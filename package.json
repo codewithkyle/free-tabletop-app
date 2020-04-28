@@ -10,7 +10,7 @@
         "preview": "serve ./public"
     },
     "dependencies": {
-        "brixi": "^0.2.0",
+        "brixi": "^0.2.1",
         "cssmonster": "^0.2.0",
         "djinnjs": "0.0.24",
         "prettier": "^2.0.5",
