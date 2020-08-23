@@ -1,7 +1,0 @@
-node_modules
-.DS_Store
-
-# Public assets
-public/assets
-public/broadcaster-worker.min.js
-public/resources-cachebust.json

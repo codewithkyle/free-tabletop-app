@@ -1,7 +1,0 @@
-module.exports = {
-    src: ["./_compiled", "./_css"],
-    usePercentage: true,
-    disableServiceWorker: true,
-    disablePrefetching: true,
-    disablePjax: true,
-};
