@@ -1,8 +1,9 @@
 {
     "scripts": {
-        "build": "rm -rf ./Client/wwwroot/css && mkdir ./Client/wwwroot/css && npm-run-all build:*",
+        "build": "rm -rf ./Client/wwwroot/css && mkdir ./Client/wwwroot/css && npm-run-all build:* && npm run start:server",
         "build:brixi": "brixi && mv ./brixi/brixi.css ./Client/scss/brixi.css && rmdir ./brixi",
         "build:css": "cssmonster",
+        "build:client": "dotnet build ./Client",
         "start:client": "dotnet run --project ./Client",
         "start:server": "dotnet run --project ./Server"
     },
