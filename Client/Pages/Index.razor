@@ -1,6 +1,9 @@
 ﻿@page "/"
 
-@using FreeTabletop.Data;
+@using FreeTabletop.Client.Models;
+@using Microsoft.AspNetCore.SignalR.Client;
+
+@inject NavigationManager NavigationManager;
 
 <div class="inline-block">
     <h1 class="block text-center font-grey-700 font-2xl mb-1.5 font-bold line-snug">Free Tabletop</h1>
@@ -25,11 +28,36 @@
 </div>
 
 @code {
-    private JoinRoom room = new JoinRoom();
+    private JoinRoomForm room = new JoinRoomForm();
 
-    private void HandleCreateRoom()
+    HubConnection hubConnection = null;
+    public bool IsConnected =>
+        hubConnection.State == HubConnectionState.Connected;
+
+    private List<string> messages = new List<string>();
+
+    protected override async Task OnInitializedAsync()
     {
-        Console.WriteLine("Create a new room");
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/gamehub"))
+            .Build();
+
+        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        {
+            var encodedMsg = $"{user}: {message}";
+            messages.Add(encodedMsg);
+            StateHasChanged();
+            Console.WriteLine(user);
+            Console.WriteLine(message);
+        });
+
+        await hubConnection.StartAsync();
+    }
+
+
+    private async Task HandleCreateRoom()
+    {
+        hubConnection.SendAsync("SendMessage", "input", "message");
     }
 
     private void HandleValidSubmit()

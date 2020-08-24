@@ -1,9 +1,9 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace FreeTabletop.Data
+namespace FreeTabletop.Client.Models
 {
-    public class JoinRoom
+    public class JoinRoomForm
     {
         [Required(
             ErrorMessage = "A Room Code is requried"
