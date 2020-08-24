@@ -8,8 +8,11 @@ namespace FreeTabletop.Data
         [Required(
             ErrorMessage = "A Room Code is requried"
         )]
-        [StringLength(6,
-            ErrorMessage = "Invalid Room Code length")]
+        [StringLength(
+            6,
+            MinimumLength = 6,
+            ErrorMessage = "Invalid Room Code length"
+        )]
         public string RoomCode { get; set; }
     }
 }

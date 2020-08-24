@@ -9,7 +9,7 @@
         <DataAnnotationsValidator />
 
         <div>
-            <InputText id="roomCode" @bind-Value="room.RoomCode" placeholder="Room code" />
+            <InputText id="roomCode" @bind-Value="@room.RoomCode" placeholder="Room code" />
             <ValidationMessage For="@(() => room.RoomCode)" />
         </div>
 
