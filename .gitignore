@@ -1,5 +1,7 @@
 node_modules
-/bin/Debug
-/obj/Debug
-/wwwroot/css
+/Client/bin/Debug
+/Client/obj/Debug
+/Client/wwwroot/css
 /brixi
+/Server/bin/Debug
+/Server/obj/Debug

@@ -1,6 +1,6 @@
 module.exports = {
     env: "production",
-    outDir: "./wwwroot/css",
-    sources: "./scss",
+    outDir: "./Client/wwwroot/css",
+    sources: "./Client/scss",
     purge: false,
 };

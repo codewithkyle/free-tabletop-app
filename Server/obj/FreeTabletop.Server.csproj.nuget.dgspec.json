@@ -1,0 +1,198 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/andrewk9/dev/free-tabletop/Server/FreeTabletop.Server.csproj": {}
+  },
+  "projects": {
+    "/home/andrewk9/dev/free-tabletop/Client/FreeTabletop.Client.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/andrewk9/dev/free-tabletop/Client/FreeTabletop.Client.csproj",
+        "projectName": "FreeTabletop.Client",
+        "projectPath": "/home/andrewk9/dev/free-tabletop/Client/FreeTabletop.Client.csproj",
+        "packagesPath": "/home/andrewk9/.nuget/packages/",
+        "outputPath": "/home/andrewk9/dev/free-tabletop/Client/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/andrewk9/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "projectReferences": {
+              "/home/andrewk9/dev/free-tabletop/Shared/FreeTabletop.Shared.csproj": {
+                "projectPath": "/home/andrewk9/dev/free-tabletop/Shared/FreeTabletop.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "dependencies": {
+            "Microsoft.AspNetCore.Components.WebAssembly": {
+              "target": "Package",
+              "version": "[3.2.1, )"
+            },
+            "Microsoft.AspNetCore.Components.WebAssembly.Build": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[3.2.1, )"
+            },
+            "Microsoft.AspNetCore.Components.WebAssembly.DevServer": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[3.2.1, )"
+            },
+            "System.Net.Http.Json": {
+              "target": "Package",
+              "version": "[3.2.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/3.1.401/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/andrewk9/dev/free-tabletop/Server/FreeTabletop.Server.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/andrewk9/dev/free-tabletop/Server/FreeTabletop.Server.csproj",
+        "projectName": "FreeTabletop.Server",
+        "projectPath": "/home/andrewk9/dev/free-tabletop/Server/FreeTabletop.Server.csproj",
+        "packagesPath": "/home/andrewk9/.nuget/packages/",
+        "outputPath": "/home/andrewk9/dev/free-tabletop/Server/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/andrewk9/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netcoreapp3.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netcoreapp3.1": {
+            "projectReferences": {
+              "/home/andrewk9/dev/free-tabletop/Client/FreeTabletop.Client.csproj": {
+                "projectPath": "/home/andrewk9/dev/free-tabletop/Client/FreeTabletop.Client.csproj"
+              },
+              "/home/andrewk9/dev/free-tabletop/Shared/FreeTabletop.Shared.csproj": {
+                "projectPath": "/home/andrewk9/dev/free-tabletop/Shared/FreeTabletop.Shared.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netcoreapp3.1": {
+          "dependencies": {
+            "Microsoft.AspNetCore.Components.WebAssembly.Server": {
+              "target": "Package",
+              "version": "[3.2.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/3.1.401/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/andrewk9/dev/free-tabletop/Shared/FreeTabletop.Shared.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/andrewk9/dev/free-tabletop/Shared/FreeTabletop.Shared.csproj",
+        "projectName": "FreeTabletop.Shared",
+        "projectPath": "/home/andrewk9/dev/free-tabletop/Shared/FreeTabletop.Shared.csproj",
+        "packagesPath": "/home/andrewk9/.nuget/packages/",
+        "outputPath": "/home/andrewk9/dev/free-tabletop/Shared/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/andrewk9/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.1"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.1": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netstandard2.1": {
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "NETStandard.Library": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/3.1.401/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
