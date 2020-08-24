@@ -1,49 +1,14 @@
 {
   "FilesToCompress": [
     {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/rIUXSRfIvN-e6N3yGOKfw9Q0MHU9Dsu1yp5jsNm5t6o=.hash",
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/KAW-ABR6UN3S_Mv-j6LhEgSMR7nPOddLDEz_pKPLZcc=.hash",
       "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/free-tabletop.dll",
       "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/free-tabletop.dll.br"
     },
     {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/99dseBOagY3mzu5Y8Eqm8gRI_o8QbbCp7R2Ew9bQ_5E=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Net.Http.Json.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Net.Http.Json.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/ZxXy75PYbzJxNfAc-SAP1nUYm4gt1jSaOpFnBb9m85M=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Buffers.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Buffers.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/BaZPMj95_YNe3G4ckTGD6szZFwZeA2MOHn91zTGKDeU=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/mscorlib.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/mscorlib.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/TkH6yxFQlTfY8NfznePrCdYJiEVpM9Dqy4Uu4H9qk10=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Threading.Tasks.Extensions.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Threading.Tasks.Extensions.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/-cPXlNTX8GKF-lIn-2DIjtxTe0Wpy4ZDcyAj67b6JYk=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Memory.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Memory.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/HQeN_ZfHAERO_uW0fP0J9J3WV1hQ3vUIOWbqGSYBPp8=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Text.Json.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Text.Json.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/kL-omZDwqByAi_lPdMeDmr3XjHcn4RVb_LmZ4mut1Yc=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Runtime.CompilerServices.Unsafe.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Runtime.CompilerServices.Unsafe.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/OBWh2or_2mU6elwqPfmL72FBZVKl2WzTJ4L-IrKeXM4=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/Microsoft.Bcl.AsyncInterfaces.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.Bcl.AsyncInterfaces.dll.br"
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/Bs1Wrmh4ex9dTEIT0yCRF52N-wOmsBDt457BHr0-ssM=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.Extensions.DependencyInjection.Abstractions.dll.br"
     },
     {
       "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/-zcPVM75OAY_joGVM8yIC1gO1SFYWP1CFERgQ8PJkfA=.hash",
@@ -69,6 +34,16 @@
       "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/ob5gN-szfb1CwWnyQWvWvuid3u4df593KvZeoJQEaKc=.hash",
       "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/WebAssembly.Net.WebSockets.dll",
       "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/WebAssembly.Net.WebSockets.dll.br"
+    },
+    {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/-cPXlNTX8GKF-lIn-2DIjtxTe0Wpy4ZDcyAj67b6JYk=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Memory.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Memory.dll.br"
+    },
+    {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/BaZPMj95_YNe3G4ckTGD6szZFwZeA2MOHn91zTGKDeU=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/mscorlib.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/mscorlib.dll.br"
     },
     {
       "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/6XMT1eT3svGdg6hFzAHJscYdTQjakoYccYTdHmKSr7Y=.hash",
@@ -146,44 +121,14 @@
       "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Data.dll.br"
     },
     {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/qAKfFnquY_7UC-MzLi04rjqEhLzTryCoLg-S6MxI19I=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Numerics.Vectors.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Numerics.Vectors.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/Tqh1Da_iTRQJEZUGAsMNFuZ4hf1PMf13WApRZod_uw4=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Text.Encodings.Web.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Text.Encodings.Web.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/Bs1Wrmh4ex9dTEIT0yCRF52N-wOmsBDt457BHr0-ssM=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/Microsoft.Extensions.DependencyInjection.Abstractions.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.Extensions.DependencyInjection.Abstractions.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/bSgsT2x5xMvs8mara5wU_EJwcyHa9GVMU85HwhWcdWM=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/Microsoft.AspNetCore.Components.Web.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.AspNetCore.Components.Web.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/m7Q_cF5-ji3OMfdGlCuE8pQ-iM_kxNHLq-IEWVvIaOg=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/Microsoft.AspNetCore.Components.Forms.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.AspNetCore.Components.Forms.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/tmnkCmP9OzLUkpQ3LP7PRosi7gt5pyfEZCM6aqAokFI=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.ComponentModel.Annotations.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.ComponentModel.Annotations.dll.br"
-    },
-    {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/LIfCYwg_PHltTK4z3EnbSkA7m2cn8JS4jHVthdKrDF8=.hash",
-      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.ComponentModel.DataAnnotations.dll",
-      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.ComponentModel.DataAnnotations.dll.br"
-    },
-    {
       "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/PEg9ghiKSWBTX0jq8pFDvv2Yvw92Y8W0ELtWrSE4fhA=.hash",
       "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/Microsoft.AspNetCore.Components.dll",
       "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.AspNetCore.Components.dll.br"
+    },
+    {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/ZxXy75PYbzJxNfAc-SAP1nUYm4gt1jSaOpFnBb9m85M=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Buffers.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Buffers.dll.br"
     },
     {
       "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/6gJMwefpsWLHWsEipZp143xn8k2Ea27upnXqjUT6iNI=.hash",
@@ -201,9 +146,19 @@
       "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.Extensions.DependencyInjection.dll.br"
     },
     {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/Tqh1Da_iTRQJEZUGAsMNFuZ4hf1PMf13WApRZod_uw4=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Text.Encodings.Web.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Text.Encodings.Web.dll.br"
+    },
+    {
       "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/y-FyJQOcW2TOcTp7Iuv8brGBzL5ZP0oJdG7ysK_gtKc=.hash",
       "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/Microsoft.Extensions.Primitives.dll",
       "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.Extensions.Primitives.dll.br"
+    },
+    {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/kL-omZDwqByAi_lPdMeDmr3XjHcn4RVb_LmZ4mut1Yc=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Runtime.CompilerServices.Unsafe.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Runtime.CompilerServices.Unsafe.dll.br"
     },
     {
       "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/n0Ag7rF7ZQamklPSZkakIXkRoa6JwlmPSS0cRaAhJQM=.hash",
@@ -241,6 +196,26 @@
       "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.Extensions.FileProviders.Abstractions.dll.br"
     },
     {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/HQeN_ZfHAERO_uW0fP0J9J3WV1hQ3vUIOWbqGSYBPp8=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Text.Json.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Text.Json.dll.br"
+    },
+    {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/OBWh2or_2mU6elwqPfmL72FBZVKl2WzTJ4L-IrKeXM4=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/Microsoft.Bcl.AsyncInterfaces.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.Bcl.AsyncInterfaces.dll.br"
+    },
+    {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/TkH6yxFQlTfY8NfznePrCdYJiEVpM9Dqy4Uu4H9qk10=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Threading.Tasks.Extensions.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Threading.Tasks.Extensions.dll.br"
+    },
+    {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/qAKfFnquY_7UC-MzLi04rjqEhLzTryCoLg-S6MxI19I=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.Numerics.Vectors.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.Numerics.Vectors.dll.br"
+    },
+    {
       "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/_kkwUt5LUrFrnFcHiSvLP3Ps50UAimB6C5utgehqOo4=.hash",
       "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/Microsoft.Extensions.Logging.dll",
       "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.Extensions.Logging.dll.br"
@@ -261,7 +236,27 @@
       "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.JSInterop.WebAssembly.dll.br"
     },
     {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/fdPmoR3cZKlkWCRrrajAJ-3nSlfukhP4EA1PErv5T9o=.hash",
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/bSgsT2x5xMvs8mara5wU_EJwcyHa9GVMU85HwhWcdWM=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/Microsoft.AspNetCore.Components.Web.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.AspNetCore.Components.Web.dll.br"
+    },
+    {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/m7Q_cF5-ji3OMfdGlCuE8pQ-iM_kxNHLq-IEWVvIaOg=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/Microsoft.AspNetCore.Components.Forms.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/Microsoft.AspNetCore.Components.Forms.dll.br"
+    },
+    {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/tmnkCmP9OzLUkpQ3LP7PRosi7gt5pyfEZCM6aqAokFI=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.ComponentModel.Annotations.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.ComponentModel.Annotations.dll.br"
+    },
+    {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/LIfCYwg_PHltTK4z3EnbSkA7m2cn8JS4jHVthdKrDF8=.hash",
+      "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/System.ComponentModel.DataAnnotations.dll",
+      "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/System.ComponentModel.DataAnnotations.dll.br"
+    },
+    {
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/ZdWbYY2V-lZGoKi4EwadzKUeGvCZ8weWzEBpyg27AEE=.hash",
       "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/unlinked\/free-tabletop.pdb",
       "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/_bin\/free-tabletop.pdb.br"
     },
@@ -286,7 +281,7 @@
       "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/blazor.webassembly.js.br"
     },
     {
-      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/xrK-ovxF63RCpWznu-ssFrg-lYv1J7acXFZIHt0hdYo=.hash",
+      "InputSource": "obj\/Debug\/netstandard2.1\/integrity\/wIb1mTrtEhH2ux3shLDb-wC78cOPPzBs5JKxfRYwhx8=.hash",
       "Source": "\/home\/andrewk9\/dev\/free-tabletop\/obj\/Debug\/netstandard2.1\/blazor\/blazor.boot.json",
       "Target": "obj\/Debug\/netstandard2.1\/compressed\/_framework\/blazor.boot.json.br"
     }
