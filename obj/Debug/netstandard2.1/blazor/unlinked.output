@@ -22,6 +22,10 @@ obj/Debug/netstandard2.1/blazor/unlinked/System.IO.Compression.dll
 obj/Debug/netstandard2.1/blazor/unlinked/System.Drawing.Common.dll
 obj/Debug/netstandard2.1/blazor/unlinked/System.Data.DataSetExtensions.dll
 obj/Debug/netstandard2.1/blazor/unlinked/System.Data.dll
+obj/Debug/netstandard2.1/blazor/unlinked/Microsoft.AspNetCore.Components.Web.dll
+obj/Debug/netstandard2.1/blazor/unlinked/Microsoft.AspNetCore.Components.Forms.dll
+obj/Debug/netstandard2.1/blazor/unlinked/System.ComponentModel.Annotations.dll
+obj/Debug/netstandard2.1/blazor/unlinked/System.ComponentModel.DataAnnotations.dll
 obj/Debug/netstandard2.1/blazor/unlinked/Microsoft.AspNetCore.Components.dll
 obj/Debug/netstandard2.1/blazor/unlinked/System.Buffers.dll
 obj/Debug/netstandard2.1/blazor/unlinked/Microsoft.Extensions.Logging.Abstractions.dll
@@ -45,8 +49,4 @@ obj/Debug/netstandard2.1/blazor/unlinked/Microsoft.Extensions.Logging.dll
 obj/Debug/netstandard2.1/blazor/unlinked/Microsoft.Extensions.Options.dll
 obj/Debug/netstandard2.1/blazor/unlinked/Microsoft.JSInterop.dll
 obj/Debug/netstandard2.1/blazor/unlinked/Microsoft.JSInterop.WebAssembly.dll
-obj/Debug/netstandard2.1/blazor/unlinked/Microsoft.AspNetCore.Components.Web.dll
-obj/Debug/netstandard2.1/blazor/unlinked/Microsoft.AspNetCore.Components.Forms.dll
-obj/Debug/netstandard2.1/blazor/unlinked/System.ComponentModel.Annotations.dll
-obj/Debug/netstandard2.1/blazor/unlinked/System.ComponentModel.DataAnnotations.dll
 obj/Debug/netstandard2.1/blazor/unlinked/free-tabletop.pdb

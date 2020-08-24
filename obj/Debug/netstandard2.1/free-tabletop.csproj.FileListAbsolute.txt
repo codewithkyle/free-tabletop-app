@@ -343,6 +343,6 @@
 /home/andrewk9/dev/free-tabletop/obj/Debug/netstandard2.1/free-tabletop.pdb
 /home/andrewk9/dev/free-tabletop/bin/Debug/netstandard2.1/package-lock.json
 /home/andrewk9/dev/free-tabletop/bin/Debug/netstandard2.1/package.json
-/home/andrewk9/dev/free-tabletop/obj/Debug/netstandard2.1/integrity/KAW-ABR6UN3S_Mv-j6LhEgSMR7nPOddLDEz_pKPLZcc=.hash
-/home/andrewk9/dev/free-tabletop/obj/Debug/netstandard2.1/integrity/ZdWbYY2V-lZGoKi4EwadzKUeGvCZ8weWzEBpyg27AEE=.hash
-/home/andrewk9/dev/free-tabletop/obj/Debug/netstandard2.1/integrity/wIb1mTrtEhH2ux3shLDb-wC78cOPPzBs5JKxfRYwhx8=.hash
+/home/andrewk9/dev/free-tabletop/obj/Debug/netstandard2.1/integrity/tYXIhtIRTe35LVvcHwAg0DypL2Igk1NX4W_QqHD9i-g=.hash
+/home/andrewk9/dev/free-tabletop/obj/Debug/netstandard2.1/integrity/kPtWx6jX-AulXhqot8_fGl1O5nIPP_OCorP7-gPUMT0=.hash
+/home/andrewk9/dev/free-tabletop/obj/Debug/netstandard2.1/integrity/GyJ2wuK17DPHUd90HbqMdV-NlBg5VFylVZaL08U_65U=.hash
