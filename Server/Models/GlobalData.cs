@@ -14,26 +14,39 @@ public static class GlobalData
         {
             if (Rooms[i].RoomCode == roomCode)
             {
+                for (int j = Rooms[i].DisconnectedPlayers.Count - 1; j >= 0; j--)
+                {
+                    RemovePlayer(Rooms[i].DisconnectedPlayers[j].UID);
+                }
                 Rooms.RemoveAt(i);
                 break;
             }
         }
     }
 
-    public static void RemovePlayer(string connectionId)
+    public static void DisconnectPlayer(string connectionId)
     {
-        for (int i = Players.Count - 1; i >= 0; i--)
+        for (int i = 0; i < Players.Count; i++)
         {
             if (Players[i].UID == connectionId)
             {
-                if (!String.IsNullOrEmpty(Players[i].RoomCode))
+                Players[i].IsConnected = false;
+                Room room = GetRoom(Players[i].RoomCode);
+                if (room != null)
                 {
-                    Room room = GetRoom(Players[i].RoomCode);
-                    if (room != null)
-                    {
-                        room.RemovePlayer(Players[i]);
-                    }
+                    room.DisconnectPlayer(Players[i].UID);
                 }
+                break;
+            }
+        }
+    }
+
+    public static void RemovePlayer(string uid)
+    {
+        for (int i = Players.Count - 1; i >= 0; i--)
+        {
+            if (Players[i].UID == uid)
+            {
                 Players.RemoveAt(i);
                 break;
             }

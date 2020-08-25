@@ -1,12 +1,8 @@
 @page "/room/{roomCode}"
+@inherits RoomBase;
 
 <div class="game">
     <table class="table">
         <tbody></tbody>
     </table>
 </div>
-
-@code {
-    [Parameter]
-    public string roomCode { get; set; }
-}

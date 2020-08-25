@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.SignalR.Client;
 
 @inject NavigationManager NavigationManager;
+@inject IJSRuntime JSRuntime;
 
 <div class="inline-block">
     <h1 class="block text-center font-grey-700 font-2xl mb-1.5 font-bold line-snug">Free Tabletop</h1>
@@ -21,6 +22,7 @@
                     <span class="inline-block">Continue</span>
                 </button>
             </EditForm>
+            <button type="button" style="opacity:0;visibility:hidden;pointer-events:none;" class="link block mx-auto font-sm">Create a room</button>
             break;
         default:
             <EditForm Model="@room" OnValidSubmit="@HandleSubmitRoomCode"  class="bg-white p-1 radius-0.5 mb-1 border-1 border-solid border-grey-300" grid="columns 1 gap-1" style="width: 300px;">
@@ -50,55 +52,57 @@
     private JoinRoomForm room = new JoinRoomForm();
     private NewPlayerForm player = new NewPlayerForm();
 
-    HubConnection hubConnection = null;
-    bool IsConnected =>
-        hubConnection.State == HubConnectionState.Connected;
     string errorMessage = null;
     string view = "initial";
 
     protected override async Task OnInitializedAsync()
     {
-        hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/gamehub"))
-            .Build();
+        await JSRuntime.InvokeVoidAsync("ClearSession");
 
-        hubConnection.On<string>("Load:GM", (roomCode) =>
+        if (!Networker.IsConnected)
         {
-            NavigationManager.NavigateTo("room/" + roomCode);
-        });
-        hubConnection.On<string>("Load:Player", (roomCode) =>
-        {
-            NavigationManager.NavigateTo("room/" + roomCode);
-        });
+            await Networker.Connect(NavigationManager.ToAbsoluteUri("/gamehub"));
+        }
 
-        hubConnection.On("Get:PlayerName", () =>
+        if (Networker.IsConnected)
         {
-            view = "player";
-            StateHasChanged();
-        });
+            Networker.hubConnection.On<string, string>("Load:GM", GoToRoom);
+            Networker.hubConnection.On<string, string>("Load:Player", GoToRoom);
 
-        hubConnection.On("Error:RoomNotFound", () =>
-        {
-            errorMessage = "Room not found";
-            room.RoomCode = "";
-            StateHasChanged();
-        });
-        await hubConnection.StartAsync();
+            Networker.hubConnection.On("Get:PlayerName", () =>
+            {
+                view = "player";
+                StateHasChanged();
+            });
+
+            Networker.hubConnection.On("Error:RoomNotFound", () =>
+            {
+                errorMessage = "Room not found";
+                room.RoomCode = "";
+                StateHasChanged();
+            });
+        }
+    }
+
+    private async Task GoToRoom(string roomCode, string uid)
+    {
+        await JSRuntime.InvokeVoidAsync("SetPlayerUID", uid);
+        NavigationManager.NavigateTo("room/" + roomCode);
     }
 
     private async Task HandleSubmitName()
     {
-        await hubConnection.SendAsync("Player:JoinRoom", room.RoomCode, player.Name);
+        await Networker.hubConnection.SendAsync("Player:JoinRoom", room.RoomCode, player.Name);
     }
 
     private async Task HandleCreateRoom()
     {
-        await hubConnection.SendAsync("Create:Room");
+        await Networker.hubConnection.SendAsync("Create:Room");
     }
 
     private async Task HandleSubmitRoomCode()
     {
-        await hubConnection.SendAsync("Player:LookupRoom", room.RoomCode);
+        await Networker.hubConnection.SendAsync("Player:LookupRoom", room.RoomCode);
     }
 
     private void ClearMessage()

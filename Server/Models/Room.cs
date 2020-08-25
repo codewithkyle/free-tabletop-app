@@ -7,7 +7,8 @@ namespace FreeTabletop.Server.Models
     public class Room
     {
         public string RoomCode { get; set; }
-        private List<Player> Players = new List<Player>();
+        public List<Player> Players = new List<Player>();
+        public List<Player> DisconnectedPlayers = new List<Player>();
 
         public void AddPlayer(Player player)
         {
@@ -15,12 +16,13 @@ namespace FreeTabletop.Server.Models
             Players.Add(player);
         }
 
-        public void RemovePlayer(Player player)
+        public void DisconnectPlayer(string uid)
         {
             for (int i = Players.Count - 1; i >= 0; i--)
             {
-                if (Players[i].UID == player.UID)
+                if (Players[i].UID == uid)
                 {
+                    DisconnectedPlayers.Add(Players[i]);
                     Players.RemoveAt(i);
                     break;
                 }
@@ -29,6 +31,24 @@ namespace FreeTabletop.Server.Models
             {
                 GlobalData.RemoveRoom(RoomCode);
             }
+        }
+
+        public bool ReconnectPlayer(string oldUID, string newUID)
+        {
+            bool status = false;
+            for (int i = DisconnectedPlayers.Count - 1; i >= 0; i--)
+            {
+                if (DisconnectedPlayers[i].UID == oldUID)
+                {
+                    DisconnectedPlayers[i].UID = newUID;
+                    DisconnectedPlayers[i].IsConnected = true;
+                    Players.Add(DisconnectedPlayers[i]);
+                    DisconnectedPlayers.RemoveAt(i);
+                    status = true;
+                    break;
+                }
+            }
+            return status;
         }
     }
 }

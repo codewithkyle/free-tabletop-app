@@ -8,5 +8,6 @@ namespace FreeTabletop.Server.Models
         public string Name { get; set; }
         public string RoomCode { get; set; }
         public string UID { get; set; }
+        public bool IsConnected { get; set; }
     }
 }

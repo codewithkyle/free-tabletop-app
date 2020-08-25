@@ -9,10 +9,23 @@ namespace FreeTabletop.Server.Hubs
 {
     public class GameHub : Hub
     {
-        public override async Task OnDisconnectedAsync(Exception exception)
+        [HubMethodName("Player:Resync")]
+        public async Task ResyncPlayer(string roomCode, string savedUID)
         {
-            await base.OnDisconnectedAsync(exception);
-            GlobalData.RemovePlayer(Context.ConnectionId);
+            Room room = GlobalData.GetRoom(roomCode);
+            if (room == null)
+            {
+                await Clients.Caller.SendAsync("Error:RoomNotFound");
+                return;
+            }
+            if (room.ReconnectPlayer(savedUID, Context.ConnectionId))
+            {
+                await Clients.Caller.SendAsync("Sync:PlayerUID", Context.ConnectionId);
+            }
+            else
+            {
+                await Clients.Caller.SendAsync("Error:PlayerNotFound");
+            }
         }
 
         [HubMethodName("Create:Room")]
@@ -24,11 +37,12 @@ namespace FreeTabletop.Server.Hubs
             player.Name = "GM";
             player.UID = Context.ConnectionId;
             player.RoomCode = room.RoomCode;
+            player.IsConnected = true;
             GlobalData.Players.Add(player);
             room.AddPlayer(player);
             GlobalData.Rooms.Add(room);
             await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
-            await Clients.Caller.SendAsync("Load:GM", room.RoomCode);
+            await Clients.Caller.SendAsync("Load:GM", room.RoomCode, Context.ConnectionId);
         }
 
         [HubMethodName("Player:LookupRoom")]
@@ -56,10 +70,22 @@ namespace FreeTabletop.Server.Hubs
             player.Name = name;
             player.UID = Context.ConnectionId;
             player.RoomCode = room.RoomCode;
+            player.IsConnected = true;
             GlobalData.Players.Add(player);
             room.AddPlayer(player);
             await Groups.AddToGroupAsync(Context.ConnectionId, roomCode);
-            await Clients.Caller.SendAsync("Load:Player", roomCode);
+            await Clients.Caller.SendAsync("Load:Player", roomCode, Context.ConnectionId);
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            await base.OnDisconnectedAsync(exception);
+            GlobalData.DisconnectPlayer(Context.ConnectionId);
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            await base.OnConnectedAsync();
         }
 
         private string GenerateRoomCode()
