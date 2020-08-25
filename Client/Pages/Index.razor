@@ -34,34 +34,29 @@
     public bool IsConnected =>
         hubConnection.State == HubConnectionState.Connected;
 
-    private List<string> messages = new List<string>();
-
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/gamehub"))
             .Build();
-
-        hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
+        hubConnection.On<string>("Init", (roomCode) =>
         {
-            var encodedMsg = $"{user}: {message}";
-            messages.Add(encodedMsg);
-            StateHasChanged();
-            Console.WriteLine(user);
-            Console.WriteLine(message);
+            Console.WriteLine(roomCode);
         });
-
+        hubConnection.On<string>("RoomNotFound", (numbers) =>
+        {
+            Console.WriteLine(numbers);
+        });
         await hubConnection.StartAsync();
     }
 
-
     private async Task HandleCreateRoom()
     {
-        hubConnection.SendAsync("SendMessage", "input", "message");
+        hubConnection.SendAsync("CreateRoom");
     }
 
-    private void HandleValidSubmit()
+    private async Task HandleValidSubmit()
     {
-        Console.WriteLine(room.RoomCode);
+        hubConnection.SendAsync("JoinRoom", room.RoomCode);
     }
 }
