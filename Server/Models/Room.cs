@@ -1,20 +1,23 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace FreeTabletop.Server.Models
 {
     public class Room
     {
-        public string RoomCode
+        public string RoomCode { get; set; }
+        private List<Player> Players = new List<Player>();
+
+        public void AddPlayer(Player player)
         {
-            get => this.GenerateRoomCode();
+            player.RoomCode = this.RoomCode;
+            this.Players.Add(player);
         }
 
-        private string GenerateRoomCode()
+        public void RemovePlayer(Player player)
         {
-            var rand = new Random();
-            int dice = rand.Next(1, 7);
-            return dice.ToString();
+            this.Players.Remove(player);
         }
     }
 }

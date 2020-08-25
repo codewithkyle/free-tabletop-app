@@ -8,55 +8,102 @@
 <div class="inline-block">
     <h1 class="block text-center font-grey-700 font-2xl mb-1.5 font-bold line-snug">Free Tabletop</h1>
 
-    <EditForm Model="@room" OnValidSubmit="@HandleValidSubmit"  class="bg-white p-1 radius-0.5 mb-1 border-1 border-solid border-grey-300" grid="columns 1 gap-1" style="width: 300px;">
-        <DataAnnotationsValidator />
-
-        <div>
-            <InputText id="roomCode" @bind-Value="@room.RoomCode" placeholder="Room code" />
-            <ValidationMessage For="@(() => room.RoomCode)" />
-        </div>
-
-        <button type="submit" class="button -solid -primary -icon block w-full">
-            <i>
-                <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="sign-in" class="svg-inline--fa fa-sign-in fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M416 448h-84c-6.6 0-12-5.4-12-12v-24c0-6.6 5.4-12 12-12h84c26.5 0 48-21.5 48-48V160c0-26.5-21.5-48-48-48h-84c-6.6 0-12-5.4-12-12V76c0-6.6 5.4-12 12-12h84c53 0 96 43 96 96v192c0 53-43 96-96 96zM167.1 83.5l-19.6 19.6c-4.8 4.8-4.7 12.5.2 17.1L260.8 230H12c-6.6 0-12 5.4-12 12v28c0 6.6 5.4 12 12 12h248.8L147.7 391.7c-4.8 4.7-4.9 12.4-.2 17.1l19.6 19.6c4.7 4.7 12.3 4.7 17 0l164.4-164c4.7-4.7 4.7-12.3 0-17l-164.4-164c-4.7-4.6-12.3-4.6-17 .1z"></path></svg>
-            </i>
-            <span class="inline-block">Join Room</span>
-        </button>
-    </EditForm>
-
-    <button type="button" @onclick="@HandleCreateRoom" class="link block mx-auto font-sm">Create a room</button>
+    @switch (@view)
+    {
+        case "player":
+            <EditForm Model="@player" OnValidSubmit="@HandleSubmitName"  class="bg-white p-1 radius-0.5 mb-1 border-1 border-solid border-grey-300" grid="columns 1 gap-1" style="width: 300px;">
+                <DataAnnotationsValidator />
+                <div>
+                    <InputText id="name" @bind-Value="@player.Name" placeholder="Character name" />
+                    <ValidationMessage For="@(() => player.Name)" />
+                </div>
+                <button type="submit" class="button -solid -primary block w-full">
+                    <span class="inline-block">Continue</span>
+                </button>
+            </EditForm>
+            break;
+        default:
+            <EditForm Model="@room" OnValidSubmit="@HandleSubmitRoomCode"  class="bg-white p-1 radius-0.5 mb-1 border-1 border-solid border-grey-300" grid="columns 1 gap-1" style="width: 300px;">
+                <DataAnnotationsValidator />
+                @if(@errorMessage == null){
+                    <div>
+                        <InputText id="roomCode" @bind-Value="@room.RoomCode" placeholder="Room code" />
+                        <ValidationMessage For="@(() => room.RoomCode)" />
+                    </div>
+                    <button type="submit" class="button -solid -primary -icon block w-full">
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="sign-in" class="svg-inline--fa fa-sign-in fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M416 448h-84c-6.6 0-12-5.4-12-12v-24c0-6.6 5.4-12 12-12h84c26.5 0 48-21.5 48-48V160c0-26.5-21.5-48-48-48h-84c-6.6 0-12-5.4-12-12V76c0-6.6 5.4-12 12-12h84c53 0 96 43 96 96v192c0 53-43 96-96 96zM167.1 83.5l-19.6 19.6c-4.8 4.8-4.7 12.5.2 17.1L260.8 230H12c-6.6 0-12 5.4-12 12v28c0 6.6 5.4 12 12 12h248.8L147.7 391.7c-4.8 4.7-4.9 12.4-.2 17.1l19.6 19.6c4.7 4.7 12.3 4.7 17 0l164.4-164c4.7-4.7 4.7-12.3 0-17l-164.4-164c-4.7-4.6-12.3-4.6-17 .1z"></path></svg>
+                        </i>
+                        <span class="inline-block">Join Room</span>
+                    </button>
+                }else{
+                    <p class="text-center font-danger-700" style="height:48px;line-height:48px;">@errorMessage</p>
+                    <button type="button" @onclick="@ClearMessage" class="button -solid -danger block w-full">Okay</button>
+                }
+            </EditForm>
+            <button type="button" @onclick="@HandleCreateRoom" class="link block mx-auto font-sm">Create a room</button>
+            break;
+    }
 </div>
 
 @code {
     private JoinRoomForm room = new JoinRoomForm();
+    private NewPlayerForm player = new NewPlayerForm();
 
     HubConnection hubConnection = null;
-    public bool IsConnected =>
+    bool IsConnected =>
         hubConnection.State == HubConnectionState.Connected;
+    string errorMessage = null;
+    string view = "initial";
 
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
             .WithUrl(NavigationManager.ToAbsoluteUri("/gamehub"))
             .Build();
-        hubConnection.On<string>("Init", (roomCode) =>
+
+        hubConnection.On<string>("Load:GM", (roomCode) =>
         {
-            Console.WriteLine(roomCode);
+            NavigationManager.NavigateTo("room/" + roomCode);
         });
-        hubConnection.On<string>("RoomNotFound", (numbers) =>
+        hubConnection.On<string>("Load:Player", (roomCode) =>
         {
-            Console.WriteLine(numbers);
+            NavigationManager.NavigateTo("room/" + roomCode);
+        });
+
+        hubConnection.On("Get:PlayerName", () =>
+        {
+            view = "player";
+            StateHasChanged();
+        });
+
+        hubConnection.On("Error:RoomNotFound", () =>
+        {
+            errorMessage = "Room not found";
+            room.RoomCode = "";
+            StateHasChanged();
         });
         await hubConnection.StartAsync();
     }
 
-    private async Task HandleCreateRoom()
+    private async Task HandleSubmitName()
     {
-        hubConnection.SendAsync("CreateRoom");
+        await hubConnection.SendAsync("Player:JoinRoom", room.RoomCode, player.Name);
     }
 
-    private async Task HandleValidSubmit()
+    private async Task HandleCreateRoom()
     {
-        hubConnection.SendAsync("JoinRoom", room.RoomCode);
+        await hubConnection.SendAsync("Create:Room");
+    }
+
+    private async Task HandleSubmitRoomCode()
+    {
+        await hubConnection.SendAsync("Player:LookupRoom", room.RoomCode);
+    }
+
+    private void ClearMessage()
+    {
+        errorMessage = null;
+        StateHasChanged();
     }
 }
