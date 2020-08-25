@@ -1,6 +1,7 @@
 # Build tools
 node_modules
 /brixi
+.vscode
 
 # User-specific files
 *.rsuser

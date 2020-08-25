@@ -9,14 +9,22 @@ namespace FreeTabletop.Server.Hubs
 {
     public class GameHub : Hub
     {
-        Player player = new Player();
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            await base.OnDisconnectedAsync(exception);
+            GlobalData.RemovePlayer(Context.ConnectionId);
+        }
 
         [HubMethodName("Create:Room")]
         public async Task CreateRoom()
         {
             Room room = new Room();
-            room.RoomCode = this.GenerateRoomCode();
-            this.player.Name = "GM";
+            Player player = new Player();
+            room.RoomCode = GenerateRoomCode();
+            player.Name = "GM";
+            player.UID = Context.ConnectionId;
+            player.RoomCode = room.RoomCode;
+            GlobalData.Players.Add(player);
             room.AddPlayer(player);
             GlobalData.Rooms.Add(room);
             await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
@@ -26,7 +34,7 @@ namespace FreeTabletop.Server.Hubs
         [HubMethodName("Player:LookupRoom")]
         public async Task LookupRoom(string roomCode)
         {
-            Room room = this.GetRoom(roomCode);
+            Room room = GlobalData.GetRoom(roomCode);
             if (room == null)
             {
                 await Clients.Caller.SendAsync("Error:RoomNotFound");
@@ -38,31 +46,20 @@ namespace FreeTabletop.Server.Hubs
         [HubMethodName("Player:JoinRoom")]
         public async Task JoinRoom(string roomCode, string name)
         {
-            Room room = this.GetRoom(roomCode);
+            Room room = GlobalData.GetRoom(roomCode);
             if (room == null)
             {
                 await Clients.Caller.SendAsync("Error:RoomNotFound");
                 return;
             }
+            Player player = new Player();
             player.Name = name;
+            player.UID = Context.ConnectionId;
+            player.RoomCode = room.RoomCode;
+            GlobalData.Players.Add(player);
             room.AddPlayer(player);
             await Groups.AddToGroupAsync(Context.ConnectionId, roomCode);
             await Clients.Caller.SendAsync("Load:Player", roomCode);
-        }
-
-        private Room GetRoom(string roomCode)
-        {
-            List<Room> rooms = GlobalData.Rooms;
-            Room room = null;
-            for (int i = 0; i < rooms.Count; i++)
-            {
-                if (rooms[i].RoomCode == roomCode.ToUpper())
-                {
-                    room = rooms[i];
-                    break;
-                }
-            }
-            return room;
         }
 
         private string GenerateRoomCode()

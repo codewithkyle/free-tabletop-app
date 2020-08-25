@@ -11,13 +11,24 @@ namespace FreeTabletop.Server.Models
 
         public void AddPlayer(Player player)
         {
-            player.RoomCode = this.RoomCode;
-            this.Players.Add(player);
+            player.RoomCode = RoomCode;
+            Players.Add(player);
         }
 
         public void RemovePlayer(Player player)
         {
-            this.Players.Remove(player);
+            for (int i = Players.Count - 1; i >= 0; i--)
+            {
+                if (Players[i].UID == player.UID)
+                {
+                    Players.RemoveAt(i);
+                    break;
+                }
+            }
+            if (Players.Count == 0)
+            {
+                GlobalData.RemoveRoom(RoomCode);
+            }
         }
     }
 }
