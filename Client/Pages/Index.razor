@@ -57,8 +57,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        await JSRuntime.InvokeVoidAsync("ClearSession");
-
         if (!Networker.IsConnected)
         {
             await Networker.Connect(NavigationManager.ToAbsoluteUri("/gamehub"));

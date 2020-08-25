@@ -38,7 +38,14 @@ namespace FreeTabletop.Client
             if (newConnection && Networker.IsConnected)
             {
                 string uid = await JSRuntime.InvokeAsync<string>("GetPlayerUID");
-                await Networker.hubConnection.SendAsync("Player:Resync", roomCode, uid);
+                if (String.IsNullOrEmpty(uid))
+                {
+                    Redirect();
+                }
+                else
+                {
+                    await Networker.hubConnection.SendAsync("Player:Resync", roomCode, uid);
+                }
             }
         }
 

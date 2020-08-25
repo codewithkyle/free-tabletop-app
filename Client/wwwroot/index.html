@@ -23,12 +23,13 @@
         <app>Loading...</app>
         <script>
             function SetPlayerUID(uid) {
-                sessionStorage.setItem("PlayerUID", uid);
+                localStorage.setItem("PlayerUID", uid);
             }
             function GetPlayerUID() {
-                return sessionStorage.getItem("PlayerUID");
+                return localStorage.getItem("PlayerUID");
             }
-            function ClearSession() {
+            function ClearStorage() {
+                localStorage.clear();
                 sessionStorage.clear();
             }
         </script>

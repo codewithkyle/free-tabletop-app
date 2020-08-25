@@ -10,21 +10,26 @@ namespace FreeTabletop.Server.Hubs
     public class GameHub : Hub
     {
         [HubMethodName("Player:Resync")]
-        public async Task ResyncPlayer(string roomCode, string savedUID)
+        public async Task ResyncPlayer(string roomCode, string staleUID)
         {
             Room room = GlobalData.GetRoom(roomCode);
-            if (room == null)
+            if (room != null)
             {
-                await Clients.Caller.SendAsync("Error:RoomNotFound");
-                return;
-            }
-            if (room.ReconnectPlayer(savedUID, Context.ConnectionId))
-            {
-                await Clients.Caller.SendAsync("Sync:PlayerUID", Context.ConnectionId);
+                Player player = GlobalData.GetPlayerByStaleUID(staleUID);
+                if (player != null)
+                {
+                    player.IsConnected = true;
+                    player.UID = Context.ConnectionId;
+                    await Clients.Caller.SendAsync("Sync:PlayerUID", Context.ConnectionId);
+                }
+                else
+                {
+                    await Clients.Caller.SendAsync("Error:PlayerNotFound");
+                }
             }
             else
             {
-                await Clients.Caller.SendAsync("Error:PlayerNotFound");
+                await Clients.Caller.SendAsync("Error:RoomNotFound");
             }
         }
 
@@ -38,6 +43,7 @@ namespace FreeTabletop.Server.Hubs
             player.UID = Context.ConnectionId;
             player.RoomCode = room.RoomCode;
             player.IsConnected = true;
+            player.IsGameMaster = true;
             GlobalData.Players.Add(player);
             room.AddPlayer(player);
             GlobalData.Rooms.Add(room);
@@ -81,11 +87,6 @@ namespace FreeTabletop.Server.Hubs
         {
             await base.OnDisconnectedAsync(exception);
             GlobalData.DisconnectPlayer(Context.ConnectionId);
-        }
-
-        public override async Task OnConnectedAsync()
-        {
-            await base.OnConnectedAsync();
         }
 
         private string GenerateRoomCode()

@@ -8,7 +8,6 @@ namespace FreeTabletop.Server.Models
     {
         public string RoomCode { get; set; }
         public List<Player> Players = new List<Player>();
-        public List<Player> DisconnectedPlayers = new List<Player>();
 
         public void AddPlayer(Player player)
         {
@@ -18,37 +17,36 @@ namespace FreeTabletop.Server.Models
 
         public void DisconnectPlayer(string uid)
         {
+            bool hasOneConnection = false;
             for (int i = Players.Count - 1; i >= 0; i--)
             {
-                if (Players[i].UID == uid)
+                if (Players[i].IsConnected)
                 {
-                    DisconnectedPlayers.Add(Players[i]);
-                    Players.RemoveAt(i);
+                    hasOneConnection = true;
                     break;
                 }
             }
-            if (Players.Count == 0)
+            if (!hasOneConnection)
             {
-                GlobalData.RemoveRoom(RoomCode);
+                GlobalData.RemoveRoom(this);
             }
         }
 
-        public bool ReconnectPlayer(string oldUID, string newUID)
+        public void CheckPlayerConnections()
         {
-            bool status = false;
-            for (int i = DisconnectedPlayers.Count - 1; i >= 0; i--)
+            bool hasOneConnection = false;
+            for (int i = 0; i < Players.Count; i++)
             {
-                if (DisconnectedPlayers[i].UID == oldUID)
+                if (Players[i].IsConnected)
                 {
-                    DisconnectedPlayers[i].UID = newUID;
-                    DisconnectedPlayers[i].IsConnected = true;
-                    Players.Add(DisconnectedPlayers[i]);
-                    DisconnectedPlayers.RemoveAt(i);
-                    status = true;
+                    hasOneConnection = true;
                     break;
                 }
             }
-            return status;
+            if (!hasOneConnection)
+            {
+                GlobalData.RemoveRoom(this);
+            }
         }
     }
 }
