@@ -85,7 +85,7 @@
     private async Task GoToRoom(string roomCode, string uid)
     {
         await JSRuntime.InvokeVoidAsync("SetPlayerUID", uid);
-        NavigationManager.NavigateTo("room/" + roomCode);
+        NavigationManager.NavigateTo("room/" + roomCode.ToLower());
     }
 
     private async Task HandleSubmitName()

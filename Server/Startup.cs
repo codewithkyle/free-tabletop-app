@@ -11,7 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using FreeTabletop.Server.Hubs;
-using Cloudcrate.AspNetCore.Blazor.Browser.Storage;
 
 namespace FreeTabletop.Server
 {
@@ -28,7 +27,6 @@ namespace FreeTabletop.Server
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddStorage();
             services.AddSignalR();
             services.AddControllersWithViews();
         }
