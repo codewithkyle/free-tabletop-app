@@ -1,8 +1,10 @@
 {
     "scripts": {
-        "build": "rm -rf ./Client/wwwroot/css && mkdir ./Client/wwwroot/css && npm-run-all build:* && npm run start:server",
+        "reset": "rm -rf ./Client/wwwroot/css && mkdir ./Client/wwwroot/css && rm -rf ./Client/wwwroot/js && mkdir ./Client/wwwroot/js",
+        "build": "npm run reset && npm-run-all build:* && npm run start:server",
         "build:brixi": "brixi && mv ./brixi/brixi.css ./Client/scss/brixi.css && rmdir ./brixi",
         "build:css": "cssmonster",
+        "build:js": "tsc",
         "build:client": "dotnet build ./Client",
         "start:client": "dotnet run --project ./Client",
         "start:server": "dotnet run --project ./Server"
@@ -10,6 +12,7 @@
     "dependencies": {
         "brixi": "^0.2.2",
         "cssmonster": "^0.2.1",
-        "npm-run-all": "^4.1.5"
+        "npm-run-all": "^4.1.5",
+        "typescript": "^4.0.2"
     }
 }

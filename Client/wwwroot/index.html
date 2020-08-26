@@ -21,18 +21,7 @@
 
     <body class="bg-grey-200">
         <app>Loading...</app>
-        <script>
-            function SetPlayerUID(uid) {
-                localStorage.setItem("PlayerUID", uid);
-            }
-            function GetPlayerUID() {
-                return localStorage.getItem("PlayerUID");
-            }
-            function ClearStorage() {
-                localStorage.clear();
-                sessionStorage.clear();
-            }
-        </script>
+        <script defer src="js/globals.js"></script>
         <script src="_framework/blazor.webassembly.js"></script>
         <script>
             navigator.serviceWorker.register("service-worker.js");
