@@ -116,7 +116,8 @@
 
     private async Task HandleSubmitRoomCode()
     {
-        await Networker.hubConnection.SendAsync("Player:LookupRoom", room.RoomCode);
+        string savedUID = await JSRuntime.InvokeAsync<string>("GetPlayerUID");
+        await Networker.hubConnection.SendAsync("Player:LookupRoom", room.RoomCode, savedUID);
     }
 
     private void ClearMessage()

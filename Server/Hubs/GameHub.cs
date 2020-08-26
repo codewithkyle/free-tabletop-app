@@ -116,7 +116,7 @@ namespace FreeTabletop.Server.Hubs
         }
 
         [HubMethodName("Player:LookupRoom")]
-        public async Task LookupRoom(string roomCode)
+        public async Task LookupRoom(string roomCode, string savedUID)
         {
             Room room = GlobalData.GetRoom(roomCode);
             if (room == null)
@@ -130,7 +130,25 @@ namespace FreeTabletop.Server.Hubs
             }
             else
             {
-                await Clients.Caller.SendAsync("Get:PlayerName");
+                if (String.IsNullOrEmpty(savedUID))
+                {
+                    await Clients.Caller.SendAsync("Get:PlayerName");
+                }
+                else
+                {
+                    Player player = GlobalData.GetPlayerByStaleUID(savedUID);
+                    if (player != null)
+                    {
+                        player.IsConnected = true;
+                        player.UID = Context.ConnectionId;
+                        await Clients.Caller.SendAsync("Load:Player", room.RoomCode, Context.ConnectionId);
+                    }
+                    else
+                    {
+                        await Clients.Caller.SendAsync("Get:PlayerName");
+                    }
+                }
+
             }
         }
 
@@ -159,6 +177,15 @@ namespace FreeTabletop.Server.Hubs
         {
             await base.OnDisconnectedAsync(exception);
             GlobalData.DisconnectPlayer(Context.ConnectionId);
+            Player player = this.GetPlayer(Context.ConnectionId);
+            if (player != null)
+            {
+                Room room = this.GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    this.SendTabletopInfo(room);
+                }
+            }
         }
 
         private Room GetRoom(string roomCode)
@@ -205,6 +232,7 @@ namespace FreeTabletop.Server.Hubs
                     player.UID = room.Players[i].UID;
                     player.Name = room.Players[i].Name;
                     player.Type = "player";
+                    player.IsConnected = room.Players[i].IsConnected;
                     players.Add(player);
                 }
             }

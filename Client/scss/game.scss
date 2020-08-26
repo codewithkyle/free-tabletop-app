@@ -134,6 +134,8 @@
                             padding: 0 4px 0 0.5rem;
                             border-radius: 0.25rem;
                             transition: all 150ms var(--ease-in-out);
+                            font-weight: var(--font-medium);
+                            font-size: var(--font-sm);
 
                             &:hover,
                             &:focus-within {
@@ -149,7 +151,6 @@
                             align-items: center;
                             width: 28px;
                             height: 28px;
-                            margin-left: 1rem;
 
                             &::before {
                                 content: "";
