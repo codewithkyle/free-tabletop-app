@@ -40,7 +40,7 @@
                     </button>
                 }else{
                     <p class="text-center font-danger-700" style="height:48px;line-height:48px;">@errorMessage</p>
-                    <button type="button" @onclick="@ClearMessage" class="button -solid -danger block w-full">Okay</button>
+                    <button id="okay-button" type="button" @onclick="@ClearMessage" class="button -solid -danger block w-full">Okay</button>
                 }
             </EditForm>
             <button type="button" @onclick="@HandleCreateRoom" class="link block mx-auto font-sm">Create a room</button>
@@ -71,6 +71,7 @@
             {
                 view = "player";
                 StateHasChanged();
+                FocusElement("#name");
             });
 
             Networker.hubConnection.On("Error:RoomNotFound", () =>
@@ -78,14 +79,23 @@
                 errorMessage = "Room not found";
                 room.RoomCode = "";
                 StateHasChanged();
+                FocusElement("#okay-button");
             });
 
             Networker.hubConnection.On("Error:RoomIsLocked", () =>
             {
                 errorMessage = "Room " + room.RoomCode.ToUpper() + " is locked";
                 StateHasChanged();
+                FocusElement("#okay-button");
             });
         }
+
+        FocusElement("#roomCode");
+    }
+
+    private async Task FocusElement(string selector)
+    {
+        await JSRuntime.InvokeVoidAsync("FocusElement", selector);
     }
 
     private async Task GoToRoom(string roomCode, string uid)
