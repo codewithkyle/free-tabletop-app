@@ -8,6 +8,7 @@ namespace FreeTabletop.Server.Models
     {
         public string RoomCode { get; set; }
         public List<Player> Players = new List<Player>();
+        public bool IsLocked { get; set; }
 
         public void AddPlayer(Player player)
         {
@@ -46,6 +47,30 @@ namespace FreeTabletop.Server.Models
             if (!hasOneConnection)
             {
                 GlobalData.RemoveRoom(this);
+            }
+        }
+
+        public void ToggleLock()
+        {
+            if (this.IsLocked)
+            {
+                this.IsLocked = false;
+            }
+            else
+            {
+                this.IsLocked = true;
+            }
+        }
+
+        public void KickPlayer(Player player)
+        {
+            for (int i = Players.Count - 1; i >= 0; i--)
+            {
+                if (Players[i].UID == player.UID)
+                {
+                    Players.RemoveAt(i);
+                    break;
+                }
             }
         }
     }

@@ -1,8 +1,83 @@
-@page "/room/{roomCode}"
+@page "/room/{RoomCode}"
 @inherits RoomBase;
 
 <div class="game">
-    <table class="table">
+    <table class="tabletop">
         <tbody></tbody>
     </table>
+    <div class="tabletop-info">
+        <button @onclick="ToggleInfoMenu" class="info-toggle" aria-label="open tabletop info menu" title="Tabletop info">
+            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="info-circle" class="svg-inline--fa fa-info-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"></path></svg>
+        </button>
+        @if(@InfoMenuOpen){
+            <dl class="info-modal">
+                <dt>Room:</dt>
+                <dd>
+                    <button class="bttn" title="Click to copy room code" @onclick="CopyRoomCodeToClipboard">
+                        <span>@Tabletop.RoomCode</span>
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="clone" class="svg-inline--fa fa-clone fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 0H144c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h320c26.51 0 48-21.49 48-48v-48h48c26.51 0 48-21.49 48-48V48c0-26.51-21.49-48-48-48zM362 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h42v224c0 26.51 21.49 48 48 48h224v42a6 6 0 0 1-6 6zm96-96H150a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h308a6 6 0 0 1 6 6v308a6 6 0 0 1-6 6z"></path></svg>
+                        </i>
+                    </button>
+                </dd>
+
+                <dt>Players:</dt>
+                <dd class="player-menu">
+                    <span class="pl-0.5">@Tabletop.Players.Count</span>
+                    @if(@Tabletop.Players.Count > 0){
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="chevron-right" class="svg-inline--fa fa-chevron-right fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M24.707 38.101L4.908 57.899c-4.686 4.686-4.686 12.284 0 16.971L185.607 256 4.908 437.13c-4.686 4.686-4.686 12.284 0 16.971L24.707 473.9c4.686 4.686 12.284 4.686 16.971 0l209.414-209.414c4.686-4.686 4.686-12.284 0-16.971L41.678 38.101c-4.687-4.687-12.285-4.687-16.971 0z"></path></svg>
+                        </i>
+                        <ul class="player-menu-modal">
+                            @for(int i = 0; i < @Tabletop.Players.Count; i++){
+                                <li>
+                                    <span>@Tabletop.Players[i].Name</span>
+                                    @if(@Tabletop.IsGameMaster){
+                                        int buttonIndex = i;
+                                        <button @onclick="@(e => KickPlayer(buttonIndex))" title="Kick player" aria-label="kick @Tabletop.Players[i].Name">
+                                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-slash" class="svg-inline--fa fa-user-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M633.8 458.1L362.3 248.3C412.1 230.7 448 183.8 448 128 448 57.3 390.7 0 320 0c-67.1 0-121.5 51.8-126.9 117.4L45.5 3.4C38.5-2 28.5-.8 23 6.2L3.4 31.4c-5.4 7-4.2 17 2.8 22.4l588.4 454.7c7 5.4 17 4.2 22.5-2.8l19.6-25.3c5.4-6.8 4.1-16.9-2.9-22.3zM96 422.4V464c0 26.5 21.5 48 48 48h350.2L207.4 290.3C144.2 301.3 96 356 96 422.4z"></path></svg>
+                                        </button>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    }
+                </dd>
+
+                <dt>Status:</dt>
+                <dd>
+                    @if(@Tabletop.IsGameMaster){
+                        <button class="bttn" @onclick="ToggleRoomLock" title="Lock or unlock the room">
+                            @if(@Tabletop.IsLocked){
+                                <span>Locked</span>
+                                <i>
+                                    <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 192h-32v-46.6C368 65.8 304 .2 224.4 0 144.8-.2 80 64.5 80 144v48H48c-26.5 0-48 21.5-48 48v224c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V240c0-26.5-21.5-48-48-48zm-272-48c0-52.9 43.1-96 96-96s96 43.1 96 96v48H128v-48zm272 320H48V240h352v224z"></path></svg>
+                                </i>
+                            }else{
+                                <span>Unlocked</span>
+                                <i>
+                                    <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="unlock" class="svg-inline--fa fa-unlock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 240H128v-94.8c0-52.8 42.1-96.7 95-97.2 53.4-.6 97 42.7 97 96v24c0 13.3 10.7 24 24 24s24-10.7 24-24v-22.6C368 65.8 304 .2 224.3 0 144.8-.2 80 64.5 80 144v96H48c-26.5 0-48 21.5-48 48v176c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V288c0-26.5-21.5-48-48-48zm0 224H48V288h352v176z"></path></svg>
+                                </i>
+                            }
+                        </button>
+                    }else{
+                        @if(@Tabletop.IsLocked){
+                            <span class="pl-0.5">Locked</span>
+                            <i>
+                                <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 192h-32v-46.6C368 65.8 304 .2 224.4 0 144.8-.2 80 64.5 80 144v48H48c-26.5 0-48 21.5-48 48v224c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V240c0-26.5-21.5-48-48-48zm-272-48c0-52.9 43.1-96 96-96s96 43.1 96 96v48H128v-48zm272 320H48V240h352v224z"></path></svg>
+                            </i>
+                        }else{
+                            <span class="pl-0.5">Unlocked</span>
+                            <i>
+                                <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="unlock" class="svg-inline--fa fa-unlock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 240H128v-94.8c0-52.8 42.1-96.7 95-97.2 53.4-.6 97 42.7 97 96v24c0 13.3 10.7 24 24 24s24-10.7 24-24v-22.6C368 65.8 304 .2 224.3 0 144.8-.2 80 64.5 80 144v96H48c-26.5 0-48 21.5-48 48v176c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V288c0-26.5-21.5-48-48-48zm0 224H48V288h352v176z"></path></svg>
+                            </i>
+                        }
+                    }
+                </dd>
+            </dl>
+        }
+    </div>
+    @if(@InfoMenuOpen){
+        <button @onclick="CloseAllModals" class="modal-backdrop" aria-label="close menu"></button>
+    }
 </div>

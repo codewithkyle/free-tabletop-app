@@ -79,6 +79,12 @@
                 room.RoomCode = "";
                 StateHasChanged();
             });
+
+            Networker.hubConnection.On("Error:RoomIsLocked", () =>
+            {
+                errorMessage = "Room " + room.RoomCode.ToUpper() + " is locked";
+                StateHasChanged();
+            });
         }
     }
 

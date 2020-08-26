@@ -44,10 +44,13 @@ public static class GlobalData
             {
                 Players[i].IsConnected = false;
                 Players[i].StaleUIDs.Add(Players[i].UID);
-                Room room = GetRoom(Players[i].RoomCode);
-                if (room != null)
+                if (Players[i].RoomCode != null)
                 {
-                    room.CheckPlayerConnections();
+                    Room room = GetRoom(Players[i].RoomCode);
+                    if (room != null)
+                    {
+                        room.CheckPlayerConnections();
+                    }
                 }
                 break;
             }
