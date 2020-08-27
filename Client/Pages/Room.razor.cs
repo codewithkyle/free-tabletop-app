@@ -22,7 +22,7 @@ namespace FreeTabletop.Client
 
         public Tabletop Tabletop = new Tabletop();
 
-        public bool InfoMenuOpen { get; set; } = false;
+        public bool InfoMenuOpen = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -36,6 +36,7 @@ namespace FreeTabletop.Client
             // Connected to server, register incoming message handler functions
             if (Networker.IsConnected)
             {
+                Console.WriteLine("Connected");
                 Networker.hubConnection.On("Error:RoomNotFound", Redirect);
                 Networker.hubConnection.On("Error:PlayerNotFound", Redirect);
 
@@ -60,6 +61,7 @@ namespace FreeTabletop.Client
                 }
             }
 
+            Console.WriteLine("Requesting tabletop sync");
             await Networker.hubConnection.SendAsync("Player:SyncTabletopInfo");
             await Networker.hubConnection.SendAsync("Player:IsGameMaster");
         }
@@ -78,6 +80,7 @@ namespace FreeTabletop.Client
 
         private void SyncTabletop(bool isLocked, List<PlayerEntity> players)
         {
+            Console.WriteLine("Tabletop synced");
             Tabletop.RoomCode = RoomCode.ToUpper();
             Tabletop.IsLocked = isLocked;
             Tabletop.Players = players;

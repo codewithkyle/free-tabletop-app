@@ -17,7 +17,6 @@ function ForceHome() {
     location.href = location.origin;
 }
 function FocusElement(selector: string) {
-    console.log(selector);
     const el: HTMLElement = document.body.querySelector(selector);
     if (el) {
         el.focus();

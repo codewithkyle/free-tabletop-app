@@ -81,6 +81,7 @@ namespace FreeTabletop.Server.Hubs
                     player.IsConnected = true;
                     player.UID = Context.ConnectionId;
                     await Clients.Caller.SendAsync("Set:PlayerUID", Context.ConnectionId);
+                    await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
                 }
                 else
                 {
@@ -124,15 +125,18 @@ namespace FreeTabletop.Server.Hubs
                 await Clients.Caller.SendAsync("Error:RoomNotFound");
                 return;
             }
-            if (room.IsLocked)
-            {
-                await Clients.Caller.SendAsync("Error:RoomIsLocked");
-            }
             else
             {
                 if (String.IsNullOrEmpty(savedUID))
                 {
-                    await Clients.Caller.SendAsync("Get:PlayerName");
+                    if (room.IsLocked)
+                    {
+                        await Clients.Caller.SendAsync("Error:RoomIsLocked");
+                    }
+                    else
+                    {
+                        await Clients.Caller.SendAsync("Get:PlayerName");
+                    }
                 }
                 else
                 {
