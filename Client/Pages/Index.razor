@@ -1,10 +1,5 @@
 ﻿@page "/"
-
-@using FreeTabletop.Client.Models;
-@using Microsoft.AspNetCore.SignalR.Client;
-
-@inject NavigationManager NavigationManager;
-@inject IJSRuntime JSRuntime;
+@inherits IndexBase;
 
 <div class="inline-block">
     <h1 class="block text-center font-grey-700 font-2xl mb-1.5 font-bold line-snug">Free Tabletop</h1>
@@ -47,82 +42,3 @@
             break;
     }
 </div>
-
-@code {
-    private JoinRoomForm room = new JoinRoomForm();
-    private NewPlayerForm player = new NewPlayerForm();
-
-    string errorMessage = null;
-    string view = "initial";
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (!Networker.IsConnected)
-        {
-            await Networker.Connect(NavigationManager.ToAbsoluteUri("/gamehub"));
-        }
-
-        if (Networker.IsConnected)
-        {
-            Networker.hubConnection.On<string, string>("Load:GM", GoToRoom);
-            Networker.hubConnection.On<string, string>("Load:Player", GoToRoom);
-
-            Networker.hubConnection.On("Get:PlayerName", () =>
-            {
-                view = "player";
-                StateHasChanged();
-                FocusElement("#name");
-            });
-
-            Networker.hubConnection.On("Error:RoomNotFound", () =>
-            {
-                errorMessage = "Room not found";
-                room.RoomCode = "";
-                StateHasChanged();
-                FocusElement("#okay-button");
-            });
-
-            Networker.hubConnection.On("Error:RoomIsLocked", () =>
-            {
-                errorMessage = "Room " + room.RoomCode.ToUpper() + " is locked";
-                StateHasChanged();
-                FocusElement("#okay-button");
-            });
-        }
-
-        FocusElement("#roomCode");
-    }
-
-    private async Task FocusElement(string selector)
-    {
-        await JSRuntime.InvokeVoidAsync("FocusElement", selector);
-    }
-
-    private async Task GoToRoom(string roomCode, string uid)
-    {
-        await JSRuntime.InvokeVoidAsync("SetPlayerUID", uid);
-        NavigationManager.NavigateTo("room/" + roomCode.ToLower());
-    }
-
-    private async Task HandleSubmitName()
-    {
-        await Networker.hubConnection.SendAsync("Player:JoinRoom", room.RoomCode, player.Name);
-    }
-
-    private async Task HandleCreateRoom()
-    {
-        await Networker.hubConnection.SendAsync("Create:Room");
-    }
-
-    private async Task HandleSubmitRoomCode()
-    {
-        string savedUID = await JSRuntime.InvokeAsync<string>("GetPlayerUID");
-        await Networker.hubConnection.SendAsync("Player:LookupRoom", room.RoomCode, savedUID);
-    }
-
-    private void ClearMessage()
-    {
-        errorMessage = null;
-        StateHasChanged();
-    }
-}
