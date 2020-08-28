@@ -1,5 +1,6 @@
 @page "/room/{RoomCode}"
 @inherits RoomBase;
+@using FreeTabletop.Shared.Models;
 
 <div class="game">
     <table class="tabletop">
@@ -31,11 +32,7 @@
                         <ul class="player-menu-modal">
                             @for(int i = 0; i < @Tabletop.Players.Count; i++){
                                 <li>
-                                    @if(@Tabletop.Players[i].IsConnected){
-                                        <span>@Tabletop.Players[i].Name</span>
-                                    }else{
-                                        <span class="font-danger-600">@Tabletop.Players[i].Name</span>
-                                    }
+                                    <span>@Tabletop.Players[i].Name</span>
                                     <div class="ml-0.5" flex="items-center row nowrap">
                                         @if(@Tabletop.Players[i].IsConnected){
                                             <i class="font-grey-500" title="Status: Connected" aria-hidden="true">
@@ -47,8 +44,8 @@
                                             </i>
                                         }
                                         @if(@Tabletop.IsGameMaster){
-                                            int buttonIndex = i;
-                                            <button @onclick="@(e => KickPlayer(buttonIndex))" title="Kick player" aria-label="kick @Tabletop.Players[i].Name">
+                                            PlayerEntity player = Tabletop.Players[i];
+                                            <button @onclick="@(e => Hub.KickPlayer(player))" title="Kick player" aria-label="kick @Tabletop.Players[i].Name">
                                                 <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-slash" class="svg-inline--fa fa-user-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M633.8 458.1L362.3 248.3C412.1 230.7 448 183.8 448 128 448 57.3 390.7 0 320 0c-67.1 0-121.5 51.8-126.9 117.4L45.5 3.4C38.5-2 28.5-.8 23 6.2L3.4 31.4c-5.4 7-4.2 17 2.8 22.4l588.4 454.7c7 5.4 17 4.2 22.5-2.8l19.6-25.3c5.4-6.8 4.1-16.9-2.9-22.3zM96 422.4V464c0 26.5 21.5 48 48 48h350.2L207.4 290.3C144.2 301.3 96 356 96 422.4z"></path></svg>
                                             </button>
                                         }
@@ -62,7 +59,7 @@
                 <dt>Status:</dt>
                 <dd>
                     @if(@Tabletop.IsGameMaster){
-                        <button class="bttn" @onclick="ToggleRoomLock" title="Lock or unlock the room">
+                        <button class="bttn" @onclick="Hub.ToggleRoomLock" title="Lock or unlock the room">
                             @if(@Tabletop.IsLocked){
                                 <span>Locked</span>
                                 <i>

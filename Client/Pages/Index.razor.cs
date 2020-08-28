@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
 using FreeTabletop.Client.Models;
 
-namespace FreeTabletop.Client
+namespace FreeTabletop.Client.Pages
 {
-    public partial class IndexBase : ComponentBase
+    public class IndexBase : ComponentBase
     {
 
         [Inject]
