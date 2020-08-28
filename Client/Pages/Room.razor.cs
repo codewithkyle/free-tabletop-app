@@ -36,7 +36,6 @@ namespace FreeTabletop.Client
             // Connected to server, register incoming message handler functions
             if (Networker.IsConnected)
             {
-                Console.WriteLine("Connected");
                 Networker.hubConnection.On("Error:RoomNotFound", Redirect);
                 Networker.hubConnection.On("Error:PlayerNotFound", Redirect);
 
@@ -61,7 +60,6 @@ namespace FreeTabletop.Client
                 }
             }
 
-            Console.WriteLine("Requesting tabletop sync");
             await Networker.hubConnection.SendAsync("Player:SyncTabletopInfo");
             await Networker.hubConnection.SendAsync("Player:IsGameMaster");
         }

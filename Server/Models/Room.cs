@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using FreeTabletop.Shared.Models;
 
 namespace FreeTabletop.Server.Models
 {
@@ -8,7 +10,7 @@ namespace FreeTabletop.Server.Models
     {
         public string RoomCode { get; set; }
         public List<Player> Players = new List<Player>();
-        public bool IsLocked { get; set; }
+        public bool IsLocked = false;
 
         public void AddPlayer(Player player)
         {
@@ -33,7 +35,7 @@ namespace FreeTabletop.Server.Models
             }
         }
 
-        public void CheckPlayerConnections()
+        public bool HasConnections()
         {
             bool hasOneConnection = false;
             for (int i = 0; i < Players.Count; i++)
@@ -44,21 +46,18 @@ namespace FreeTabletop.Server.Models
                     break;
                 }
             }
-            if (!hasOneConnection)
-            {
-                GlobalData.RemoveRoom(this);
-            }
+            return hasOneConnection;
         }
 
         public void ToggleLock()
         {
-            if (this.IsLocked)
+            if (IsLocked)
             {
-                this.IsLocked = false;
+                IsLocked = false;
             }
             else
             {
-                this.IsLocked = true;
+                IsLocked = true;
             }
         }
 
@@ -68,10 +67,29 @@ namespace FreeTabletop.Server.Models
             {
                 if (Players[i].UID == player.UID)
                 {
+                    Players[i].RoomCode = null;
                     Players.RemoveAt(i);
                     break;
                 }
             }
+        }
+
+        public List<PlayerEntity> BuildPlayerEntities()
+        {
+            List<PlayerEntity> players = new List<PlayerEntity>();
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (!Players[i].IsGameMaster)
+                {
+                    PlayerEntity player = new PlayerEntity();
+                    player.UID = Players[i].UID;
+                    player.Name = Players[i].Name;
+                    player.Type = "player";
+                    player.IsConnected = Players[i].IsConnected;
+                    players.Add(player);
+                }
+            }
+            return players;
         }
     }
 }

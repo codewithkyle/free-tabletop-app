@@ -5,12 +5,9 @@ namespace FreeTabletop.Shared.Models
 {
     public class Tabletop
     {
-        public string RoomCode { get; set; }
-
-        public bool IsGameMaster { get; set; }
-
-        public bool IsLocked { get; set; }
-
-        public List<PlayerEntity> Players { get; set; }
+        public string RoomCode = "";
+        public bool IsGameMaster = false;
+        public bool IsLocked = false;
+        public List<PlayerEntity> Players { get; set; } = new List<PlayerEntity>();
     }
 }

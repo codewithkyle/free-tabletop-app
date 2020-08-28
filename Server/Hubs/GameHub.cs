@@ -10,22 +10,37 @@ namespace FreeTabletop.Server.Hubs
 {
     public class GameHub : Hub
     {
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            await base.OnDisconnectedAsync(exception);
+            GlobalData.DisconnectPlayer(Context.ConnectionId);
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.RoomCode);
+                    await SendTabletopInfoToRoom(room);
+                }
+            }
+        }
+
         [HubMethodName("Room:KickPlayer")]
         public async Task KickPlayer(string playerUID)
         {
-            Player playerToKick = this.GetPlayer(playerUID);
-            Player playerSendingCommand = this.GetPlayer(Context.ConnectionId);
+            Player playerToKick = GetPlayer(playerUID);
+            Player playerSendingCommand = GetPlayer(Context.ConnectionId);
             if (playerToKick != null && playerSendingCommand != null && playerSendingCommand.IsGameMaster && playerToKick.RoomCode == playerSendingCommand.RoomCode)
             {
-                Room room = this.GetRoom(playerToKick.RoomCode);
+                Room room = GetRoom(playerToKick.RoomCode);
                 if (room != null)
                 {
                     await Groups.RemoveFromGroupAsync(playerToKick.UID, playerToKick.RoomCode);
                     room.KickPlayer(playerToKick);
-                    playerToKick.RoomCode = null;
                     GlobalData.RemovePlayer(playerToKick);
                     await Clients.Client(playerToKick.UID).SendAsync("Player:Kick");
-                    await SendTabletopInfo(room);
+                    await SendTabletopInfoToRoom(room);
                 }
             }
         }
@@ -33,7 +48,7 @@ namespace FreeTabletop.Server.Hubs
         [HubMethodName("Player:IsGameMaster")]
         public async Task CheckIfPlayerIsGameMaster()
         {
-            Player player = this.GetPlayer(Context.ConnectionId);
+            Player player = GetPlayer(Context.ConnectionId);
             if (player != null)
             {
                 await Clients.Caller.SendAsync("Set:IsGameMaster", player.IsGameMaster);
@@ -43,28 +58,28 @@ namespace FreeTabletop.Server.Hubs
         [HubMethodName("Room:ToggleLock")]
         public async Task ToggleRoomLock()
         {
-            Player player = this.GetPlayer(Context.ConnectionId);
+            Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
             {
-                Room room = this.GetRoom(player.RoomCode);
+                Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
                     room.ToggleLock();
-                    await SendTabletopInfo(room);
+                    await SendTabletopInfoToRoom(room);
                 }
             }
         }
 
         [HubMethodName("Player:SyncTabletopInfo")]
-        public async Task SyncPlayersTabletopInfo()
+        public async Task SyncTabletopInfo()
         {
-            Player player = this.GetPlayer(Context.ConnectionId);
+            Player player = GetPlayer(Context.ConnectionId);
             if (player != null)
             {
-                Room room = this.GetRoom(player.RoomCode);
+                Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    await SendTabletopInfo(room);
+                    await SendTabletopInfoToRoom(room);
                 }
             }
         }
@@ -72,60 +87,36 @@ namespace FreeTabletop.Server.Hubs
         [HubMethodName("Player:Resync")]
         public async Task ResyncPlayer(string roomCode, string staleUID)
         {
-            Room room = GlobalData.GetRoom(roomCode);
+            Room room = GetRoom(roomCode);
             if (room != null)
             {
                 Player player = GlobalData.GetPlayerByStaleUID(staleUID);
                 if (player != null)
                 {
-                    player.IsConnected = true;
-                    player.UID = Context.ConnectionId;
-                    await Clients.Caller.SendAsync("Set:PlayerUID", Context.ConnectionId);
                     await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
+                    player.Reconnect(Context.ConnectionId);
+                    await Clients.Caller.SendAsync("Set:PlayerUID", Context.ConnectionId);
                 }
                 else
                 {
                     await Clients.Caller.SendAsync("Error:PlayerNotFound");
                 }
             }
-            else
-            {
-                await Clients.Caller.SendAsync("Error:RoomNotFound");
-            }
         }
 
         [HubMethodName("Create:Room")]
         public async Task CreateRoom()
         {
-            Room room = new Room();
-            room.RoomCode = GenerateRoomCode();
-            room.IsLocked = false;
-
-            Player player = new Player();
-            player.Name = "GM";
-            player.UID = Context.ConnectionId;
-            player.RoomCode = room.RoomCode;
-            player.IsConnected = true;
-            player.IsGameMaster = true;
-
-            GlobalData.Players.Add(player);
-            room.AddPlayer(player);
-            GlobalData.Rooms.Add(room);
-
-            await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
-            await Clients.Caller.SendAsync("Load:GM", room.RoomCode, Context.ConnectionId);
+            string roomCode = GlobalData.CreateRoom(Context.ConnectionId);
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomCode);
+            await Clients.Caller.SendAsync("Load:GM", roomCode, Context.ConnectionId);
         }
 
         [HubMethodName("Player:LookupRoom")]
         public async Task LookupRoom(string roomCode, string savedUID)
         {
-            Room room = GlobalData.GetRoom(roomCode);
-            if (room == null)
-            {
-                await Clients.Caller.SendAsync("Error:RoomNotFound");
-                return;
-            }
-            else
+            Room room = GetRoom(roomCode);
+            if (room != null)
             {
                 if (String.IsNullOrEmpty(savedUID))
                 {
@@ -143,8 +134,8 @@ namespace FreeTabletop.Server.Hubs
                     Player player = GlobalData.GetPlayerByStaleUID(savedUID);
                     if (player != null)
                     {
-                        player.IsConnected = true;
-                        player.UID = Context.ConnectionId;
+                        await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
+                        player.Reconnect(Context.ConnectionId);
                         await Clients.Caller.SendAsync("Load:Player", room.RoomCode, Context.ConnectionId);
                     }
                     else
@@ -152,43 +143,20 @@ namespace FreeTabletop.Server.Hubs
                         await Clients.Caller.SendAsync("Get:PlayerName");
                     }
                 }
-
             }
         }
 
         [HubMethodName("Player:JoinRoom")]
         public async Task JoinRoom(string roomCode, string name)
         {
-            Room room = GlobalData.GetRoom(roomCode);
-            if (room == null)
+            Room room = GetRoom(roomCode);
+            if (room != null)
             {
-                await Clients.Caller.SendAsync("Error:RoomNotFound");
-                return;
-            }
-            Player player = new Player();
-            player.Name = name;
-            player.UID = Context.ConnectionId;
-            player.RoomCode = room.RoomCode;
-            player.IsConnected = true;
-            GlobalData.Players.Add(player);
-            room.AddPlayer(player);
-            await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
-            await Clients.Caller.SendAsync("Load:Player", roomCode, Context.ConnectionId);
-            await SendTabletopInfo(room);
-        }
-
-        public override async Task OnDisconnectedAsync(Exception exception)
-        {
-            await base.OnDisconnectedAsync(exception);
-            GlobalData.DisconnectPlayer(Context.ConnectionId);
-            Player player = this.GetPlayer(Context.ConnectionId);
-            if (player != null)
-            {
-                Room room = this.GetRoom(player.RoomCode);
-                if (room != null)
-                {
-                    this.SendTabletopInfo(room);
-                }
+                Player player = GlobalData.CreatePlayer(Context.ConnectionId, name, room.RoomCode);
+                room.AddPlayer(player);
+                await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
+                await Clients.Caller.SendAsync("Load:Player", roomCode, Context.ConnectionId);
+                await SendTabletopInfoToRoom(room);
             }
         }
 
@@ -212,34 +180,9 @@ namespace FreeTabletop.Server.Hubs
             return player;
         }
 
-        private string GenerateRoomCode()
+        private async Task SendTabletopInfoToRoom(Room room)
         {
-            string abc = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            Random random = new Random();
-            string roomCode = "";
-            for (int i = 0; i < 6; i++)
-            {
-                int index = random.Next(abc.Length);
-                roomCode += abc[index];
-            }
-            return roomCode;
-        }
-
-        private async Task SendTabletopInfo(Room room)
-        {
-            List<PlayerEntity> players = new List<PlayerEntity>();
-            for (int i = 0; i < room.Players.Count; i++)
-            {
-                if (!room.Players[i].IsGameMaster)
-                {
-                    PlayerEntity player = new PlayerEntity();
-                    player.UID = room.Players[i].UID;
-                    player.Name = room.Players[i].Name;
-                    player.Type = "player";
-                    player.IsConnected = room.Players[i].IsConnected;
-                    players.Add(player);
-                }
-            }
+            List<PlayerEntity> players = room.BuildPlayerEntities();
             await Clients.Group(room.RoomCode).SendAsync("Sync:TabletopInfo", room.IsLocked, players);
         }
     }
