@@ -2,7 +2,7 @@
 using System;
 using FreeTabletop.Server.Models;
 using System.Collections.Generic;
-using FreeTabletop.Server.Hubs;
+using FreeTabletop.Server.Controllers;
 
 public static class GlobalData
 {

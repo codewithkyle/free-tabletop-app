@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using FreeTabletop.Shared.Models;
-using FreeTabletop.Client.Models;
+using FreeTabletop.Client.Controllers;
 
 namespace FreeTabletop.Client.Pages
 {

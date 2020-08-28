@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.SignalR.Client;
 using FreeTabletop.Shared.Models;
 using Microsoft.JSInterop;
 using FreeTabletop.Client.Pages;
+using FreeTabletop.Client.Models;
 
-namespace FreeTabletop.Client.Models
+namespace FreeTabletop.Client.Controllers
 {
     public class ClientHub
     {

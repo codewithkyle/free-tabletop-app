@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 using FreeTabletop.Server.Models;
 using FreeTabletop.Shared.Models;
 
-namespace FreeTabletop.Server.Hubs
+namespace FreeTabletop.Server.Controllers
 {
     public class GameHub : Hub
     {
