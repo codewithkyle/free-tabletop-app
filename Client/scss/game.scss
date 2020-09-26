@@ -276,6 +276,16 @@
                 border-radius: 0.25rem;
                 position: relative;
 
+                &.danger {
+                    &:active {
+                        color: var(--danger-800);
+
+                        &::before {
+                            background-color: var(--danger-500);
+                        }
+                    }
+                }
+
                 &:hover,
                 &:focus {
                     color: var(--grey-800);

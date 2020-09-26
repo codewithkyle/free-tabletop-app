@@ -87,7 +87,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:ClearTabletop")]
-        public async Task ClearTabletop()
+        public async Task ClearRoomsTabletop()
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)

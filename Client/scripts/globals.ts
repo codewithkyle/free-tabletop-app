@@ -25,3 +25,24 @@ function FocusElement(selector: string) {
 function Debug(thing: any) {
     console.log(thing);
 }
+async function GetGridSize(url: string) {
+    let grid = [0, 0];
+    if (url.length) {
+        grid = await new Promise((resolve) => {
+            const tempImg = document.createElement("img");
+            tempImg.src = url;
+            tempImg.className = "temp-image";
+            tempImg.addEventListener("load", () => {
+                const bounds = tempImg.getBoundingClientRect();
+                const width = Math.floor(bounds.width / 32);
+                const height = Math.floor(bounds.height / 32);
+                resolve([width, height]);
+            });
+            tempImg.addEventListener("error", () => {
+                resolve([0, 0]);
+            });
+            document.body.appendChild(tempImg);
+        });
+    }
+    return grid;
+}

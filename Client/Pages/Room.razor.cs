@@ -32,6 +32,8 @@ namespace FreeTabletop.Client.Pages
 
         public String TabletopImage = null;
         public bool TabletopGrid = true;
+        public int TabletopX = 0;
+        public int TabletopY = 0;
 
         protected override async Task OnInitializedAsync()
         {
@@ -130,10 +132,13 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void RenderTabletopFromImage(String imageURL, bool generateGrid)
+        public async Task RenderTabletopFromImage(String imageURL, bool generateGrid)
         {
             TabletopImage = imageURL;
             TabletopGrid = generateGrid;
+            int[] GridSize = await JSRuntime.InvokeAsync<int[]>("GetGridSize", imageURL);
+            TabletopX = GridSize[0];
+            TabletopY = GridSize[1];
             StateHasChanged();
         }
 
