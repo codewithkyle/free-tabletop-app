@@ -24,6 +24,14 @@ namespace FreeTabletop.Client.Pages
         public ClientHub Hub = new ClientHub();
 
         public bool InfoMenuOpen = false;
+        public bool SettingsMenuOpen = false;
+        public bool ImageUploadOpen = false;
+
+        public String ImageURL = null;
+        public bool GenerateGrid = true;
+
+        public String TabletopImage = null;
+        public bool TabletopGrid = true;
 
         protected override async Task OnInitializedAsync()
         {
@@ -46,6 +54,7 @@ namespace FreeTabletop.Client.Pages
 
         public void ToggleInfoMenu()
         {
+            CloseAllModals();
             if (InfoMenuOpen)
             {
                 InfoMenuOpen = false;
@@ -60,12 +69,79 @@ namespace FreeTabletop.Client.Pages
         public void CloseAllModals()
         {
             InfoMenuOpen = false;
+            SettingsMenuOpen = false;
+            ImageUploadOpen = false;
             StateHasChanged();
         }
 
         public async Task CopyRoomCodeToClipboard()
         {
             await JSRuntime.InvokeVoidAsync("CopyToClipboard", Tabletop.RoomCode);
+        }
+
+        public void ToggleSettingsMenu()
+        {
+            CloseAllModals();
+            if (SettingsMenuOpen)
+            {
+                SettingsMenuOpen = false;
+            }
+            else
+            {
+                SettingsMenuOpen = true;
+            }
+            StateHasChanged();
+        }
+
+        public void UploadTabletopImage()
+        {
+            SettingsMenuOpen = false;
+            ImageUploadOpen = true;
+            StateHasChanged();
+        }
+
+        public void RemoveTabletopImage()
+        {
+            CloseAllModals();
+            Hub.ClearTabletop();
+        }
+
+        public async Task LoadTabletop()
+        {
+            if (ImageURL.Length != 0)
+            {
+                CloseAllModals();
+                await Hub.LoadTabletop(ImageURL, GenerateGrid);
+                ImageURL = null;
+                GenerateGrid = true;
+            }
+        }
+
+        public void ToggleGridStatus()
+        {
+            if (GenerateGrid)
+            {
+                GenerateGrid = false;
+            }
+            else
+            {
+                GenerateGrid = true;
+            }
+            StateHasChanged();
+        }
+
+        public void RenderTabletopFromImage(String imageURL, bool generateGrid)
+        {
+            TabletopImage = imageURL;
+            TabletopGrid = generateGrid;
+            StateHasChanged();
+        }
+
+        public void ClearTabletop()
+        {
+            TabletopImage = null;
+            TabletopGrid = true;
+            StateHasChanged();
         }
     }
 }

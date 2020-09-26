@@ -3,14 +3,21 @@
 @using FreeTabletop.Shared.Models;
 
 <div class="game">
-    <table class="tabletop">
-        <tbody></tbody>
-    </table>
+    @if (@TabletopImage != null && @TabletopImage.Length != 0){
+        <div class="tabletop">
+            <img draggable="false" src="@TabletopImage" />
+            @if (@TabletopGrid){
+                <table>
+                    <tbody></tbody>
+                </table>
+            }
+        </div>
+    }
     <div class="tabletop-info">
-        <button @onclick="ToggleInfoMenu" class="info-toggle" aria-label="open tabletop info menu" title="Tabletop info">
+        <button @onclick="ToggleInfoMenu" class="icon-button-toggle" aria-label="open tabletop info menu" title="tabletop info">
             <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="info-circle" class="svg-inline--fa fa-info-circle fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"></path></svg>
         </button>
-        @if(@InfoMenuOpen){
+        @if (@InfoMenuOpen){
             <dl class="info-modal">
                 <dt>Room:</dt>
                 <dd>
@@ -88,8 +95,48 @@
                 </dd>
             </dl>
         }
+        <button @onclick="ToggleSettingsMenu" class="icon-button-toggle" aria-label="open tabletop settings menu" title="tabletop settings">
+            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="cog" class="svg-inline--fa fa-cog fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M487.4 315.7l-42.6-24.6c4.3-23.2 4.3-47 0-70.2l42.6-24.6c4.9-2.8 7.1-8.6 5.5-14-11.1-35.6-30-67.8-54.7-94.6-3.8-4.1-10-5.1-14.8-2.3L380.8 110c-17.9-15.4-38.5-27.3-60.8-35.1V25.8c0-5.6-3.9-10.5-9.4-11.7-36.7-8.2-74.3-7.8-109.2 0-5.5 1.2-9.4 6.1-9.4 11.7V75c-22.2 7.9-42.8 19.8-60.8 35.1L88.7 85.5c-4.9-2.8-11-1.9-14.8 2.3-24.7 26.7-43.6 58.9-54.7 94.6-1.7 5.4.6 11.2 5.5 14L67.3 221c-4.3 23.2-4.3 47 0 70.2l-42.6 24.6c-4.9 2.8-7.1 8.6-5.5 14 11.1 35.6 30 67.8 54.7 94.6 3.8 4.1 10 5.1 14.8 2.3l42.6-24.6c17.9 15.4 38.5 27.3 60.8 35.1v49.2c0 5.6 3.9 10.5 9.4 11.7 36.7 8.2 74.3 7.8 109.2 0 5.5-1.2 9.4-6.1 9.4-11.7v-49.2c22.2-7.9 42.8-19.8 60.8-35.1l42.6 24.6c4.9 2.8 11 1.9 14.8-2.3 24.7-26.7 43.6-58.9 54.7-94.6 1.5-5.5-.7-11.3-5.6-14.1zM256 336c-44.1 0-80-35.9-80-80s35.9-80 80-80 80 35.9 80 80-35.9 80-80 80z"></path></svg>
+        </button>
+        @if (@SettingsMenuOpen){
+            <div class="settings-modal">
+                @if (@Tabletop.IsGameMaster)
+                {
+                    <button @onclick="UploadTabletopImage">
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="file-upload" class="svg-inline--fa fa-file-upload fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M369.9 97.98L286.02 14.1c-9-9-21.2-14.1-33.89-14.1H47.99C21.5.1 0 21.6 0 48.09v415.92C0 490.5 21.5 512 47.99 512h288.02c26.49 0 47.99-21.5 47.99-47.99V131.97c0-12.69-5.1-24.99-14.1-33.99zM256.03 32.59c2.8.7 5.3 2.1 7.4 4.2l83.88 83.88c2.1 2.1 3.5 4.6 4.2 7.4h-95.48V32.59zm95.98 431.42c0 8.8-7.2 16-16 16H47.99c-8.8 0-16-7.2-16-16V48.09c0-8.8 7.2-16.09 16-16.09h176.04v104.07c0 13.3 10.7 23.93 24 23.93h103.98v304.01zm-180.1-247.32l-68.12 71.75c-7.81 8.2-9.94 20.31-5.44 30.83 4.41 10.31 14 16.72 25 16.72H176V424c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-88.02h52.66c11 0 20.59-6.41 25-16.72 4.5-10.52 2.38-22.62-5.44-30.81l-68.12-71.78c-10.69-11.19-29.51-11.2-40.19.02zm-38.75 87.29l58.84-62 58.84 62H133.16z"></path></svg>
+                        </i>
+                        <span>Upload tabletop image</span>
+                    </button>
+                    <button @onclick="RemoveTabletopImage">
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="exclamation-triangle" class="svg-inline--fa fa-exclamation-triangle fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M270.2 160h35.5c3.4 0 6.1 2.8 6 6.2l-7.5 196c-.1 3.2-2.8 5.8-6 5.8h-20.5c-3.2 0-5.9-2.5-6-5.8l-7.5-196c-.1-3.4 2.6-6.2 6-6.2zM288 388c-15.5 0-28 12.5-28 28s12.5 28 28 28 28-12.5 28-28-12.5-28-28-28zm281.5 52L329.6 24c-18.4-32-64.7-32-83.2 0L6.5 440c-18.4 31.9 4.6 72 41.6 72H528c36.8 0 60-40 41.5-72zM528 480H48c-12.3 0-20-13.3-13.9-24l240-416c6.1-10.6 21.6-10.7 27.7 0l240 416c6.2 10.6-1.5 24-13.8 24z"></path></svg>
+                        </i>
+                        <span>Clear tabletop</span>
+                    </button>
+                }
+            </div>
+        }
+        @if (@ImageUploadOpen){
+            <div class="image-upload-modal">
+                <div class="file-upload-input input mb-1">
+                    <input required type="text" id="imageURL" @bind-value="ImageURL" placeholder="Image URL" />
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="file-image" class="svg-inline--fa fa-file-image fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M159 336l-39.5-39.5c-4.7-4.7-12.3-4.7-17 0l-39 39L63 448h256V304l-55.5-55.5c-4.7-4.7-12.3-4.7-17 0L159 336zm96-50.7l32 32V416H95.1l.3-67.2 15.6-15.6 48 48c20.3-20.3 77.7-77.6 96-95.9zM127 256c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm0-96c17.6 0 32 14.4 32 32s-14.4 32-32 32-32-14.4-32-32 14.4-32 32-32zm242.9-62.1L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM256 32.5c2.8.7 5.3 2.1 7.4 4.2l83.9 83.9c2.1 2.1 3.5 4.6 4.2 7.4H256V32.5zM352 464c0 8.8-7.2 16-16 16H48c-8.8 0-16-7.2-16-16V48c0-8.8 7.2-16 16-16h176v104c0 13.3 10.7 24 24 24h104v304z"></path></svg>
+                    </i>
+                </div>
+                <div class="lightswitch mb-1">
+                    <input type="checkbox" id="generateGrid" checked="@GenerateGrid" @onchange="ToggleGridStatus" />
+                    <label for="generateGrid">
+                        <i></i>
+                        <span>Generate grid</span>
+                    </label>
+                </div>
+                <button disabled="@(@ImageURL == null || @ImageURL.Length == 0)" class="button -solid -primary w-full" @onclick="LoadTabletop">Load Tabletop</button>
+            </div>
+        }
     </div>
-    @if(@InfoMenuOpen){
+    @if (@InfoMenuOpen || @SettingsMenuOpen || @ImageUploadOpen){
         <button @onclick="CloseAllModals" class="modal-backdrop" aria-label="close menu"></button>
     }
 </div>

@@ -12,6 +12,9 @@ namespace FreeTabletop.Server.Models
         public List<Player> Players = new List<Player>();
         public bool IsLocked = false;
 
+        public String ImageURL;
+        public bool GenerateGrid = true;
+
         public void AddPlayer(Player player)
         {
             player.RoomCode = RoomCode;
@@ -90,6 +93,18 @@ namespace FreeTabletop.Server.Models
                 }
             }
             return players;
+        }
+
+        public void LoadImage(String imageURL, bool generateGrid)
+        {
+            ImageURL = imageURL;
+            GenerateGrid = generateGrid;
+        }
+
+        public void ClearTabletop()
+        {
+            ImageURL = null;
+            GenerateGrid = true;
         }
     }
 }

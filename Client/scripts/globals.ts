@@ -22,3 +22,6 @@ function FocusElement(selector: string) {
         el.focus();
     }
 }
+function Debug(thing: any) {
+    console.log(thing);
+}

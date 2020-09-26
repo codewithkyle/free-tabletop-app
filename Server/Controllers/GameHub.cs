@@ -70,6 +70,37 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:LoadImage")]
+        public async Task LoadImage(String imageURL, bool generateGrid)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.LoadImage(imageURL, generateGrid);
+                    await ClearTabletop(room);
+                    await LoadTabletopImage(room);
+                }
+            }
+        }
+
+        [HubMethodName("Room:ClearTabletop")]
+        public async Task ClearTabletop()
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.ClearTabletop();
+                    await ClearTabletop(room);
+                }
+            }
+        }
+
         [HubMethodName("Player:SyncTabletopInfo")]
         public async Task SyncTabletopInfo()
         {
@@ -184,6 +215,16 @@ namespace FreeTabletop.Server.Controllers
         {
             List<PlayerEntity> players = room.BuildPlayerEntities();
             await Clients.Group(room.RoomCode).SendAsync("Sync:TabletopInfo", room.IsLocked, players);
+        }
+
+        private async Task ClearTabletop(Room room)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:Clear");
+        }
+
+        private async Task LoadTabletopImage(Room room)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GenerateGrid);
         }
     }
 }

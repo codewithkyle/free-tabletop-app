@@ -46,6 +46,9 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<bool>("Set:IsGameMaster", Room.UpdateGameMasterStatus);
 
                 Networker.hubConnection.On("Player:Kick", HandleKick);
+
+                Networker.hubConnection.On<String, bool>("Tabletop:LoadImage", Room.RenderTabletopFromImage);
+                Networker.hubConnection.On("Tabletop:Clear", Room.ClearTabletop);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -89,6 +92,16 @@ namespace FreeTabletop.Client.Controllers
         public async Task KickPlayer(PlayerEntity player)
         {
             await Networker.hubConnection.SendAsync("Room:KickPlayer", player.UID);
+        }
+
+        public async Task LoadTabletop(String imageURL, bool generateGrid)
+        {
+            await Networker.hubConnection.SendAsync("Room:LoadImage", imageURL, generateGrid);
+        }
+
+        public async Task ClearTabletop()
+        {
+            await Networker.hubConnection.SendAsync("Room:ClearTabletop");
         }
     }
 }

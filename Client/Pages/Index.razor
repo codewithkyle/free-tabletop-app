@@ -23,7 +23,7 @@
             <EditForm Model="@room" OnValidSubmit="@HandleSubmitRoomCode"  class="bg-white p-1 radius-0.5 mb-1 border-1 border-solid border-grey-300" grid="columns 1 gap-1" style="width: 300px;">
                 <DataAnnotationsValidator />
                 @if(@errorMessage == null){
-                    <div>
+                    <div class="input">
                         <InputText id="roomCode" @bind-Value="@room.RoomCode" placeholder="Room code" />
                         <ValidationMessage For="@(() => room.RoomCode)" />
                     </div>
