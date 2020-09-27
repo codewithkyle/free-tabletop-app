@@ -46,3 +46,13 @@ async function GetGridSize(url: string) {
     }
     return grid;
 }
+document.onkeydown = (event: KeyboardEvent) => {
+    const key = event.key.toLowerCase();
+    if (key === "f5") {
+        event.returnValue = false;
+        return false;
+    } else if (key === "r" && (event.ctrlKey || event.metaKey)) {
+        event.returnValue = false;
+        return false;
+    }
+};
