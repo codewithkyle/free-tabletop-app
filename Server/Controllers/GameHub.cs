@@ -83,7 +83,7 @@ namespace FreeTabletop.Server.Controllers
                     await ClearTabletop(room);
                     await LoadTabletopImage(room);
                     room.ResetPlayerPawnPositions();
-                    await SpawnPlayerEntities(room);
+                    await RenderPlayerEntities(room);
                 }
             }
         }
@@ -99,6 +99,31 @@ namespace FreeTabletop.Server.Controllers
                 {
                     room.ClearTabletop();
                     await ClearTabletop(room);
+                }
+            }
+        }
+
+        [HubMethodName("Room:MovePlayerEntity")]
+        public async Task MovePlayerEntity(string entityUid, int[] newPosition)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null)
+            {
+                if (player.UID == entityUid || player.IsGameMaster)
+                {
+                    Room room = GetRoom(player.RoomCode);
+                    if (room != null)
+                    {
+                        if (room.IsPositionValid(newPosition))
+                        {
+                            room.UpdatePlayerPosition(entityUid, newPosition);
+                            await RenderPlayerEntities(room);
+                        }
+                        else
+                        {
+                            await RenderPlayerEntities(room);
+                        }
+                    }
                 }
             }
         }
@@ -217,6 +242,11 @@ namespace FreeTabletop.Server.Controllers
         {
             List<PlayerEntity> players = room.BuildPlayerEntities();
             await Clients.Group(room.RoomCode).SendAsync("Sync:TabletopInfo", room.IsLocked, players);
+            if (room.ImageURL != null && room.ImageURL.Length != 0)
+            {
+                await LoadTabletopImage(room);
+                await RenderPlayerEntities(room);
+            }
         }
 
         private async Task ClearTabletop(Room room)
@@ -229,10 +259,10 @@ namespace FreeTabletop.Server.Controllers
             await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GenerateGrid, room.Grid);
         }
 
-        private async Task SpawnPlayerEntities(Room room)
+        private async Task RenderPlayerEntities(Room room)
         {
             List<PlayerEntity> players = room.BuildPlayerEntities();
-            await Clients.Group(room.RoomCode).SendAsync("Tabletop:SpawnPlayerEntities", players);
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderPlayerEntities", players);
         }
     }
 }

@@ -52,7 +52,7 @@ namespace FreeTabletop.Client.Controllers
 
                 Networker.hubConnection.On<String, bool, int[]>("Tabletop:LoadImage", Room.RenderTabletopFromImage);
                 Networker.hubConnection.On("Tabletop:Clear", Room.ClearTabletop);
-                Networker.hubConnection.On<List<PlayerEntity>>("Tabletop:SpawnPlayerEntities", Room.RenderPlayerEntities);
+                Networker.hubConnection.On<List<PlayerEntity>>("Tabletop:RenderPlayerEntities", Room.RenderPlayerEntities);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -108,6 +108,11 @@ namespace FreeTabletop.Client.Controllers
         public async Task ClearTabletop()
         {
             await Networker.hubConnection.SendAsync("Room:ClearTabletop");
+        }
+
+        public async Task MovePlayerEntity(string entityUID, int[] newPosition)
+        {
+            await Networker.hubConnection.SendAsync("Room:MovePlayerEntity", entityUID, newPosition);
         }
     }
 }

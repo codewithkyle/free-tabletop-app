@@ -12,16 +12,25 @@
                         @for (int y = 0; y < TabletopY; y++){
                             <tr>
                                 @for (int x = 0; x < TabletopX; x++){
-                                    <td style="top: @(y * 32)px;left: @(x * 32)px;" data-x="@x" data-y="@y">
+                                    int LocalX = x;
+                                    int LocalY = y;
+                                    <td 
+                                        @ondrop="@(e => HandleDrop(LocalX, LocalY))" 
+                                        style="top: @(y * 32)px;left: @(x * 32)px;" 
+                                        data-x="@x" 
+                                        data-y="@y" 
+                                        ondragover="event.preventDefault();" 
+                                    >
                                         @for (int p = 0; p < Tabletop.Players.Count; p++){
                                             @if (Tabletop.Players[p].Position[0] == x && Tabletop.Players[p].Position[1] == y){
                                                 bool IsPlayer = Tabletop.Players[p].UID == Tabletop.UID;
                                                 string PawnType = "-friend";
+                                                PlayerEntity player = Tabletop.Players[p];
                                                 if (IsPlayer){
                                                     PawnType = "-player";
                                                 }
                                                 <div class="pawn @PawnType">
-                                                    <i draggable="@((IsPlayer || Tabletop.IsGameMaster) ? "true" : "false")"></i>
+                                                    <i @ondragstart="@(e => HandleDragStart(player.UID))" draggable="@((IsPlayer || Tabletop.IsGameMaster) ? "true" : "false")"></i>
                                                     <span class="nametag">@Tabletop.Players[p].Name</span>
                                                 </div>
                                             }

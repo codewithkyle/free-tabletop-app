@@ -10,5 +10,10 @@ namespace FreeTabletop.Shared.Models
         public string Type { get; set; }
 
         public int[] Position { get; set; } = { 0, 0 };
+
+        public void UpdatePosition(int[] newPosition)
+        {
+            Position = newPosition;
+        }
     }
 }

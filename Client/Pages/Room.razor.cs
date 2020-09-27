@@ -34,6 +34,7 @@ namespace FreeTabletop.Client.Pages
         public bool TabletopGrid = true;
         public int TabletopX = 0;
         public int TabletopY = 0;
+        public string MovingEntityUID { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
@@ -153,9 +154,21 @@ namespace FreeTabletop.Client.Pages
         public void RenderPlayerEntities(List<PlayerEntity> players)
         {
             Tabletop.Players = players;
-            Console.WriteLine(players[0].Position[0]);
-            Console.WriteLine(players[0].Position[1]);
+            Console.WriteLine("I rendered players");
             StateHasChanged();
+        }
+
+        public async Task HandleDrop(int x, int y)
+        {
+            int[] Position = { x, y };
+            Tabletop.MoveLocalEntitiy(MovingEntityUID, Position);
+            StateHasChanged();
+            await Hub.MovePlayerEntity(MovingEntityUID, Position);
+        }
+
+        public void HandleDragStart(string uid)
+        {
+            MovingEntityUID = uid;
         }
     }
 }
