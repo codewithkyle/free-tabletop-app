@@ -1,7 +1,5 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using FreeTabletop.Shared.Models;
 
 namespace FreeTabletop.Server.Models
@@ -14,6 +12,8 @@ namespace FreeTabletop.Server.Models
 
         public String ImageURL;
         public bool GenerateGrid = true;
+
+        public int[] Grid = { 0, 0 };
 
         public void AddPlayer(Player player)
         {
@@ -87,24 +87,48 @@ namespace FreeTabletop.Server.Models
                     PlayerEntity player = new PlayerEntity();
                     player.UID = Players[i].UID;
                     player.Name = Players[i].Name;
-                    player.Type = "player";
+                    player.Type = "friend";
                     player.IsConnected = Players[i].IsConnected;
+                    player.Position = Players[i].Position;
                     players.Add(player);
                 }
             }
             return players;
         }
 
-        public void LoadImage(String imageURL, bool generateGrid)
+        public void LoadImage(String imageURL, bool generateGrid, int[] gridSize)
         {
             ImageURL = imageURL;
             GenerateGrid = generateGrid;
+            Grid = gridSize;
         }
 
         public void ClearTabletop()
         {
             ImageURL = null;
             GenerateGrid = true;
+        }
+
+        public void ResetPlayerPawnPositions()
+        {
+            int X = Convert.ToInt32(Math.Round((double)(Grid[0] / 2)));
+            int Y = Convert.ToInt32(Math.Round((double)(Grid[1] / 2)));
+            int StartingX = X;
+
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (!Players[i].IsGameMaster)
+                {
+                    Players[i].Position[0] = X;
+                    Players[i].Position[1] = Y;
+                    X++;
+                    if (X > Grid[0])
+                    {
+                        X = StartingX;
+                        Y++;
+                    }
+                }
+            }
         }
     }
 }

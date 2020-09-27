@@ -3,16 +3,30 @@
 @using FreeTabletop.Shared.Models;
 
 <div class="game">
-    @if (@TabletopImage != null && @TabletopImage.Length != 0){
+    @if (TabletopImage != null && TabletopImage.Length != 0){
         <div class="tabletop">
             <img draggable="false" src="@TabletopImage" />
-            @if (@TabletopGrid){
+            @if (TabletopGrid){
                 <table>
                     <tbody>
-                        @for (int y = 0; y < @TabletopY; y++){
+                        @for (int y = 0; y < TabletopY; y++){
                             <tr>
-                                @for (int x = 0; x < @TabletopX; x++){
-                                    <td style="top: @(y * 32)px;left: @(x * 32)px;"></td>
+                                @for (int x = 0; x < TabletopX; x++){
+                                    <td style="top: @(y * 32)px;left: @(x * 32)px;" data-x="@x" data-y="@y">
+                                        @for (int p = 0; p < Tabletop.Players.Count; p++){
+                                            @if (Tabletop.Players[p].Position[0] == x && Tabletop.Players[p].Position[1] == y){
+                                                bool IsPlayer = Tabletop.Players[p].UID == Tabletop.UID;
+                                                string PawnType = "-friend";
+                                                if (IsPlayer){
+                                                    PawnType = "-player";
+                                                }
+                                                <div class="pawn @PawnType">
+                                                    <i draggable="@((IsPlayer || Tabletop.IsGameMaster) ? "true" : "false")"></i>
+                                                    <span class="nametag">@Tabletop.Players[p].Name</span>
+                                                </div>
+                                            }
+                                        }
+                                    </td>
                                 }
                             </tr>
                         }

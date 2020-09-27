@@ -45,13 +45,13 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
-        [HubMethodName("Player:IsGameMaster")]
+        [HubMethodName("Player:GetStatus")]
         public async Task CheckIfPlayerIsGameMaster()
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null)
             {
-                await Clients.Caller.SendAsync("Set:IsGameMaster", player.IsGameMaster);
+                await Clients.Caller.SendAsync("Set:PlayerStatus", player.IsGameMaster, player.UID);
             }
         }
 
@@ -71,7 +71,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:LoadImage")]
-        public async Task LoadImage(String imageURL, bool generateGrid)
+        public async Task LoadImage(String imageURL, bool generateGrid, int[] gridSize)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -79,9 +79,11 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    room.LoadImage(imageURL, generateGrid);
+                    room.LoadImage(imageURL, generateGrid, gridSize);
                     await ClearTabletop(room);
                     await LoadTabletopImage(room);
+                    room.ResetPlayerPawnPositions();
+                    await SpawnPlayerEntities(room);
                 }
             }
         }
@@ -224,7 +226,13 @@ namespace FreeTabletop.Server.Controllers
 
         private async Task LoadTabletopImage(Room room)
         {
-            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GenerateGrid);
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GenerateGrid, room.Grid);
+        }
+
+        private async Task SpawnPlayerEntities(Room room)
+        {
+            List<PlayerEntity> players = room.BuildPlayerEntities();
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:SpawnPlayerEntities", players);
         }
     }
 }

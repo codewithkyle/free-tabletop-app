@@ -9,9 +9,6 @@ namespace FreeTabletop.Shared.Models
         public string Name { get; set; }
         public string Type { get; set; }
 
-        // Workround since C# doesn't offer vectors
-        // 0 = x
-        // 1 = y
-        public List<int> Position = new List<int>();
+        public int[] Position { get; set; } = { 0, 0 };
     }
 }

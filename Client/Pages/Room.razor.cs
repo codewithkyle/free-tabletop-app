@@ -37,12 +37,13 @@ namespace FreeTabletop.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            await Hub.Connect(RoomCode, this, NavigationManager, JSRuntime);
+            await Hub.Connect(RoomCode, this, NavigationManager, JSRuntime, Tabletop);
         }
 
-        public void UpdateGameMasterStatus(bool isGM)
+        public void UpdatePlayerStatus(bool isGM, string uid)
         {
             Tabletop.IsGameMaster = isGM;
+            Tabletop.UID = uid;
             StateHasChanged();
         }
 
@@ -113,7 +114,8 @@ namespace FreeTabletop.Client.Pages
             if (ImageURL.Length != 0)
             {
                 CloseAllModals();
-                await Hub.LoadTabletop(ImageURL, GenerateGrid);
+                int[] GridSize = await JSRuntime.InvokeAsync<int[]>("GetGridSize", ImageURL);
+                await Hub.LoadTabletop(ImageURL, GenerateGrid, GridSize);
                 ImageURL = null;
                 GenerateGrid = true;
             }
@@ -132,13 +134,12 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public async Task RenderTabletopFromImage(String imageURL, bool generateGrid)
+        public void RenderTabletopFromImage(String imageURL, bool generateGrid, int[] grid)
         {
             TabletopImage = imageURL;
             TabletopGrid = generateGrid;
-            int[] GridSize = await JSRuntime.InvokeAsync<int[]>("GetGridSize", imageURL);
-            TabletopX = GridSize[0];
-            TabletopY = GridSize[1];
+            TabletopX = grid[0];
+            TabletopY = grid[1];
             StateHasChanged();
         }
 
@@ -146,6 +147,14 @@ namespace FreeTabletop.Client.Pages
         {
             TabletopImage = null;
             TabletopGrid = true;
+            StateHasChanged();
+        }
+
+        public void RenderPlayerEntities(List<PlayerEntity> players)
+        {
+            Tabletop.Players = players;
+            Console.WriteLine(players[0].Position[0]);
+            Console.WriteLine(players[0].Position[1]);
             StateHasChanged();
         }
     }

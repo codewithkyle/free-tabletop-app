@@ -1,15 +1,13 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using FreeTabletop.Shared.Models;
 
 namespace FreeTabletop.Server.Models
 {
-    public class Player
+    public class Player : PlayerEntity
     {
-        public string Name { get; set; }
         public string RoomCode { get; set; }
-        public string UID { get; set; }
-        public bool IsConnected = true;
         public bool IsGameMaster = false;
 
         public List<string> StaleUIDs = new List<string>();

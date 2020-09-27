@@ -9,5 +9,7 @@ namespace FreeTabletop.Shared.Models
         public bool IsGameMaster = false;
         public bool IsLocked = false;
         public List<PlayerEntity> Players { get; set; } = new List<PlayerEntity>();
+
+        public string UID { get; set; }
     }
 }

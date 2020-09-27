@@ -130,6 +130,7 @@ public static class GlobalData
         player.UID = UID;
         player.Name = name;
         player.RoomCode = roomCode;
+        player.Type = "friend";
         Players.Add(player);
         return player;
     }
