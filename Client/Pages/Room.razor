@@ -21,26 +21,26 @@
                                         data-y="@y" 
                                         ondragover="event.preventDefault();" 
                                     >
-                                        @for (int p = 0; p < Tabletop.Players.Count; p++){
-                                            @if (Tabletop.Players[p].Position[0] == x && Tabletop.Players[p].Position[1] == y){
-                                                bool IsPlayer = Tabletop.Players[p].UID == Tabletop.UID;
-                                                string PawnType = "-friend";
-                                                PlayerEntity player = Tabletop.Players[p];
-                                                if (IsPlayer){
-                                                    PawnType = "-player";
-                                                }
-                                                <div class="pawn @PawnType">
-                                                    <i @ondragstart="@(e => HandleDragStart(player.UID))" draggable="@((IsPlayer || Tabletop.IsGameMaster) ? "true" : "false")"></i>
-                                                    <span class="nametag">@Tabletop.Players[p].Name</span>
-                                                </div>
-                                            }
-                                        }
                                     </td>
                                 }
                             </tr>
                         }
                     </tbody>
                 </table>
+            }
+            @for (int p = 0; p < Tabletop.Players.Count; p++){
+                bool IsPlayer = Tabletop.Players[p].UID == Tabletop.UID;
+                string PawnType = "-friend";
+                PlayerEntity player = Tabletop.Players[p];
+                if (IsPlayer){
+                    PawnType = "-player";
+                }
+                int x = Tabletop.Players[p].Position[0];
+                int y = Tabletop.Players[p].Position[1];
+                <div class="pawn @PawnType" style="top: @(y * 32)px;left: @(x * 32)px;" >
+                    <i @ondragstart="@(e => HandleDragStart(player.UID))" draggable="@((IsPlayer || Tabletop.IsGameMaster) ? "true" : "false")"></i>
+                    <span class="nametag">@Tabletop.Players[p].Name</span>
+                </div>
             }
         </div>
     }
