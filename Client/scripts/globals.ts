@@ -56,3 +56,9 @@ document.onkeydown = (event: KeyboardEvent) => {
         return false;
     }
 };
+function ClearHighlightedCells() {
+    const cells = Array.from(document.body.querySelectorAll("td.highlight"));
+    for (let i = 0; i < cells.length; i++) {
+        cells[i].className = "";
+    }
+}

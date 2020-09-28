@@ -161,8 +161,7 @@ namespace FreeTabletop.Client.Pages
         public async Task HandleDrop(int x, int y)
         {
             int[] Position = { x, y };
-            Tabletop.MoveLocalEntitiy(MovingEntityUID, Position);
-            StateHasChanged();
+            JSRuntime.InvokeVoidAsync("ClearHighlightedCells");
             await Hub.MovePlayerEntity(MovingEntityUID, Position);
         }
 

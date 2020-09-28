@@ -23,5 +23,21 @@ namespace FreeTabletop.Shared.Models
                 }
             }
         }
+
+        public bool IsPositionValid(int[] newPosition)
+        {
+            bool IsValidPosition = true;
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (Players[i].Position[0] == newPosition[0] && Players[i].Position[1] == newPosition[1])
+                {
+                    IsValidPosition = false;
+                    break;
+                }
+            }
+            // TODO: check NPCs
+            // TOOD: check monsters
+            return IsValidPosition;
+        }
     }
 }
