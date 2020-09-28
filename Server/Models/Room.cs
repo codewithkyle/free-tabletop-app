@@ -15,6 +15,8 @@ namespace FreeTabletop.Server.Models
 
         public int[] Grid = { 0, 0 };
 
+        public List<Creature> Creatures = new List<Creature>();
+
         public void AddPlayer(Player player)
         {
             player.RoomCode = RoomCode;
@@ -147,16 +149,41 @@ namespace FreeTabletop.Server.Models
             return IsValidPosition;
         }
 
-        public void UpdatePlayerPosition(string uid, int[] newPosition)
+        public void UpdateEntityPosition(string uid, int[] newPosition)
         {
+            bool Updated = false;
             for (int i = 0; i < Players.Count; i++)
             {
                 if (Players[i].UID == uid)
                 {
+                    Updated = true;
                     Players[i].UpdatePosition(newPosition);
                     break;
                 }
             }
+            if (!Updated)
+            {
+                for (int i = 0; i < Creatures.Count; i++)
+                {
+                    if (Creatures[i].UID == uid)
+                    {
+                        Updated = true;
+                        Creatures[i].UpdatePosition(newPosition);
+                        break;
+                    }
+                }
+            }
+        }
+
+        public void SpawnCreature(Creature creature)
+        {
+            Guid guid = Guid.NewGuid();
+            creature.Name = creature.BaseName;
+            creature.Type = "foe";
+            creature.UID = guid.ToString();
+            creature.AC = creature.BaseAC;
+            creature.HP = creature.BaseHP;
+            Creatures.Add(creature);
         }
     }
 }

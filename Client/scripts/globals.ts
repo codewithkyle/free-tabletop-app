@@ -62,3 +62,39 @@ function ClearHighlightedCells() {
         cells[i].className = "";
     }
 }
+function uid(): string {
+    return new Array(4)
+        .fill(0)
+        .map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16))
+        .join("-");
+}
+
+let dbWorker: Worker = null;
+let lastDBWorkerUid = null;
+function SyncMonsterData() {
+    if (!dbWorker) {
+        dbWorker = new Worker(`${location.origin}/js/db-worker.js`);
+    }
+}
+
+function LookupCreature(query: string) {
+    return new Promise((resolve) => {
+        if (!dbWorker) {
+            resolve([]);
+        }
+        lastDBWorkerUid = uid();
+        dbWorker.onmessage = (e: MessageEvent) => {
+            const data = e.data;
+            if (data.messageUid === lastDBWorkerUid && data.type === "lookup") {
+                resolve(JSON.stringify(data.creatures));
+            } else {
+                resolve(JSON.stringify([]));
+            }
+        };
+        dbWorker.postMessage({
+            type: "lookup",
+            query: query,
+            messageUid: lastDBWorkerUid,
+        });
+    });
+}

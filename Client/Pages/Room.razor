@@ -7,7 +7,7 @@
         <div class="tabletop">
             <img draggable="false" src="@Tabletop.Image" />
             @if (Tabletop.GridType != "3"){
-                <table>
+                <table class="@(Tabletop.GridType == "1" ? "has-border" : "")">
                     <tbody>
                         @for (int y = 0; y < Tabletop.Grid[1]; y++){
                             <tr>
@@ -42,6 +42,15 @@
                     <div class="pawn @PawnType" style="top: @(y * 32)px;left: @(x * 32)px;" >
                         <i @ondragstart="@(e => HandleDragStart(player.UID))" draggable="@((IsPlayer || Tabletop.IsGameMaster) ? "true" : "false")"></i>
                         <span class="nametag">@Tabletop.Players[p].Name</span>
+                    </div>
+                }
+                @for (int i = 0; i < Tabletop.Creatures.Count; i++){
+                    Creature creature = Tabletop.Creatures[i];
+                    int x = Tabletop.Creatures[i].Position[0];
+                    int y = Tabletop.Creatures[i].Position[1];
+                    <div class="pawn -foe" style="top: @(y * 32)px;left: @(x * 32)px;" >
+                        <i @ondragstart="@(e => HandleDragStart(creature.UID))" draggable="@((Tabletop.IsGameMaster) ? "true" : "false")"></i>
+                        <span class="nametag">@Tabletop.Creatures[i].Name</span>
                     </div>
                 }
             }
@@ -133,12 +142,37 @@
             <button @onclick="ToggleSettingsMenu" class="icon-button-toggle" aria-label="open tabletop settings menu" title="tabletop settings">
                 <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="cog" class="svg-inline--fa fa-cog fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M487.4 315.7l-42.6-24.6c4.3-23.2 4.3-47 0-70.2l42.6-24.6c4.9-2.8 7.1-8.6 5.5-14-11.1-35.6-30-67.8-54.7-94.6-3.8-4.1-10-5.1-14.8-2.3L380.8 110c-17.9-15.4-38.5-27.3-60.8-35.1V25.8c0-5.6-3.9-10.5-9.4-11.7-36.7-8.2-74.3-7.8-109.2 0-5.5 1.2-9.4 6.1-9.4 11.7V75c-22.2 7.9-42.8 19.8-60.8 35.1L88.7 85.5c-4.9-2.8-11-1.9-14.8 2.3-24.7 26.7-43.6 58.9-54.7 94.6-1.7 5.4.6 11.2 5.5 14L67.3 221c-4.3 23.2-4.3 47 0 70.2l-42.6 24.6c-4.9 2.8-7.1 8.6-5.5 14 11.1 35.6 30 67.8 54.7 94.6 3.8 4.1 10 5.1 14.8 2.3l42.6-24.6c17.9 15.4 38.5 27.3 60.8 35.1v49.2c0 5.6 3.9 10.5 9.4 11.7 36.7 8.2 74.3 7.8 109.2 0 5.5-1.2 9.4-6.1 9.4-11.7v-49.2c22.2-7.9 42.8-19.8 60.8-35.1l42.6 24.6c4.9 2.8 11 1.9 14.8-2.3 24.7-26.7 43.6-58.9 54.7-94.6 1.5-5.5-.7-11.3-5.6-14.1zM256 336c-44.1 0-80-35.9-80-80s35.9-80 80-80 80 35.9 80 80-35.9 80-80 80z"></path></svg>
             </button>
+            @if (Tabletop.Image != null && Tabletop.Image.Length != 0 && Tabletop.GridType != "3"){
+                <button @onclick="ToggleEntitySpawnMenu" class="icon-button-toggle" aria-label="open entity spawning menu" title="entity spawning">
+                    <svg style="transform: translateY(-2px);" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="chess-pawn-alt" class="svg-inline--fa fa-chess-pawn-alt fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M64 288h14.89A535.84 535.84 0 0 1 64 384h128a535.84 535.84 0 0 1-14.89-96H192a16 16 0 0 0 16-16v-16a16 16 0 0 0-16-16h-16.44a80 80 0 1 0-95.12 0H64a16 16 0 0 0-16 16v16a16 16 0 0 0 16 16zm183.16 171.58L224 448v-16a16 16 0 0 0-16-16H48a16 16 0 0 0-16 16v16L8.85 459.58A16 16 0 0 0 0 473.89V496a16 16 0 0 0 16 16h224a16 16 0 0 0 16-16v-22.11a16 16 0 0 0-8.84-14.31z"></path></svg>
+                </button>
+            }
         }
-        @if (@SettingsMenuOpen){
+        @if (EntitySpawnMenuOpen){
+            <div class="entity-spawn-modal">
+                <button @onclick="OpenMonsterLookupMenu">
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dragon" class="svg-inline--fa fa-dragon fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M481.01 119.95c14.92.86 27.35-9.89 30.88-24.58L453.47 80c-6.49 27.12 15.51 39.26 27.54 39.95zm54.5 131.8c-29.84-16.98-55.61-31.64-55.61-51.38V192h16.96l28.62 22.03c8.34 6.42 18.74 9.97 29.27 9.97h29.18c21.15 0 40.09-14.17 46.02-34.45l7.4-25.16c5.84-19.8 1.88-41.44-10.62-57.91L569.8 31.59C554.78 11.81 530.98 0 506.14 0H297.16c-19.47 0-33.09 24.04-15.4 41.25l37.49 30.25-32.55 13.42c-16.19 7.94-19.14 32.81 1.13 42.64l48.11 19.25v50.89l-190.3-47.88c-19.18-4.86-39.68 2.83-50.99 19.08L3.76 299.12c-5.03 7.91-5 17.72.03 25.59 1.69 2.62 9.54 13.11 24.99 10.91l115.02-21.8-12.07 17.3c-5.03 7.91-5 17.72.03 25.59 6.7 10.45 17.87 11.86 24.15 11.05l202.87-27.39c8.33 16.71 18.17 32.35 31.17 45.73-130.55 8.75-252.39 36.8-364.13 61.33C10.86 450.7.01 464.1.01 479.31c0 18 14.75 32.64 32.87 32.64l474.01.05c42.65 0 83.14-19.77 108.29-52.89 23.4-30.8 30.49-68.73 19.9-106.8-14.5-52.15-61.68-79-99.57-100.56zM41.72 300.62l79.17-113.41c3.75-5.39 10.59-7.86 17-6.36l84.07 21.02L170 276.3 41.72 300.62zm127.18 33.1l86.23-123.48 80.79 20.5c0 47.9 8.68 72.63 10.6 79L168.9 333.72zM506.89 480H32c230.53-56.77 352.62-62.36 400.47-64.02 15.54-.53 21.22-20.83 8.22-29.34-48.96-32.23-72.76-80.92-72.76-148.83V135.98c0-6.55-3.97-12.42-10.06-14.86l-38.15-15.23 36.71-15.09c5.22-2.16 8.94-6.91 9.75-12.5s-1.41-11.2-5.81-14.75L321.15 32h184.99c14.9 0 29.18 7.08 38.18 18.95l56.92 74.91c6.38 8.38 8.4 19.39 5.44 29.48l-7.4 25.19c-2 6.75-8.31 11.47-15.34 11.47h-29.18c-3.56 0-6.9-1.14-9.75-3.33l-32.96-25.36a16.01 16.01 0 0 0-9.75-3.31h-38.4c-8.84 0-16 7.16-16 16v24.38c0 38.34 34.87 58.19 71.8 79.19 36.18 20.59 73.58 41.89 84.57 81.33 19.36 69.86-41.14 119.1-97.38 119.1z"></path></svg>
+                    </i>
+                    <span>Spawn monster</span>
+                </button>
+                <button @onclick="UploadTabletopImage">
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="street-view" class="svg-inline--fa fa-street-view fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M368 360.15v30.87c62.27 8.42 104 23.6 104 40.99 0 26.51-96.71 48-216 48S40 458.51 40 432c0-17.38 41.73-32.56 104-40.99v-30.87C58.82 373.14 0 400.39 0 432c0 44.18 114.62 80 256 80s256-35.82 256-80c0-31.61-58.82-58.86-144-71.85zM176 320v80c0 26.47 21.53 48 48 48h64c26.47 0 48-21.53 48-48v-80c26.47 0 48-21.53 48-48v-64c0-34.53-22.11-63.75-52.82-74.93C339.14 119.84 344 104.54 344 88c0-48.52-39.48-88-88-88s-88 39.48-88 88c0 16.54 4.86 31.84 12.82 45.07C150.11 144.25 128 173.47 128 208v64c0 26.47 21.53 48 48 48zm80-288c30.93 0 56 25.07 56 56s-25.07 56-56 56-56-25.07-56-56 25.07-56 56-56zm-96 176c0-25.76 20.44-46.68 45.93-47.79C220.17 170.11 237.38 176 256 176s35.83-5.89 50.07-15.79C331.56 161.32 352 182.24 352 208v64c0 8.83-7.19 16-16 16h-32v112c0 8.83-7.19 16-16 16h-64c-8.81 0-16-7.17-16-16V288h-32c-8.81 0-16-7.17-16-16v-64z"></path></svg>
+                    </i>
+                    <span>Spawn NPC</span>
+                </button>
+                <button @onclick="UploadTabletopImage">
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="ghost" class="svg-inline--fa fa-ghost fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M192 0c-1.96 0-3.93.03-5.91.09C81.01 3.24 0 94.92 0 200.05v263.92C0 473.61 7.89 480 16.12 480c3.93 0 7.94-1.46 11.2-4.72l24.92-18.53c2.86-2.12 6.21-3.16 9.54-3.16 4.43 0 8.82 1.83 11.97 5.38l42.95 48.35c3.12 3.12 7.22 4.69 11.31 4.69s8.19-1.56 11.31-4.69l40.72-45.85c3.18-3.58 7.57-5.38 11.96-5.38s8.78 1.79 11.96 5.38l40.72 45.85c3.12 3.12 7.22 4.69 11.31 4.69s8.19-1.56 11.31-4.69l42.95-48.35a15.994 15.994 0 0 1 21.51-2.22l24.92 18.53c3.26 3.26 7.27 4.72 11.2 4.72 8.22 0 16.12-6.39 16.12-16.03V192C384 85.96 298.04 0 192 0zm160 431.92l-1.13-.84c-8.34-6.21-18.24-9.48-28.64-9.48-13.71 0-26.79 5.88-35.89 16.12L256 471.87l-28.11-31.65c-9.1-10.25-22.18-16.12-35.89-16.12s-26.79 5.88-35.89 16.12L128 471.87l-30.34-34.15a48.017 48.017 0 0 0-35.89-16.12c-10.39 0-20.29 3.28-28.63 9.48l-1.14.84V200.05C32 110 101.56 34.64 187.05 32.08L192 32c88.22 0 160 71.78 160 160v239.92zM128 160c-17.67 0-32 14.33-32 32s14.33 32 32 32 32-14.33 32-32-14.33-32-32-32zm128 0c-17.67 0-32 14.33-32 32s14.33 32 32 32 32-14.33 32-32-14.33-32-32-32z"></path></svg>
+                    </i>
+                    <span>Spawn custom creature</span>
+                </button>
+            </div>
+        }
+        @if (SettingsMenuOpen){
             <div class="settings-modal">
-                @if (@Tabletop.IsGameMaster)
-                {
-                    <button @onclick="UploadTabletopImage">
+                <button @onclick="UploadTabletopImage">
                         <i>
                             <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="file-upload" class="svg-inline--fa fa-file-upload fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M369.9 97.98L286.02 14.1c-9-9-21.2-14.1-33.89-14.1H47.99C21.5.1 0 21.6 0 48.09v415.92C0 490.5 21.5 512 47.99 512h288.02c26.49 0 47.99-21.5 47.99-47.99V131.97c0-12.69-5.1-24.99-14.1-33.99zM256.03 32.59c2.8.7 5.3 2.1 7.4 4.2l83.88 83.88c2.1 2.1 3.5 4.6 4.2 7.4h-95.48V32.59zm95.98 431.42c0 8.8-7.2 16-16 16H47.99c-8.8 0-16-7.2-16-16V48.09c0-8.8 7.2-16.09 16-16.09h176.04v104.07c0 13.3 10.7 23.93 24 23.93h103.98v304.01zm-180.1-247.32l-68.12 71.75c-7.81 8.2-9.94 20.31-5.44 30.83 4.41 10.31 14 16.72 25 16.72H176V424c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-88.02h52.66c11 0 20.59-6.41 25-16.72 4.5-10.52 2.38-22.62-5.44-30.81l-68.12-71.78c-10.69-11.19-29.51-11.2-40.19.02zm-38.75 87.29l58.84-62 58.84 62H133.16z"></path></svg>
                         </i>
@@ -150,13 +184,12 @@
                         </i>
                         <span>Clear tabletop</span>
                     </button>
-                }
             </div>
         }
-        @if (@ImageUploadOpen){
+        @if (ImageUploadOpen){
             <div class="image-upload-modal">
                 <div class="file-upload-input input mb-1">
-                    <input required type="text" id="imageURL" @bind="InputImageURL" placeholder="Image URL" autocomplete="no" autocapitalize="off" />
+                    <input class="js-image-input" required type="text" id="imageURL" @bind="InputImageURL" placeholder="Image URL" autocomplete="no" autocapitalize="off" />
                     <i>
                         <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="file-image" class="svg-inline--fa fa-file-image fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M159 336l-39.5-39.5c-4.7-4.7-12.3-4.7-17 0l-39 39L63 448h256V304l-55.5-55.5c-4.7-4.7-12.3-4.7-17 0L159 336zm96-50.7l32 32V416H95.1l.3-67.2 15.6-15.6 48 48c20.3-20.3 77.7-77.6 96-95.9zM127 256c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm0-96c17.6 0 32 14.4 32 32s-14.4 32-32 32-32-14.4-32-32 14.4-32 32-32zm242.9-62.1L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM256 32.5c2.8.7 5.3 2.1 7.4 4.2l83.9 83.9c2.1 2.1 3.5 4.6 4.2 7.4H256V32.5zM352 464c0 8.8-7.2 16-16 16H48c-8.8 0-16-7.2-16-16V48c0-8.8 7.2-16 16-16h176v104c0 13.3 10.7 24 24 24h104v304z"></path></svg>
                     </i>
@@ -174,8 +207,24 @@
                 <button class="button -solid -primary w-full" @onclick="LoadTabletop">Load Tabletop</button>
             </div>
         }
+        @if (MonsterLookupMenuOpen){
+            <div class="monster-lookup-modal">
+                <div class="input">
+                    <input class="js-monster-lookup" required type="text" @oninput="LookupMonster" placeholder="Search for a monster" autocomplete="no" autocapitalize="off" />
+                    @if (Creatures.Count != 0){
+                        <div class="lookup-list">
+                            @for (int i = 0; i < Creatures.Count; i++){
+                                int index = i;
+                                <button @onclick="@(e => SpawnCreature(index))">@Creatures[i].BaseName</button>
+                            }
+                        </div>
+                    }
+                </div>
+                <p class="block w-full mt-0.75 px-0.25 font-grey-700 font-xs line-snug">Monsters provided by the 5E SRD. If a monster is not listed create a custom creature instead.</p>
+            </div>
+        }
     </div>
-    @if (@InfoMenuOpen || @SettingsMenuOpen || @ImageUploadOpen){
+    @if (InfoMenuOpen || SettingsMenuOpen || ImageUploadOpen || EntitySpawnMenuOpen || MonsterLookupMenuOpen){
         <button @onclick="CloseAllModals" class="modal-backdrop" aria-label="close menu"></button>
     }
 </div>

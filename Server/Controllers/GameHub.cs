@@ -106,8 +106,8 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
-        [HubMethodName("Room:MovePlayerEntity")]
-        public async Task MovePlayerEntity(string entityUid, int[] newPosition)
+        [HubMethodName("Room:MoveEntity")]
+        public async Task MoveEntity(string entityUid, int[] newPosition)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null)
@@ -119,14 +119,26 @@ namespace FreeTabletop.Server.Controllers
                     {
                         if (room.IsPositionValid(newPosition))
                         {
-                            room.UpdatePlayerPosition(entityUid, newPosition);
+                            room.UpdateEntityPosition(entityUid, newPosition);
                             await RenderPlayerEntities(room);
-                        }
-                        else
-                        {
-                            await RenderPlayerEntities(room);
+                            await RenderCreatureEntities(room);
                         }
                     }
+                }
+            }
+        }
+
+        [HubMethodName("Room:SpawnCreature")]
+        public async Task SpawnCreature(Creature creature)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.SpawnCreature(creature);
+                    await RenderCreatureEntities(room);
                 }
             }
         }
@@ -269,6 +281,11 @@ namespace FreeTabletop.Server.Controllers
         {
             List<PlayerEntity> players = room.BuildPlayerEntities();
             await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderPlayerEntities", players);
+        }
+
+        private async Task RenderCreatureEntities(Room room)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderCreatureEntities", room.Creatures);
         }
     }
 }

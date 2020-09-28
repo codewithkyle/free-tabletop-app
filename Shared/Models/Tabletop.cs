@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 
 namespace FreeTabletop.Shared.Models
@@ -9,6 +8,7 @@ namespace FreeTabletop.Shared.Models
         public bool IsGameMaster = false;
         public bool IsLocked = false;
         public List<PlayerEntity> Players { get; set; } = new List<PlayerEntity>();
+        public List<Creature> Creatures { get; set; } = new List<Creature>();
 
         public string UID { get; set; }
 

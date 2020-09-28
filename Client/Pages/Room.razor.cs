@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using FreeTabletop.Shared.Models;
 using FreeTabletop.Client.Controllers;
+using Newtonsoft.Json;
 
 namespace FreeTabletop.Client.Pages
 {
@@ -29,16 +30,37 @@ namespace FreeTabletop.Client.Pages
         public String InputImageURL = null;
         public string MovingEntityUID { get; set; }
         public string SelectedGridType = "1";
+        public bool EntitySpawnMenuOpen = false;
+        public bool MonsterLookupMenuOpen = false;
+
+        public List<Creature> Creatures = new List<Creature>();
 
         protected override async Task OnInitializedAsync()
         {
             await Hub.Connect(RoomCode, this, NavigationManager, JSRuntime, Tabletop);
         }
 
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (MonsterLookupMenuOpen)
+            {
+                JSRuntime.InvokeVoidAsync("FocusElement", ".js-monster-lookup");
+            }
+            else if (ImageUploadOpen)
+            {
+                JSRuntime.InvokeVoidAsync("FocusElement", ".js-image-input");
+            }
+            return base.OnAfterRenderAsync(firstRender);
+        }
+
         public void UpdatePlayerStatus(bool isGM, string uid)
         {
             Tabletop.IsGameMaster = isGM;
             Tabletop.UID = uid;
+            if (isGM)
+            {
+                JSRuntime.InvokeVoidAsync("SyncMonsterData");
+            }
             StateHasChanged();
         }
 
@@ -69,6 +91,9 @@ namespace FreeTabletop.Client.Pages
             InfoMenuOpen = false;
             SettingsMenuOpen = false;
             ImageUploadOpen = false;
+            EntitySpawnMenuOpen = false;
+            MonsterLookupMenuOpen = false;
+            Creatures = new List<Creature>();
             StateHasChanged();
         }
 
@@ -138,16 +163,68 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
+        public void RenderCreatureEntities(List<Creature> creatures)
+        {
+            Tabletop.Creatures = creatures;
+            Console.WriteLine(creatures[0].Name);
+            StateHasChanged();
+        }
+
         public async Task HandleDrop(int x, int y)
         {
             int[] Position = { x, y };
             await JSRuntime.InvokeVoidAsync("ClearHighlightedCells");
-            await Hub.MovePlayerEntity(MovingEntityUID, Position);
+            await Hub.MoveEntity(MovingEntityUID, Position);
         }
 
         public void HandleDragStart(string uid)
         {
             MovingEntityUID = uid;
+        }
+
+        public void ToggleEntitySpawnMenu()
+        {
+            CloseAllModals();
+            if (EntitySpawnMenuOpen)
+            {
+                EntitySpawnMenuOpen = false;
+            }
+            else
+            {
+                EntitySpawnMenuOpen = true;
+            }
+            StateHasChanged();
+        }
+
+        public void OpenMonsterLookupMenu()
+        {
+            CloseAllModals();
+            MonsterLookupMenuOpen = true;
+            StateHasChanged();
+        }
+
+        public async Task LookupMonster(ChangeEventArgs e)
+        {
+            string Value = e.Value.ToString().ToLower();
+            if (Value != "")
+            {
+                string CreatureJSON = await JSRuntime.InvokeAsync<string>("LookupCreature", Value);
+                Creatures = JsonConvert.DeserializeObject<List<Creature>>(CreatureJSON);
+            }
+            else
+            {
+                Creatures = new List<Creature>();
+            }
+        }
+
+        public void SpawnCreature(int index)
+        {
+            if (Tabletop.GridType != "3" && Tabletop.Image != null)
+            {
+                Creature Creature = Creatures[index];
+                Hub.SpawnCreature(Creature);
+                CloseAllModals();
+            }
         }
     }
 }

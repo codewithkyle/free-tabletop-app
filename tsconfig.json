@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outFile": "./Client/wwwroot/js/globals.js",
+        "outDir": "./Client/wwwroot/js",
         "module": "None",
         "allowJs": true,
         "checkJs": false,

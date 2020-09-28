@@ -53,6 +53,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<String, string, int[]>("Tabletop:LoadImage", Room.RenderTabletopFromImage);
                 Networker.hubConnection.On("Tabletop:Clear", Room.ClearTabletop);
                 Networker.hubConnection.On<List<PlayerEntity>>("Tabletop:RenderPlayerEntities", Room.RenderPlayerEntities);
+                Networker.hubConnection.On<List<Creature>>("Tabletop:RenderCreatureEntities", Room.RenderCreatureEntities);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -110,9 +111,14 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:ClearTabletop");
         }
 
-        public async Task MovePlayerEntity(string entityUID, int[] newPosition)
+        public async Task MoveEntity(string entityUID, int[] newPosition)
         {
-            await Networker.hubConnection.SendAsync("Room:MovePlayerEntity", entityUID, newPosition);
+            await Networker.hubConnection.SendAsync("Room:MoveEntity", entityUID, newPosition);
+        }
+
+        public async Task SpawnCreature(Creature creature)
+        {
+            await Networker.hubConnection.SendAsync("Room:SpawnCreature", creature);
         }
     }
 }
