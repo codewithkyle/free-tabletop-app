@@ -71,7 +71,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:LoadImage")]
-        public async Task LoadImage(String imageURL, bool generateGrid, int[] gridSize)
+        public async Task LoadImage(String imageURL, string gridType, int[] gridSize)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -79,10 +79,10 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    room.LoadImage(imageURL, generateGrid, gridSize);
+                    room.LoadImage(imageURL, gridType, gridSize);
                     await ClearTabletop(room);
                     await LoadTabletopImage(room);
-                    if (generateGrid)
+                    if (gridType != "3")
                     {
                         room.ResetPlayerPawnPositions();
                         await RenderPlayerEntities(room);
@@ -248,7 +248,10 @@ namespace FreeTabletop.Server.Controllers
             if (room.ImageURL != null && room.ImageURL.Length != 0)
             {
                 await LoadTabletopImage(room);
-                await RenderPlayerEntities(room);
+                if (room.GridType != "3")
+                {
+                    await RenderPlayerEntities(room);
+                }
             }
         }
 
@@ -259,7 +262,7 @@ namespace FreeTabletop.Server.Controllers
 
         private async Task LoadTabletopImage(Room room)
         {
-            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GenerateGrid, room.Grid);
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid);
         }
 
         private async Task RenderPlayerEntities(Room room)

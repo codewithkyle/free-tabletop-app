@@ -11,7 +11,7 @@ namespace FreeTabletop.Server.Models
         public bool IsLocked = false;
 
         public String ImageURL;
-        public bool GenerateGrid = true;
+        public string GridType = "1";
 
         public int[] Grid = { 0, 0 };
 
@@ -96,17 +96,17 @@ namespace FreeTabletop.Server.Models
             return players;
         }
 
-        public void LoadImage(String imageURL, bool generateGrid, int[] gridSize)
+        public void LoadImage(String imageURL, string gridType, int[] gridSize)
         {
             ImageURL = imageURL;
-            GenerateGrid = generateGrid;
+            GridType = gridType;
             Grid = gridSize;
         }
 
         public void ClearTabletop()
         {
             ImageURL = null;
-            GenerateGrid = true;
+            GridType = "1";
         }
 
         public void ResetPlayerPawnPositions()

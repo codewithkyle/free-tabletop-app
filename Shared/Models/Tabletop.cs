@@ -12,6 +12,8 @@ namespace FreeTabletop.Shared.Models
 
         public string UID { get; set; }
 
+        public string GridType = "1";
+
         public void MoveLocalEntitiy(string uid, int[] newPosition)
         {
             for (int i = 0; i < Players.Count; i++)

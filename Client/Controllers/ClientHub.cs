@@ -50,7 +50,7 @@ namespace FreeTabletop.Client.Controllers
 
                 Networker.hubConnection.On("Player:Kick", HandleKick);
 
-                Networker.hubConnection.On<String, bool, int[]>("Tabletop:LoadImage", Room.RenderTabletopFromImage);
+                Networker.hubConnection.On<String, string, int[]>("Tabletop:LoadImage", Room.RenderTabletopFromImage);
                 Networker.hubConnection.On("Tabletop:Clear", Room.ClearTabletop);
                 Networker.hubConnection.On<List<PlayerEntity>>("Tabletop:RenderPlayerEntities", Room.RenderPlayerEntities);
             }
@@ -100,9 +100,9 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:KickPlayer", player.UID);
         }
 
-        public async Task LoadTabletop(String imageURL, bool generateGrid, int[] gridSize)
+        public async Task LoadTabletop(String imageURL, string gridType, int[] gridSize)
         {
-            await Networker.hubConnection.SendAsync("Room:LoadImage", imageURL, generateGrid, gridSize);
+            await Networker.hubConnection.SendAsync("Room:LoadImage", imageURL, gridType, gridSize);
         }
 
         public async Task ClearTabletop()
