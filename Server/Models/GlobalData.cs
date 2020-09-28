@@ -54,7 +54,6 @@ public static class GlobalData
                     {
                         if (!room.HasConnections())
                         {
-                            Console.WriteLine("Room was empty?");
                             RemoveRoom(room);
                         }
                     }

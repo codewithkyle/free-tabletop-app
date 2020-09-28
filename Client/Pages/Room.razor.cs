@@ -148,6 +148,7 @@ namespace FreeTabletop.Client.Pages
         {
             TabletopImage = null;
             TabletopGrid = true;
+            Tabletop.Players = new List<PlayerEntity>();
             StateHasChanged();
         }
 
@@ -161,7 +162,7 @@ namespace FreeTabletop.Client.Pages
         public async Task HandleDrop(int x, int y)
         {
             int[] Position = { x, y };
-            JSRuntime.InvokeVoidAsync("ClearHighlightedCells");
+            await JSRuntime.InvokeVoidAsync("ClearHighlightedCells");
             await Hub.MovePlayerEntity(MovingEntityUID, Position);
         }
 

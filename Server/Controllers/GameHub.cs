@@ -82,8 +82,11 @@ namespace FreeTabletop.Server.Controllers
                     room.LoadImage(imageURL, generateGrid, gridSize);
                     await ClearTabletop(room);
                     await LoadTabletopImage(room);
-                    room.ResetPlayerPawnPositions();
-                    await RenderPlayerEntities(room);
+                    if (generateGrid)
+                    {
+                        room.ResetPlayerPawnPositions();
+                        await RenderPlayerEntities(room);
+                    }
                 }
             }
         }
