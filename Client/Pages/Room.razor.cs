@@ -26,12 +26,9 @@ namespace FreeTabletop.Client.Pages
         public bool InfoMenuOpen = false;
         public bool SettingsMenuOpen = false;
         public bool ImageUploadOpen = false;
-        public String ImageURL = null;
-        public String TabletopImage = null;
-        public int TabletopX = 0;
-        public int TabletopY = 0;
+        public String InputImageURL = null;
         public string MovingEntityUID { get; set; }
-        public string GridType = "1";
+        public string SelectedGridType = "1";
 
         protected override async Task OnInitializedAsync()
         {
@@ -109,29 +106,28 @@ namespace FreeTabletop.Client.Pages
 
         public async Task LoadTabletop()
         {
-            if (ImageURL.Length != 0)
+            if (InputImageURL.Length != 0)
             {
-                Console.WriteLine(GridType);
+                Console.WriteLine(SelectedGridType);
                 CloseAllModals();
-                int[] GridSize = await JSRuntime.InvokeAsync<int[]>("GetGridSize", ImageURL);
-                await Hub.LoadTabletop(ImageURL, GridType, GridSize);
-                ImageURL = null;
-                GridType = "1";
+                int[] GridSize = await JSRuntime.InvokeAsync<int[]>("GetGridSize", InputImageURL);
+                await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridSize);
+                InputImageURL = null;
+                SelectedGridType = "1";
             }
         }
 
         public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid)
         {
-            TabletopImage = imageURL;
+            Tabletop.Image = imageURL;
             Tabletop.GridType = gridType;
-            TabletopX = grid[0];
-            TabletopY = grid[1];
+            Tabletop.Grid = grid;
             StateHasChanged();
         }
 
         public void ClearTabletop()
         {
-            TabletopImage = null;
+            Tabletop.Image = null;
             Tabletop.Players = new List<PlayerEntity>();
             StateHasChanged();
         }
