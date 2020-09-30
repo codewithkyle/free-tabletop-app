@@ -54,6 +54,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On("Tabletop:Clear", Room.ClearTabletop);
                 Networker.hubConnection.On<List<PlayerEntity>>("Tabletop:RenderPlayerEntities", Room.RenderPlayerEntities);
                 Networker.hubConnection.On<List<Creature>>("Tabletop:RenderCreatureEntities", Room.RenderCreatureEntities);
+                Networker.hubConnection.On<List<NPC>>("Tabletop:RenderNPCEntities", Room.RenderNPCEntities);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -119,6 +120,11 @@ namespace FreeTabletop.Client.Controllers
         public async Task SpawnCreature(Creature creature)
         {
             await Networker.hubConnection.SendAsync("Room:SpawnCreature", creature);
+        }
+
+        public async Task SpawnNPC(NPC npc)
+        {
+            await Networker.hubConnection.SendAsync("Room:SpawnNPC", npc);
         }
     }
 }

@@ -1,6 +1,6 @@
 namespace FreeTabletop.Shared.Models
 {
-    public class Creature : Entity
+    public class NPC : Entity
     {
         public int BaseHP { get; set; }
         public int BaseAC { get; set; }

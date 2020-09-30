@@ -24,43 +24,52 @@
         justify-content: center;
         align-items: center;
         z-index: 4;
-        transition: all 600ms var(--ease-in-out);
+        transition: all 600ms var(--ease-in-out), z-index 0ms linear;
 
         &.-player {
             i {
-                background-color: var(--blue-700);
-                border-color: darken(#2b6cb0, 5);
+                background-color: var(--blue-600);
+                border-color: darken(#3182ce, 7);
             }
         }
 
         &.-foe {
             i {
-                background-color: var(--danger-700);
-                border-color: var(--danger-800);
+                background-color: var(--danger-600);
+                border-color: darken(#e53e3e, 6);
             }
         }
 
         &.-friend {
             i {
-                background-color: var(--success-700);
-                border-color: darken(#2f855a, 4);
+                background-color: var(--success-600);
+                border-color: darken(#38a169, 6);
+            }
+        }
+
+        &.-npc {
+            i {
+                background-color: #805ad5;
+                border-color: darken(#805ad5, 5);
             }
         }
 
         &:hover,
         &:focus {
+            z-index: 100;
+
             span {
                 opacity: 1;
                 visibility: visible;
-                transition: all 150ms var(--ease-in-out);
             }
         }
 
         &:active {
+            z-index: 100;
+
             span {
                 opacity: 0;
                 visibility: hidden;
-                transition: all 0ms var(--ease-in-out);
             }
         }
 
@@ -93,7 +102,7 @@
             visibility: hidden;
             opacity: 0;
             pointer-events: none;
-            transition: all 0ms var(--ease-in-out);
+            transition: all 0ms linear;
             white-space: nowrap;
             text-transform: capitalize;
 

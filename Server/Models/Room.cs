@@ -17,6 +17,8 @@ namespace FreeTabletop.Server.Models
 
         public List<Creature> Creatures = new List<Creature>();
 
+        public List<NPC> NPCs = new List<NPC>();
+
         public void AddPlayer(Player player)
         {
             player.RoomCode = RoomCode;
@@ -110,6 +112,7 @@ namespace FreeTabletop.Server.Models
             ImageURL = null;
             GridType = "1";
             Creatures = new List<Creature>();
+            NPCs = new List<NPC>();
         }
 
         public void ResetPlayerPawnPositions()
@@ -145,8 +148,28 @@ namespace FreeTabletop.Server.Models
                     break;
                 }
             }
-            // TODO: check NPCs
-            // TOOD: check monsters
+            if (IsValidPosition)
+            {
+                for (int i = 0; i < Creatures.Count; i++)
+                {
+                    if (Creatures[i].Position[0] == newPosition[0] && Creatures[i].Position[1] == newPosition[1])
+                    {
+                        IsValidPosition = false;
+                        break;
+                    }
+                }
+            }
+            if (IsValidPosition)
+            {
+                for (int i = 0; i < NPCs.Count; i++)
+                {
+                    if (NPCs[i].Position[0] == newPosition[0] && NPCs[i].Position[1] == newPosition[1])
+                    {
+                        IsValidPosition = false;
+                        break;
+                    }
+                }
+            }
             return IsValidPosition;
         }
 
@@ -174,6 +197,18 @@ namespace FreeTabletop.Server.Models
                     }
                 }
             }
+            if (!Updated)
+            {
+                for (int i = 0; i < NPCs.Count; i++)
+                {
+                    if (NPCs[i].UID == uid)
+                    {
+                        Updated = true;
+                        NPCs[i].UpdatePosition(newPosition);
+                        break;
+                    }
+                }
+            }
         }
 
         public void SpawnCreature(Creature creature)
@@ -185,6 +220,17 @@ namespace FreeTabletop.Server.Models
             creature.AC = creature.BaseAC;
             creature.HP = creature.BaseHP;
             Creatures.Add(creature);
+        }
+
+        public void SpawnNPC(NPC npc)
+        {
+            Guid guid = Guid.NewGuid();
+            npc.Name = npc.BaseName;
+            npc.Type = "friend";
+            npc.UID = guid.ToString();
+            npc.AC = npc.BaseAC;
+            npc.HP = npc.BaseHP;
+            NPCs.Add(npc);
         }
     }
 }

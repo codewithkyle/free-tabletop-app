@@ -33,10 +33,15 @@ namespace FreeTabletop.Client.Pages
         public bool EntitySpawnMenuOpen = false;
         public bool MonsterLookupMenuOpen = false;
         public bool CustomCreatureMenuOpen = false;
+        public bool NPCMenuOpen = false;
 
         public List<Creature> Creatures = new List<Creature>();
 
         public Creature CustomCreature = new Creature();
+        public NPC NewNPC = new NPC();
+        public bool DidAutofocus = false;
+        public double[] RightClickPosition = { -1, -1 };
+        public int[] RightClickGridPosition = { 0, 0 };
 
         protected override async Task OnInitializedAsync()
         {
@@ -45,13 +50,23 @@ namespace FreeTabletop.Client.Pages
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
-            if (MonsterLookupMenuOpen)
+            if (!DidAutofocus)
             {
-                JSRuntime.InvokeVoidAsync("FocusElement", ".js-monster-lookup");
-            }
-            else if (ImageUploadOpen)
-            {
-                JSRuntime.InvokeVoidAsync("FocusElement", ".js-image-input");
+                if (MonsterLookupMenuOpen)
+                {
+                    JSRuntime.InvokeVoidAsync("FocusElement", ".js-monster-lookup");
+                    DidAutofocus = true;
+                }
+                else if (ImageUploadOpen)
+                {
+                    JSRuntime.InvokeVoidAsync("FocusElement", ".js-image-input");
+                    DidAutofocus = true;
+                }
+                else if (NPCMenuOpen)
+                {
+                    JSRuntime.InvokeVoidAsync("FocusElement", ".js-npc-input");
+                    DidAutofocus = true;
+                }
             }
             return base.OnAfterRenderAsync(firstRender);
         }
@@ -99,6 +114,11 @@ namespace FreeTabletop.Client.Pages
             Creatures = new List<Creature>();
             CustomCreatureMenuOpen = false;
             CustomCreature = new Creature();
+            NPCMenuOpen = false;
+            NewNPC = new NPC();
+            DidAutofocus = false;
+            RightClickPosition[0] = -1;
+            RightClickPosition[1] = -1;
             StateHasChanged();
         }
 
@@ -173,6 +193,12 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
+        public void RenderNPCEntities(List<NPC> npcs)
+        {
+            Tabletop.NPCs = npcs;
+            StateHasChanged();
+        }
+
         public async Task HandleDrop(int x, int y)
         {
             int[] Position = { x, y };
@@ -194,6 +220,8 @@ namespace FreeTabletop.Client.Pages
             }
             else
             {
+                RightClickGridPosition[0] = 0;
+                RightClickGridPosition[1] = 0;
                 EntitySpawnMenuOpen = true;
             }
             StateHasChanged();
@@ -218,22 +246,28 @@ namespace FreeTabletop.Client.Pages
             {
                 Creatures = new List<Creature>();
             }
+            StateHasChanged();
         }
 
         public void SpawnCreature(int index)
         {
-            if (Tabletop.GridType != "3" && Tabletop.Image != null)
-            {
-                Creature Creature = Creatures[index];
-                Hub.SpawnCreature(Creature);
-                CloseAllModals();
-            }
+            Creature Creature = Creatures[index];
+            Creature.Position = RightClickGridPosition;
+            Hub.SpawnCreature(Creature);
+            CloseAllModals();
         }
 
         public void OpenCustomCreatureMenu()
         {
             CloseAllModals();
             CustomCreatureMenuOpen = true;
+            StateHasChanged();
+        }
+
+        public void OpenNPCMenu()
+        {
+            CloseAllModals();
+            NPCMenuOpen = true;
             StateHasChanged();
         }
 
@@ -253,10 +287,44 @@ namespace FreeTabletop.Client.Pages
             }
             else
             {
+                CustomCreature.Position = RightClickGridPosition;
                 Hub.SpawnCreature(CustomCreature);
                 JSRuntime.InvokeVoidAsync("AddCustomCreature", JsonConvert.SerializeObject(CustomCreature));
                 CloseAllModals();
             }
+        }
+
+        public void SpawnNPC()
+        {
+            if (NewNPC.BaseName == null || NewNPC.BaseName.Trim() == "")
+            {
+                JSRuntime.InvokeVoidAsync("FocusElement", "#npc-name");
+            }
+            else if (NewNPC.BaseAC == 0)
+            {
+                JSRuntime.InvokeVoidAsync("FocusElement", "#npc-ac");
+            }
+            else if (NewNPC.BaseHP == 0)
+            {
+                JSRuntime.InvokeVoidAsync("FocusElement", "#npc-hp");
+            }
+            else
+            {
+                NewNPC.Position = RightClickGridPosition;
+                Hub.SpawnNPC(NewNPC);
+                CloseAllModals();
+            }
+        }
+
+        public void HandleRightClick(double x, double y, int gridX, int gridY)
+        {
+            CloseAllModals();
+            RightClickPosition[0] = x;
+            RightClickPosition[1] = y;
+            EntitySpawnMenuOpen = true;
+            RightClickGridPosition[0] = gridX;
+            RightClickGridPosition[1] = gridY;
+            StateHasChanged();
         }
     }
 }

@@ -122,6 +122,7 @@ namespace FreeTabletop.Server.Controllers
                             room.UpdateEntityPosition(entityUid, newPosition);
                             await RenderPlayerEntities(room);
                             await RenderCreatureEntities(room);
+                            await RenderNPCEntities(room);
                         }
                     }
                 }
@@ -139,6 +140,21 @@ namespace FreeTabletop.Server.Controllers
                 {
                     room.SpawnCreature(creature);
                     await RenderCreatureEntities(room);
+                }
+            }
+        }
+
+        [HubMethodName("Room:SpawnNPC")]
+        public async Task SpawnNPC(NPC npc)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.SpawnNPC(npc);
+                    await RenderNPCEntities(room);
                 }
             }
         }
@@ -286,6 +302,11 @@ namespace FreeTabletop.Server.Controllers
         private async Task RenderCreatureEntities(Room room)
         {
             await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderCreatureEntities", room.Creatures);
+        }
+
+        private async Task RenderNPCEntities(Room room)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderNPCEntities", room.NPCs);
         }
     }
 }
