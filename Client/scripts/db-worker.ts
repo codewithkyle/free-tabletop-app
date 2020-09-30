@@ -110,10 +110,11 @@ idbRequest.onupgradeneeded = (event) => {
     objectStore.createIndex("name", "name", { unique: true });
     objectStore.createIndex("hp", "hp", { unique: false });
     objectStore.createIndex("ac", "ac", { unique: false });
+
+    objectStore.transaction.oncomplete = SyncMonstersWithAPI;
 };
 idbRequest.onsuccess = (event) => {
     idb = event.target.result;
-    SyncMonstersWithAPI();
 };
 
 self.onmessage = (e: MessageEvent) => {
@@ -128,6 +129,15 @@ self.onmessage = (e: MessageEvent) => {
                     messageUid: data.messageUid,
                 });
             });
+            break;
+        case "add":
+            const creature = JSON.parse(data.creature);
+            const newCreature: Creature = {
+                name: creature.BaseName.trim().toLowerCase(),
+                ac: creature.BaseAC,
+                hp: creature.BaseHP,
+            };
+            PutCreaturesInLocalDB([newCreature]);
             break;
         default:
             console.warn(`Uncaught DB Worker message type: ${data.type}`);

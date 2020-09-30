@@ -98,3 +98,12 @@ function LookupCreature(query: string) {
         });
     });
 }
+function AddCustomCreature(creature: string) {
+    if (!dbWorker) {
+        return;
+    }
+    dbWorker.postMessage({
+        type: "add",
+        creature: creature,
+    });
+}

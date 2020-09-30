@@ -32,8 +32,11 @@ namespace FreeTabletop.Client.Pages
         public string SelectedGridType = "1";
         public bool EntitySpawnMenuOpen = false;
         public bool MonsterLookupMenuOpen = false;
+        public bool CustomCreatureMenuOpen = false;
 
         public List<Creature> Creatures = new List<Creature>();
+
+        public Creature CustomCreature = new Creature();
 
         protected override async Task OnInitializedAsync()
         {
@@ -94,6 +97,8 @@ namespace FreeTabletop.Client.Pages
             EntitySpawnMenuOpen = false;
             MonsterLookupMenuOpen = false;
             Creatures = new List<Creature>();
+            CustomCreatureMenuOpen = false;
+            CustomCreature = new Creature();
             StateHasChanged();
         }
 
@@ -133,7 +138,6 @@ namespace FreeTabletop.Client.Pages
         {
             if (InputImageURL.Length != 0)
             {
-                Console.WriteLine(SelectedGridType);
                 CloseAllModals();
                 int[] GridSize = await JSRuntime.InvokeAsync<int[]>("GetGridSize", InputImageURL);
                 await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridSize);
@@ -166,7 +170,6 @@ namespace FreeTabletop.Client.Pages
         public void RenderCreatureEntities(List<Creature> creatures)
         {
             Tabletop.Creatures = creatures;
-            Console.WriteLine(creatures[0].Name);
             StateHasChanged();
         }
 
@@ -223,6 +226,35 @@ namespace FreeTabletop.Client.Pages
             {
                 Creature Creature = Creatures[index];
                 Hub.SpawnCreature(Creature);
+                CloseAllModals();
+            }
+        }
+
+        public void OpenCustomCreatureMenu()
+        {
+            CloseAllModals();
+            CustomCreatureMenuOpen = true;
+            StateHasChanged();
+        }
+
+        public void SpawnCustomCreature()
+        {
+            if (CustomCreature.BaseName == null || CustomCreature.BaseName.Trim() == "")
+            {
+                JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-name");
+            }
+            else if (CustomCreature.BaseAC == 0)
+            {
+                JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-ac");
+            }
+            else if (CustomCreature.BaseHP == 0)
+            {
+                JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-hp");
+            }
+            else
+            {
+                Hub.SpawnCreature(CustomCreature);
+                JSRuntime.InvokeVoidAsync("AddCustomCreature", JsonConvert.SerializeObject(CustomCreature));
                 CloseAllModals();
             }
         }

@@ -109,6 +109,7 @@ namespace FreeTabletop.Server.Models
         {
             ImageURL = null;
             GridType = "1";
+            Creatures = new List<Creature>();
         }
 
         public void ResetPlayerPawnPositions()
