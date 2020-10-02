@@ -249,6 +249,105 @@
             }
         }
 
+        .dice-modal {
+            background-color: var(--white);
+            border-radius: 0.25rem;
+            border: 1px solid var(--grey-200);
+            box-shadow: var(--shadow-sm);
+            padding: 0.5rem;
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            left: 36px + 6px;
+            width: 270px;
+            display: flex;
+            flex-flow: row wrap;
+
+            .button {
+                color: var(--white);
+                width: 36px;
+                height: 36px;
+                padding: 0;
+                border-radius: 50%;
+
+                &:hover,
+                &:focus,
+                &:active {
+                    color: var(--white);
+                }
+
+                i {
+                    margin-right: 0;
+                }
+            }
+
+            button {
+                display: inline-flex;
+                width: 36px;
+                height: 36px;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: var(--grey-700);
+                font-size: var(--font-sm);
+                transition: all 150ms var(--ease-in-out);
+                overflow: hidden;
+                border-radius: 0.25rem;
+                position: relative;
+
+                &.is-active {
+                    color: var(--grey-800);
+
+                    &::before {
+                        background-color: var(--grey-500);
+                    }
+                }
+
+                &:hover,
+                &:focus {
+                    color: var(--grey-800);
+
+                    &::before {
+                        background-color: var(--grey-500);
+                    }
+                }
+
+                &:active {
+                    color: var(--primary-700);
+
+                    &::before {
+                        background-color: var(--primary-500);
+                    }
+                }
+
+                &::before {
+                    content: "";
+                    display: inline-block;
+                    width: 100%;
+                    height: 100%;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    transition: all 150ms var(--ease-in-out);
+                    border-radius: 50%;
+                    opacity: 0.15;
+                    background-color: transparent;
+                }
+
+                i {
+                    display: inline-flex;
+                    width: 24px;
+                    height: 24px;
+                    justify-content: center;
+                    align-items: center;
+
+                    svg {
+                        width: 18px;
+                        height: 18px;
+                    }
+                }
+            }
+        }
+
         .entity-spawn-modal {
             background-color: var(--white);
             border-radius: 0.25rem;
@@ -339,7 +438,7 @@
             padding: 0.5rem;
             position: absolute;
             top: calc(100% + 0.5rem);
-            left: 36px + 6px;
+            left: calc(36px * 2 + 6px);
             width: 225px;
             display: flex;
             flex-flow: row wrap;

@@ -15,6 +15,7 @@
         <link href="css/app.css" rel="stylesheet" />
         <link href="css/game.css" rel="stylesheet" />
         <link href="css/tabletop.css" rel="stylesheet" />
+        <link href="css/toast.css" rel="stylesheet" />
 
         <link href="css/form.css" rel="stylesheet" />
         <link href="css/input.css" rel="stylesheet" />
@@ -25,7 +26,12 @@
 
     <body class="bg-grey-200">
         <app>Loading...</app>
-        <script defer src="js/globals.js"></script>
+        <script src="js/globals.js"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/rpg-dice-roller@4.5.1/lib/umd/bundle.min.js"></script>
+        <script src="js/notify.js"></script>
+        <script src="js/dice.js"></script>
+
         <script src="_framework/blazor.webassembly.js"></script>
         <script>
             navigator.serviceWorker.register("service-worker.js");

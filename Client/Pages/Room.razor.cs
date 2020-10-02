@@ -27,7 +27,7 @@ namespace FreeTabletop.Client.Pages
         public bool InfoMenuOpen = false;
         public bool SettingsMenuOpen = false;
         public bool ImageUploadOpen = false;
-        public String InputImageURL = null;
+        public string InputImageURL = null;
         public string MovingEntityUID { get; set; }
         public string SelectedGridType = "1";
         public bool EntitySpawnMenuOpen = false;
@@ -42,6 +42,9 @@ namespace FreeTabletop.Client.Pages
         public bool DidAutofocus = false;
         public double[] RightClickPosition = { -1, -1 };
         public int[] RightClickGridPosition = { 0, 0 };
+        public bool DiceMenuOpen = false;
+        public string ActiveDie = "d4";
+        public int RollCount = 1;
 
         protected override async Task OnInitializedAsync()
         {
@@ -119,6 +122,7 @@ namespace FreeTabletop.Client.Pages
             DidAutofocus = false;
             RightClickPosition[0] = -1;
             RightClickPosition[1] = -1;
+            DiceMenuOpen = false;
             StateHasChanged();
         }
 
@@ -325,6 +329,33 @@ namespace FreeTabletop.Client.Pages
             RightClickGridPosition[0] = gridX;
             RightClickGridPosition[1] = gridY;
             StateHasChanged();
+        }
+
+        public void ToggleDiceMenu()
+        {
+            CloseAllModals();
+            if (DiceMenuOpen)
+            {
+                DiceMenuOpen = false;
+            }
+            else
+            {
+                DiceMenuOpen = true;
+            }
+            StateHasChanged();
+        }
+
+        public void SetActiveDie(string die)
+        {
+            ActiveDie = die;
+            StateHasChanged();
+        }
+
+        public void RollDice()
+        {
+            CloseAllModals();
+            JSRuntime.InvokeVoidAsync("RollDice", RollCount.ToString() + ActiveDie);
+            RollCount = 1;
         }
     }
 }
