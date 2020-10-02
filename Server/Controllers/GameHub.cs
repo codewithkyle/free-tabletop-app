@@ -21,6 +21,7 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.RoomCode);
+                    await SendPlayerDisconnectionNotification(room, player.Name);
                     await SendTabletopInfoToRoom(room);
                 }
             }
@@ -40,6 +41,7 @@ namespace FreeTabletop.Server.Controllers
                     room.KickPlayer(playerToKick);
                     GlobalData.RemovePlayer(playerToKick);
                     await Clients.Client(playerToKick.UID).SendAsync("Player:Kick");
+                    await SendPlayerKickNotification(room, playerToKick.Name);
                     await SendTabletopInfoToRoom(room);
                 }
             }
@@ -182,6 +184,7 @@ namespace FreeTabletop.Server.Controllers
                 Player player = GlobalData.GetPlayerByStaleUID(staleUID);
                 if (player != null)
                 {
+                    await SendPlayerReconnectionNotification(room, player.Name);
                     await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
                     player.Reconnect(Context.ConnectionId);
                     await Clients.Caller.SendAsync("Set:PlayerUID", Context.ConnectionId);
@@ -223,6 +226,7 @@ namespace FreeTabletop.Server.Controllers
                     Player player = GlobalData.GetPlayerByStaleUID(savedUID);
                     if (player != null)
                     {
+                        await SendPlayerReconnectionNotification(room, player.Name);
                         await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
                         player.Reconnect(Context.ConnectionId);
                         await Clients.Caller.SendAsync("Load:Player", room.RoomCode, Context.ConnectionId);
@@ -243,6 +247,7 @@ namespace FreeTabletop.Server.Controllers
             {
                 Player player = GlobalData.CreatePlayer(Context.ConnectionId, name, room.RoomCode);
                 room.AddPlayer(player);
+                await SendPlayerConnectionNotification(room, name);
                 await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
                 await Clients.Caller.SendAsync("Load:Player", roomCode, Context.ConnectionId);
                 await SendTabletopInfoToRoom(room);
@@ -307,6 +312,25 @@ namespace FreeTabletop.Server.Controllers
         private async Task RenderNPCEntities(Room room)
         {
             await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderNPCEntities", room.NPCs);
+        }
+
+        private async Task SendPlayerConnectionNotification(Room room, string name)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Notification:PlayerConnected", name);
+        }
+
+        private async Task SendPlayerDisconnectionNotification(Room room, string name)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Notification:PlayerDisconnected", name);
+        }
+
+        private async Task SendPlayerReconnectionNotification(Room room, string name)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Notification:PlayerReconnected", name);
+        }
+        private async Task SendPlayerKickNotification(Room room, string name)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Notification:PlayerKicked", name);
         }
     }
 }

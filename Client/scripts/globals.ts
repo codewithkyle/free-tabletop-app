@@ -107,3 +107,35 @@ function AddCustomCreature(creature: string) {
         creature: creature,
     });
 }
+function PlayerConnected(name: string) {
+    toast({
+        title: `${name} Joined`,
+        message: `${name} has joined to the room.`,
+        duration: 5,
+        classes: "-green",
+    });
+}
+function PlayerDisconnected(name: string) {
+    toast({
+        title: `${name} Disconnected`,
+        message: `${name} has disconnected from the room.`,
+        duration: 5,
+        classes: "-red",
+    });
+}
+function PlayerReconnected(name: string) {
+    toast({
+        title: `${name} Reconnected`,
+        message: `${name} has reconnected to the room.`,
+        duration: 5,
+        classes: "-green",
+    });
+}
+function PlayerKicked(name: string) {
+    toast({
+        title: `${name} Disconnected`,
+        message: `The GM kicked ${name} from the room.`,
+        duration: 5,
+        classes: "-red",
+    });
+}

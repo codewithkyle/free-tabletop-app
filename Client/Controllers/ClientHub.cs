@@ -55,6 +55,11 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<List<PlayerEntity>>("Tabletop:RenderPlayerEntities", Room.RenderPlayerEntities);
                 Networker.hubConnection.On<List<Creature>>("Tabletop:RenderCreatureEntities", Room.RenderCreatureEntities);
                 Networker.hubConnection.On<List<NPC>>("Tabletop:RenderNPCEntities", Room.RenderNPCEntities);
+
+                Networker.hubConnection.On<string>("Notification:PlayerConnected", ConnectedNotification);
+                Networker.hubConnection.On<string>("Notification:PlayerDisconnected", DisconnectedNotification);
+                Networker.hubConnection.On<string>("Notification:PlayerReconnected", ReconnectedNotification);
+                Networker.hubConnection.On<string>("Notification:PlayerKicked", KickNotification);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -125,6 +130,23 @@ namespace FreeTabletop.Client.Controllers
         public async Task SpawnNPC(NPC npc)
         {
             await Networker.hubConnection.SendAsync("Room:SpawnNPC", npc);
+        }
+
+        private void ConnectedNotification(string name)
+        {
+            JSRuntime.InvokeVoidAsync("PlayerConnected", name);
+        }
+        private void DisconnectedNotification(string name)
+        {
+            JSRuntime.InvokeVoidAsync("PlayerDisconnected", name);
+        }
+        private void ReconnectedNotification(string name)
+        {
+            JSRuntime.InvokeVoidAsync("PlayerReconnected", name);
+        }
+        private void KickNotification(string name)
+        {
+            JSRuntime.InvokeVoidAsync("PlayerKicked", name);
         }
     }
 }
