@@ -45,6 +45,7 @@ namespace FreeTabletop.Client.Pages
         public bool DiceMenuOpen = false;
         public string ActiveDie = "d4";
         public int RollCount = 1;
+        public bool CombatMenuOpen = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -123,6 +124,7 @@ namespace FreeTabletop.Client.Pages
             RightClickPosition[0] = -1;
             RightClickPosition[1] = -1;
             DiceMenuOpen = false;
+            CombatMenuOpen = false;
             StateHasChanged();
         }
 
@@ -356,6 +358,29 @@ namespace FreeTabletop.Client.Pages
             CloseAllModals();
             JSRuntime.InvokeVoidAsync("RollDice", RollCount.ToString() + ActiveDie);
             RollCount = 1;
+        }
+
+        public void ToggleCombatMenu()
+        {
+            CloseAllModals();
+            CombatMenuOpen = true;
+            StateHasChanged();
+        }
+
+        public void SyncCombatOrder()
+        {
+            Hub.SyncCombatOrder();
+        }
+
+        public void UpdateCombatOrder(List<Entity> combarOrder)
+        {
+            Tabletop.CombatOrder = combarOrder;
+            StateHasChanged();
+        }
+
+        public void UpdateEntityCombatOrderPosition(int newPosition)
+        {
+            Hub.UpdateEntityCombatOrderPosition(MovingEntityUID, newPosition);
         }
     }
 }

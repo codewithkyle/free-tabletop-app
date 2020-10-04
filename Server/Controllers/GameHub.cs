@@ -161,6 +161,51 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:SyncCombatOrder")]
+        public async Task SyncCombatOrder()
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    List<Entity> CombatOrder = room.BuildCombatOrder();
+                    await SendCombatOrder(room, CombatOrder);
+                }
+            }
+        }
+
+        [HubMethodName("Room:UpdateEntityCombatOrderPosition")]
+        public async Task UpdateEntityCombatOrderPosition(string uid, int newPosition)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    List<Entity> CombatOrder = room.UpdateCombatOrder(uid, newPosition);
+                    await SendCombatOrder(room, CombatOrder);
+                }
+            }
+        }
+
+        [HubMethodName("Room:RemoveEntityFromCombatOrder")]
+        public async Task RemoveEntityFromCombatOrder(string uid)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    List<Entity> CombatOrder = room.RemoveEntityFromCombatOrder(uid);
+                    await SendCombatOrder(room, CombatOrder);
+                }
+            }
+        }
+
         [HubMethodName("Player:SyncTabletopInfo")]
         public async Task SyncTabletopInfo()
         {
@@ -331,6 +376,11 @@ namespace FreeTabletop.Server.Controllers
         private async Task SendPlayerKickNotification(Room room, string name)
         {
             await Clients.Group(room.RoomCode).SendAsync("Notification:PlayerKicked", name);
+        }
+
+        private async Task SendCombatOrder(Room room, List<Entity> combatOrder)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Sync:CombatOrder", combatOrder);
         }
     }
 }

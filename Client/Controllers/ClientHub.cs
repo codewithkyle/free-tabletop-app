@@ -44,6 +44,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On("Error:PlayerNotFound", Redirect);
 
                 Networker.hubConnection.On<bool, List<PlayerEntity>>("Sync:TabletopInfo", Room.SyncTabletop);
+                Networker.hubConnection.On<List<Entity>>("Sync:CombatOrder", Room.UpdateCombatOrder);
 
                 Networker.hubConnection.On<string>("Set:PlayerUID", UpdateUID);
                 Networker.hubConnection.On<bool, string>("Set:PlayerStatus", Room.UpdatePlayerStatus);
@@ -130,6 +131,20 @@ namespace FreeTabletop.Client.Controllers
         public async Task SpawnNPC(NPC npc)
         {
             await Networker.hubConnection.SendAsync("Room:SpawnNPC", npc);
+        }
+        public async Task SyncCombatOrder()
+        {
+            await Networker.hubConnection.SendAsync("Room:SyncCombatOrder");
+        }
+
+        public async Task RemoveEntityFromCombatOrder(string uid)
+        {
+            await Networker.hubConnection.SendAsync("Room:RemoveEntityFromCombatOrder", uid);
+        }
+
+        public async Task UpdateEntityCombatOrderPosition(string uid, int newPosition)
+        {
+            await Networker.hubConnection.SendAsync("Room:UpdateEntityCombatOrderPosition", uid, newPosition);
         }
 
         private void ConnectedNotification(string name)

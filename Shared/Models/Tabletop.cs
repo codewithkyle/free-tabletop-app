@@ -11,6 +11,8 @@ namespace FreeTabletop.Shared.Models
         public List<Creature> Creatures = new List<Creature>();
         public List<NPC> NPCs = new List<NPC>();
 
+        public List<Entity> CombatOrder = new List<Entity>();
+
         public string UID { get; set; }
 
         public string GridType = "1";

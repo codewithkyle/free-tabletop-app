@@ -19,6 +19,8 @@ namespace FreeTabletop.Server.Models
 
         public List<NPC> NPCs = new List<NPC>();
 
+        List<Entity> CombatOrder = new List<Entity>();
+
         public void AddPlayer(Player player)
         {
             player.RoomCode = RoomCode;
@@ -231,6 +233,82 @@ namespace FreeTabletop.Server.Models
             npc.AC = npc.BaseAC;
             npc.HP = npc.BaseHP;
             NPCs.Add(npc);
+        }
+
+        public List<Entity> BuildCombatOrder()
+        {
+            CombatOrder = new List<Entity>();
+
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (!Players[i].IsGameMaster)
+                {
+                    CombatOrder.Add(Players[i]);
+                }
+            }
+            for (int i = 0; i < NPCs.Count; i++)
+            {
+                bool IsAllowed = true;
+                for (int k = 0; k < CombatOrder.Count; k++)
+                {
+                    if (CombatOrder[k].Name == NPCs[i].Name)
+                    {
+                        IsAllowed = false;
+                        break;
+                    }
+                }
+                if (IsAllowed)
+                {
+                    CombatOrder.Add(NPCs[i]);
+                }
+            }
+            for (int i = 0; i < Creatures.Count; i++)
+            {
+                bool IsNewCreature = true;
+                for (int k = 0; k < CombatOrder.Count; k++)
+                {
+                    if (CombatOrder[k].Name == Creatures[i].BaseName)
+                    {
+                        IsNewCreature = false;
+                        break;
+                    }
+                }
+                if (IsNewCreature)
+                {
+                    CombatOrder.Add(Creatures[i]);
+                }
+            }
+
+            return CombatOrder;
+        }
+
+        public List<Entity> RemoveEntityFromCombatOrder(string uid)
+        {
+            for (int i = 0; i < CombatOrder.Count; i++)
+            {
+                if (CombatOrder[i].UID == uid)
+                {
+                    CombatOrder.RemoveAt(i);
+                    break;
+                }
+            }
+
+            return CombatOrder;
+        }
+
+        public List<Entity> UpdateCombatOrder(string uid, int newPosition)
+        {
+            for (int i = 0; i < CombatOrder.Count; i++)
+            {
+                if (CombatOrder[i].UID == uid)
+                {
+                    Entity Entity = CombatOrder[i];
+                    CombatOrder.RemoveAt(i);
+                    CombatOrder.Insert(newPosition, Entity);
+                    break;
+                }
+            }
+            return CombatOrder;
         }
     }
 }
