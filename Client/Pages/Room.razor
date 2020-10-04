@@ -334,41 +334,63 @@
         }
         @if (CombatMenuOpen){
             <div class="combat-modal" style="left: @(Tabletop.IsGameMaster ? "160" : "80")px">
-                <div class="w-full bg-grey-100 p-0.5" flex="items-center row nowrap justify-between">
-                    <span class="inline-block font-xs font-grey-700 font-medium">Combat Order</span>
+                <div class="w-full bg-grey-800 p-0.5" flex="items-center row nowrap justify-between">
+                    <span class="inline-block font-xs font-grey-100 font-medium">Combat Order</span>
                     @if (Tabletop.IsGameMaster){
                         <button @onclick="SyncCombatOrder" class="sync" title="sync list" aria-label="sync combat order list">
                             <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="sync-alt" class="svg-inline--fa fa-sync-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M457.373 9.387l-50.095 50.102C365.411 27.211 312.953 8 256 8 123.228 8 14.824 112.338 8.31 243.493 7.971 250.311 13.475 256 20.301 256h10.015c6.352 0 11.647-4.949 11.977-11.293C48.159 131.913 141.389 42 256 42c47.554 0 91.487 15.512 127.02 41.75l-53.615 53.622c-20.1 20.1-5.855 54.628 22.627 54.628H480c17.673 0 32-14.327 32-32V32.015c0-28.475-34.564-42.691-54.627-22.628zM480 160H352L480 32v128zm11.699 96h-10.014c-6.353 0-11.647 4.949-11.977 11.293C463.84 380.203 370.504 470 256 470c-47.525 0-91.468-15.509-127.016-41.757l53.612-53.616c20.099-20.1 5.855-54.627-22.627-54.627H32c-17.673 0-32 14.327-32 32v127.978c0 28.614 34.615 42.641 54.627 22.627l50.092-50.096C146.587 484.788 199.046 504 256 504c132.773 0 241.176-104.338 247.69-235.493.339-6.818-5.165-12.507-11.991-12.507zM32 480V352h128L32 480z"></path></svg>
                         </button>
                     }
                 </div>
-                <ul class="mb-0.5">
-                    @for (int i = 0; i < Tabletop.CombatOrder.Count; i++){
-                        Entity Entity = Tabletop.CombatOrder[i];
-                        int OrderPosition = i;
-                        <li 
-                            class="entity" 
-                            draggable="@(Tabletop.IsGameMaster ? "true" : "false")" 
-                            ondragover="event.preventDefault();" 
-                            @ondrop="@(e => UpdateEntityCombatOrderPosition(OrderPosition))" 
-                            @ondragstart="@(e => MovingEntityUID = Entity.UID)"
-                        >
-                            <div flex="items-center">
+                @if (Tabletop.CombatOrder.Count > 0){
+                    <ul class="mb-0.5">
+                        @for (int i = 0; i < Tabletop.CombatOrder.Count; i++){
+                            Entity Entity = Tabletop.CombatOrder[i];
+                            int OrderPosition = i;
+                            <li 
+                                class="entity" 
+                                draggable="@(Tabletop.IsGameMaster ? "true" : "false")" 
+                                ondragover="event.preventDefault();" 
+                                @ondrop="@(e => UpdateEntityCombatOrderPosition(OrderPosition))" 
+                                @ondragstart="@(e => MovingEntityUID = Entity.UID)" 
+                                title="@Entity.Name"
+                            >
+                                <div flex="items-center">
+                                    @if (Tabletop.IsGameMaster){
+                                        <i class="handle">
+                                            <svg style="pointer-events: none;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="grip-lines" class="svg-inline--fa fa-grip-lines fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M440 192H8c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8h432c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8zm0 96H8c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8h432c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8z"></path></svg>
+                                        </i>
+                                    }
+                                    <div 
+                                        class="@(Tabletop.IsGameMaster ? "flex" : "ml-0.75")" 
+                                    >
+                                        @if (Tabletop.IsGameMaster){
+                                            <div class="ml-0.25 mr-0.5 gm-status @(Entity.IsTurn ? "active" : "")"></div>
+                                        }
+                                        <span>@Entity.Name</span>
+                                    </div>
+                                </div>
                                 @if (Tabletop.IsGameMaster){
-                                    <i class="handle">
-                                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="grip-lines" class="svg-inline--fa fa-grip-lines fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M440 192H8c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8h432c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8zm0 96H8c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8h432c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8z"></path></svg>
-                                    </i>
+                                    <div flex="row nowrap items-center">
+                                        <button title="Ping @Entity.Name" class="ping" @onclick="@(e => Hub.PingEntity(Entity.UID))">
+                                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="share" class="svg-inline--fa fa-share fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M564.907 196.35L388.91 12.366C364.216-13.45 320 3.746 320 40.016v88.154C154.548 130.155 0 160.103 0 331.19c0 94.98 55.84 150.231 89.13 174.571 24.233 17.722 58.021-4.992 49.68-34.51C100.937 336.887 165.575 321.972 320 320.16V408c0 36.239 44.19 53.494 68.91 27.65l175.998-184c14.79-15.47 14.79-39.83-.001-55.3zm-23.127 33.18l-176 184c-4.933 5.16-13.78 1.73-13.78-5.53V288c-171.396 0-295.313 9.707-243.98 191.7C72 453.36 32 405.59 32 331.19 32 171.18 194.886 160 352 160V40c0-7.262 8.851-10.69 13.78-5.53l176 184a7.978 7.978 0 0 1 0 11.06z"></path></svg>
+                                        </button>
+                                        <button title="Remove @Entity.Name" class="remove" @onclick="@(e => Hub.RemoveEntityFromCombatOrder(Entity.UID))">
+                                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
+                                        </button>
+                                    </div>
+                                }else{
+                                    <div class="status @(Entity.IsTurn ? "active" : "")"></div>
                                 }
-                                <span class="inline-block @(Tabletop.IsGameMaster ? "" : "ml-0.5")">@Entity.Name</span>
-                            </div>
-                            @if (Tabletop.IsGameMaster){
-                                <button class="remove" @onclick="@(e => Hub.RemoveEntityFromCombatOrder(Entity.UID))">
-                                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
-                                </button>
-                            }
-                        </li>
-                    }
-                </ul>
+                            </li>
+                        }
+                    </ul>
+                }else if (Tabletop.IsGameMaster){
+                    <p class="px-0.5 py-1 font-xs font-grey-700 w-full block text-center">Press the Sync button to load the combat order.</p>
+                }else{
+                    <p class="px-0.5 py-1 font-xs font-grey-700 w-full block text-center">Waiting for your GM to load the combat order.</p>
+                }
+                
                 @* <button class="add">Add Creature</button> *@
             </div>
         }

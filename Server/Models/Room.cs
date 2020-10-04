@@ -19,7 +19,7 @@ namespace FreeTabletop.Server.Models
 
         public List<NPC> NPCs = new List<NPC>();
 
-        List<Entity> CombatOrder = new List<Entity>();
+        public List<Entity> CombatOrder = new List<Entity>();
 
         public void AddPlayer(Player player)
         {
@@ -309,6 +309,69 @@ namespace FreeTabletop.Server.Models
                 }
             }
             return CombatOrder;
+        }
+
+        public List<Entity> UpdateCombatOrderActiveEntity(string uid)
+        {
+            for (int i = 0; i < CombatOrder.Count; i++)
+            {
+                if (CombatOrder[i].UID == uid)
+                {
+                    CombatOrder[i].IsTurn = true;
+                }
+                else
+                {
+                    CombatOrder[i].IsTurn = false;
+                }
+            }
+            return CombatOrder;
+        }
+
+        public PlayerEntity GetNextActivePlayer(string uid)
+        {
+            PlayerEntity Player = null;
+            int Index = 0;
+            string NextEntityUID = null;
+            for (int i = 0; i < CombatOrder.Count; i++)
+            {
+                if (CombatOrder[i].UID == uid)
+                {
+                    Index = i;
+                }
+            }
+            Index++;
+            if (Index >= CombatOrder.Count)
+            {
+                Index = 0;
+            }
+            NextEntityUID = CombatOrder[Index].UID;
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (Players[i].UID == NextEntityUID)
+                {
+                    Player = Players[i];
+                    break;
+                }
+            }
+            return Player;
+        }
+
+        public string GetNextActiveEntityName(string uid)
+        {
+            int Index = 0;
+            for (int i = 0; i < CombatOrder.Count; i++)
+            {
+                if (CombatOrder[i].UID == uid)
+                {
+                    Index = i;
+                }
+            }
+            Index++;
+            if (Index >= CombatOrder.Count)
+            {
+                Index = 0;
+            }
+            return CombatOrder[Index].Name;
         }
     }
 }

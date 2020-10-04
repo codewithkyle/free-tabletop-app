@@ -373,9 +373,9 @@ namespace FreeTabletop.Client.Pages
             Hub.SyncCombatOrder();
         }
 
-        public void UpdateCombatOrder(List<Entity> combarOrder)
+        public void UpdateCombatOrder(List<Entity> combatOrder)
         {
-            Tabletop.CombatOrder = combarOrder;
+            Tabletop.CombatOrder = combatOrder;
             StateHasChanged();
         }
 

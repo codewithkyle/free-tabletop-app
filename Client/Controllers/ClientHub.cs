@@ -65,6 +65,9 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<string>("Notification:PlayerDisconnected", DisconnectedNotification);
                 Networker.hubConnection.On<string>("Notification:PlayerReconnected", ReconnectedNotification);
                 Networker.hubConnection.On<string>("Notification:PlayerKicked", KickNotification);
+                Networker.hubConnection.On("Notification:TakeTurn", TakeTurnNotification);
+                Networker.hubConnection.On("Notification:OnDeck", OnDeckNotification);
+                Networker.hubConnection.On<string>("Notification:EntityOnDeck", EntityOnDeckNotification);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -103,6 +106,9 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Notification:PlayerDisconnected");
             Networker.hubConnection.Remove("Notification:PlayerReconnected");
             Networker.hubConnection.Remove("Notification:PlayerKicked");
+            Networker.hubConnection.Remove("Notification:TakeTurn");
+            Networker.hubConnection.Remove("Notification:OnDeck");
+            Networker.hubConnection.Remove("Notification:EntityOnDeck");
         }
 
         private async Task UpdateUID(string uid)
@@ -187,6 +193,23 @@ namespace FreeTabletop.Client.Controllers
         private void KickNotification(string name)
         {
             JSRuntime.InvokeVoidAsync("PlayerKicked", name);
+        }
+        private void TakeTurnNotification()
+        {
+            JSRuntime.InvokeVoidAsync("TakeTurn");
+        }
+        private void OnDeckNotification()
+        {
+            JSRuntime.InvokeVoidAsync("OnDeck");
+        }
+        private void EntityOnDeckNotification(string name)
+        {
+            JSRuntime.InvokeVoidAsync("EntityOnDeck", name);
+        }
+
+        public async Task PingEntity(string uid)
+        {
+            await Networker.hubConnection.SendAsync("Room:PingEntity", uid);
         }
     }
 }

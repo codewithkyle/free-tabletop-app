@@ -11,7 +11,7 @@ namespace FreeTabletop.Shared.Models
 
         public int[] Position { get; set; } = { 0, 0 };
 
-        public bool IsTurn = false;
+        public bool IsTurn { get; set; } = false;
 
         public void UpdatePosition(int[] newPosition)
         {

@@ -206,6 +206,39 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:PingEntity")]
+        public async Task PingEntity(string uid)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    Player PlayerToPing = GlobalData.GetPlayer(uid);
+                    if (PlayerToPing != null)
+                    {
+                        if (player.RoomCode == PlayerToPing.RoomCode)
+                        {
+                            await Clients.Client(PlayerToPing.UID).SendAsync("Notification:TakeTurn");
+                        }
+                    }
+                    List<Entity> CombatOrder = room.UpdateCombatOrderActiveEntity(uid);
+                    await SendCombatOrder(room, CombatOrder);
+                    PlayerEntity NextPlayer = room.GetNextActivePlayer(uid);
+                    if (NextPlayer != null)
+                    {
+                        await Clients.Client(NextPlayer.UID).SendAsync("Notification:OnDeck");
+                    }
+                    else
+                    {
+                        string name = room.GetNextActiveEntityName(uid);
+                        await SendEntityOnDeckNotification(room, name);
+                    }
+                }
+            }
+        }
+
         [HubMethodName("Player:SyncTabletopInfo")]
         public async Task SyncTabletopInfo()
         {
@@ -331,6 +364,7 @@ namespace FreeTabletop.Server.Controllers
                     await RenderPlayerEntities(room);
                     await RenderCreatureEntities(room);
                     await RenderNPCEntities(room);
+                    await SendCombatOrder(room, room.CombatOrder);
                 }
             }
         }
@@ -383,6 +417,11 @@ namespace FreeTabletop.Server.Controllers
         private async Task SendCombatOrder(Room room, List<Entity> combatOrder)
         {
             await Clients.Group(room.RoomCode).SendAsync("Sync:CombatOrder", combatOrder);
+        }
+
+        private async Task SendEntityOnDeckNotification(Room room, string name)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Notification:EntityOnDeck", name);
         }
     }
 }

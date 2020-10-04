@@ -526,7 +526,7 @@
             box-shadow: var(--shadow-sm), 0 0 0 1px rgba(51, 51, 51, 0.025);
             position: absolute;
             top: calc(100% + 0.5rem);
-            width: 225px;
+            width: 300px;
             overflow: hidden;
 
             .sync {
@@ -535,11 +535,11 @@
                 display: inline-flex;
                 justify-content: center;
                 align-items: center;
-                color: var(--grey-700);
+                color: var(--grey-100);
 
                 &:hover,
                 &:focus {
-                    color: var(--grey-800);
+                    color: var(--white);
 
                     &::before {
                         opacity: 0.05;
@@ -548,11 +548,10 @@
                 }
 
                 &:active {
-                    color: var(--primary-700);
+                    color: var(--white);
 
                     &::before {
                         opacity: 0.1;
-                        background-color: var(--primary-700);
                         transform: scale(1.15);
                     }
                 }
@@ -565,7 +564,7 @@
                     left: 0;
                     width: 100%;
                     height: 100%;
-                    background-color: var(--grey-900);
+                    background-color: var(--white);
                     opacity: 0;
                     border-radius: 50%;
                     transform: scale(0);
@@ -589,8 +588,6 @@
                     margin: 0.5rem 0.5rem 0;
                     height: 36px;
                     width: calc(100% - 1rem);
-                    font-size: var(--font-sm);
-                    text-transform: capitalize;
                     color: var(--grey-700);
                     border: 1px solid var(--grey-200);
                     border-radius: 0.25rem;
@@ -605,13 +602,64 @@
                         }
                     }
 
+                    span {
+                        text-transform: capitalize;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
+                    .ping {
+                        width: 36px;
+                        height: 36px;
+                        display: inline-flex;
+                        justify-content: center;
+                        align-items: center;
+                        color: var(--grey-600);
+                        border-left: 1px solid var(--grey-200);
+
+                        &:hover,
+                        &:focus {
+                            color: var(--grey-700);
+
+                            &::before {
+                                opacity: 0.025;
+                            }
+                        }
+
+                        &:active {
+                            color: var(--primary-700);
+
+                            &::before {
+                                opacity: 0.1;
+                                background-color: var(--primary-500);
+                            }
+                        }
+
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background-color: var(--grey-900);
+                            opacity: 0;
+                            transition: all 150ms var(--ease-in-out);
+                        }
+
+                        svg {
+                            width: 16px;
+                            height: 16px;
+                        }
+                    }
+
                     .remove {
                         width: 36px;
                         height: 36px;
                         display: inline-flex;
                         justify-content: center;
                         align-items: center;
-                        margin-left: 0.5rem;
                         color: var(--grey-600);
                         border-left: 1px solid var(--grey-200);
 
@@ -641,7 +689,7 @@
                             height: 100%;
                             background-color: var(--danger-500);
                             opacity: 0;
-                            transition: all 150ms var(--ease--in-out);
+                            transition: all 150ms var(--ease-in-out);
                         }
 
                         svg {
@@ -687,12 +735,56 @@
                             height: 100%;
                             background-color: var(--grey-900);
                             opacity: 0;
-                            transition: all 150ms var(--ease--in-out);
+                            transition: all 150ms var(--ease-in-out);
                         }
 
                         svg {
                             width: 16px;
                             height: 16px;
+                        }
+                    }
+
+                    .flex {
+                        display: inline-flex;
+                        align-items: center;
+                    }
+
+                    .gm-status {
+                        display: inline-block;
+                        width: 8px;
+                        height: 8px;
+                        border-radius: 50%;
+                        background-color: var(--grey-300);
+                        transition: all 150ms var(--ease-in-out);
+
+                        &.active {
+                            background-color: var(--primary-400);
+                            box-shadow: 0 0 0 3px var(--primary-100);
+                        }
+                    }
+
+                    .status {
+                        width: 36px;
+                        height: 36px;
+                        display: inline-flex;
+                        justify-content: center;
+                        align-items: center;
+
+                        &.active {
+                            &::before {
+                                background-color: var(--primary-400);
+                                box-shadow: 0 0 0 3px var(--primary-100);
+                            }
+                        }
+
+                        &::before {
+                            content: "";
+                            display: inline-block;
+                            width: 8px;
+                            height: 8px;
+                            border-radius: 50%;
+                            background-color: var(--grey-300);
+                            transition: all 150ms var(--ease-in-out);
                         }
                     }
                 }
@@ -739,7 +831,7 @@
                     background-color: var(--grey-900);
                     opacity: 0;
                     border-radius: 0.25rem;
-                    transition: all 150ms var(--ease--in-out);
+                    transition: all 150ms var(--ease-in-out);
                 }
             }
         }

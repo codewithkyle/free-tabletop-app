@@ -134,8 +134,39 @@ function PlayerReconnected(name: string) {
 function PlayerKicked(name: string) {
     toast({
         title: `${name} Disconnected`,
-        message: `The GM kicked ${name} from the room.`,
+        message: `${name} was kicked from the room.`,
         duration: 5,
         classes: "-red",
+    });
+}
+function TakeTurn() {
+    toast({
+        title: `You're Up`,
+        message: `It's your turn for combat, use it wisely.`,
+        duration: 5,
+    });
+}
+function OnDeck() {
+    toast({
+        title: `On Deck`,
+        message: `You're up next for combat. Start planning your turn.`,
+        duration: 5,
+    });
+}
+function toUpper(str: string) {
+    return str
+        .toLowerCase()
+        .split(" ")
+        .map(function (word) {
+            return word[0].toUpperCase() + word.substr(1);
+        })
+        .join(" ");
+}
+function EntityOnDeck(name: string) {
+    const fixedName = toUpper(name);
+    toast({
+        title: `${fixedName} Is On Deck`,
+        message: `${fixedName} is up next for combat.`,
+        duration: 5,
     });
 }
