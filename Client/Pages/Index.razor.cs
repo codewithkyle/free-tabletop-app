@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -23,13 +24,19 @@ namespace FreeTabletop.Client.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            bool IsNewConnection = false;
             if (!Networker.IsConnected)
             {
+                IsNewConnection = true;
                 await Networker.Connect(NavigationManager.ToAbsoluteUri("/gamehub"));
             }
 
             if (Networker.IsConnected)
             {
+                if (!IsNewConnection)
+                {
+                    MessageReset();
+                }
                 Networker.hubConnection.On<string, string>("Load:GM", GoToRoom);
                 Networker.hubConnection.On<string, string>("Load:Player", GoToRoom);
 
@@ -57,6 +64,15 @@ namespace FreeTabletop.Client.Pages
             }
 
             FocusElement("#roomCode");
+        }
+
+        private void MessageReset()
+        {
+            Networker.hubConnection.Remove("Load:GM");
+            Networker.hubConnection.Remove("Load:Player");
+            Networker.hubConnection.Remove("Get:PlayerName");
+            Networker.hubConnection.Remove("Error:RoomNotFound");
+            Networker.hubConnection.Remove("Error:RoomIsLocked");
         }
 
         private async Task FocusElement(string selector)

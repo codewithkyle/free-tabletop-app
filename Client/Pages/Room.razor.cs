@@ -83,6 +83,7 @@ namespace FreeTabletop.Client.Pages
             {
                 JSRuntime.InvokeVoidAsync("SyncMonsterData");
             }
+            Console.WriteLine(Tabletop.IsGameMaster);
             StateHasChanged();
         }
 

@@ -40,6 +40,10 @@ namespace FreeTabletop.Client.Controllers
 
             if (Networker.IsConnected)
             {
+                if (!newConnection)
+                {
+                    MessageReset();
+                }
                 Networker.hubConnection.On("Error:RoomNotFound", Redirect);
                 Networker.hubConnection.On("Error:PlayerNotFound", Redirect);
 
@@ -79,6 +83,26 @@ namespace FreeTabletop.Client.Controllers
 
             await Networker.hubConnection.SendAsync("Player:SyncTabletopInfo");
             await Networker.hubConnection.SendAsync("Player:GetStatus");
+        }
+
+        private void MessageReset()
+        {
+            Networker.hubConnection.Remove("Error:RoomNotFound");
+            Networker.hubConnection.Remove("Error:PlayerNotFound");
+            Networker.hubConnection.Remove("Sync:TabletopInfo");
+            Networker.hubConnection.Remove("Sync:CombatOrder");
+            Networker.hubConnection.Remove("Set:PlayerUID");
+            Networker.hubConnection.Remove("Set:PlayerStatus");
+            Networker.hubConnection.Remove("Player:Kick");
+            Networker.hubConnection.Remove("Tabletop:LoadImage");
+            Networker.hubConnection.Remove("Tabletop:Clear");
+            Networker.hubConnection.Remove("Tabletop:RenderPlayerEntities");
+            Networker.hubConnection.Remove("Tabletop:RenderCreatureEntities");
+            Networker.hubConnection.Remove("Tabletop:RenderNPCEntities");
+            Networker.hubConnection.Remove("Notification:PlayerConnected");
+            Networker.hubConnection.Remove("Notification:PlayerDisconnected");
+            Networker.hubConnection.Remove("Notification:PlayerReconnected");
+            Networker.hubConnection.Remove("Notification:PlayerKicked");
         }
 
         private async Task UpdateUID(string uid)
@@ -149,6 +173,7 @@ namespace FreeTabletop.Client.Controllers
 
         private void ConnectedNotification(string name)
         {
+            Console.WriteLine("I recieved the player connected message");
             JSRuntime.InvokeVoidAsync("PlayerConnected", name);
         }
         private void DisconnectedNotification(string name)

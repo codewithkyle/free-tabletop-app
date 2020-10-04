@@ -329,6 +329,8 @@ namespace FreeTabletop.Server.Controllers
                 if (room.GridType != "3")
                 {
                     await RenderPlayerEntities(room);
+                    await RenderCreatureEntities(room);
+                    await RenderNPCEntities(room);
                 }
             }
         }
