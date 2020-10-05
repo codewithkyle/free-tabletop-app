@@ -87,11 +87,8 @@ function LookupCreature(query: string) {
         dbWorker.onmessage = (e: MessageEvent) => {
             const data = e.data;
             if (data.messageUid === lastDBWorkerUid) {
-                const creature = {
-                    BaseName: toUpper(data.creature.name),
-                    BaseHP: data.creature.hp,
-                    BaseAC: data.creature.ac,
-                };
+                const creature = { ...data.creature };
+                creature.BaseName = toUpper(creature.BaseName);
                 resolve(JSON.stringify(creature));
             } else {
                 resolve(JSON.stringify([]));

@@ -2,6 +2,14 @@ type Creature = {
     name: string;
     ac: number;
     hp: number;
+    str: number;
+    int: number;
+    wis: number;
+    cha: number;
+    dex: number;
+    con: number;
+    actions: string;
+    abilities: string;
 };
 
 async function GetMonstersFromAPI() {
@@ -27,10 +35,32 @@ function GetMonsterDataFromAPI(creatures: Array<{ name: string; url: string }>):
             fetch(`https://www.dnd5eapi.co/${creatures[i].url.replace(/^(\/)/, "")}`)
                 .then((request) => request.json())
                 .then((response) => {
+                    const actions = [];
+                    const abilities = [];
+                    for (let i = 0; i < response.actions.length; i++) {
+                        actions.push({
+                            Name: response.actions[i].name,
+                            Description: response.actions[i].desc,
+                        });
+                    }
+                    for (let i = 0; i < response.special_abilities.length; i++) {
+                        abilities.push({
+                            Name: response.special_abilities[i].name,
+                            Description: response.special_abilities[i].desc,
+                        });
+                    }
                     const creature: Creature = {
                         name: response.name.toLowerCase(),
                         ac: response.armor_class,
                         hp: response.hit_points,
+                        str: response.strength,
+                        int: response.intelligence,
+                        wis: response.wisdom,
+                        cha: response.charisma,
+                        dex: response.dexterity,
+                        con: response.constitution,
+                        actions: JSON.stringify(actions),
+                        abilities: JSON.stringify(abilities),
                     };
                     creatureData.push(creature);
                     resolved++;
@@ -118,6 +148,14 @@ idbRequest.onupgradeneeded = (event) => {
     objectStore.createIndex("name", "name", { unique: true });
     objectStore.createIndex("hp", "hp", { unique: false });
     objectStore.createIndex("ac", "ac", { unique: false });
+    objectStore.createIndex("str", "str", { unique: false });
+    objectStore.createIndex("int", "int", { unique: false });
+    objectStore.createIndex("wis", "wis", { unique: false });
+    objectStore.createIndex("cha", "cha", { unique: false });
+    objectStore.createIndex("dex", "dex", { unique: false });
+    objectStore.createIndex("con", "con", { unique: false });
+    objectStore.createIndex("actions", "actions", { unique: false });
+    objectStore.createIndex("abilities", "abilities", { unique: false });
 
     objectStore.transaction.oncomplete = SyncMonstersWithAPI;
 };
@@ -129,7 +167,22 @@ self.onmessage = (e: MessageEvent) => {
     const data = e.data;
     switch (data.type) {
         case "lookup":
-            LookupCreatureInDB(data.query).then((creature) => {
+            LookupCreatureInDB(data.query).then((creatureData: Creature) => {
+                const creature = {
+                    BaseHP: creatureData.hp,
+                    BaseAC: creatureData.ac,
+                    BaseName: creatureData.name,
+                    HP: creatureData.hp,
+                    AC: creatureData.ac,
+                    Strength: creatureData.str,
+                    Dexterity: creatureData.dex,
+                    Intelligence: creatureData.int,
+                    Constitution: creatureData.con,
+                    Wisdom: creatureData.wis,
+                    Charisma: creatureData.cha,
+                    ActionsString: creatureData.actions,
+                    AbilitiesString: creatureData.abilities,
+                };
                 // @ts-ignore
                 self.postMessage({
                     creature: creature,
@@ -143,6 +196,14 @@ self.onmessage = (e: MessageEvent) => {
                 name: creature.BaseName.trim().toLowerCase(),
                 ac: creature.BaseAC,
                 hp: creature.BaseHP,
+                str: null,
+                int: null,
+                wis: null,
+                cha: null,
+                dex: null,
+                con: null,
+                actions: null,
+                abilities: null,
             };
             PutCreaturesInLocalDB([newCreature]);
             break;

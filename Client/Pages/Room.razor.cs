@@ -85,7 +85,6 @@ namespace FreeTabletop.Client.Pages
             {
                 JSRuntime.InvokeVoidAsync("SyncMonsterData");
             }
-            Console.WriteLine(Tabletop.IsGameMaster);
             StateHasChanged();
         }
 
@@ -274,6 +273,8 @@ namespace FreeTabletop.Client.Pages
             string CreatureJSON = await JSRuntime.InvokeAsync<string>("LookupCreature", CreatureName);
             Creature Creature = JsonConvert.DeserializeObject<Creature>(CreatureJSON);
             Creature.Position = RightClickGridPosition;
+            Creature.Abilities = JsonConvert.DeserializeObject<List<Ability>>(Creature.AbilitiesString);
+            Creature.Actions = JsonConvert.DeserializeObject<List<Ability>>(Creature.ActionsString);
             Hub.SpawnCreature(Creature);
             CloseAllModals();
         }
