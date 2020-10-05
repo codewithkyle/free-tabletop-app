@@ -286,7 +286,7 @@
                         <div class="lookup-list">
                             @for (int i = 0; i < Creatures.Count; i++){
                                 int index = i;
-                                <button @onclick="@(e => SpawnCreature(index))">@Creatures[i].BaseName</button>
+                                <button @onclick="@(e => SpawnCreature(index))">@Creatures[i]</button>
                             }
                         </div>
                     }

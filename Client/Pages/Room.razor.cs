@@ -6,6 +6,7 @@ using Microsoft.JSInterop;
 using FreeTabletop.Shared.Models;
 using FreeTabletop.Client.Controllers;
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 
 namespace FreeTabletop.Client.Pages
 {
@@ -35,7 +36,8 @@ namespace FreeTabletop.Client.Pages
         public bool CustomCreatureMenuOpen = false;
         public bool NPCMenuOpen = false;
 
-        public List<Creature> Creatures = new List<Creature>();
+        public List<string> Creatures = new List<string>();
+        public string[] AllCreatures { get; set; }
 
         public Creature CustomCreature = new Creature();
         public NPC NewNPC = new NPC();
@@ -116,7 +118,7 @@ namespace FreeTabletop.Client.Pages
             ImageUploadOpen = false;
             EntitySpawnMenuOpen = false;
             MonsterLookupMenuOpen = false;
-            Creatures = new List<Creature>();
+            Creatures = new List<string>();
             CustomCreatureMenuOpen = false;
             CustomCreature = new Creature();
             NPCMenuOpen = false;
@@ -234,31 +236,43 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void OpenMonsterLookupMenu()
+        public async Task OpenMonsterLookupMenu()
         {
             CloseAllModals();
+            string AllCreaturesJSON = await JSRuntime.InvokeAsync<string>("GetCreatures");
+            AllCreatures = JsonConvert.DeserializeObject<string[]>(AllCreaturesJSON);
             MonsterLookupMenuOpen = true;
             StateHasChanged();
         }
 
-        public async Task LookupMonster(ChangeEventArgs e)
+        public void LookupMonster(ChangeEventArgs e)
         {
-            string Value = e.Value.ToString().ToLower();
+            string Value = e.Value.ToString().ToLower().Trim();
             if (Value != "")
             {
-                string CreatureJSON = await JSRuntime.InvokeAsync<string>("LookupCreature", Value);
-                Creatures = JsonConvert.DeserializeObject<List<Creature>>(CreatureJSON);
+                Regex expression = new Regex(Value);
+                List<string> Results = new List<string>();
+                for (int i = 0; i < AllCreatures.Length; i++)
+                {
+                    if (expression.IsMatch(AllCreatures[i]))
+                    {
+                        Results.Add(AllCreatures[i]);
+                    }
+                }
+                Creatures = Results;
             }
             else
             {
-                Creatures = new List<Creature>();
+                Creatures = new List<string>();
             }
             StateHasChanged();
         }
 
-        public void SpawnCreature(int index)
+        public async Task SpawnCreature(int index)
         {
-            Creature Creature = Creatures[index];
+            string CreatureName = Creatures[index];
+            string CreatureJSON = await JSRuntime.InvokeAsync<string>("LookupCreature", CreatureName);
+            Creature Creature = JsonConvert.DeserializeObject<Creature>(CreatureJSON);
             Creature.Position = RightClickGridPosition;
             Hub.SpawnCreature(Creature);
             CloseAllModals();

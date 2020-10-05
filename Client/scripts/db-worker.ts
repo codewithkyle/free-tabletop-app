@@ -77,20 +77,28 @@ async function SyncMonstersWithAPI() {
 
 function LookupCreatureInDB(query: string) {
     return new Promise((resolve) => {
+        let creature = {};
+        const creatureStore = idb.transaction("creatures", "readonly").objectStore("creatures");
+        const request = creatureStore.get(query);
+        request.onsuccess = () => {
+            creature = request.result;
+            resolve(creature);
+        };
+        request.onerror = () => {
+            resolve(creature);
+        };
+    });
+}
+
+function GetAllCreatures() {
+    return new Promise((resolve) => {
         const creatures = [];
-        const creatureStore = idb.transaction("creatures", "readwrite").objectStore("creatures");
+        const creatureStore = idb.transaction("creatures", "readonly").objectStore("creatures");
         const request = creatureStore.getAll();
         request.onsuccess = () => {
             const results = request.result;
             for (let i = 0; i < results.length; i++) {
-                const QueryTest = new RegExp(query);
-                if (QueryTest.test(results[i].name)) {
-                    creatures.push({
-                        BaseName: results[i].name,
-                        BaseAC: results[i].ac,
-                        BaseHP: results[i].hp,
-                    });
-                }
+                creatures.push(results[i].name);
             }
             resolve(creatures);
         };
@@ -121,11 +129,10 @@ self.onmessage = (e: MessageEvent) => {
     const data = e.data;
     switch (data.type) {
         case "lookup":
-            LookupCreatureInDB(data.query).then((creatures) => {
+            LookupCreatureInDB(data.query).then((creature) => {
                 // @ts-ignore
                 self.postMessage({
-                    type: "lookup",
-                    creatures: creatures,
+                    creature: creature,
                     messageUid: data.messageUid,
                 });
             });
@@ -138,6 +145,15 @@ self.onmessage = (e: MessageEvent) => {
                 hp: creature.BaseHP,
             };
             PutCreaturesInLocalDB([newCreature]);
+            break;
+        case "get":
+            GetAllCreatures().then((creatures) => {
+                // @ts-ignore
+                self.postMessage({
+                    creatures: creatures,
+                    messageUid: data.messageUid,
+                });
+            });
             break;
         default:
             console.warn(`Uncaught DB Worker message type: ${data.type}`);

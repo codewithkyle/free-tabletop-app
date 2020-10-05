@@ -69,6 +69,7 @@ function uid(): string {
         .join("-");
 }
 
+// DB Worker
 let dbWorker: Worker = null;
 let lastDBWorkerUid = null;
 function SyncMonsterData() {
@@ -85,8 +86,13 @@ function LookupCreature(query: string) {
         lastDBWorkerUid = uid();
         dbWorker.onmessage = (e: MessageEvent) => {
             const data = e.data;
-            if (data.messageUid === lastDBWorkerUid && data.type === "lookup") {
-                resolve(JSON.stringify(data.creatures));
+            if (data.messageUid === lastDBWorkerUid) {
+                const creature = {
+                    BaseName: toUpper(data.creature.name),
+                    BaseHP: data.creature.hp,
+                    BaseAC: data.creature.ac,
+                };
+                resolve(JSON.stringify(creature));
             } else {
                 resolve(JSON.stringify([]));
             }
@@ -107,6 +113,28 @@ function AddCustomCreature(creature: string) {
         creature: creature,
     });
 }
+function GetCreatures() {
+    return new Promise((resolve) => {
+        if (!dbWorker) {
+            resolve([]);
+        }
+        lastDBWorkerUid = uid();
+        dbWorker.onmessage = (e: MessageEvent) => {
+            const data = e.data;
+            if (data.messageUid === lastDBWorkerUid) {
+                resolve(JSON.stringify(data.creatures));
+            } else {
+                resolve(JSON.stringify([]));
+            }
+        };
+        dbWorker.postMessage({
+            type: "get",
+            messageUid: lastDBWorkerUid,
+        });
+    });
+}
+
+// Notifications
 function PlayerConnected(name: string) {
     toast({
         title: `${name} Joined`,
