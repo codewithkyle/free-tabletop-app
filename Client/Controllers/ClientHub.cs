@@ -210,19 +210,14 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:PingEntity", uid);
         }
 
-        public async Task UpdateCreatureAliveStatus(Creature creature)
+        public async Task UpdateCreatureAC(Creature creature, int ac)
         {
-            await Networker.hubConnection.SendAsync("Room:UpdateCreatureAliveStatus", creature.UID, creature.IsAlive);
+            await Networker.hubConnection.SendAsync("Room:UpdateCreatureAC", creature.UID, ac);
         }
 
-        public async Task UpdateCreatureAC(Creature creature)
+        public async Task UpdateCreatureHP(Creature creature, int hp)
         {
-            await Networker.hubConnection.SendAsync("Room:UpdateCreatureAC", creature.UID, creature.AC);
-        }
-
-        public async Task UpdateCreatureHP(Creature creature)
-        {
-            await Networker.hubConnection.SendAsync("Room:UpdateCreatureHP", creature.UID, creature.HP);
+            await Networker.hubConnection.SendAsync("Room:UpdateCreatureHP", creature.UID, hp);
         }
     }
 }

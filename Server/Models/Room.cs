@@ -221,6 +221,7 @@ namespace FreeTabletop.Server.Models
             creature.UID = guid.ToString();
             creature.AC = creature.BaseAC;
             creature.HP = creature.BaseHP;
+            creature.IsAlive = true;
             Creatures.Add(creature);
         }
 
@@ -372,6 +373,56 @@ namespace FreeTabletop.Server.Models
                 Index = 0;
             }
             return CombatOrder[Index].Name;
+        }
+
+        public void UpdateCreatureAliveStatus(string uid, bool isAlive, int hp)
+        {
+            for (int i = 0; i < Creatures.Count; i++)
+            {
+                if (Creatures[i].UID == uid)
+                {
+                    Creatures[i].IsAlive = isAlive;
+                    Creatures[i].HP = hp;
+                    break;
+                }
+            }
+        }
+
+        public void UpdateCreatureAC(string uid, int ac)
+        {
+            for (int i = 0; i < Creatures.Count; i++)
+            {
+                if (Creatures[i].UID == uid)
+                {
+                    Creatures[i].AC = ac;
+                    break;
+                }
+            }
+        }
+
+        public bool UpdateCreatureHP(string uid, int hp)
+        {
+            bool NeedsRerender = false;
+            for (int i = 0; i < Creatures.Count; i++)
+            {
+                if (Creatures[i].UID == uid)
+                {
+                    Creatures[i].HP = hp;
+                    if (Creatures[i].HP <= 0 && Creatures[i].IsAlive)
+                    {
+                        Creatures[i].IsAlive = false;
+                        Creatures[i].HP = 0;
+                        NeedsRerender = true;
+                    }
+                    else if (Creatures[i].HP > 0 && !Creatures[i].IsAlive)
+                    {
+                        Creatures[i].IsAlive = true;
+                        NeedsRerender = true;
+                    }
+                    break;
+                }
+            }
+            return NeedsRerender;
         }
     }
 }

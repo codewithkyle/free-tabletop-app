@@ -273,7 +273,7 @@ namespace FreeTabletop.Client.Pages
             string CreatureJSON = await JSRuntime.InvokeAsync<string>("LookupCreature", CreatureName);
             Creature Creature = JsonConvert.DeserializeObject<Creature>(CreatureJSON);
             Creature.Main(RightClickGridPosition);
-            Hub.SpawnCreature(Creature);
+            await Hub.SpawnCreature(Creature);
             CloseAllModals();
         }
 
@@ -291,47 +291,47 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void SpawnCustomCreature()
+        public async Task SpawnCustomCreature()
         {
             if (CustomCreature.BaseName == null || CustomCreature.BaseName.Trim() == "")
             {
-                JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-name");
+                await JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-name");
             }
             else if (CustomCreature.BaseAC == 0)
             {
-                JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-ac");
+                await JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-ac");
             }
             else if (CustomCreature.BaseHP == 0)
             {
-                JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-hp");
+                await JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-hp");
             }
             else
             {
                 CustomCreature.Position = RightClickGridPosition;
-                Hub.SpawnCreature(CustomCreature);
-                JSRuntime.InvokeVoidAsync("AddCustomCreature", JsonConvert.SerializeObject(CustomCreature));
+                await Hub.SpawnCreature(CustomCreature);
+                await JSRuntime.InvokeVoidAsync("AddCustomCreature", JsonConvert.SerializeObject(CustomCreature));
                 CloseAllModals();
             }
         }
 
-        public void SpawnNPC()
+        public async Task SpawnNPC()
         {
             if (NewNPC.BaseName == null || NewNPC.BaseName.Trim() == "")
             {
-                JSRuntime.InvokeVoidAsync("FocusElement", "#npc-name");
+                await JSRuntime.InvokeVoidAsync("FocusElement", "#npc-name");
             }
             else if (NewNPC.BaseAC == 0)
             {
-                JSRuntime.InvokeVoidAsync("FocusElement", "#npc-ac");
+                await JSRuntime.InvokeVoidAsync("FocusElement", "#npc-ac");
             }
             else if (NewNPC.BaseHP == 0)
             {
-                JSRuntime.InvokeVoidAsync("FocusElement", "#npc-hp");
+                await JSRuntime.InvokeVoidAsync("FocusElement", "#npc-hp");
             }
             else
             {
                 NewNPC.Position = RightClickGridPosition;
-                Hub.SpawnNPC(NewNPC);
+                await Hub.SpawnNPC(NewNPC);
                 CloseAllModals();
             }
         }
@@ -381,9 +381,9 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void SyncCombatOrder()
+        public async Task SyncCombatOrder()
         {
-            Hub.SyncCombatOrder();
+            await Hub.SyncCombatOrder();
         }
 
         public void UpdateCombatOrder(List<Entity> combatOrder)
@@ -392,30 +392,22 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void UpdateEntityCombatOrderPosition(int newPosition)
+        public async Task UpdateEntityCombatOrderPosition(int newPosition)
         {
-            Hub.UpdateEntityCombatOrderPosition(MovingEntityUID, newPosition);
+            await Hub.UpdateEntityCombatOrderPosition(MovingEntityUID, newPosition);
         }
 
-        public void UpdateCreatureHP(Creature creature, ChangeEventArgs e)
+        public async Task UpdateCreatureHP(Creature creature, ChangeEventArgs e)
         {
-            creature.HP = Int16.Parse(e.Value.ToString());
-            if (creature.HP == 0)
-            {
-                creature.IsAlive = false;
-                Hub.UpdateCreatureAliveStatus(creature);
-            }
-            else if (!creature.IsAlive)
-            {
-                creature.IsAlive = true;
-                Hub.UpdateCreatureAliveStatus(creature);
-            }
-            Hub.UpdateCreatureHP(creature);
+            int HP = Int16.Parse(e.Value.ToString());
+            creature.HP = HP;
+            await Hub.UpdateCreatureHP(creature, HP);
         }
-        public void UpdateCreatureAC(Creature creature, ChangeEventArgs e)
+        public async Task UpdateCreatureAC(Creature creature, ChangeEventArgs e)
         {
-            creature.AC = Int16.Parse(e.Value.ToString());
-            Hub.UpdateCreatureAC(creature);
+            int AC = Int16.Parse(e.Value.ToString());
+            creature.AC = AC;
+            await Hub.UpdateCreatureAC(creature, AC);
         }
     }
 }

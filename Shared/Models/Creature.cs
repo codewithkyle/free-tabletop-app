@@ -17,11 +17,11 @@ namespace FreeTabletop.Shared.Models
         public int Wisdom { get; set; }
         public int Charisma { get; set; }
         public List<Ability> Actions { get; set; }
-
         public List<Ability> Abilities { get; set; }
-        public bool IsAlive = true;
+        public bool IsAlive { get; set; }
         public string ActionsString { get; set; }
         public string AbilitiesString { get; set; }
+        public int View = 1;
 
         public void Main(int[] pos)
         {
