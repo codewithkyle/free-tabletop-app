@@ -206,8 +206,8 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
-        [HubMethodName("Room:UpdateCreatureAC")]
-        public void UpdateCreatureAC(string uid, int ac)
+        [HubMethodName("Room:UpdateEntityAC")]
+        public void UpdateEntityAC(string uid, int ac)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -215,13 +215,13 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    room.UpdateCreatureAC(uid, ac);
+                    room.UpdateEntityAC(uid, ac);
                 }
             }
         }
 
-        [HubMethodName("Room:UpdateCreatureHP")]
-        public async Task UpdateCreatureHP(string uid, int hp)
+        [HubMethodName("Room:UpdateEntityHP")]
+        public async Task UpdateEntityHP(string uid, int hp)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -229,10 +229,11 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    bool NeedsRerender = room.UpdateCreatureHP(uid, hp);
+                    bool NeedsRerender = room.UpdateEntityHP(uid, hp);
                     if (NeedsRerender)
                     {
                         await RenderCreatureEntities(room);
+                        await RenderNPCEntities(room);
                     }
                 }
             }

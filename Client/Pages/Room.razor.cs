@@ -397,17 +397,17 @@ namespace FreeTabletop.Client.Pages
             await Hub.UpdateEntityCombatOrderPosition(MovingEntityUID, newPosition);
         }
 
-        public async Task UpdateCreatureHP(Creature creature, ChangeEventArgs e)
+        public async Task UpdateEntityHP(Entity entity, ChangeEventArgs e)
         {
             int HP = Int16.Parse(e.Value.ToString());
-            creature.HP = HP;
-            await Hub.UpdateCreatureHP(creature, HP);
+            entity.HP = HP;
+            await Hub.UpdateEntityHP(entity, HP);
         }
-        public async Task UpdateCreatureAC(Creature creature, ChangeEventArgs e)
+        public async Task UpdateEntityAC(Entity entity, ChangeEventArgs e)
         {
             int AC = Int16.Parse(e.Value.ToString());
-            creature.AC = AC;
-            await Hub.UpdateCreatureAC(creature, AC);
+            entity.AC = AC;
+            await Hub.UpdateEntityAC(entity, AC);
         }
     }
 }

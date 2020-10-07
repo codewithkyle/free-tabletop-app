@@ -9,8 +9,6 @@ namespace FreeTabletop.Shared.Models
         public int BaseHP { get; set; }
         public int BaseAC { get; set; }
         public string BaseName { get; set; }
-        public int HP { get; set; }
-        public int AC { get; set; }
         public int Strength { get; set; }
         public int Dexterity { get; set; }
         public int Intelligence { get; set; }
@@ -19,7 +17,6 @@ namespace FreeTabletop.Shared.Models
         public int Charisma { get; set; }
         public List<Ability> Actions { get; set; }
         public List<Ability> Abilities { get; set; }
-        public bool IsAlive { get; set; }
         public string ActionsString { get; set; }
         public string AbilitiesString { get; set; }
         public int View = 1;

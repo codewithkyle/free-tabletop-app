@@ -233,6 +233,7 @@ namespace FreeTabletop.Server.Models
             npc.UID = guid.ToString();
             npc.AC = npc.BaseAC;
             npc.HP = npc.BaseHP;
+            npc.IsAlive = true;
             NPCs.Add(npc);
         }
 
@@ -388,21 +389,36 @@ namespace FreeTabletop.Server.Models
             }
         }
 
-        public void UpdateCreatureAC(string uid, int ac)
+        public void UpdateEntityAC(string uid, int ac)
         {
+            bool FoundEntity = false;
             for (int i = 0; i < Creatures.Count; i++)
             {
                 if (Creatures[i].UID == uid)
                 {
                     Creatures[i].AC = ac;
+                    FoundEntity = true;
                     break;
+                }
+            }
+            if (!FoundEntity)
+            {
+                for (int i = 0; i < NPCs.Count; i++)
+                {
+                    if (NPCs[i].UID == uid)
+                    {
+                        NPCs[i].AC = ac;
+                        FoundEntity = true;
+                        break;
+                    }
                 }
             }
         }
 
-        public bool UpdateCreatureHP(string uid, int hp)
+        public bool UpdateEntityHP(string uid, int hp)
         {
             bool NeedsRerender = false;
+            bool FoundEntity = false;
             for (int i = 0; i < Creatures.Count; i++)
             {
                 if (Creatures[i].UID == uid)
@@ -419,7 +435,31 @@ namespace FreeTabletop.Server.Models
                         Creatures[i].IsAlive = true;
                         NeedsRerender = true;
                     }
+                    FoundEntity = true;
                     break;
+                }
+            }
+            if (!FoundEntity)
+            {
+                for (int i = 0; i < NPCs.Count; i++)
+                {
+                    if (NPCs[i].UID == uid)
+                    {
+                        NPCs[i].HP = hp;
+                        if (NPCs[i].HP <= 0 && NPCs[i].IsAlive)
+                        {
+                            NPCs[i].IsAlive = false;
+                            NPCs[i].HP = 0;
+                            NeedsRerender = true;
+                        }
+                        else if (NPCs[i].HP > 0 && !NPCs[i].IsAlive)
+                        {
+                            NPCs[i].IsAlive = true;
+                            NeedsRerender = true;
+                        }
+                        FoundEntity = true;
+                        break;
+                    }
                 }
             }
             return NeedsRerender;
