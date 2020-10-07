@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "5mQW2PRyUOCx/7fkc0NCNKJ9Ii3MhB4L/8wrxx/393O8aRuRwjZ/mz+iBOFs4b3eA4fcswX8kNOSEyPYIS45WA==",
+  "dgSpecHash": "YreuMQd8j5UoYgUzVbxCARgGxjMVH8m6D2ynh28ou4cCsaQxTVJ0460pM5fpL8vKHk6oHGfggzLCAO7VUahHhQ==",
   "success": true,
   "projectFilePath": "/home/andrewk9/dev/free-tabletop/Shared/FreeTabletop.Shared.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "/home/andrewk9/.nuget/packages/newtonsoft.json/12.0.3/newtonsoft.json.12.0.3.nupkg.sha512"
+  ],
   "logs": []
 }

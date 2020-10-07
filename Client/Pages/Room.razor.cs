@@ -272,9 +272,7 @@ namespace FreeTabletop.Client.Pages
             string CreatureName = Creatures[index];
             string CreatureJSON = await JSRuntime.InvokeAsync<string>("LookupCreature", CreatureName);
             Creature Creature = JsonConvert.DeserializeObject<Creature>(CreatureJSON);
-            Creature.Position = RightClickGridPosition;
-            Creature.Abilities = JsonConvert.DeserializeObject<List<Ability>>(Creature.AbilitiesString);
-            Creature.Actions = JsonConvert.DeserializeObject<List<Ability>>(Creature.ActionsString);
+            Creature.Main(RightClickGridPosition);
             Hub.SpawnCreature(Creature);
             CloseAllModals();
         }
@@ -397,6 +395,27 @@ namespace FreeTabletop.Client.Pages
         public void UpdateEntityCombatOrderPosition(int newPosition)
         {
             Hub.UpdateEntityCombatOrderPosition(MovingEntityUID, newPosition);
+        }
+
+        public void UpdateCreatureHP(Creature creature, ChangeEventArgs e)
+        {
+            creature.HP = Int16.Parse(e.Value.ToString());
+            if (creature.HP == 0)
+            {
+                creature.IsAlive = false;
+                Hub.UpdateCreatureAliveStatus(creature);
+            }
+            else if (!creature.IsAlive)
+            {
+                creature.IsAlive = true;
+                Hub.UpdateCreatureAliveStatus(creature);
+            }
+            Hub.UpdateCreatureHP(creature);
+        }
+        public void UpdateCreatureAC(Creature creature, ChangeEventArgs e)
+        {
+            creature.AC = Int16.Parse(e.Value.ToString());
+            Hub.UpdateCreatureAC(creature);
         }
     }
 }

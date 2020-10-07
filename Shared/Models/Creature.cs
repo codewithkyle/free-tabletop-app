@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace FreeTabletop.Shared.Models
 {
@@ -21,5 +22,12 @@ namespace FreeTabletop.Shared.Models
         public bool IsAlive = true;
         public string ActionsString { get; set; }
         public string AbilitiesString { get; set; }
+
+        public void Main(int[] pos)
+        {
+            Position = pos;
+            Abilities = JsonConvert.DeserializeObject<List<Ability>>(AbilitiesString);
+            Actions = JsonConvert.DeserializeObject<List<Ability>>(ActionsString);
+        }
     }
 }

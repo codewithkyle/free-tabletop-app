@@ -20,8 +20,6 @@ namespace FreeTabletop.Client.Controllers
 
         private Tabletop Tabletop { get; set; }
 
-        bool newConnection = false;
-
         string RoomCode { get; set; }
 
         public async Task Connect(string roomCode, RoomBase room, NavigationManager navManager, IJSRuntime jsRuntime, Tabletop tabletop)
@@ -210,6 +208,21 @@ namespace FreeTabletop.Client.Controllers
         public async Task PingEntity(string uid)
         {
             await Networker.hubConnection.SendAsync("Room:PingEntity", uid);
+        }
+
+        public async Task UpdateCreatureAliveStatus(Creature creature)
+        {
+            await Networker.hubConnection.SendAsync("Room:UpdateCreatureAliveStatus", creature.UID, creature.IsAlive);
+        }
+
+        public async Task UpdateCreatureAC(Creature creature)
+        {
+            await Networker.hubConnection.SendAsync("Room:UpdateCreatureAC", creature.UID, creature.AC);
+        }
+
+        public async Task UpdateCreatureHP(Creature creature)
+        {
+            await Networker.hubConnection.SendAsync("Room:UpdateCreatureHP", creature.UID, creature.HP);
         }
     }
 }
