@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System;
 
 namespace FreeTabletop.Shared.Models
 {
@@ -28,6 +29,29 @@ namespace FreeTabletop.Shared.Models
             Position = pos;
             Abilities = JsonConvert.DeserializeObject<List<Ability>>(AbilitiesString);
             Actions = JsonConvert.DeserializeObject<List<Ability>>(ActionsString);
+        }
+
+        public void SetView(int view)
+        {
+            View = view;
+        }
+
+        public string CalculateModifier(int value)
+        {
+            string Modifier = "0";
+            decimal Decimal = (value - 10) / 2;
+            decimal newValue = Math.Floor(Decimal);
+
+            if (newValue > 0)
+            {
+                Modifier = "+" + newValue.ToString();
+            }
+            else if (newValue < 0)
+            {
+                Modifier = newValue.ToString();
+            }
+
+            return Modifier;
         }
     }
 }
