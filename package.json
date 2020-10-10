@@ -7,7 +7,8 @@
         "build:js": "tsc",
         "build:client": "dotnet build ./Client",
         "start:client": "dotnet run --project ./Client",
-        "start:server": "dotnet run --project ./Server"
+        "start:server": "dotnet run --project ./Server",
+        "production": "npm run reset && npm-run-all build:* && dotnet build ./Server"
     },
     "dependencies": {
         "@codewithkyle/notifyjs": "^2.0.3",
