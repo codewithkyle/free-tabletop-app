@@ -23,7 +23,7 @@
                                         ondragover="event.preventDefault();" 
                                         ondragenter="event.target.className = 'highlight';"
                                         ondragleave="event.target.className = '';"
-                                        @oncontextmenu="@(e => HandleRightClick(e.ClientX, e.ClientY, LocalX, LocalY))"
+                                        @oncontextmenu="@(e => HandleRightClick(e.ClientX, e.ClientY, LocalX, LocalY, e.CtrlKey))"
                                         @oncontextmenu:preventDefault="true"
                                     >
                                     </td>

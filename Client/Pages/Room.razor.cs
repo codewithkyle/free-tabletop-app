@@ -336,9 +336,9 @@ namespace FreeTabletop.Client.Pages
             }
         }
 
-        public void HandleRightClick(double x, double y, int gridX, int gridY)
+        public void HandleRightClick(double x, double y, int gridX, int gridY, bool ctrlKeyPressed)
         {
-            if (Tabletop.IsGameMaster)
+            if (Tabletop.IsGameMaster && !ctrlKeyPressed)
             {
                 CloseAllModals();
                 RightClickPosition[0] = x;
@@ -348,7 +348,7 @@ namespace FreeTabletop.Client.Pages
                 RightClickGridPosition[1] = gridY;
                 StateHasChanged();
             }
-            else
+            else if (Tabletop.IsGameMaster && ctrlKeyPressed || !Tabletop.IsGameMaster)
             {
                 Hub.Ping(x, y);
             }

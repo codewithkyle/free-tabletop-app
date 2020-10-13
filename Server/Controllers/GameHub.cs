@@ -243,7 +243,7 @@ namespace FreeTabletop.Server.Controllers
         public async Task Ping(double x, double y)
         {
             Player player = GetPlayer(Context.ConnectionId);
-            if (player != null && !player.IsGameMaster)
+            if (player != null)
             {
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
