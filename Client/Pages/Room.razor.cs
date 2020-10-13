@@ -74,6 +74,10 @@ namespace FreeTabletop.Client.Pages
                     DidAutofocus = true;
                 }
             }
+            if (firstRender)
+            {
+                JSRuntime.InvokeAsync<string>("StartCombatDrag");
+            }
             return base.OnAfterRenderAsync(firstRender);
         }
 
@@ -126,8 +130,6 @@ namespace FreeTabletop.Client.Pages
             RightClickPosition[0] = -1;
             RightClickPosition[1] = -1;
             DiceMenuOpen = false;
-            CombatMenuOpen = false;
-            StateHasChanged();
         }
 
         public async Task CopyRoomCodeToClipboard()
@@ -383,8 +385,8 @@ namespace FreeTabletop.Client.Pages
 
         public void ToggleCombatMenu()
         {
-            CloseAllModals();
             CombatMenuOpen = true;
+            JSRuntime.InvokeVoidAsync("ResetCombatModal");
             StateHasChanged();
         }
 
