@@ -338,13 +338,20 @@ namespace FreeTabletop.Client.Pages
 
         public void HandleRightClick(double x, double y, int gridX, int gridY)
         {
-            CloseAllModals();
-            RightClickPosition[0] = x;
-            RightClickPosition[1] = y;
-            EntitySpawnMenuOpen = true;
-            RightClickGridPosition[0] = gridX;
-            RightClickGridPosition[1] = gridY;
-            StateHasChanged();
+            if (Tabletop.IsGameMaster)
+            {
+                CloseAllModals();
+                RightClickPosition[0] = x;
+                RightClickPosition[1] = y;
+                EntitySpawnMenuOpen = true;
+                RightClickGridPosition[0] = gridX;
+                RightClickGridPosition[1] = gridY;
+                StateHasChanged();
+            }
+            else
+            {
+                Hub.Ping(x, y);
+            }
         }
 
         public void ToggleDiceMenu()
@@ -408,6 +415,11 @@ namespace FreeTabletop.Client.Pages
             int AC = Int16.Parse(e.Value.ToString());
             entity.AC = AC;
             await Hub.UpdateEntityAC(entity, AC);
+        }
+
+        public void RenderPing(double x, double y)
+        {
+            JSRuntime.InvokeVoidAsync("Ping", x, y);
         }
     }
 }

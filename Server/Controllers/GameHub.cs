@@ -239,6 +239,20 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:Ping")]
+        public async Task Ping(double x, double y)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && !player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    await SendPing(room, x, y);
+                }
+            }
+        }
+
         [HubMethodName("Room:PingEntity")]
         public async Task PingEntity(string uid)
         {
@@ -455,6 +469,11 @@ namespace FreeTabletop.Server.Controllers
         private async Task SendEntityOnDeckNotification(Room room, string name)
         {
             await Clients.Group(room.RoomCode).SendAsync("Notification:EntityOnDeck", name);
+        }
+
+        private async Task SendPing(Room room, double x, double y)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Notification:Ping", x, y);
         }
     }
 }
