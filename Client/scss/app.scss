@@ -48,3 +48,14 @@ app {
     --blue-800: #2c5282;
     --blue-900: #2a4365;
 }
+.spinner {
+    animation: spinner 600ms linear infinite;
+}
+@keyframes spinner {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
