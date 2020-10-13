@@ -59,3 +59,38 @@ app {
         transform: rotate(360deg);
     }
 }
+
+footer {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    color: var(--grey-700);
+    font-size: var(--font-sm);
+    display: inline-flex;
+    align-items: center;
+
+    svg {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        color: var(--grey-600);
+    }
+
+    a {
+        color: var(--primary-700);
+        transition: all 150ms var(--ease-in-out);
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+            text-decoration: underline;
+            color: var(--primary-600);
+        }
+
+        &:active {
+            color: var(--primary-800);
+        }
+    }
+}
