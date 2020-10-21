@@ -41,7 +41,7 @@
                     }
                     int x = Tabletop.Players[p].Position[0];
                     int y = Tabletop.Players[p].Position[1];
-                    <div class="pawn @PawnType" style="top: @(y * 32)px;left: @(x * 32)px;" >
+                    <div class="pawn @PawnType" style="top: @(y * 32)px;left: @(x * 32)px;" oncontextmenu="return false;">
                         <i @ondragstart="@(e => HandleDragStart(player.UID))" draggable="@((IsPlayer || Tabletop.IsGameMaster) ? "true" : "false")"></i>
                         <span class="nametag">@Tabletop.Players[p].Name</span>
                     </div>
@@ -50,7 +50,7 @@
                     Creature Creature = Tabletop.Creatures[i];
                     int x = Creature.Position[0];
                     int y = Creature.Position[1];
-                    <div class="pawn @(Creature.IsAlive ? "-foe" : "-dead")" style="top: @(y * 32)px;left: @(x * 32)px;" >
+                    <div class="pawn @(Creature.IsAlive ? "-foe" : "-dead")" style="top: @(y * 32)px;left: @(x * 32)px;" oncontextmenu="return false;">
                         <i 
                             @ondragstart="@(e => HandleDragStart(Creature.UID))" 
                             draggable="@((Tabletop.IsGameMaster) ? "true" : "false")"
@@ -145,7 +145,7 @@
                     NPC NPC = Tabletop.NPCs[i];
                     int x = NPC.Position[0];
                     int y = NPC.Position[1];
-                    <div class="pawn @(NPC.IsAlive ? "-npc" : "-dead")" style="top: @(y * 32)px;left: @(x * 32)px;" >
+                    <div class="pawn @(NPC.IsAlive ? "-npc" : "-dead")" style="top: @(y * 32)px;left: @(x * 32)px;" oncontextmenu="return false;">
                         <i 
                             @ondragstart="@(e => HandleDragStart(NPC.UID))" 
                             draggable="@((Tabletop.IsGameMaster) ? "true" : "false")"
