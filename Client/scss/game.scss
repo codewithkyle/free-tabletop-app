@@ -615,18 +615,19 @@
                 }
 
                 textarea{
-                    height: 36px;
-                    line-height: 36px;
+                    height: 0px;
+                    min-height: 36px;
+                    line-height: 1.618;
                     display: block;
                     width: 100%;
                     text-overflow: ellipsis;
                     overflow: hidden;
-                    padding: 0 0.5rem;
+                    padding: 0.25rem 0.5rem;
                     background-color: var(--grey-100);
                     border: 1px solid var(--grey-300);
                     border-radius: 0.25rem;
                     color: var(--grey-900);
-                    transition: all 150ms var(--ease-in-out);
+                    transition: all 150ms var(--ease-in-out), height 0ms 0ms linear;
                     resize: none;
 
                     &::placeholder {

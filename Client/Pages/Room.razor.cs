@@ -443,23 +443,30 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void SendMessage(string Key)
+        public async Task SendMessage(string Key)
         {
             if (Key == "Enter")
             {
-                Hub.SendMessage(MessageValue, ActiveChatPlayerUID);
-                MessageValue = "";
+                string Message = await JSRuntime.InvokeAsync<string>("GetChatMessage");
+                Hub.SendMessage(Message, ActiveChatPlayerUID);
                 JSRuntime.InvokeVoidAsync("ResetChatMessage");
+                StateHasChanged();
             }
             else
             {
-                MessageValue += Key;
+                JSRuntime.InvokeVoidAsync("AdjustChatMessageHeight");
             }
         }
 
         public void UpdatesMessages(List<Message> messages)
         {
-            Tabletop.UpdatesMessages(messages);
+            Tabletop.Messages = messages;
+            StateHasChanged();
+        }
+
+        public void UpdatePlayers(List<PlayerEntity> players)
+        {
+            Tabletop.Players = players;
             StateHasChanged();
         }
     }

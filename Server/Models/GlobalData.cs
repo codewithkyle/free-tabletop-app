@@ -3,6 +3,7 @@ using System;
 using FreeTabletop.Server.Models;
 using System.Collections.Generic;
 using FreeTabletop.Server.Controllers;
+using FreeTabletop.Shared.Models;
 
 public static class GlobalData
 {
@@ -131,6 +132,7 @@ public static class GlobalData
         player.Name = name;
         player.RoomCode = roomCode;
         player.Type = "friend";
+        player.Messages = new List<Message>();
         Players.Add(player);
         return player;
     }

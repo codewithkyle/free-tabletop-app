@@ -325,19 +325,26 @@ namespace FreeTabletop.Server.Controllers
         public async Task Message(string msg, string targetPlayerUID)
         {
             Player player = GetPlayer(Context.ConnectionId);
-            if (player.IsGameMaster){
-                Player recievingPlayer = GetPlayer(targetPlayerUID);
-                if (player != null && recievingPlayer != null)
+            Player recievingPlayer = GetPlayer(targetPlayerUID);
+            Room room = GetRoom(player.RoomCode);
+            if (room != null)
+            {
+                if (player.IsGameMaster)
                 {
-                    Message message = new Message();
-                    message.Author = player.Name;
-                    message.Msg = msg;
-                    recievingPlayer.Messages.Add(message);
-                    await Clients.Client(recievingPlayer.UID).SendAsync("Set:Messages", recievingPlayer.Messages);
-                    // TODO: send messages to GM
+                    List<Message> Messages = room.MessagePlayer(targetPlayerUID, msg, player.Name);
+                    await Clients.Client(recievingPlayer.UID).SendAsync("Set:Messages", Messages);
+
+                    List<PlayerEntity> players = room.BuildPlayerEntities();
+                    await Clients.Caller.SendAsync("Set:Players", players);
                 }
-            }else{
-                // TODO: send messages to GM from other player
+                else
+                {
+                    List<Message> Messages = room.MessagePlayer(player.UID, msg, player.Name);
+                    await Clients.Caller.SendAsync("Set:Messages", Messages);
+
+                    List<PlayerEntity> players = room.BuildPlayerEntities();
+                    await Clients.Client(recievingPlayer.UID).SendAsync("Set:Players", players);
+                }
             }
         }
 

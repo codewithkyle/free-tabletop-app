@@ -7,6 +7,8 @@ namespace FreeTabletop.Shared.Models
     {
         public bool IsConnected { get; set; } = true;
 
+        public List<Message> Messages {get;set;}
+
         public void UpdateUID(string newUID)
         {
             this.UID = newUID;

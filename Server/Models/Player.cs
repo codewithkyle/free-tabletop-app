@@ -10,8 +10,6 @@ namespace FreeTabletop.Server.Models
 
         public List<string> StaleUIDs = new List<string>();
 
-        public List<Message> Messages = new List<Message>();
-
         public void Reconnect(string newUID)
         {
             IsConnected = true;

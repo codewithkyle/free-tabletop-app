@@ -51,6 +51,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<string>("Set:PlayerUID", UpdateUID);
                 Networker.hubConnection.On<bool, string>("Set:PlayerStatus", Room.UpdatePlayerStatus);
                 Networker.hubConnection.On<List<Message>>("Set:Messages", Room.UpdatesMessages);
+                Networker.hubConnection.On<List<PlayerEntity>>("Set:Players", Room.UpdatePlayers);
 
                 Networker.hubConnection.On("Player:Kick", HandleKick);
 
@@ -111,6 +112,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Notification:EntityOnDeck");
             Networker.hubConnection.Remove("Notification:Ping");
             Networker.hubConnection.Remove("Set:Messages");
+            Networker.hubConnection.Remove("Set:Players");
         }
 
         private async Task UpdateUID(string uid)

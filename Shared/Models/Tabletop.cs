@@ -46,17 +46,5 @@ namespace FreeTabletop.Shared.Models
             // TOOD: check monsters
             return IsValidPosition;
         }
-
-        public void UpdatesMessages(List<Message> messages)
-        {
-            if (IsGameMaster)
-            {
-
-            }
-            else
-            {
-                Messages = messages;
-            }
-        }
     }
 }

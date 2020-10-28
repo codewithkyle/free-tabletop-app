@@ -96,6 +96,7 @@ namespace FreeTabletop.Server.Models
                     player.Type = "friend";
                     player.IsConnected = Players[i].IsConnected;
                     player.Position = Players[i].Position;
+                    player.Messages = Players[i].Messages;
                     players.Add(player);
                 }
             }
@@ -477,6 +478,24 @@ namespace FreeTabletop.Server.Models
                 }
             }
             return GameMaster;
+        }
+
+        public List<Message> MessagePlayer(string targetPlayerUID, string msg, string author)
+        {
+            List<Message> messages = new List<Message>();
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (Players[i].UID == targetPlayerUID)
+                {
+                    Message message = new Message();
+                    message.Author = author;
+                    message.Msg = msg;
+                    Players[i].Messages.Add(message);
+                    messages = Players[i].Messages;
+                    break;
+                }
+            }
+            return messages;
         }
     }
 }

@@ -297,4 +297,13 @@ function ResetChatMessage(){
     const textarea:HTMLTextAreaElement = document.body.querySelector(".js-messenger-input");
     textarea.value = "";
     textarea.innerHTML = "";
+    textarea.style.height = `0px`;
+}
+function GetChatMessage(){
+    const textarea:HTMLTextAreaElement = document.body.querySelector(".js-messenger-input");
+    return textarea.value;
+}
+function AdjustChatMessageHeight(){
+    const textarea:HTMLTextAreaElement = document.body.querySelector(".js-messenger-input");
+    textarea.style.height = `${textarea.scrollHeight}px`;
 }
