@@ -321,6 +321,26 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Player:Message")]
+        public async Task Message(string msg, string targetPlayerUID)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player.IsGameMaster){
+                Player recievingPlayer = GetPlayer(targetPlayerUID);
+                if (player != null && recievingPlayer != null)
+                {
+                    Message message = new Message();
+                    message.Author = player.Name;
+                    message.Msg = msg;
+                    recievingPlayer.Messages.Add(message);
+                    await Clients.Client(recievingPlayer.UID).SendAsync("Set:Messages", recievingPlayer.Messages);
+                    // TODO: send messages to GM
+                }
+            }else{
+                // TODO: send messages to GM from other player
+            }
+        }
+
         [HubMethodName("Create:Room")]
         public async Task CreateRoom()
         {
@@ -402,7 +422,8 @@ namespace FreeTabletop.Server.Controllers
         private async Task SendTabletopInfoToRoom(Room room)
         {
             List<PlayerEntity> players = room.BuildPlayerEntities();
-            await Clients.Group(room.RoomCode).SendAsync("Sync:TabletopInfo", room.IsLocked, players);
+            Player gameMaster = room.GetGameMaster();
+            await Clients.Group(room.RoomCode).SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.UID);
             if (room.ImageURL != null && room.ImageURL.Length != 0)
             {
                 await LoadTabletopImage(room);

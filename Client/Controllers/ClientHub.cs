@@ -45,11 +45,12 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On("Error:RoomNotFound", Redirect);
                 Networker.hubConnection.On("Error:PlayerNotFound", Redirect);
 
-                Networker.hubConnection.On<bool, List<PlayerEntity>>("Sync:TabletopInfo", Room.SyncTabletop);
+                Networker.hubConnection.On<bool, List<PlayerEntity>, string>("Sync:TabletopInfo", Room.SyncTabletop);
                 Networker.hubConnection.On<List<Entity>>("Sync:CombatOrder", Room.UpdateCombatOrder);
 
                 Networker.hubConnection.On<string>("Set:PlayerUID", UpdateUID);
                 Networker.hubConnection.On<bool, string>("Set:PlayerStatus", Room.UpdatePlayerStatus);
+                Networker.hubConnection.On<List<Message>>("Set:Messages", Room.UpdatesMessages);
 
                 Networker.hubConnection.On("Player:Kick", HandleKick);
 
@@ -109,6 +110,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Notification:OnDeck");
             Networker.hubConnection.Remove("Notification:EntityOnDeck");
             Networker.hubConnection.Remove("Notification:Ping");
+            Networker.hubConnection.Remove("Set:Messages");
         }
 
         private async Task UpdateUID(string uid)
@@ -225,6 +227,11 @@ namespace FreeTabletop.Client.Controllers
         public async Task Ping(double x, double y)
         {
             await Networker.hubConnection.SendAsync("Room:Ping", x, y);
+        }
+
+        public async Task SendMessage(string msg, string activePlayerUID)
+        {
+            await Networker.hubConnection.SendAsync("Player:Message", msg, activePlayerUID);
         }
     }
 }

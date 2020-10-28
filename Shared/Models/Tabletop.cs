@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace FreeTabletop.Shared.Models
@@ -10,15 +11,13 @@ namespace FreeTabletop.Shared.Models
         public List<PlayerEntity> Players = new List<PlayerEntity>();
         public List<Creature> Creatures = new List<Creature>();
         public List<NPC> NPCs = new List<NPC>();
-
         public List<Entity> CombatOrder = new List<Entity>();
-
         public string UID { get; set; }
-
         public string GridType = "1";
-
         public string Image = null;
         public int[] Grid { get; set; }
+        public List<Message> Messages = new List<Message>();
+        public string GameMasterUID {get;set;}
 
         public void MoveLocalEntitiy(string uid, int[] newPosition)
         {
@@ -46,6 +45,18 @@ namespace FreeTabletop.Shared.Models
             // TODO: check NPCs
             // TOOD: check monsters
             return IsValidPosition;
+        }
+
+        public void UpdatesMessages(List<Message> messages)
+        {
+            if (IsGameMaster)
+            {
+
+            }
+            else
+            {
+                Messages = messages;
+            }
         }
     }
 }

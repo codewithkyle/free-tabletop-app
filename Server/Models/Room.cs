@@ -464,5 +464,19 @@ namespace FreeTabletop.Server.Models
             }
             return NeedsRerender;
         }
+
+        public Player GetGameMaster()
+        {
+            Player GameMaster = null;
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (Players[i].IsGameMaster)
+                {
+                    GameMaster = Players[i];
+                    break;
+                }
+            }
+            return GameMaster;
+        }
     }
 }

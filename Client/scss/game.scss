@@ -263,7 +263,7 @@
             padding: 0.5rem;
             position: absolute;
             top: calc(100% + 0.5rem);
-            left: 36px + 6px;
+            left: calc(36px + 0.25rem);
             width: 270px;
             display: flex;
             flex-flow: row wrap;
@@ -444,7 +444,7 @@
             padding: 0.5rem;
             position: absolute;
             top: calc(100% + 0.5rem);
-            left: calc(36px * 2 + 8px);
+            left: calc(36px * 3 + 0.25rem * 3);
             width: 225px;
             display: flex;
             flex-flow: row wrap;
@@ -515,6 +515,192 @@
                     svg {
                         width: 18px;
                         height: 18px;
+                    }
+                }
+            }
+        }
+
+        .chat-modal {
+            background-color: var(--white);
+            border-radius: 0.25rem;
+            box-shadow: var(--shadow-lg);
+            position: absolute;
+            width: 560px;
+            overflow: hidden;
+
+            .modal-close {
+                width: 24px;
+                height: 24px;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                color: var(--grey-100);
+
+                &:hover,
+                &:focus {
+                    color: var(--white);
+
+                    &::before {
+                        opacity: 0.05;
+                        transform: scale(1);
+                    }
+                }
+
+                &:active {
+                    color: var(--white);
+
+                    &::before {
+                        opacity: 0.1;
+                        transform: scale(1.15);
+                    }
+                }
+
+                &::before {
+                    content: "";
+                    display: inline-block;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: var(--white);
+                    opacity: 0;
+                    border-radius: 50%;
+                    transform: scale(0);
+                    transition: all 150ms var(--ease-bounce);
+                }
+
+                svg {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+
+            .container{
+                display: grid;
+                width: 100%;
+                grid-template-columns: 1fr 3fr;
+
+                &.-player{
+                    grid-template-columns: 1fr;
+                    padding: 0.5rem;
+                }
+
+                & > div{
+                    padding: 0.5rem;
+
+                    &:first-of-type{
+                        &::after{
+                            content: "";
+                            display: inline-block;
+                            width: 1px;
+                            background-color: var(--grey-200);
+                            height: calc(100% - 1rem);
+                            position: absolute;
+                            top: 0.5rem;
+                            right: 0;
+                        }
+                    }
+                }
+
+                ul{
+                    display: block;
+                    width: 100%;
+                    
+                    li{
+                        display: block;
+                        width: 100%;
+                        margin-bottom: 0.5rem;
+                    }
+                }
+
+                textarea{
+                    height: 36px;
+                    line-height: 36px;
+                    display: block;
+                    width: 100%;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    padding: 0 0.5rem;
+                    background-color: var(--grey-100);
+                    border: 1px solid var(--grey-300);
+                    border-radius: 0.25rem;
+                    color: var(--grey-900);
+                    transition: all 150ms var(--ease-in-out);
+                    resize: none;
+
+                    &::placeholder {
+                        color: var(--grey-700);
+                    }
+
+                    &:hover {
+                        border-color: var(--primary-400);
+                    }
+
+                    &:focus {
+                        border-color: var(--primary-400);
+                        box-shadow: 0 0 0 5px var(--primary-100);
+                        background-color: var(--white);
+                    }
+                }
+
+                .chat-toggle-button{
+                    display: flex;
+                    align-items: center;
+                    height: 36px;
+                    width: 100%;
+                    padding: 0 0.5rem;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    font-size: var(--font-sm);
+                    color: var(--grey-700);
+                    transition: all 150ms var(--ease-in-out);
+                    position: relative;
+                    border-radius: 0.25rem;
+                    border: 1px solid var(--grey-300);
+                    margin-bottom: 0.5rem;
+
+                    &:last-of-type{
+                        margin-bottom: 0;
+                    }
+
+                    &:hover,
+                    &:focus{
+                        color: var(--grey-800);
+                        border-color: var(--primary-400);
+
+                        &::before{
+                            opacity: 0.05;
+                        }
+                    }
+                    &:active{
+                        color: var(--primary-700);
+                        border-color: var(--primary-400);
+                        box-shadow: 0 0 0 4px var(--primary-100);
+
+                        &::before{
+                            opacity: 0.1;
+                        }
+                    }
+
+                    &.is-active{
+                        color: var(--primary-700);
+                        border-color: var(--primary-400);
+                    }
+
+                    &::before{
+                        content: "";
+                        display: inline-block;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: var(--primary-500);
+                        opacity: 0;
+                        border-radius: 0.25rem;
+                        transition: all 150ms var(--ease-in-out);
                     }
                 }
             }

@@ -35,6 +35,7 @@ namespace FreeTabletop.Client.Pages
         public bool MonsterLookupMenuOpen = false;
         public bool CustomCreatureMenuOpen = false;
         public bool NPCMenuOpen = false;
+        public bool ChatMenuOpen = false;
 
         public List<string> Creatures = new List<string>();
         public string[] AllCreatures { get; set; }
@@ -48,6 +49,8 @@ namespace FreeTabletop.Client.Pages
         public string ActiveDie = "d4";
         public int RollCount = 1;
         public bool CombatMenuOpen = false;
+        public string ActiveChatPlayerUID = null;
+        public string MessageValue = "";
 
         protected override async Task OnInitializedAsync()
         {
@@ -77,6 +80,7 @@ namespace FreeTabletop.Client.Pages
             if (firstRender)
             {
                 JSRuntime.InvokeAsync<string>("StartCombatDrag");
+                JSRuntime.InvokeAsync<string>("StartChatDrag");
             }
             return base.OnAfterRenderAsync(firstRender);
         }
@@ -92,11 +96,12 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void SyncTabletop(bool isLocked, List<PlayerEntity> players)
+        public void SyncTabletop(bool isLocked, List<PlayerEntity> players, string gmUID)
         {
             Tabletop.RoomCode = RoomCode.ToUpper();
             Tabletop.IsLocked = isLocked;
             Tabletop.Players = players;
+            Tabletop.GameMasterUID = gmUID;
             StateHasChanged();
         }
 
@@ -385,6 +390,7 @@ namespace FreeTabletop.Client.Pages
 
         public void ToggleCombatMenu()
         {
+            CloseAllModals();
             CombatMenuOpen = true;
             JSRuntime.InvokeVoidAsync("ResetCombatModal");
             StateHasChanged();
@@ -422,6 +428,39 @@ namespace FreeTabletop.Client.Pages
         public void RenderPing(double x, double y)
         {
             JSRuntime.InvokeVoidAsync("Ping", x, y);
+        }
+
+        public void OpenChatModal()
+        {
+            CloseAllModals();
+            ChatMenuOpen = true;
+            JSRuntime.InvokeVoidAsync("ResetChatModal");
+            MessageValue = "";
+            if (!Tabletop.IsGameMaster)
+            {
+                ActiveChatPlayerUID = Tabletop.GameMasterUID;
+            }
+            StateHasChanged();
+        }
+
+        public void SendMessage(string Key)
+        {
+            if (Key == "Enter")
+            {
+                Hub.SendMessage(MessageValue, ActiveChatPlayerUID);
+                MessageValue = "";
+                JSRuntime.InvokeVoidAsync("ResetChatMessage");
+            }
+            else
+            {
+                MessageValue += Key;
+            }
+        }
+
+        public void UpdatesMessages(List<Message> messages)
+        {
+            Tabletop.UpdatesMessages(messages);
+            StateHasChanged();
         }
     }
 }
