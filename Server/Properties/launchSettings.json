@@ -24,6 +24,17 @@
         "environmentVariables": {
           "ASPNETCORE_ENVIRONMENT": "Development"
         }
+      },
+      "Production": {
+        "commandName": "Production",
+        "launchBrowser": true,
+        "launchUrl": "https://freetabletop.app/",
+        "environmentVariables": {
+          "ASPNETCORE_ENVIRONMENT": "Production",
+          "ASPNETCORE_HTTPS_PORT": 443,
+          "ASPNETCORE_Kestrel__Certificates__Default__Path": "/etc/letsencrypt/live/freetabletop.app/"
+        },
+        "applicationUrl": "https://freetabletop.app/"
       }
     }
   }
