@@ -24,7 +24,7 @@
                                         ondragenter="event.target.className = 'highlight';"
                                         ondragleave="event.target.className = '';"
                                         @oncontextmenu="@(e => HandleRightClick(e.ClientX, e.ClientY, LocalX, LocalY, e.CtrlKey))"
-                                        @oncontextmenu:preventDefault="true"
+                                        @oncontextmenu:preventDefault="true" 
                                     >
                                     </td>
                                 }
@@ -271,6 +271,9 @@
         </button>
         <button @onclick="OpenChatModal" class="icon-button-toggle" aria-label="open messenger window" title="open messenger">
             <svg style="width: 24px;height: 24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="comments-alt" class="svg-inline--fa fa-comments-alt fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M512 160h-96V64c0-35.3-28.7-64-64-64H64C28.7 0 0 28.7 0 64v160c0 35.3 28.7 64 64 64h32v52c0 7.1 5.8 12 12 12 2.4 0 4.9-.7 7.1-2.4l76.9-43.5V384c0 35.3 28.7 64 64 64h96l108.9 61.6c2.2 1.6 4.7 2.4 7.1 2.4 6.2 0 12-4.9 12-12v-52h32c35.3 0 64-28.7 64-64V224c0-35.3-28.7-64-64-64zM64 256c-17.6 0-32-14.4-32-32V64c0-17.6 14.4-32 32-32h288c17.6 0 32 14.4 32 32v160c0 17.6-14.4 32-32 32H215.6l-7.3 4.2-80.3 45.4V256zm480 128c0 17.6-14.4 32-32 32h-64v49.6l-80.2-45.4-7.3-4.2H256c-17.6 0-32-14.4-32-32v-96h128c35.3 0 64-28.7 64-64v-32h96c17.6 0 32 14.4 32 32z"></path></svg>
+            @if (HasUnreadMessages){
+                <i class="badge"></i>
+            }
         </button>
         @if (DiceMenuOpen){
             <div class="dice-modal">
@@ -560,7 +563,7 @@
                 }else{
                     <div class="container -player">
                         <ul class="js-chat-messages">
-                            <li class="font-xs font-grey-700 text-center py-0.">Beginning of Game Master message history.</li>
+                            <li class="font-xs font-grey-700 text-center py-0.5">Beginning of Game Master message history.</li>
                             @if (Tabletop.Messages.Count > 0){
                                 @for (int k = 0; k < Tabletop.Messages.Count; k++){
                                     <li class="@(Tabletop.Messages[k].Author == "GM" ? "incoming" : "outgoing")">

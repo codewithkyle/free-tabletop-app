@@ -2,8 +2,8 @@
     background-color: var(--white);
     box-shadow: var(--shadow-2xl);
     display: inline-block;
-    max-height: calc(100vh - 4rem);
-    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 6rem);
+    max-width: calc(100vw - 4rem);
     overflow: auto;
     position: fixed;
     top: 50%;
@@ -11,9 +11,9 @@
     transform: translate(-50%, calc(-50% + 1rem));
 
     &.has-border {
-        border-color: rgba(0, 0, 0, 0.9);
+        border-color: rgba(0, 0, 0, 0.87);
         border-style: solid;
-        border-width: 0 0 1px 1px;
+        border-width: 1px;
     }
 
     img {

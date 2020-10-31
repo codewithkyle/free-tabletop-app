@@ -50,7 +50,8 @@ namespace FreeTabletop.Client.Pages
         public int RollCount = 1;
         public bool CombatMenuOpen = false;
         public string ActiveChatPlayerUID = null;
-        public string MessageValue = "";
+
+        public bool HasUnreadMessages = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -444,8 +445,8 @@ namespace FreeTabletop.Client.Pages
         {
             CloseAllModals();
             ChatMenuOpen = true;
+            HasUnreadMessages = false;
             JSRuntime.InvokeVoidAsync("ResetChatModal");
-            MessageValue = "";
             if (!Tabletop.IsGameMaster)
             {
                 ActiveChatPlayerUID = Tabletop.GameMasterUID;
@@ -475,6 +476,7 @@ namespace FreeTabletop.Client.Pages
                 if (!ChatMenuOpen)
                 {
                     JSRuntime.InvokeVoidAsync("PlaySound", "message.wav");
+                    HasUnreadMessages = true;
                 }
                 StateHasChanged();
             }
@@ -483,6 +485,7 @@ namespace FreeTabletop.Client.Pages
         public void UpdatePlayers(List<PlayerEntity> players)
         {
             bool ContainsNewMessages = false;
+            string NewActivePlayerUID = null;
             for (int i = 0; i < players.Count; i++)
             {
                 for (int k = 0; k < Tabletop.Players.Count; k++)
@@ -490,6 +493,9 @@ namespace FreeTabletop.Client.Pages
                     if (players[i].UID == Tabletop.Players[k].UID && players[i].Messages.Count > Tabletop.Players[k].Messages.Count)
                     {
                         ContainsNewMessages = true;
+                        if (!ChatMenuOpen){
+                            NewActivePlayerUID = players[i].UID;
+                        }
                         break;
                     }
                 }
@@ -500,6 +506,12 @@ namespace FreeTabletop.Client.Pages
             }
             Tabletop.Players = players;
             if (!ChatMenuOpen && ContainsNewMessages)
+            {
+                JSRuntime.InvokeVoidAsync("PlaySound", "message.wav");
+                HasUnreadMessages = true;
+                ActiveChatPlayerUID = NewActivePlayerUID;
+            }
+            else if (ChatMenuOpen && ContainsNewMessages && NewActivePlayerUID != ActiveChatPlayerUID)
             {
                 JSRuntime.InvokeVoidAsync("PlaySound", "message.wav");
             }
