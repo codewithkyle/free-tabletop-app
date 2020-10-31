@@ -307,3 +307,13 @@ function AdjustChatMessageHeight(){
     const textarea:HTMLTextAreaElement = document.body.querySelector(".js-messenger-input");
     textarea.style.height = `${textarea.scrollHeight}px`;
 }
+function ScrollChatMessages(){
+    const container:HTMLElement = document.body.querySelector(".js-chat-messages");
+    if (container){
+        container.scrollTo({
+            top: container.scrollHeight,
+            left: 0,
+            behavior: "auto",
+        });
+    }
+}

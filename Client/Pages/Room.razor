@@ -536,10 +536,11 @@
                                 @for (int i = 0; i < Tabletop.Players.Count; i++){
                                     PlayerEntity Player = Tabletop.Players[i];
                                     if (Player.UID == ActiveChatPlayerUID){
-                                        <ul>
+                                        <ul class="js-chat-messages">
+                                            <li class="font-xs font-grey-700 text-center">Beginning of message history with @Player.Name.</li>
                                             @if (Player.Messages.Count > 0){
                                                 @for (int k = 0; k < Player.Messages.Count; k++){
-                                                    <li>
+                                                    <li class="@(Player.Messages[k].Author == "GM" ? "outgoing" : "incoming")">
                                                         <span class="msg">@Player.Messages[k].Msg</span>
                                                         <span class="author">@Player.Messages[k].Author</span>
                                                     </li>
@@ -558,14 +559,16 @@
                     </div>
                 }else{
                     <div class="container -player">
-                        <ul>
+                        <ul class="js-chat-messages">
+                            <li class="font-xs font-grey-700 text-center">Beginning of Game Master message history.</li>
                             @if (Tabletop.Messages.Count > 0){
                                 @for (int k = 0; k < Tabletop.Messages.Count; k++){
-                                    <li>
+                                    <li class="@(Tabletop.Messages[k].Author == "GM" ? "incoming" : "outgoing")">
                                         <span class="msg">@Tabletop.Messages[k].Msg</span>
                                         <span class="author">@Tabletop.Messages[k].Author</span>
                                     </li>
                                 }
+                            }else{
                             }
                         </ul>
                         <textarea placeholder="Send the Game Master a message..." class="js-messenger-input" @onkeyup="@(e => SendMessage(e.Key))"></textarea>

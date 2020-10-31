@@ -77,6 +77,9 @@ namespace FreeTabletop.Client.Pages
                     DidAutofocus = true;
                 }
             }
+            if (ChatMenuOpen){
+                JSRuntime.InvokeVoidAsync("ScrollChatMessages");
+            }
             if (firstRender)
             {
                 JSRuntime.InvokeAsync<string>("StartCombatDrag");
@@ -448,13 +451,13 @@ namespace FreeTabletop.Client.Pages
             if (Key == "Enter")
             {
                 string Message = await JSRuntime.InvokeAsync<string>("GetChatMessage");
-                Hub.SendMessage(Message, ActiveChatPlayerUID);
-                JSRuntime.InvokeVoidAsync("ResetChatMessage");
+                await Hub.SendMessage(Message, ActiveChatPlayerUID);
+                await JSRuntime.InvokeVoidAsync("ResetChatMessage");
                 StateHasChanged();
             }
             else
             {
-                JSRuntime.InvokeVoidAsync("AdjustChatMessageHeight");
+                await JSRuntime.InvokeVoidAsync("AdjustChatMessageHeight");
             }
         }
 
