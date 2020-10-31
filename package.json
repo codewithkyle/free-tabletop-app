@@ -6,6 +6,7 @@
         "build:css": "cssmonster",
         "build:js": "tsc",
         "build:client": "dotnet build ./Client",
+        "start": "npm run start:server",
         "start:client": "dotnet run --project ./Client",
         "start:server": "dotnet run --project ./Server",
         "production": "npm run reset && npm-run-all build:* && dotnet build ./Server"
