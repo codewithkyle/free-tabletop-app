@@ -518,7 +518,7 @@
                 <p class="px-0.5 py-1 font-xs font-grey-700 w-full block text-center">Waiting for your GM to load the combat order.</p>
             }
         </div>
-        <div class="chat-modal" style="display: @(ChatMenuOpen ? "block" : "none");left:0;top:calc(36px + 0.5rem);">
+        <div class="chat-modal" style="display: @(ChatMenuOpen ? "block" : "none");left:0;top:calc(36px + 0.5rem);@(!Tabletop.IsGameMaster ? "width:420px;" : "")">
             <div style="cursor: move;" class="w-full bg-grey-800 p-0.5 js-chat-modal" flex="items-center row nowrap justify-between">
                 <span class="inline-block font-xs font-grey-100 font-medium">Messenger</span>
                 <button class="modal-close" @onclick="@(e => ChatMenuOpen = false)" title="close" aria-label="close messenger">
@@ -531,7 +531,12 @@
                         <div>
                             @for (int i = 0; i < Tabletop.Players.Count; i++){
                                 PlayerEntity Player = Tabletop.Players[i];
-                                <button title="@Player.Name" class="chat-toggle-button @(Player.UID == ActiveChatPlayerUID ? "is-active" : "")" @onclick="@(e => SetActivePlayerUID(Player.UID))">@Player.Name</button>
+                                <button title="@Player.Name" class="chat-toggle-button @(Player.UID == ActiveChatPlayerUID ? "is-active" : "")" @onclick="@(e => SetActivePlayerUID(Player.UID))">
+                                    @Player.Name
+                                    @if (Player.UnreadMessages){
+                                        <i class="badge"></i>
+                                    }
+                                </button>
                             }
                         </div>
                         <div>

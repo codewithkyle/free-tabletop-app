@@ -490,18 +490,22 @@ namespace FreeTabletop.Client.Pages
             {
                 for (int k = 0; k < Tabletop.Players.Count; k++)
                 {
-                    if (players[i].UID == Tabletop.Players[k].UID && players[i].Messages.Count > Tabletop.Players[k].Messages.Count)
+                    if (players[i].UID == Tabletop.Players[k].UID)
                     {
-                        ContainsNewMessages = true;
-                        if (!ChatMenuOpen){
-                            NewActivePlayerUID = players[i].UID;
+                        if (players[i].UID != ActiveChatPlayerUID || players[i].UID == ActiveChatPlayerUID && !ChatMenuOpen)
+                        {
+                            if (players[i].Messages.Count > Tabletop.Players[k].Messages.Count)
+                            {
+                                ContainsNewMessages = true;
+                                players[i].UnreadMessages = true;
+                            }
+                            else if (Tabletop.Players[k].UnreadMessages)
+                            {
+                                players[i].UnreadMessages = true;
+                            }
                         }
                         break;
                     }
-                }
-                if (ContainsNewMessages)
-                {
-                    break;
                 }
             }
             Tabletop.Players = players;
@@ -509,7 +513,6 @@ namespace FreeTabletop.Client.Pages
             {
                 JSRuntime.InvokeVoidAsync("PlaySound", "message.wav");
                 HasUnreadMessages = true;
-                ActiveChatPlayerUID = NewActivePlayerUID;
             }
             else if (ChatMenuOpen && ContainsNewMessages && NewActivePlayerUID != ActiveChatPlayerUID)
             {
@@ -521,6 +524,14 @@ namespace FreeTabletop.Client.Pages
         public void SetActivePlayerUID(string uid)
         {
             ActiveChatPlayerUID = uid;
+            for (int k = 0; k < Tabletop.Players.Count; k++)
+            {
+                if (Tabletop.Players[k].UID == ActiveChatPlayerUID)
+                {
+                    Tabletop.Players[k].UnreadMessages = false;
+                    break;
+                }
+            }
             StateHasChanged();
         }
     }
