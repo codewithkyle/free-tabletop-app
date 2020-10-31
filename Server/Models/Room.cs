@@ -497,5 +497,19 @@ namespace FreeTabletop.Server.Models
             }
             return messages;
         }
+
+        public List<Message> GetPlayerMessages(string UID)
+        {
+            List<Message> messages = new List<Message>();
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (Players[i].UID == UID)
+                {
+                    messages = Players[i].Messages;
+                    break;
+                }
+            }
+            return messages;
+        }
     }
 }

@@ -528,7 +528,7 @@
                         <div>
                             @for (int i = 0; i < Tabletop.Players.Count; i++){
                                 PlayerEntity Player = Tabletop.Players[i];
-                                <button title="@Player.Name" class="chat-toggle-button @(Player.UID == ActiveChatPlayerUID ? "is-active" : "")" @onclick="@(e => ActiveChatPlayerUID = Player.UID)">@Player.Name</button>
+                                <button title="@Player.Name" class="chat-toggle-button @(Player.UID == ActiveChatPlayerUID ? "is-active" : "")" @onclick="@(e => SetActivePlayerUID(Player.UID))">@Player.Name</button>
                             }
                         </div>
                         <div>
@@ -537,7 +537,7 @@
                                     PlayerEntity Player = Tabletop.Players[i];
                                     if (Player.UID == ActiveChatPlayerUID){
                                         <ul class="js-chat-messages">
-                                            <li class="font-xs font-grey-700 text-center">Beginning of message history with @Player.Name.</li>
+                                            <li class="font-xs font-grey-700 text-center py-0.5">Beginning of message history with @Player.Name.</li>
                                             @if (Player.Messages.Count > 0){
                                                 @for (int k = 0; k < Player.Messages.Count; k++){
                                                     <li class="@(Player.Messages[k].Author == "GM" ? "outgoing" : "incoming")">
@@ -560,7 +560,7 @@
                 }else{
                     <div class="container -player">
                         <ul class="js-chat-messages">
-                            <li class="font-xs font-grey-700 text-center">Beginning of Game Master message history.</li>
+                            <li class="font-xs font-grey-700 text-center py-0.">Beginning of Game Master message history.</li>
                             @if (Tabletop.Messages.Count > 0){
                                 @for (int k = 0; k < Tabletop.Messages.Count; k++){
                                     <li class="@(Tabletop.Messages[k].Author == "GM" ? "incoming" : "outgoing")">

@@ -472,5 +472,11 @@ namespace FreeTabletop.Client.Pages
             Tabletop.Players = players;
             StateHasChanged();
         }
+
+        public void SetActivePlayerUID(string uid)
+        {
+            ActiveChatPlayerUID = uid;
+            StateHasChanged();
+        }
     }
 }

@@ -85,8 +85,8 @@ namespace FreeTabletop.Client.Controllers
                 }
             }
 
-            await Networker.hubConnection.SendAsync("Player:SyncTabletopInfo");
             await Networker.hubConnection.SendAsync("Player:GetStatus");
+            await Networker.hubConnection.SendAsync("Player:SyncTabletopInfo");
         }
 
         private void MessageReset()

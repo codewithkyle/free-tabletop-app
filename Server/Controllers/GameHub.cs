@@ -296,6 +296,8 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     await SendTabletopInfoToRoom(room);
+                    List<Message> Messages = room.GetPlayerMessages(player.UID);
+                    await Clients.Caller.SendAsync("Set:Messages", Messages);
                 }
             }
         }
@@ -431,6 +433,7 @@ namespace FreeTabletop.Server.Controllers
             List<PlayerEntity> players = room.BuildPlayerEntities();
             Player gameMaster = room.GetGameMaster();
             await Clients.Group(room.RoomCode).SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.UID);
+            
             if (room.ImageURL != null && room.ImageURL.Length != 0)
             {
                 await LoadTabletopImage(room);
