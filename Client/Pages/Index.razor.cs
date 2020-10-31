@@ -22,6 +22,15 @@ namespace FreeTabletop.Client.Pages
         public string errorMessage = null;
         public string view = "initial";
 
+        protected override Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                JSRuntime.InvokeVoidAsync("PlaySound", "celebration.wav");
+            }
+            return base.OnAfterRenderAsync(firstRender);
+        }
+
         protected override async Task OnInitializedAsync()
         {
             bool IsNewConnection = false;

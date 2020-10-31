@@ -84,6 +84,7 @@ namespace FreeTabletop.Client.Pages
             {
                 JSRuntime.InvokeAsync<string>("StartCombatDrag");
                 JSRuntime.InvokeAsync<string>("StartChatDrag");
+                JSRuntime.InvokeVoidAsync("PlaySound", "success.wav");
             }
             return base.OnAfterRenderAsync(firstRender);
         }
@@ -189,6 +190,7 @@ namespace FreeTabletop.Client.Pages
             Tabletop.Image = imageURL;
             Tabletop.GridType = gridType;
             Tabletop.Grid = grid;
+            JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
             StateHasChanged();
         }
 
@@ -222,6 +224,7 @@ namespace FreeTabletop.Client.Pages
             int[] Position = { x, y };
             await JSRuntime.InvokeVoidAsync("ClearHighlightedCells");
             await Hub.MoveEntity(MovingEntityUID, Position);
+            await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
         }
 
         public void HandleDragStart(string uid)
@@ -284,6 +287,7 @@ namespace FreeTabletop.Client.Pages
             Creature Creature = JsonConvert.DeserializeObject<Creature>(CreatureJSON);
             Creature.Main(RightClickGridPosition);
             await Hub.SpawnCreature(Creature);
+            await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
             CloseAllModals();
         }
 
@@ -319,6 +323,7 @@ namespace FreeTabletop.Client.Pages
             {
                 CustomCreature.Position = RightClickGridPosition;
                 await Hub.SpawnCreature(CustomCreature);
+                await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
                 await JSRuntime.InvokeVoidAsync("AddCustomCreature", JsonConvert.SerializeObject(CustomCreature));
                 CloseAllModals();
             }
@@ -342,6 +347,7 @@ namespace FreeTabletop.Client.Pages
             {
                 NewNPC.Position = RightClickGridPosition;
                 await Hub.SpawnNPC(NewNPC);
+                await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
                 CloseAllModals();
             }
         }
@@ -412,6 +418,7 @@ namespace FreeTabletop.Client.Pages
 
         public async Task UpdateEntityCombatOrderPosition(int newPosition)
         {
+            await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
             await Hub.UpdateEntityCombatOrderPosition(MovingEntityUID, newPosition);
         }
 
@@ -463,13 +470,39 @@ namespace FreeTabletop.Client.Pages
 
         public void UpdatesMessages(List<Message> messages)
         {
-            Tabletop.Messages = messages;
-            StateHasChanged();
+            if (messages.Count > Tabletop.Messages.Count){
+                Tabletop.Messages = messages;
+                if (!ChatMenuOpen)
+                {
+                    JSRuntime.InvokeVoidAsync("PlaySound", "message.wav");
+                }
+                StateHasChanged();
+            }
         }
 
         public void UpdatePlayers(List<PlayerEntity> players)
         {
+            bool ContainsNewMessages = false;
+            for (int i = 0; i < players.Count; i++)
+            {
+                for (int k = 0; k < Tabletop.Players.Count; k++)
+                {
+                    if (players[i].UID == Tabletop.Players[k].UID && players[i].Messages.Count > Tabletop.Players[k].Messages.Count)
+                    {
+                        ContainsNewMessages = true;
+                        break;
+                    }
+                }
+                if (ContainsNewMessages)
+                {
+                    break;
+                }
+            }
             Tabletop.Players = players;
+            if (!ChatMenuOpen && ContainsNewMessages)
+            {
+                JSRuntime.InvokeVoidAsync("PlaySound", "message.wav");
+            }
             StateHasChanged();
         }
 

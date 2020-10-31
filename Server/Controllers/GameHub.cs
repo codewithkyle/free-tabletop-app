@@ -296,8 +296,11 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     await SendTabletopInfoToRoom(room);
-                    List<Message> Messages = room.GetPlayerMessages(player.UID);
-                    await Clients.Caller.SendAsync("Set:Messages", Messages);
+                    if (!player.IsGameMaster)
+                    {
+                        List<Message> Messages = room.GetPlayerMessages(player.UID);
+                        await Clients.Caller.SendAsync("Set:Messages", Messages);
+                    }
                 }
             }
         }

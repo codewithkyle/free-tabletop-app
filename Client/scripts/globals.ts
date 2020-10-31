@@ -139,6 +139,7 @@ function PlayerConnected(name: string) {
         duration: 5,
         classes: "-green",
     });
+    PlaySound("alert.wav");
 }
 function PlayerDisconnected(name: string) {
     toast({
@@ -170,6 +171,7 @@ function TakeTurn() {
         message: `It's your turn for combat, use it wisely.`,
         duration: 5,
     });
+    PlaySound("alert.wav");
 }
 function OnDeck() {
     toast({

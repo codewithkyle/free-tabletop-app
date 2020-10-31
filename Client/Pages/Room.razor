@@ -4,10 +4,10 @@
 
 <div class="game">
     @if (Tabletop.Image != null && Tabletop.Image.Length != 0){
-        <div class="tabletop">
+        <div class="tabletop @(Tabletop.GridType == "1" ? "has-border" : "")">
             <img draggable="false" src="@Tabletop.Image" />
             @if (Tabletop.GridType != "3"){
-                <table class="@(Tabletop.GridType == "1" ? "has-border" : "")">
+                <table>
                     <tbody>
                         @for (int y = 0; y < Tabletop.Grid[1]; y++){
                             <tr>
