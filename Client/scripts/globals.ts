@@ -319,3 +319,36 @@ function ScrollChatMessages(){
         });
     }
 }
+function DragTabletop(){
+    const tabletop:HTMLElement = document.body.querySelector(".js-tabletop");
+    if (tabletop){
+        let pos = { top: 0, left: 0, x: 0, y: 0 };
+        let movingTabletop = false;
+        tabletop.addEventListener("mousedown", (e:MouseEvent)=>{
+            if (e.button === 0 && e.target instanceof HTMLTableCellElement){
+                pos = {
+                    left: tabletop.scrollLeft,
+                    top: tabletop.scrollTop,
+                    x: e.clientX,
+                    y: e.clientY,
+                };
+                movingTabletop = true;
+            }
+        });
+        document.addEventListener('mousemove', (e:MouseEvent) => {
+            if (movingTabletop){
+                const dx = e.clientX - pos.x;
+                const dy = e.clientY - pos.y;
+
+                tabletop.scrollTo({
+                    top: pos.top - dy,
+                    left: pos.left - dx,
+                    behavior: "auto",
+                });
+            }
+        });
+        document.addEventListener('mouseup', (e:MouseEvent) => {
+            movingTabletop = false;
+        });
+    }
+}

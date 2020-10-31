@@ -4,7 +4,7 @@
 
 <div class="game">
     @if (Tabletop.Image != null && Tabletop.Image.Length != 0){
-        <div class="tabletop @(Tabletop.GridType == "1" ? "has-border" : "")">
+        <div class="js-tabletop tabletop @(Tabletop.GridType == "1" ? "has-border" : "")">
             <img draggable="false" src="@Tabletop.Image" />
             @if (Tabletop.GridType != "3"){
                 <table>

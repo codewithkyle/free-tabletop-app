@@ -191,8 +191,9 @@ namespace FreeTabletop.Client.Pages
             Tabletop.Image = imageURL;
             Tabletop.GridType = gridType;
             Tabletop.Grid = grid;
-            JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
             StateHasChanged();
+            JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
+            JSRuntime.InvokeVoidAsync("DragTabletop");
         }
 
         public void ClearTabletop()
