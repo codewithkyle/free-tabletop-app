@@ -51,7 +51,7 @@ namespace FreeTabletop.Server
                 });
             }
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
             app.UseBlazorFrameworkFiles();
             app.UseStaticFiles();
 
