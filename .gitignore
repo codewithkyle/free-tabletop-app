@@ -2,8 +2,6 @@
 node_modules
 /brixi
 .vscode
-/Client/wwwroot/css
-/Client/wwwroot/js
 
 # User-specific files
 *.rsuser
