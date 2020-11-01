@@ -48,7 +48,6 @@ public static class GlobalData
             if (Players[i].UID == connectionId)
             {
                 Players[i].Disconnect();
-                Console.WriteLine(Players[i].Name + " disconnected");
                 if (Players[i].RoomCode != null)
                 {
                     Room room = GetRoom(Players[i].RoomCode);

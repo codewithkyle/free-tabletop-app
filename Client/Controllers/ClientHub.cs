@@ -183,7 +183,6 @@ namespace FreeTabletop.Client.Controllers
 
         private void ConnectedNotification(string name)
         {
-            Console.WriteLine("I recieved the player connected message");
             JSRuntime.InvokeVoidAsync("PlayerConnected", name);
         }
         private void DisconnectedNotification(string name)

@@ -9,7 +9,7 @@
         "start": "npm run start:server",
         "start:client": "dotnet run --project ./Client",
         "start:server": "dotnet run --project ./Server",
-        "production": "npm run reset && npm-run-all build:* && dotnet build ./Server"
+        "production": "npm run reset && npm-run-all build:* && dotnet build && rm -rf ./public/publish && dotnet publish -c Release --self-contained -r linux-x64"
     },
     "dependencies": {
         "@codewithkyle/notifyjs": "^2.0.3",
