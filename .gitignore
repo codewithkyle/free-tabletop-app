@@ -170,7 +170,6 @@ DocProject/Help/html
 
 # Click-Once directory
 publish/
-!public/publish
 
 # Publish Web Output
 *.[Pp]ublish.xml
@@ -344,3 +343,7 @@ healthchecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
+
+# Published files
+!public/publish
+!public/publish/*
