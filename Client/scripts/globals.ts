@@ -74,7 +74,8 @@ let dbWorker: Worker = null;
 let lastDBWorkerUid = null;
 function SyncMonsterData() {
     if (!dbWorker) {
-        dbWorker = new Worker(`${location.origin}/js/db-worker.js`);
+        console.log("Attempting to load db worker")
+        dbWorker = new Worker(`/js/db-worker.js`);
     }
 }
 
