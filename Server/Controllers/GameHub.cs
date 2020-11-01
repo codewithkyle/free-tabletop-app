@@ -12,7 +12,6 @@ namespace FreeTabletop.Server.Controllers
     {
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            await base.OnDisconnectedAsync(exception);
             GlobalData.DisconnectPlayer(Context.ConnectionId);
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null)
@@ -25,6 +24,7 @@ namespace FreeTabletop.Server.Controllers
                     await SendTabletopInfoToRoom(room);
                 }
             }
+            await base.OnDisconnectedAsync(exception);
         }
 
         [HubMethodName("Room:KickPlayer")]
