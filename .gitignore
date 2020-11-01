@@ -346,4 +346,7 @@ MigrationBackup/
 
 # Published files
 !public/publish
-!public/publish/*
+!public/publish/*.pdb
+!public/publish/BlazorDebugProxy/*.pdb
+!public/publish/BlazorDebugProxy/x64
+!public/publish/BlazorDebugProxy/x86
