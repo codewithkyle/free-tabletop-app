@@ -231,7 +231,18 @@ function StartCombatDrag() {
         pos4 = e.clientY;
         dragging = true;
     });
+    el.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.touches[0].clientX;
+        pos4 = e.touches[0].clientY;
+        dragging = true;
+    });
     document.addEventListener("mouseup", (e) => {
+        e.preventDefault();
+        dragging = false;
+    });
+    document.addEventListener("touchend", (e) => {
         e.preventDefault();
         dragging = false;
     });
@@ -243,6 +254,19 @@ function StartCombatDrag() {
             pos2 = pos4 - e.clientY;
             pos3 = e.clientX;
             pos4 = e.clientY;
+            // set the element's new position:
+            modal.style.top = (modal.offsetTop - pos2) + "px";
+            modal.style.left = (modal.offsetLeft - pos1) + "px";
+        }
+    });
+    document.addEventListener("touchmove", (e) => {
+        if (dragging) {
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.touches[0].clientX;
+            pos2 = pos4 - e.touches[0].clientY;
+            pos3 = e.touches[0].clientX;
+            pos4 = e.touches[0].clientY;
             // set the element's new position:
             modal.style.top = (modal.offsetTop - pos2) + "px";
             modal.style.left = (modal.offsetLeft - pos1) + "px";
@@ -267,7 +291,18 @@ function StartChatDrag() {
         pos4 = e.clientY;
         dragging = true;
     });
+    el.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        // get the mouse cursor position at startup:
+        pos3 = e.touches[0].clientX;
+        pos4 = e.touches[0].clientY;
+        dragging = true;
+    });
     document.addEventListener("mouseup", (e) => {
+        e.preventDefault();
+        dragging = false;
+    });
+    document.addEventListener("touchend", (e) => {
         e.preventDefault();
         dragging = false;
     });
@@ -279,6 +314,19 @@ function StartChatDrag() {
             pos2 = pos4 - e.clientY;
             pos3 = e.clientX;
             pos4 = e.clientY;
+            // set the element's new position:
+            modal.style.top = (modal.offsetTop - pos2) + "px";
+            modal.style.left = (modal.offsetLeft - pos1) + "px";
+        }
+    });
+    document.addEventListener("touchmove", (e) => {
+        if (dragging) {
+            e.preventDefault();
+            // calculate the new cursor position:
+            pos1 = pos3 - e.touches[0].clientX;
+            pos2 = pos4 - e.touches[0].clientY;
+            pos3 = e.touches[0].clientX;
+            pos4 = e.touches[0].clientY;
             // set the element's new position:
             modal.style.top = (modal.offsetTop - pos2) + "px";
             modal.style.left = (modal.offsetLeft - pos1) + "px";
@@ -330,6 +378,17 @@ function DragTabletop() {
                 movingTabletop = true;
             }
         });
+        tabletop.addEventListener("touchstart", (e) => {
+            if (e.target instanceof HTMLTableCellElement) {
+                pos = {
+                    left: tabletop.scrollLeft,
+                    top: tabletop.scrollTop,
+                    x: e.touches[0].clientX,
+                    y: e.touches[0].clientY,
+                };
+                movingTabletop = true;
+            }
+        });
         document.addEventListener('mousemove', (e) => {
             if (movingTabletop) {
                 const dx = e.clientX - pos.x;
@@ -341,7 +400,21 @@ function DragTabletop() {
                 });
             }
         });
+        document.addEventListener("touchmove", (e) => {
+            if (movingTabletop) {
+                const dx = e.touches[0].clientX - pos.x;
+                const dy = e.touches[0].clientY - pos.y;
+                tabletop.scrollTo({
+                    top: pos.top - dy,
+                    left: pos.left - dx,
+                    behavior: "auto",
+                });
+            }
+        });
         document.addEventListener('mouseup', (e) => {
+            movingTabletop = false;
+        });
+        document.addEventListener("touchend", (e) => {
             movingTabletop = false;
         });
     }
