@@ -199,7 +199,6 @@ namespace FreeTabletop.Client.Pages
         public void ClearTabletop()
         {
             Tabletop.Image = null;
-            Tabletop.Players = new List<PlayerEntity>();
             StateHasChanged();
         }
 
