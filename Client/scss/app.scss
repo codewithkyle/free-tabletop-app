@@ -10,12 +10,24 @@ body {
 }
 
 app {
-    display: flex;
+    display: none;
     width: 100%;
     height: 100%;
     overflow: hidden;
     justify-content: center;
     align-items: center;
+
+    @media (min-width: 1024px) and (min-height: 768px){
+        display: flex;
+    }
+}
+
+.size-warning{
+    display: flex;
+
+    @media (min-width: 1024px) and (min-height: 768px){
+        display: none;
+    }
 }
 
 * {
