@@ -156,11 +156,10 @@ idbRequest.onupgradeneeded = (event) => {
     objectStore.createIndex("con", "con", { unique: false });
     objectStore.createIndex("actions", "actions", { unique: false });
     objectStore.createIndex("abilities", "abilities", { unique: false });
-
-    objectStore.transaction.oncomplete = SyncMonstersWithAPI;
 };
 idbRequest.onsuccess = (event) => {
     idb = event.target.result;
+    SyncMonstersWithAPI();
 };
 
 self.onmessage = (e: MessageEvent) => {
