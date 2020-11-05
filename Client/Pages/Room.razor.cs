@@ -26,7 +26,7 @@ namespace FreeTabletop.Client.Pages
         public ClientHub Hub = new ClientHub();
 
         public bool InfoMenuOpen = false;
-        public bool SettingsMenuOpen = false;
+        public bool TabletopMenuOpen = false;
         public bool ImageUploadOpen = false;
         public string InputImageURL = null;
         public string MovingEntityUID { get; set; }
@@ -53,9 +53,17 @@ namespace FreeTabletop.Client.Pages
 
         public bool HasUnreadMessages = false;
 
+        public string SettingsMenu = null;
+
+        public bool PlayPingSound = true;
+        public bool PlayAlertSound = true;
+        public bool PlayNotificationSound = true;
+        public bool PlayLoadingSound = true;
+
         protected override async Task OnInitializedAsync()
         {
             await Hub.Connect(RoomCode, this, NavigationManager, JSRuntime, Tabletop);
+            await JSRuntime.InvokeVoidAsync("ResetSession");
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
@@ -127,7 +135,7 @@ namespace FreeTabletop.Client.Pages
         public void CloseAllModals()
         {
             InfoMenuOpen = false;
-            SettingsMenuOpen = false;
+            TabletopMenuOpen = false;
             ImageUploadOpen = false;
             EntitySpawnMenuOpen = false;
             MonsterLookupMenuOpen = false;
@@ -140,6 +148,7 @@ namespace FreeTabletop.Client.Pages
             RightClickPosition[0] = -1;
             RightClickPosition[1] = -1;
             DiceMenuOpen = false;
+            SettingsMenu = null;
         }
 
         public async Task CopyRoomCodeToClipboard()
@@ -147,23 +156,23 @@ namespace FreeTabletop.Client.Pages
             await JSRuntime.InvokeVoidAsync("CopyToClipboard", Tabletop.RoomCode);
         }
 
-        public void ToggleSettingsMenu()
+        public void ToggleTabletopMenu()
         {
             CloseAllModals();
-            if (SettingsMenuOpen)
+            if (TabletopMenuOpen)
             {
-                SettingsMenuOpen = false;
+                TabletopMenuOpen = false;
             }
             else
             {
-                SettingsMenuOpen = true;
+                TabletopMenuOpen = true;
             }
             StateHasChanged();
         }
 
         public void UploadTabletopImage()
         {
-            SettingsMenuOpen = false;
+            TabletopMenuOpen = false;
             ImageUploadOpen = true;
             StateHasChanged();
         }
@@ -532,6 +541,68 @@ namespace FreeTabletop.Client.Pages
                     break;
                 }
             }
+            StateHasChanged();
+        }
+
+        public void OpenSettingsMenu()
+        {
+            SettingsMenu = "settings";
+            StateHasChanged();
+        }
+
+        public void TogglePingSound()
+        {
+            if (PlayPingSound)
+            {
+                PlayPingSound = false;
+            }
+            else
+            {
+                PlayPingSound = true;
+            }
+            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "ping", PlayPingSound);
+            StateHasChanged();
+        }
+
+        public void ToggleAlertSound()
+        {
+            if (PlayAlertSound)
+            {
+                PlayAlertSound = false;
+            }
+            else
+            {
+                PlayAlertSound = true;
+            }
+            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "alert", PlayAlertSound);
+            StateHasChanged();
+        }
+
+        public void ToggleNotificationSound()
+        {
+            if (PlayNotificationSound)
+            {
+                PlayNotificationSound = false;
+            }
+            else
+            {
+                PlayNotificationSound = true;
+            }
+            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "notification", PlayNotificationSound);
+            StateHasChanged();
+        }
+
+        public void ToggleLoadingSound()
+        {
+            if (PlayLoadingSound)
+            {
+                PlayLoadingSound = false;
+            }
+            else
+            {
+                PlayLoadingSound = true;
+            }
+            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "loading", PlayLoadingSound);
             StateHasChanged();
         }
     }

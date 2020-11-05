@@ -1,3 +1,22 @@
+// App Reset
+
+document.onkeydown = (event: KeyboardEvent) => {
+    const key = event.key.toLowerCase();
+    if (key === "f5") {
+        event.returnValue = false;
+        return false;
+    } else if (key === "r" && (event.ctrlKey || event.metaKey)) {
+        event.returnValue = false;
+        return false;
+    }
+};
+
+// Global Functions
+
+function ResetSession(){
+    sessionStorage.clear();
+}
+
 function SetPlayerUID(uid: string) {
     localStorage.setItem("PlayerUID", uid);
 }
@@ -46,16 +65,6 @@ async function GetGridSize(url: string) {
     }
     return grid;
 }
-document.onkeydown = (event: KeyboardEvent) => {
-    const key = event.key.toLowerCase();
-    if (key === "f5") {
-        event.returnValue = false;
-        return false;
-    } else if (key === "r" && (event.ctrlKey || event.metaKey)) {
-        event.returnValue = false;
-        return false;
-    }
-};
 function ClearHighlightedCells() {
     const cells = Array.from(document.body.querySelectorAll("td.highlight"));
     for (let i = 0; i < cells.length; i++) {
@@ -198,13 +207,44 @@ function EntityOnDeck(name: string) {
     });
 }
 function PlaySound(name:string){
-    var audio = new Audio(`${location.origin}/sfx/${name}`);
-    audio.play();
+    switch(name){
+        case "alert.wav":
+            if (!sessionStorage.getItem("alertDisabled")){
+                var audio = new Audio(`${location.origin}/sfx/${name}`);
+                audio.play();
+            }
+            break;
+        case "loading.wav":
+            if (!sessionStorage.getItem("loadingDisabled")){
+                var audio = new Audio(`${location.origin}/sfx/${name}`);
+                audio.play();
+            }
+            break;
+        case "message.wav":
+            if (!sessionStorage.getItem("notificationDisabled")){
+                var audio = new Audio(`${location.origin}/sfx/${name}`);
+                audio.play();
+            }
+            break;
+        case "ping.mp3":
+            if (!sessionStorage.getItem("pingDisabled")){
+                var audio = new Audio(`${location.origin}/sfx/${name}`);
+                audio.volume = 0.75;
+                audio.play();
+            }
+            break;
+        default:
+            var audio = new Audio(`${location.origin}/sfx/${name}`);
+            audio.play();
+            break;
+    }
 }
 function Ping(x:number, y:number){
-    var audio = new Audio(`${location.origin}/sfx/ping.mp3`);
-    audio.volume = 0.75;
-    audio.play();
+    if (!sessionStorage.getItem("pingDisabled")){
+        var audio = new Audio(`${location.origin}/sfx/ping.mp3`);
+        audio.volume = 0.75;
+        audio.play();
+    }
     
     const el = document.createElement("div");
     el.className = "ping";
@@ -430,5 +470,12 @@ function DragTabletop(){
         document.addEventListener("touchend", (e:MouseEvent) => {
             movingTabletop = false;
         });
+    }
+}
+function ToggleSoundStatus(type:string, enabled:boolean){
+    if (enabled){
+        sessionStorage.removeItem(`${type}Disabled`);
+    }else{
+        sessionStorage.setItem(`${type}Disabled`, "true");
     }
 }

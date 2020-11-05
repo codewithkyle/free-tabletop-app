@@ -185,411 +185,486 @@
         </div>
     }
     <div class="tabletop-info">
-        <button @onclick="ToggleInfoMenu" class="icon-button-toggle" aria-label="open tabletop info menu" title="tabletop info">
-            <svg style="width: 24px;height: 24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="info" class="svg-inline--fa fa-info fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M208 368.667V208c0-15.495-7.38-29.299-18.811-38.081C210.442 152.296 224 125.701 224 96c0-52.935-43.065-96-96-96S32 43.065 32 96c0 24.564 9.274 47.004 24.504 64H56c-26.467 0-48 21.533-48 48v48c0 23.742 17.327 43.514 40 47.333v65.333C25.327 372.486 8 392.258 8 416v48c0 26.467 21.533 48 48 48h144c26.467 0 48-21.533 48-48v-48c0-23.742-17.327-43.514-40-47.333zM128 32c35.346 0 64 28.654 64 64s-28.654 64-64 64-64-28.654-64-64 28.654-64 64-64zm88 432c0 8.837-7.163 16-16 16H56c-8.837 0-16-7.163-16-16v-48c0-8.837 7.163-16 16-16h24V272H56c-8.837 0-16-7.163-16-16v-48c0-8.837 7.163-16 16-16h104c8.837 0 16 7.163 16 16v192h24c8.837 0 16 7.163 16 16v48z"></path></svg>
-        </button>
-        @if (InfoMenuOpen){
-            <dl class="info-modal">
-                <dt>Room:</dt>
-                <dd>
-                    <button class="bttn" title="Click to copy room code" @onclick="CopyRoomCodeToClipboard">
-                        <span>@Tabletop.RoomCode</span>
-                        <i>
-                            <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="clone" class="svg-inline--fa fa-clone fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 0H144c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h320c26.51 0 48-21.49 48-48v-48h48c26.51 0 48-21.49 48-48V48c0-26.51-21.49-48-48-48zM362 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h42v224c0 26.51 21.49 48 48 48h224v42a6 6 0 0 1-6 6zm96-96H150a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h308a6 6 0 0 1 6 6v308a6 6 0 0 1-6 6z"></path></svg>
-                        </i>
-                    </button>
-                </dd>
+        <div flex="items-center row nowrap">
+            <button @onclick="ToggleInfoMenu" class="icon-button-toggle" aria-label="open tabletop info menu" title="tabletop info">
+                <svg style="width: 24px;height: 24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="info" class="svg-inline--fa fa-info fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M208 368.667V208c0-15.495-7.38-29.299-18.811-38.081C210.442 152.296 224 125.701 224 96c0-52.935-43.065-96-96-96S32 43.065 32 96c0 24.564 9.274 47.004 24.504 64H56c-26.467 0-48 21.533-48 48v48c0 23.742 17.327 43.514 40 47.333v65.333C25.327 372.486 8 392.258 8 416v48c0 26.467 21.533 48 48 48h144c26.467 0 48-21.533 48-48v-48c0-23.742-17.327-43.514-40-47.333zM128 32c35.346 0 64 28.654 64 64s-28.654 64-64 64-64-28.654-64-64 28.654-64 64-64zm88 432c0 8.837-7.163 16-16 16H56c-8.837 0-16-7.163-16-16v-48c0-8.837 7.163-16 16-16h24V272H56c-8.837 0-16-7.163-16-16v-48c0-8.837 7.163-16 16-16h104c8.837 0 16 7.163 16 16v192h24c8.837 0 16 7.163 16 16v48z"></path></svg>
+            </button>
+            @if (InfoMenuOpen){
+                <dl class="info-modal">
+                    <dt>Room:</dt>
+                    <dd>
+                        <button class="bttn" title="Click to copy room code" @onclick="CopyRoomCodeToClipboard">
+                            <span>@Tabletop.RoomCode</span>
+                            <i>
+                                <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="clone" class="svg-inline--fa fa-clone fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 0H144c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h320c26.51 0 48-21.49 48-48v-48h48c26.51 0 48-21.49 48-48V48c0-26.51-21.49-48-48-48zM362 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h42v224c0 26.51 21.49 48 48 48h224v42a6 6 0 0 1-6 6zm96-96H150a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h308a6 6 0 0 1 6 6v308a6 6 0 0 1-6 6z"></path></svg>
+                            </i>
+                        </button>
+                    </dd>
 
-                <dt>Players:</dt>
-                <dd class="player-menu">
-                    <span class="pl-0.5">@Tabletop.Players.Count</span>
-                    @if(@Tabletop.Players.Count > 0){
-                        <i>
-                            <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="chevron-right" class="svg-inline--fa fa-chevron-right fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M24.707 38.101L4.908 57.899c-4.686 4.686-4.686 12.284 0 16.971L185.607 256 4.908 437.13c-4.686 4.686-4.686 12.284 0 16.971L24.707 473.9c4.686 4.686 12.284 4.686 16.971 0l209.414-209.414c4.686-4.686 4.686-12.284 0-16.971L41.678 38.101c-4.687-4.687-12.285-4.687-16.971 0z"></path></svg>
-                        </i>
-                        <ul class="player-menu-modal">
-                            @for(int i = 0; i < @Tabletop.Players.Count; i++){
-                                <li>
-                                    <span>@Tabletop.Players[i].Name</span>
-                                    <div class="ml-0.5" flex="items-center row nowrap">
-                                        @if(@Tabletop.Players[i].IsConnected){
-                                            <i class="font-grey-500" title="Status: Connected" aria-hidden="true">
-                                                <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="wifi" class="svg-inline--fa fa-wifi fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M634.91 154.88C457.74-8.99 182.19-8.93 5.09 154.88c-6.66 6.16-6.79 16.59-.35 22.98l34.24 33.97c6.14 6.1 16.02 6.23 22.4.38 145.92-133.68 371.3-133.71 517.25 0 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.97c6.43-6.39 6.3-16.82-.36-22.98zM320 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm202.67-83.59c-115.26-101.93-290.21-101.82-405.34 0-6.9 6.1-7.12 16.69-.57 23.15l34.44 33.99c6 5.92 15.66 6.32 22.05.8 83.95-72.57 209.74-72.41 293.49 0 6.39 5.52 16.05 5.13 22.05-.8l34.44-33.99c6.56-6.46 6.33-17.06-.56-23.15z"></path></svg>
-                                            </i>
-                                        }else{
-                                            <i class="font-danger-600" title="Status: Disconnected" aria-hidden="true">
-                                                <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="wifi-slash" class="svg-inline--fa fa-wifi-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M5.09 154.87c-6.66 6.16-6.79 16.59-.35 22.97l34.24 33.96c6.14 6.09 16.02 6.23 22.4.38 6.99-6.4 14.31-12.22 21.65-18.01l-64.96-50.21c-4.3 3.71-8.79 7.04-12.98 10.91zm471.75 181.9l45.42-45.21c6.52-6.46 6.29-17.06-.57-23.17-64.94-57.74-148.91-82.66-230.34-74.98l-83.16-64.27c125.94-38.36 267.75-11.01 370.43 83.05 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.96c6.44-6.39 6.3-16.82-.35-22.97C496.46 26.82 298.08-.76 133.42 71.35L45.47 3.37C38.49-2.05 28.43-.8 23.01 6.18L3.37 31.45C-2.05 38.42-.8 48.47 6.18 53.9l588.36 454.73c6.98 5.43 17.03 4.17 22.46-2.81l19.64-25.27c5.42-6.97 4.17-17.03-2.81-22.45L476.84 336.77zm-358.53-68.38c-6.86 6.1-7.08 16.7-.57 23.17l34.28 34.01c5.97 5.93 15.59 6.32 21.94.8 13.35-11.6 28.01-20.66 43.15-28.55l-68.36-52.83c-10.48 7.15-20.74 14.78-30.44 23.4zM256 416c0 35.35 28.65 64 64 64 31.91 0 58.15-23.42 62.99-53.98l-88.7-68.56C271.77 367.37 256 389.82 256 416z"></path></svg>
-                                            </i>
-                                        }
-                                        @if(@Tabletop.IsGameMaster){
-                                            PlayerEntity player = Tabletop.Players[i];
-                                            <button @onclick="@(e => Hub.KickPlayer(player))" title="Kick player" aria-label="kick @Tabletop.Players[i].Name">
-                                                <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-slash" class="svg-inline--fa fa-user-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M633.8 458.1L362.3 248.3C412.1 230.7 448 183.8 448 128 448 57.3 390.7 0 320 0c-67.1 0-121.5 51.8-126.9 117.4L45.5 3.4C38.5-2 28.5-.8 23 6.2L3.4 31.4c-5.4 7-4.2 17 2.8 22.4l588.4 454.7c7 5.4 17 4.2 22.5-2.8l19.6-25.3c5.4-6.8 4.1-16.9-2.9-22.3zM96 422.4V464c0 26.5 21.5 48 48 48h350.2L207.4 290.3C144.2 301.3 96 356 96 422.4z"></path></svg>
-                                            </button>
-                                        }
-                                    </div>
-                                </li>
-                            }
-                        </ul>
-                    }
-                </dd>
+                    <dt>Players:</dt>
+                    <dd class="player-menu">
+                        <span class="pl-0.5">@Tabletop.Players.Count</span>
+                        @if(@Tabletop.Players.Count > 0){
+                            <i>
+                                <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="chevron-right" class="svg-inline--fa fa-chevron-right fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M24.707 38.101L4.908 57.899c-4.686 4.686-4.686 12.284 0 16.971L185.607 256 4.908 437.13c-4.686 4.686-4.686 12.284 0 16.971L24.707 473.9c4.686 4.686 12.284 4.686 16.971 0l209.414-209.414c4.686-4.686 4.686-12.284 0-16.971L41.678 38.101c-4.687-4.687-12.285-4.687-16.971 0z"></path></svg>
+                            </i>
+                            <ul class="player-menu-modal">
+                                @for(int i = 0; i < @Tabletop.Players.Count; i++){
+                                    <li>
+                                        <span>@Tabletop.Players[i].Name</span>
+                                        <div class="ml-0.5" flex="items-center row nowrap">
+                                            @if(@Tabletop.Players[i].IsConnected){
+                                                <i class="font-grey-500" title="Status: Connected" aria-hidden="true">
+                                                    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="wifi" class="svg-inline--fa fa-wifi fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M634.91 154.88C457.74-8.99 182.19-8.93 5.09 154.88c-6.66 6.16-6.79 16.59-.35 22.98l34.24 33.97c6.14 6.1 16.02 6.23 22.4.38 145.92-133.68 371.3-133.71 517.25 0 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.97c6.43-6.39 6.3-16.82-.36-22.98zM320 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm202.67-83.59c-115.26-101.93-290.21-101.82-405.34 0-6.9 6.1-7.12 16.69-.57 23.15l34.44 33.99c6 5.92 15.66 6.32 22.05.8 83.95-72.57 209.74-72.41 293.49 0 6.39 5.52 16.05 5.13 22.05-.8l34.44-33.99c6.56-6.46 6.33-17.06-.56-23.15z"></path></svg>
+                                                </i>
+                                            }else{
+                                                <i class="font-danger-600" title="Status: Disconnected" aria-hidden="true">
+                                                    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="wifi-slash" class="svg-inline--fa fa-wifi-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M5.09 154.87c-6.66 6.16-6.79 16.59-.35 22.97l34.24 33.96c6.14 6.09 16.02 6.23 22.4.38 6.99-6.4 14.31-12.22 21.65-18.01l-64.96-50.21c-4.3 3.71-8.79 7.04-12.98 10.91zm471.75 181.9l45.42-45.21c6.52-6.46 6.29-17.06-.57-23.17-64.94-57.74-148.91-82.66-230.34-74.98l-83.16-64.27c125.94-38.36 267.75-11.01 370.43 83.05 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.96c6.44-6.39 6.3-16.82-.35-22.97C496.46 26.82 298.08-.76 133.42 71.35L45.47 3.37C38.49-2.05 28.43-.8 23.01 6.18L3.37 31.45C-2.05 38.42-.8 48.47 6.18 53.9l588.36 454.73c6.98 5.43 17.03 4.17 22.46-2.81l19.64-25.27c5.42-6.97 4.17-17.03-2.81-22.45L476.84 336.77zm-358.53-68.38c-6.86 6.1-7.08 16.7-.57 23.17l34.28 34.01c5.97 5.93 15.59 6.32 21.94.8 13.35-11.6 28.01-20.66 43.15-28.55l-68.36-52.83c-10.48 7.15-20.74 14.78-30.44 23.4zM256 416c0 35.35 28.65 64 64 64 31.91 0 58.15-23.42 62.99-53.98l-88.7-68.56C271.77 367.37 256 389.82 256 416z"></path></svg>
+                                                </i>
+                                            }
+                                            @if(@Tabletop.IsGameMaster){
+                                                PlayerEntity player = Tabletop.Players[i];
+                                                <button @onclick="@(e => Hub.KickPlayer(player))" title="Kick player" aria-label="kick @Tabletop.Players[i].Name">
+                                                    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-slash" class="svg-inline--fa fa-user-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M633.8 458.1L362.3 248.3C412.1 230.7 448 183.8 448 128 448 57.3 390.7 0 320 0c-67.1 0-121.5 51.8-126.9 117.4L45.5 3.4C38.5-2 28.5-.8 23 6.2L3.4 31.4c-5.4 7-4.2 17 2.8 22.4l588.4 454.7c7 5.4 17 4.2 22.5-2.8l19.6-25.3c5.4-6.8 4.1-16.9-2.9-22.3zM96 422.4V464c0 26.5 21.5 48 48 48h350.2L207.4 290.3C144.2 301.3 96 356 96 422.4z"></path></svg>
+                                                </button>
+                                            }
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </dd>
 
-                <dt>Status:</dt>
-                <dd>
-                    @if(@Tabletop.IsGameMaster){
-                        <button class="bttn" @onclick="Hub.ToggleRoomLock" title="Lock or unlock the room">
+                    <dt>Status:</dt>
+                    <dd>
+                        @if(@Tabletop.IsGameMaster){
+                            <button class="bttn" @onclick="Hub.ToggleRoomLock" title="Lock or unlock the room">
+                                @if(@Tabletop.IsLocked){
+                                    <span>Locked</span>
+                                    <i>
+                                        <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 192h-32v-46.6C368 65.8 304 .2 224.4 0 144.8-.2 80 64.5 80 144v48H48c-26.5 0-48 21.5-48 48v224c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V240c0-26.5-21.5-48-48-48zm-272-48c0-52.9 43.1-96 96-96s96 43.1 96 96v48H128v-48zm272 320H48V240h352v224z"></path></svg>
+                                    </i>
+                                }else{
+                                    <span>Unlocked</span>
+                                    <i>
+                                        <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="unlock" class="svg-inline--fa fa-unlock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 240H128v-94.8c0-52.8 42.1-96.7 95-97.2 53.4-.6 97 42.7 97 96v24c0 13.3 10.7 24 24 24s24-10.7 24-24v-22.6C368 65.8 304 .2 224.3 0 144.8-.2 80 64.5 80 144v96H48c-26.5 0-48 21.5-48 48v176c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V288c0-26.5-21.5-48-48-48zm0 224H48V288h352v176z"></path></svg>
+                                    </i>
+                                }
+                            </button>
+                        }else{
                             @if(@Tabletop.IsLocked){
-                                <span>Locked</span>
+                                <span class="pl-0.5">Locked</span>
                                 <i>
                                     <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 192h-32v-46.6C368 65.8 304 .2 224.4 0 144.8-.2 80 64.5 80 144v48H48c-26.5 0-48 21.5-48 48v224c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V240c0-26.5-21.5-48-48-48zm-272-48c0-52.9 43.1-96 96-96s96 43.1 96 96v48H128v-48zm272 320H48V240h352v224z"></path></svg>
                                 </i>
                             }else{
-                                <span>Unlocked</span>
+                                <span class="pl-0.5">Unlocked</span>
                                 <i>
                                     <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="unlock" class="svg-inline--fa fa-unlock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 240H128v-94.8c0-52.8 42.1-96.7 95-97.2 53.4-.6 97 42.7 97 96v24c0 13.3 10.7 24 24 24s24-10.7 24-24v-22.6C368 65.8 304 .2 224.3 0 144.8-.2 80 64.5 80 144v96H48c-26.5 0-48 21.5-48 48v176c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V288c0-26.5-21.5-48-48-48zm0 224H48V288h352v176z"></path></svg>
                                 </i>
                             }
-                        </button>
-                    }else{
-                        @if(@Tabletop.IsLocked){
-                            <span class="pl-0.5">Locked</span>
-                            <i>
-                                <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 192h-32v-46.6C368 65.8 304 .2 224.4 0 144.8-.2 80 64.5 80 144v48H48c-26.5 0-48 21.5-48 48v224c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V240c0-26.5-21.5-48-48-48zm-272-48c0-52.9 43.1-96 96-96s96 43.1 96 96v48H128v-48zm272 320H48V240h352v224z"></path></svg>
-                            </i>
-                        }else{
-                            <span class="pl-0.5">Unlocked</span>
-                            <i>
-                                <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="unlock" class="svg-inline--fa fa-unlock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 240H128v-94.8c0-52.8 42.1-96.7 95-97.2 53.4-.6 97 42.7 97 96v24c0 13.3 10.7 24 24 24s24-10.7 24-24v-22.6C368 65.8 304 .2 224.3 0 144.8-.2 80 64.5 80 144v96H48c-26.5 0-48 21.5-48 48v176c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V288c0-26.5-21.5-48-48-48zm0 224H48V288h352v176z"></path></svg>
-                            </i>
                         }
-                    }
-                </dd>
-            </dl>
-        }
-        <button @onclick="ToggleDiceMenu" class="icon-button-toggle" aria-label="open dice roller menu" title="dice roller">
-            <svg style="width: 26px;height: 26px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice" class="svg-inline--fa fa-dice fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M480 328c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zM224 200c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm96 0c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm-192 0c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm96 96c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm0-192c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm352 88H439.38c-2.89-5.17-6.26-10.15-10.65-14.54L270.54 19.28C257.69 6.42 240.84 0 224 0s-33.69 6.42-46.54 19.28L19.28 177.46c-25.7 25.7-25.7 67.38 0 93.08l158.18 158.18C190.31 441.57 207.16 448 224 448s33.69-6.43 46.54-19.28L320 379.26V448c0 35.35 28.65 64 64 64h192c35.35 0 64-28.65 64-64V256c0-35.35-28.65-64-64-64zM247.27 405.45c-6.21 6.21-14.48 9.64-23.27 9.64s-17.05-3.42-23.27-9.64L42.55 247.27c-6.21-6.22-9.64-14.48-9.64-23.27s3.42-17.05 9.64-23.27L200.73 42.55c6.21-6.21 14.48-9.64 23.27-9.64s17.05 3.42 23.27 9.64l158.18 158.18c6.22 6.21 9.64 14.48 9.64 23.27s-3.42 17.05-9.64 23.27L247.27 405.45zM608 448c0 17.64-14.36 32-32 32H384c-17.64 0-32-14.36-32-32V347.26l76.72-76.72C441.57 257.69 448 240.84 448 224h128c17.64 0 32 14.36 32 32v192z"></path></svg>
-        </button>
-        <button @onclick="OpenChatModal" class="icon-button-toggle" aria-label="open messenger window" title="open messenger">
-            <svg style="width: 24px;height: 24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="comments-alt" class="svg-inline--fa fa-comments-alt fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M512 160h-96V64c0-35.3-28.7-64-64-64H64C28.7 0 0 28.7 0 64v160c0 35.3 28.7 64 64 64h32v52c0 7.1 5.8 12 12 12 2.4 0 4.9-.7 7.1-2.4l76.9-43.5V384c0 35.3 28.7 64 64 64h96l108.9 61.6c2.2 1.6 4.7 2.4 7.1 2.4 6.2 0 12-4.9 12-12v-52h32c35.3 0 64-28.7 64-64V224c0-35.3-28.7-64-64-64zM64 256c-17.6 0-32-14.4-32-32V64c0-17.6 14.4-32 32-32h288c17.6 0 32 14.4 32 32v160c0 17.6-14.4 32-32 32H215.6l-7.3 4.2-80.3 45.4V256zm480 128c0 17.6-14.4 32-32 32h-64v49.6l-80.2-45.4-7.3-4.2H256c-17.6 0-32-14.4-32-32v-96h128c35.3 0 64-28.7 64-64v-32h96c17.6 0 32 14.4 32 32z"></path></svg>
-            @if (HasUnreadMessages){
-                <i class="badge"></i>
+                    </dd>
+                </dl>
             }
-        </button>
-        @if (DiceMenuOpen){
-            <div class="dice-modal">
-                <button title="d4" @onclick="@(e => SetActiveDie("d4"))" class="@(ActiveDie == "d4" ? "is-active" : "")">
-                    <i>
-                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d4" class="svg-inline--fa fa-dice-d4 fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M504.9 289.03L280.84 11.86C274.45 3.96 265.23 0 256 0s-18.45 3.96-24.85 11.86L7.1 289.03c-11.31 14-8.84 34.57 5.47 45.49l224.05 170.94c5.72 4.37 12.55 6.55 19.38 6.55s13.66-2.18 19.38-6.55l224.05-170.94c14.31-10.92 16.78-31.5 5.47-45.49zM31.99 309.14L240 51.75v416.04L31.99 309.14zM256.02 480h.03l-.01.01-.02-.01zM272 467.82v-416l208.02 257.26L272 467.82z"></path></svg>
-                    </i>
-                </button>
-                <button title="d6" @onclick="@(e => SetActiveDie("d6"))" class="@(ActiveDie == "d6" ? "is-active" : "")">
-                    <i>
-                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d6" class="svg-inline--fa fa-dice-d6 fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M431.88 116.13L239.88 4.3a31.478 31.478 0 0 0-31.76 0l-192 111.84C6.15 121.94 0 132.75 0 144.46v223.09c0 11.71 6.15 22.51 16.12 28.32l192 111.83a31.478 31.478 0 0 0 31.76 0l192-111.83c9.97-5.81 16.12-16.62 16.12-28.32V144.46c0-11.71-6.15-22.52-16.12-28.33zM224 32.08l175.75 102.86L224 237.48 47.83 134.7 224 32.08zM32.21 162.65L208 265.18v205.37L32 367.54l.21-204.89zM240 470.84V265.18l175.98-102.64-.21 205.67L240 470.84z"></path></svg>
-                    </i>
-                </button>
-                <button title="d8" @onclick="@(e => SetActiveDie("d8"))" class="@(ActiveDie == "d8" ? "is-active" : "")">
-                    <i>
-                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d8" class="svg-inline--fa fa-dice-d8 fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M502.1 232.1L279.9 9.9C273.3 3.3 264.6 0 256 0s-17.3 3.3-23.9 9.9L9.9 232.1c-13.2 13.2-13.2 34.5 0 47.7L232.1 502c6.6 6.6 15.2 9.9 23.9 9.9s17.3-3.3 23.9-9.9l222.2-222.2c13.2-13.1 13.2-34.5 0-47.7zM240 464.7L61.2 285.9 240 362.5zm0-137L43.7 243.6 240 47.3zm32 137V362.5l178.8-76.6zm0-137V47.3l196.3 196.3z"></path></svg>
-                    </i>
-                </button>
-                <button title="d10" @onclick="@(e => SetActiveDie("d10"))" class="@(ActiveDie == "d10" ? "is-active" : "")">
-                    <i>
-                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d10" class="svg-inline--fa fa-dice-d10 fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M503.88 261.29L279.8 10.64C273.45 3.55 264.72 0 256 0s-17.45 3.55-23.8 10.64L8.12 261.29c-11.81 13.21-10.6 33.5 2.69 45.22l224.08 197.52c6.03 5.32 13.57 7.97 21.11 7.97 7.54 0 15.08-2.66 21.11-7.97L501.19 306.5c13.29-11.71 14.49-32.01 2.69-45.21zM256 297.95l-75.86-50.57 75.86-177 75.86 177L256 297.95zm-107.28-58.24L47.69 264.97 220.97 71.12l-72.25 168.59zm214.56 0L291.03 71.12 464.5 265.01l-101.22-25.3zM31.91 282.62l.01.04-.03-.02.02-.02zm17.03 15.03l108.34-27.09 82.76 55.19v140.22L48.94 297.65zM271.96 465.9V325.75l82.76-55.19 108.2 27.06L271.96 465.9z"></path></svg>
-                    </i>
-                </button>
-                <button title="d12" @onclick="@(e => SetActiveDie("d12"))" class="@(ActiveDie == "d12" ? "is-active" : "")">
-                    <i>
-                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d12" class="svg-inline--fa fa-dice-d12 fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M505.24 178.49l-47.7-95.41a63.972 63.972 0 0 0-28.62-28.62l-95.41-47.7A63.905 63.905 0 0 0 304.89 0h-97.78c-9.94 0-19.73 2.31-28.62 6.76l-95.41 47.7a63.972 63.972 0 0 0-28.62 28.62l-47.7 95.41A63.874 63.874 0 0 0 0 207.11v97.78c0 9.94 2.31 19.73 6.76 28.62l47.7 95.41a63.972 63.972 0 0 0 28.62 28.62l95.41 47.7a64.07 64.07 0 0 0 28.62 6.76h97.78c9.94 0 19.73-2.31 28.62-6.76l95.41-47.7a63.972 63.972 0 0 0 28.62-28.62l47.7-95.41a64.07 64.07 0 0 0 6.76-28.62v-97.78c0-9.94-2.31-19.74-6.76-28.62zm-29.55 12.44l-95.58 109.23L272 246.11V140.22l156.94-42.8 46.75 93.51zM308.8 480H203.2l-55.29-152.06L256 273.89l108.09 54.05L308.8 480zM199.55 32h112.89l82.85 41.42L256 111.41 116.71 73.42 199.55 32zM83.06 97.42L240 140.22V246.1l-108.11 54.05-95.58-109.22 46.75-93.51zM32 312.45v-77.88l81.99 93.7 48.42 133.16-74.56-37.28L32 312.45zm392.15 111.7l-74.56 37.28 48.42-133.16 81.99-93.7v77.88l-55.85 111.7z"></path></svg>
-                    </i>
-                </button>
-                <button title="d20" @onclick="@(e => SetActiveDie("d20"))" class="@(ActiveDie == "d20" ? "is-active" : "")">
-                    <i>
-                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d20" class="svg-inline--fa fa-dice-d20 fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M431.88 116.13L239.88 4.3a31.478 31.478 0 0 0-31.76 0l-192 111.84C6.15 121.94 0 132.75 0 144.46v223.09c0 11.71 6.15 22.51 16.12 28.32l192 111.83a31.478 31.478 0 0 0 31.76 0l192-111.83c9.97-5.81 16.12-16.62 16.12-28.32V144.46c0-11.71-6.15-22.52-16.12-28.33zM224 57.62L318.7 176H129.3L224 57.62zM124.62 208h198.75L224 369.47 124.62 208zm68.28 171.99L55.92 362.87l44.43-133.28 92.55 150.4zm154.75-150.41l44.43 133.28-136.98 17.13 92.55-150.41zm7.17-59.69L262.67 54.72l138.01 80.78-45.86 34.39zm-261.64 0l-46.24-34.68 138.54-80.7-92.3 115.38zm-16.01 27.98l-45.13 135.4.17-169.12 44.96 33.72zM208 414.12v56.43L85.4 398.8 208 414.12zm155.6-15.45L240 470.84v-56.72l123.6-15.45zm7.23-200.8l45.15-33.86-.17 168.79-44.98-134.93zM224.14 480h.17l-.09.05-.08-.05z"></path></svg>
-                    </i>
-                </button>
-                <button title="d100" @onclick="@(e => SetActiveDie("d100"))" class="@(ActiveDie == "d100" ? "is-active" : "")">
-                    <i>
-                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="badge-percent" class="svg-inline--fa fa-badge-percent fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M349.66 173.65l-11.31-11.31c-3.12-3.12-8.19-3.12-11.31 0l-164.7 164.69c-3.12 3.12-3.12 8.19 0 11.31l11.31 11.31c3.12 3.12 8.19 3.12 11.31 0l164.69-164.69c3.13-3.12 3.13-8.18.01-11.31zM240 192c0-26.47-21.53-48-48-48s-48 21.53-48 48 21.53 48 48 48 48-21.53 48-48zm-64 0c0-8.83 7.19-16 16-16s16 7.17 16 16-7.19 16-16 16-16-7.17-16-16zm144 80c-26.47 0-48 21.53-48 48s21.53 48 48 48 48-21.53 48-48-21.53-48-48-48zm0 64c-8.81 0-16-7.17-16-16s7.19-16 16-16 16 7.17 16 16-7.19 16-16 16zm192-80c0-35.5-19.4-68.2-49.6-85.5 9.1-33.6-.3-70.4-25.4-95.5s-61.9-34.5-95.5-25.4C324.2 19.4 291.5 0 256 0s-68.2 19.4-85.5 49.6c-33.6-9.1-70.4.3-95.5 25.4s-34.5 61.9-25.4 95.5C19.4 187.8 0 220.5 0 256s19.4 68.2 49.6 85.5c-9.1 33.6.3 70.4 25.4 95.5 26.5 26.5 63.4 34.1 95.5 25.4 17.4 30.2 50 49.6 85.5 49.6s68.1-19.4 85.5-49.6c32.7 8.9 69.4.7 95.5-25.4 25.1-25.1 34.5-61.9 25.4-95.5 30.2-17.3 49.6-50 49.6-85.5zm-91.1 68.3c5.3 11.8 29.5 54.1-6.5 90.1-28.9 28.9-57.5 21.3-90.1 6.5C319.7 433 307 480 256 480c-52.1 0-64.7-49.5-68.3-59.1-32.6 14.8-61.3 22.2-90.1-6.5-36.8-36.7-10.9-80.5-6.5-90.1C79 319.7 32 307 32 256c0-52.1 49.5-64.7 59.1-68.3-5.3-11.8-29.5-54.1 6.5-90.1 36.8-36.9 80.8-10.7 90.1-6.5C192.3 79 205 32 256 32c52.1 0 64.7 49.5 68.3 59.1 11.8-5.3 54.1-29.5 90.1 6.5 36.8 36.7 10.9 80.5 6.5 90.1C433 192.3 480 205 480 256c0 52.1-49.5 64.7-59.1 68.3z"></path></svg>
-                    </i>
-                </button>
-                <div class="w-full mt-0.5" flex="row nowrap items-center">
-                    <div class="input mr-0.5" style="flex:1;">
-                        <input required type="number" @bind="RollCount" min="1" />
-                    </div>
-                    <button @onclick="RollDice" class="button -primary -solid -round" title="roll dice" aria-label="roll dice">
-                        <i>
-                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sync-alt" class="svg-inline--fa fa-sync-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M370.72 133.28C339.458 104.008 298.888 87.962 255.848 88c-77.458.068-144.328 53.178-162.791 126.85-1.344 5.363-6.122 9.15-11.651 9.15H24.103c-7.498 0-13.194-6.807-11.807-14.176C33.933 94.924 134.813 8 256 8c66.448 0 126.791 26.136 171.315 68.685L463.03 40.97C478.149 25.851 504 36.559 504 57.941V192c0 13.255-10.745 24-24 24H345.941c-21.382 0-32.09-25.851-16.971-40.971l41.75-41.749zM32 296h134.059c21.382 0 32.09 25.851 16.971 40.971l-41.75 41.75c31.262 29.273 71.835 45.319 114.876 45.28 77.418-.07 144.315-53.144 162.787-126.849 1.344-5.363 6.122-9.15 11.651-9.15h57.304c7.498 0 13.194 6.807 11.807 14.176C478.067 417.076 377.187 504 256 504c-66.448 0-126.791-26.136-171.315-68.685L48.97 471.03C33.851 486.149 8 475.441 8 454.059V320c0-13.255 10.745-24 24-24z"></path></svg>
-                        </i>
-                    </button>
-                </div>
-            </div>
-        }
-        @if (Tabletop.IsGameMaster){
-            <button @onclick="ToggleSettingsMenu" class="icon-button-toggle" aria-label="open tabletop settings menu" title="tabletop settings">
-                <svg style="width: 24px;height: 24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="scroll-old" class="svg-inline--fa fa-scroll-old fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M616 352h-72v-73.38L521.38 256 544 233.38v-82.75L521.38 128l22.25-22.28-.97-7.77C535.59 42.11 488.03 0 432 0H80C35.88 0 0 35.89 0 80v88c0 13.23 10.78 24 24 24h104v41.38L150.62 256 128 278.62v132.81c0 51.28 37.84 95.23 86.16 100.08 1.5.15 3 .14 4.5.23v.26h312C590.94 512 640 462.95 640 402.67V376c0-13.23-10.78-24-24-24zM128 160H32V80c0-26.47 21.53-48 48-48s48 21.53 48 48v80zm32 251.44V291.88L195.88 256 160 220.12V80c0-18-5.97-34.62-16.03-48H432c37.41 0 69.56 26.39 77.59 62.5L476.12 128 512 163.88v56.25L476.12 256 512 291.88V352h-73.38L416 374.62 393.38 352H320c-17.66 0-32 14.36-32 32v32c0 18.05-7.69 35.34-21.06 47.47-13.59 12.3-31.12 18.09-49.59 16.2-32.16-3.22-57.35-33.19-57.35-68.23zm448-8.77c0 42.64-34.69 77.33-77.34 77.33H294.83c15.82-17.55 25.17-40.18 25.17-64v-32h60.12L416 419.88 451.88 384H608v18.67z"></path></svg>
+            <button @onclick="ToggleDiceMenu" class="icon-button-toggle" aria-label="open dice roller menu" title="dice roller">
+                <svg style="width: 26px;height: 26px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice" class="svg-inline--fa fa-dice fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M480 328c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zM224 200c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm96 0c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm-192 0c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm96 96c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm0-192c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm352 88H439.38c-2.89-5.17-6.26-10.15-10.65-14.54L270.54 19.28C257.69 6.42 240.84 0 224 0s-33.69 6.42-46.54 19.28L19.28 177.46c-25.7 25.7-25.7 67.38 0 93.08l158.18 158.18C190.31 441.57 207.16 448 224 448s33.69-6.43 46.54-19.28L320 379.26V448c0 35.35 28.65 64 64 64h192c35.35 0 64-28.65 64-64V256c0-35.35-28.65-64-64-64zM247.27 405.45c-6.21 6.21-14.48 9.64-23.27 9.64s-17.05-3.42-23.27-9.64L42.55 247.27c-6.21-6.22-9.64-14.48-9.64-23.27s3.42-17.05 9.64-23.27L200.73 42.55c6.21-6.21 14.48-9.64 23.27-9.64s17.05 3.42 23.27 9.64l158.18 158.18c6.22 6.21 9.64 14.48 9.64 23.27s-3.42 17.05-9.64 23.27L247.27 405.45zM608 448c0 17.64-14.36 32-32 32H384c-17.64 0-32-14.36-32-32V347.26l76.72-76.72C441.57 257.69 448 240.84 448 224h128c17.64 0 32 14.36 32 32v192z"></path></svg>
             </button>
+            <button @onclick="OpenChatModal" class="icon-button-toggle" aria-label="open messenger window" title="open messenger">
+                <svg style="width: 24px;height: 24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="comments-alt" class="svg-inline--fa fa-comments-alt fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M512 160h-96V64c0-35.3-28.7-64-64-64H64C28.7 0 0 28.7 0 64v160c0 35.3 28.7 64 64 64h32v52c0 7.1 5.8 12 12 12 2.4 0 4.9-.7 7.1-2.4l76.9-43.5V384c0 35.3 28.7 64 64 64h96l108.9 61.6c2.2 1.6 4.7 2.4 7.1 2.4 6.2 0 12-4.9 12-12v-52h32c35.3 0 64-28.7 64-64V224c0-35.3-28.7-64-64-64zM64 256c-17.6 0-32-14.4-32-32V64c0-17.6 14.4-32 32-32h288c17.6 0 32 14.4 32 32v160c0 17.6-14.4 32-32 32H215.6l-7.3 4.2-80.3 45.4V256zm480 128c0 17.6-14.4 32-32 32h-64v49.6l-80.2-45.4-7.3-4.2H256c-17.6 0-32-14.4-32-32v-96h128c35.3 0 64-28.7 64-64v-32h96c17.6 0 32 14.4 32 32z"></path></svg>
+                @if (HasUnreadMessages){
+                    <i class="badge"></i>
+                }
+            </button>
+            @if (Tabletop.IsGameMaster){
+                <button @onclick="ToggleTabletopMenu" class="icon-button-toggle" aria-label="open tabletop settings menu" title="tabletop settings">
+                    <svg style="width: 24px;height: 24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="scroll-old" class="svg-inline--fa fa-scroll-old fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M616 352h-72v-73.38L521.38 256 544 233.38v-82.75L521.38 128l22.25-22.28-.97-7.77C535.59 42.11 488.03 0 432 0H80C35.88 0 0 35.89 0 80v88c0 13.23 10.78 24 24 24h104v41.38L150.62 256 128 278.62v132.81c0 51.28 37.84 95.23 86.16 100.08 1.5.15 3 .14 4.5.23v.26h312C590.94 512 640 462.95 640 402.67V376c0-13.23-10.78-24-24-24zM128 160H32V80c0-26.47 21.53-48 48-48s48 21.53 48 48v80zm32 251.44V291.88L195.88 256 160 220.12V80c0-18-5.97-34.62-16.03-48H432c37.41 0 69.56 26.39 77.59 62.5L476.12 128 512 163.88v56.25L476.12 256 512 291.88V352h-73.38L416 374.62 393.38 352H320c-17.66 0-32 14.36-32 32v32c0 18.05-7.69 35.34-21.06 47.47-13.59 12.3-31.12 18.09-49.59 16.2-32.16-3.22-57.35-33.19-57.35-68.23zm448-8.77c0 42.64-34.69 77.33-77.34 77.33H294.83c15.82-17.55 25.17-40.18 25.17-64v-32h60.12L416 419.88 451.88 384H608v18.67z"></path></svg>
+                </button>
+                @if (Tabletop.Image != null && Tabletop.Image.Length != 0 && Tabletop.GridType != "3"){
+                    <button @onclick="ToggleEntitySpawnMenu" class="icon-button-toggle" aria-label="open entity spawning menu" title="entity spawning">
+                        <svg style="width: 26px;height: 26px;transform: translateY(-3px);" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="chess-pawn-alt" class="svg-inline--fa fa-chess-pawn-alt fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M247.16 435.58L224 424v-16a24 24 0 0 0-24-24h1.41a519 519 0 0 1-9.31-96H216a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8h-16.91A95.86 95.86 0 1 0 32 192a95.3 95.3 0 0 0 24.91 64H40a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h23.9a519 519 0 0 1-9.31 96H56a24 24 0 0 0-24 24v16L8.85 435.58A16 16 0 0 0 0 449.89V496a16 16 0 0 0 16 16h224a16 16 0 0 0 16-16v-46.11a16 16 0 0 0-8.84-14.31zM160.09 288a552.7 552.7 0 0 0 8.75 96H87.16a552.7 552.7 0 0 0 8.75-96zM128 128a64 64 0 1 1-64 64 64.07 64.07 0 0 1 64-64zm96 352H32v-20.22l32-16V416h128v27.78l32 16z"></path></svg>
+                    </button>
+                }
+            }
             @if (Tabletop.Image != null && Tabletop.Image.Length != 0 && Tabletop.GridType != "3"){
-                <button @onclick="ToggleEntitySpawnMenu" class="icon-button-toggle" aria-label="open entity spawning menu" title="entity spawning">
-                    <svg style="width: 26px;height: 26px;transform: translateY(-3px);" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="chess-pawn-alt" class="svg-inline--fa fa-chess-pawn-alt fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M247.16 435.58L224 424v-16a24 24 0 0 0-24-24h1.41a519 519 0 0 1-9.31-96H216a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8h-16.91A95.86 95.86 0 1 0 32 192a95.3 95.3 0 0 0 24.91 64H40a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h23.9a519 519 0 0 1-9.31 96H56a24 24 0 0 0-24 24v16L8.85 435.58A16 16 0 0 0 0 449.89V496a16 16 0 0 0 16 16h224a16 16 0 0 0 16-16v-46.11a16 16 0 0 0-8.84-14.31zM160.09 288a552.7 552.7 0 0 0 8.75 96H87.16a552.7 552.7 0 0 0 8.75-96zM128 128a64 64 0 1 1-64 64 64.07 64.07 0 0 1 64-64zm96 352H32v-20.22l32-16V416h128v27.78l32 16z"></path></svg>
+                <button @onclick="ToggleCombatMenu" class="icon-button-toggle" aria-label="open combat order menu" title="combat order menu">
+                    <svg style="width: 20px;height: 20px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="swords" class="svg-inline--fa fa-swords fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M507.3 443.32l-55.88-55.88L486 329.91a16.007 16.007 0 0 0-2-20.19l-34.8-34.8c-6.21-6.21-16.35-6.28-22.63 0l-27.83 27.84L112 16.01 18.27.18C7.06-1.45-1.25 8.38.17 18.28L16 112.01l286.75 286.75-27.84 27.83c-6.25 6.25-6.25 16.38 0 22.63l34.8 34.79c5.4 5.4 13.86 6.22 20.19 2l57.52-34.58 55.88 55.88c6.25 6.25 16.38 6.25 22.63 0l41.37-41.37c6.25-6.24 6.25-16.38 0-22.62zM45.85 96.61L35.54 35.54 96.6 45.87 376.13 325.4l-50.74 50.74L45.85 96.61zm408.77 376.76l-63.11-63.12-68.44 41.86-14.21-14.21L437.9 308.87l14.21 14.21-41.85 68.44 63.11 63.11-18.75 18.74zM415.39 45.85l61.07-10.31-10.33 61.06-114.14 114.14 22.63 22.63L495.99 112l15.83-93.73c1.63-11.21-8.2-19.52-18.1-18.1L399.99 16 278.62 137.37 301.24 160 415.39 45.85zM237.07 426.58l-27.84-27.83 24.12-24.12L210.73 352l-24.12 24.12-50.74-50.74L160 301.25l-22.63-22.63-24.13 24.13-27.83-27.84c-6.25-6.25-16.38-6.25-22.63 0l-34.79 34.8c-5.4 5.4-6.22 13.86-2 20.19l34.58 57.52-55.89 55.89c-6.25 6.25-6.25 16.38 0 22.63l41.37 41.37c6.25 6.25 16.38 6.25 22.63 0l55.88-55.88 57.53 34.58a16.007 16.007 0 0 0 20.19-2l34.8-34.8c.87-.87 1.34-1.96 1.97-2.97-.48-2.73-.81-5.5-.81-8.33s.34-5.61.81-8.35c-.63-1.01-1.1-2.1-1.98-2.98zm-48.15 25.52l-68.44-41.85-63.11 63.11-18.75-18.75 63.12-63.11-41.86-68.44 14.21-14.21L203.13 437.9l-14.21 14.2z"></path></svg>
                 </button>
-            }
-        }
-        @if (Tabletop.Image != null && Tabletop.Image.Length != 0 && Tabletop.GridType != "3"){
-            <button @onclick="ToggleCombatMenu" class="icon-button-toggle" aria-label="open combat order menu" title="combat order menu">
-                <svg style="width: 20px;height: 20px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="swords" class="svg-inline--fa fa-swords fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M507.3 443.32l-55.88-55.88L486 329.91a16.007 16.007 0 0 0-2-20.19l-34.8-34.8c-6.21-6.21-16.35-6.28-22.63 0l-27.83 27.84L112 16.01 18.27.18C7.06-1.45-1.25 8.38.17 18.28L16 112.01l286.75 286.75-27.84 27.83c-6.25 6.25-6.25 16.38 0 22.63l34.8 34.79c5.4 5.4 13.86 6.22 20.19 2l57.52-34.58 55.88 55.88c6.25 6.25 16.38 6.25 22.63 0l41.37-41.37c6.25-6.24 6.25-16.38 0-22.62zM45.85 96.61L35.54 35.54 96.6 45.87 376.13 325.4l-50.74 50.74L45.85 96.61zm408.77 376.76l-63.11-63.12-68.44 41.86-14.21-14.21L437.9 308.87l14.21 14.21-41.85 68.44 63.11 63.11-18.75 18.74zM415.39 45.85l61.07-10.31-10.33 61.06-114.14 114.14 22.63 22.63L495.99 112l15.83-93.73c1.63-11.21-8.2-19.52-18.1-18.1L399.99 16 278.62 137.37 301.24 160 415.39 45.85zM237.07 426.58l-27.84-27.83 24.12-24.12L210.73 352l-24.12 24.12-50.74-50.74L160 301.25l-22.63-22.63-24.13 24.13-27.83-27.84c-6.25-6.25-16.38-6.25-22.63 0l-34.79 34.8c-5.4 5.4-6.22 13.86-2 20.19l34.58 57.52-55.89 55.89c-6.25 6.25-6.25 16.38 0 22.63l41.37 41.37c6.25 6.25 16.38 6.25 22.63 0l55.88-55.88 57.53 34.58a16.007 16.007 0 0 0 20.19-2l34.8-34.8c.87-.87 1.34-1.96 1.97-2.97-.48-2.73-.81-5.5-.81-8.33s.34-5.61.81-8.35c-.63-1.01-1.1-2.1-1.98-2.98zm-48.15 25.52l-68.44-41.85-63.11 63.11-18.75-18.75 63.12-63.11-41.86-68.44 14.21-14.21L203.13 437.9l-14.21 14.2z"></path></svg>
-            </button>
-        }
-        @if (EntitySpawnMenuOpen){
-            <div 
-                class="entity-spawn-modal" 
-                style="top: @(RightClickPosition[1] != -1 ? RightClickPosition[1].ToString() + "px" : "calc(100% + 0.5rem)");left: @(RightClickPosition[0] != -1 ? RightClickPosition[0].ToString() : "120")px;"
-            >
-                <button @onclick="OpenMonsterLookupMenu">
-                    <i>
-                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dragon" class="svg-inline--fa fa-dragon fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M481.01 119.95c14.92.86 27.35-9.89 30.88-24.58L453.47 80c-6.49 27.12 15.51 39.26 27.54 39.95zm54.5 131.8c-29.84-16.98-55.61-31.64-55.61-51.38V192h16.96l28.62 22.03c8.34 6.42 18.74 9.97 29.27 9.97h29.18c21.15 0 40.09-14.17 46.02-34.45l7.4-25.16c5.84-19.8 1.88-41.44-10.62-57.91L569.8 31.59C554.78 11.81 530.98 0 506.14 0H297.16c-19.47 0-33.09 24.04-15.4 41.25l37.49 30.25-32.55 13.42c-16.19 7.94-19.14 32.81 1.13 42.64l48.11 19.25v50.89l-190.3-47.88c-19.18-4.86-39.68 2.83-50.99 19.08L3.76 299.12c-5.03 7.91-5 17.72.03 25.59 1.69 2.62 9.54 13.11 24.99 10.91l115.02-21.8-12.07 17.3c-5.03 7.91-5 17.72.03 25.59 6.7 10.45 17.87 11.86 24.15 11.05l202.87-27.39c8.33 16.71 18.17 32.35 31.17 45.73-130.55 8.75-252.39 36.8-364.13 61.33C10.86 450.7.01 464.1.01 479.31c0 18 14.75 32.64 32.87 32.64l474.01.05c42.65 0 83.14-19.77 108.29-52.89 23.4-30.8 30.49-68.73 19.9-106.8-14.5-52.15-61.68-79-99.57-100.56zM41.72 300.62l79.17-113.41c3.75-5.39 10.59-7.86 17-6.36l84.07 21.02L170 276.3 41.72 300.62zm127.18 33.1l86.23-123.48 80.79 20.5c0 47.9 8.68 72.63 10.6 79L168.9 333.72zM506.89 480H32c230.53-56.77 352.62-62.36 400.47-64.02 15.54-.53 21.22-20.83 8.22-29.34-48.96-32.23-72.76-80.92-72.76-148.83V135.98c0-6.55-3.97-12.42-10.06-14.86l-38.15-15.23 36.71-15.09c5.22-2.16 8.94-6.91 9.75-12.5s-1.41-11.2-5.81-14.75L321.15 32h184.99c14.9 0 29.18 7.08 38.18 18.95l56.92 74.91c6.38 8.38 8.4 19.39 5.44 29.48l-7.4 25.19c-2 6.75-8.31 11.47-15.34 11.47h-29.18c-3.56 0-6.9-1.14-9.75-3.33l-32.96-25.36a16.01 16.01 0 0 0-9.75-3.31h-38.4c-8.84 0-16 7.16-16 16v24.38c0 38.34 34.87 58.19 71.8 79.19 36.18 20.59 73.58 41.89 84.57 81.33 19.36 69.86-41.14 119.1-97.38 119.1z"></path></svg>
-                    </i>
-                    <span>Spawn Creature</span>
-                </button>
-                <button @onclick="OpenNPCMenu">
-                    <i>
-                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="street-view" class="svg-inline--fa fa-street-view fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M368 360.15v30.87c62.27 8.42 104 23.6 104 40.99 0 26.51-96.71 48-216 48S40 458.51 40 432c0-17.38 41.73-32.56 104-40.99v-30.87C58.82 373.14 0 400.39 0 432c0 44.18 114.62 80 256 80s256-35.82 256-80c0-31.61-58.82-58.86-144-71.85zM176 320v80c0 26.47 21.53 48 48 48h64c26.47 0 48-21.53 48-48v-80c26.47 0 48-21.53 48-48v-64c0-34.53-22.11-63.75-52.82-74.93C339.14 119.84 344 104.54 344 88c0-48.52-39.48-88-88-88s-88 39.48-88 88c0 16.54 4.86 31.84 12.82 45.07C150.11 144.25 128 173.47 128 208v64c0 26.47 21.53 48 48 48zm80-288c30.93 0 56 25.07 56 56s-25.07 56-56 56-56-25.07-56-56 25.07-56 56-56zm-96 176c0-25.76 20.44-46.68 45.93-47.79C220.17 170.11 237.38 176 256 176s35.83-5.89 50.07-15.79C331.56 161.32 352 182.24 352 208v64c0 8.83-7.19 16-16 16h-32v112c0 8.83-7.19 16-16 16h-64c-8.81 0-16-7.17-16-16V288h-32c-8.81 0-16-7.17-16-16v-64z"></path></svg>
-                    </i>
-                    <span>Spawn NPC</span>
-                </button>
-                <button @onclick="OpenCustomCreatureMenu">
-                    <i>
-                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="paw-claws" class="svg-inline--fa fa-paw-claws fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M318.55 222.61c40.16 10.56 69.55-34.86 77.46-63.87 8.44-30.94 3.01-61.05-12.01-78.75L320 0v74.96c-15.94 11.26-29.49 30.37-36.02 54.29-11.84 43.42 3.64 85.22 34.57 93.36zm-3.7-84.93c18.22-66.79 66.59-47.08 50.29 12.65-18.19 66.71-66.59 47.12-50.29-12.65zm178.65 52.69L448 128v66.94c-19.83 6.55-37.51 24.43-44.72 48.46-10.4 34.65 4.77 68.38 33.89 75.34 30.46 7.29 61.64-17.11 71.55-50.13 8.85-29.51-1.55-59.5-15.22-78.24zm-15.43 69.03c-12.72 42.35-56.89 35.65-44.15-6.81 12.69-42.26 56.91-35.72 44.15 6.81zM256 256c-79.41 0-191.99 122.76-191.99 200.25 0 34.91 26.81 55.75 71.74 55.75 48.84 0 81.09-25.08 120.26-25.08 39.51 0 71.84 25.08 120.26 25.08 44.93 0 71.74-20.85 71.74-55.75C447.99 378.76 335.41 256 256 256zm120.26 224c-20.3 0-37.81-5.77-56.34-11.88-19.68-6.49-40.02-13.19-63.91-13.19-23.65 0-43.85 6.67-63.39 13.12-18.64 6.15-36.25 11.96-56.87 11.96-39.74 0-39.74-17.88-39.74-23.75C96.01 393.35 196.19 288 256 288s159.99 105.35 159.99 168.25c0 5.87 0 23.75-39.73 23.75zM108.73 243.39c-7.21-24.03-24.89-41.91-44.72-48.46V128L18.5 190.37C4.81 209.13-5.57 239.11 3.29 268.61c10 33.3 41.36 57.35 71.55 50.13 29.11-6.97 44.29-40.7 33.89-75.35zM33.94 259.4c-12.84-42.77 31.51-48.87 44.15-6.81 12.8 42.69-31.5 48.95-44.15 6.81zm159.51-36.79c30.94-8.14 46.42-49.94 34.58-93.36-6.53-23.92-20.07-43.04-36.02-54.29V0L128 79.99c-15.02 17.7-20.45 47.82-12.01 78.75 7.65 28.05 37.08 74.5 77.46 63.87zm3.7-84.93c16.2 59.39-32 79.74-50.3 12.65-16.19-59.39 32-79.75 50.3-12.65z"></path></svg>
-                    </i>
-                    <span>Create Custom Creature</span>
-                </button>
-            </div>
-        }
-        @if (SettingsMenuOpen){
-            <div class="settings-modal">
-                <button @onclick="UploadTabletopImage">
-                        <i>
-                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="file-upload" class="svg-inline--fa fa-file-upload fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M369.9 97.98L286.02 14.1c-9-9-21.2-14.1-33.89-14.1H47.99C21.5.1 0 21.6 0 48.09v415.92C0 490.5 21.5 512 47.99 512h288.02c26.49 0 47.99-21.5 47.99-47.99V131.97c0-12.69-5.1-24.99-14.1-33.99zM256.03 32.59c2.8.7 5.3 2.1 7.4 4.2l83.88 83.88c2.1 2.1 3.5 4.6 4.2 7.4h-95.48V32.59zm95.98 431.42c0 8.8-7.2 16-16 16H47.99c-8.8 0-16-7.2-16-16V48.09c0-8.8 7.2-16.09 16-16.09h176.04v104.07c0 13.3 10.7 23.93 24 23.93h103.98v304.01zm-180.1-247.32l-68.12 71.75c-7.81 8.2-9.94 20.31-5.44 30.83 4.41 10.31 14 16.72 25 16.72H176V424c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-88.02h52.66c11 0 20.59-6.41 25-16.72 4.5-10.52 2.38-22.62-5.44-30.81l-68.12-71.78c-10.69-11.19-29.51-11.2-40.19.02zm-38.75 87.29l58.84-62 58.84 62H133.16z"></path></svg>
-                        </i>
-                        <span>Load Tabletop Image</span>
-                    </button>
-                    <button class="danger" @onclick="RemoveTabletopImage">
-                        <i>
-                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="exclamation-triangle" class="svg-inline--fa fa-exclamation-triangle fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M270.2 160h35.5c3.4 0 6.1 2.8 6 6.2l-7.5 196c-.1 3.2-2.8 5.8-6 5.8h-20.5c-3.2 0-5.9-2.5-6-5.8l-7.5-196c-.1-3.4 2.6-6.2 6-6.2zM288 388c-15.5 0-28 12.5-28 28s12.5 28 28 28 28-12.5 28-28-12.5-28-28-28zm281.5 52L329.6 24c-18.4-32-64.7-32-83.2 0L6.5 440c-18.4 31.9 4.6 72 41.6 72H528c36.8 0 60-40 41.5-72zM528 480H48c-12.3 0-20-13.3-13.9-24l240-416c6.1-10.6 21.6-10.7 27.7 0l240 416c6.2 10.6-1.5 24-13.8 24z"></path></svg>
-                        </i>
-                        <span>Clear Tabletop</span>
-                    </button>
-            </div>
-        }
-        @if (ImageUploadOpen){
-            <div class="image-upload-modal">
-                <div class="file-upload-input input mb-1">
-                    <input class="js-image-input" required type="text" id="imageURL" @bind="InputImageURL" placeholder="Image URL" autocomplete="no" autocapitalize="off" />
-                    <i>
-                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="file-image" class="svg-inline--fa fa-file-image fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M159 336l-39.5-39.5c-4.7-4.7-12.3-4.7-17 0l-39 39L63 448h256V304l-55.5-55.5c-4.7-4.7-12.3-4.7-17 0L159 336zm96-50.7l32 32V416H95.1l.3-67.2 15.6-15.6 48 48c20.3-20.3 77.7-77.6 96-95.9zM127 256c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm0-96c17.6 0 32 14.4 32 32s-14.4 32-32 32-32-14.4-32-32 14.4-32 32-32zm242.9-62.1L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM256 32.5c2.8.7 5.3 2.1 7.4 4.2l83.9 83.9c2.1 2.1 3.5 4.6 4.2 7.4H256V32.5zM352 464c0 8.8-7.2 16-16 16H48c-8.8 0-16-7.2-16-16V48c0-8.8 7.2-16 16-16h176v104c0 13.3 10.7 24 24 24h104v304z"></path></svg>
-                    </i>
-                </div>
-                <div class="select mb-1">
-                    <select @bind="SelectedGridType">
-                        <option value="1">Visible Grid</option>
-                        <option value="2">Invisible Grid</option>
-                        <option value="3">Gridless</option>
-                    </select>
-                    <i>
-                        <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"></path></svg>
-                    </i>
-                </div>
-                <button class="button -solid -primary w-full" @onclick="LoadTabletop">Load Tabletop</button>
-            </div>
-        }
-        @if (MonsterLookupMenuOpen){
-            <div class="monster-lookup-modal">
-                <div class="input">
-                    <input class="js-monster-lookup" required type="text" @oninput="LookupMonster" placeholder="Search for a monster" autocomplete="no" autocapitalize="off" />
-                    @if (Creatures.Count != 0){
-                        <div class="lookup-list">
-                            @for (int i = 0; i < Creatures.Count; i++){
-                                int index = i;
-                                <button @onclick="@(e => SpawnCreature(index))">@Creatures[i]</button>
-                            }
-                        </div>
-                    }
-                </div>
-                <p class="block w-full mt-0.75 px-0.25 font-grey-700 font-xs line-snug">Monsters provided by the 5E SRD. If a monster is not listed create a custom creature instead.</p>
-            </div>
-        }
-        @if (CustomCreatureMenuOpen){
-            <form class="custom-creature-modal" @onsubmit="SpawnCustomCreature">
-                <div class="input mb-1">
-                    <label for="custom-creature-name">Creature's Name</label>
-                    <input required id="custom-creature-name" type="text" @bind="CustomCreature.BaseName" autocomplete="no" autocapitalize="off" />
-                </div>
-                <div class="w-full mb-1" grid="columns 2 gap-1">
-                    <div class="input">
-                        <label for="custom-creature-ac">Armor Class</label>
-                        <input required id="custom-creature-ac" type="number" @bind="CustomCreature.BaseAC" min="0" />
-                    </div>
-                    <div class="input">
-                        <label for="custom-creature-hp">Hit Points</label>
-                        <input required id="custom-creature-hp" type="number" @bind="CustomCreature.BaseHP" min="0" />
-                    </div>
-                </div>
-                <button class="button -solid -primary w-full" type="submit">Spawn creature</button>
-            </form>
-        }
-        @if (NPCMenuOpen){
-            <form class="custom-creature-modal" @onsubmit="SpawnNPC">
-                <div class="input mb-1">
-                    <label for="custom-creature-name">Creature's Name</label>
-                    <input class="js-npc-input" required id="npc-name" type="text" @bind="NewNPC.BaseName" autocomplete="no" autocapitalize="off" />
-                </div>
-                <div class="w-full mb-1" grid="columns 2 gap-1">
-                    <div class="input">
-                        <label for="custom-creature-ac">Armor Class</label>
-                        <input required id="npc-ac" type="number" @bind="NewNPC.BaseAC" min="0" />
-                    </div>
-                    <div class="input">
-                        <label for="custom-creature-hp">Hit Points</label>
-                        <input required id="npc-hp" type="number" @bind="NewNPC.BaseHP" min="0" />
-                    </div>
-                </div>
-                <button class="button -solid -primary w-full" type="submit">Spawn NPC</button>
-            </form>
-        }
-        <div class="combat-modal" style="display: @(CombatMenuOpen ? "block" : "none");left:0;top:calc(36px + 0.5rem);">
-            <div style="cursor: move;" class="w-full bg-grey-800 p-0.5 js-combat-modal" flex="items-center row nowrap justify-between">
-                <span class="inline-block font-xs font-grey-100 font-medium">Combat Order</span>
-                <div flex="items-center row nowrap">
-                    @if (Tabletop.IsGameMaster){
-                        <button @onclick="SyncCombatOrder" class="sync" title="sync list" aria-label="sync combat order list">
-                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="sync-alt" class="svg-inline--fa fa-sync-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M457.373 9.387l-50.095 50.102C365.411 27.211 312.953 8 256 8 123.228 8 14.824 112.338 8.31 243.493 7.971 250.311 13.475 256 20.301 256h10.015c6.352 0 11.647-4.949 11.977-11.293C48.159 131.913 141.389 42 256 42c47.554 0 91.487 15.512 127.02 41.75l-53.615 53.622c-20.1 20.1-5.855 54.628 22.627 54.628H480c17.673 0 32-14.327 32-32V32.015c0-28.475-34.564-42.691-54.627-22.628zM480 160H352L480 32v128zm11.699 96h-10.014c-6.353 0-11.647 4.949-11.977 11.293C463.84 380.203 370.504 470 256 470c-47.525 0-91.468-15.509-127.016-41.757l53.612-53.616c20.099-20.1 5.855-54.627-22.627-54.627H32c-17.673 0-32 14.327-32 32v127.978c0 28.614 34.615 42.641 54.627 22.627l50.092-50.096C146.587 484.788 199.046 504 256 504c132.773 0 241.176-104.338 247.69-235.493.339-6.818-5.165-12.507-11.991-12.507zM32 480V352h128L32 480z"></path></svg>
-                        </button>
-                    }
-                    <button class="modal-close" @onclick="@(e => CombatMenuOpen = false)" title="close" aria-label="close combat order list">
-                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
-                    </button>
-                </div>
-            </div>
-            @if (Tabletop.CombatOrder.Count > 0){
-                <ul class="mb-0.5">
-                    @for (int i = 0; i < Tabletop.CombatOrder.Count; i++){
-                        Entity Entity = Tabletop.CombatOrder[i];
-                        int OrderPosition = i;
-                        <li 
-                            class="entity" 
-                            draggable="@(Tabletop.IsGameMaster ? "true" : "false")" 
-                            ondragover="event.preventDefault();" 
-                            @ondrop="@(e => UpdateEntityCombatOrderPosition(OrderPosition))" 
-                            @ondragstart="@(e => MovingEntityUID = Entity.UID)" 
-                            title="@Entity.Name"
-                        >
-                            <div flex="items-center">
-                                @if (Tabletop.IsGameMaster){
-                                    <i class="handle">
-                                        <svg style="pointer-events: none;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="grip-lines" class="svg-inline--fa fa-grip-lines fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M440 192H8c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8h432c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8zm0 96H8c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8h432c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8z"></path></svg>
-                                    </i>
-                                }
-                                <div 
-                                    class="@(Tabletop.IsGameMaster ? "flex" : "ml-0.75")" 
-                                >
-                                    @if (Tabletop.IsGameMaster){
-                                        <div class="ml-0.25 mr-0.5 gm-status @(Entity.IsTurn ? "active" : "")"></div>
-                                    }
-                                    <span>@Entity.Name</span>
-                                </div>
-                            </div>
-                            @if (Tabletop.IsGameMaster){
-                                <div flex="row nowrap items-center">
-                                    <button title="Ping @Entity.Name" class="ping-player" @onclick="@(e => Hub.PingEntity(Entity.UID))">
-                                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="share" class="svg-inline--fa fa-share fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M564.907 196.35L388.91 12.366C364.216-13.45 320 3.746 320 40.016v88.154C154.548 130.155 0 160.103 0 331.19c0 94.98 55.84 150.231 89.13 174.571 24.233 17.722 58.021-4.992 49.68-34.51C100.937 336.887 165.575 321.972 320 320.16V408c0 36.239 44.19 53.494 68.91 27.65l175.998-184c14.79-15.47 14.79-39.83-.001-55.3zm-23.127 33.18l-176 184c-4.933 5.16-13.78 1.73-13.78-5.53V288c-171.396 0-295.313 9.707-243.98 191.7C72 453.36 32 405.59 32 331.19 32 171.18 194.886 160 352 160V40c0-7.262 8.851-10.69 13.78-5.53l176 184a7.978 7.978 0 0 1 0 11.06z"></path></svg>
-                                    </button>
-                                    <button title="Remove @Entity.Name" class="remove" @onclick="@(e => Hub.RemoveEntityFromCombatOrder(Entity.UID))">
-                                        <svg style="width:14px;height:14px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
-                                    </button>
-                                </div>
-                            }else{
-                                <div class="status @(Entity.IsTurn ? "active" : "")"></div>
-                            }
-                        </li>
-                    }
-                </ul>
-            }else if (Tabletop.IsGameMaster){
-                <p class="px-0.5 py-1 font-xs font-grey-700 w-full block text-center">Press the Sync button to load the combat order.</p>
-            }else{
-                <p class="px-0.5 py-1 font-xs font-grey-700 w-full block text-center">Waiting for your GM to load the combat order.</p>
             }
         </div>
-        <div class="chat-modal" style="display: @(ChatMenuOpen ? "block" : "none");left:0;top:calc(36px + 0.5rem);@(!Tabletop.IsGameMaster ? "width:420px;" : "")">
-            <div style="cursor: move;" class="w-full bg-grey-800 p-0.5 js-chat-modal" flex="items-center row nowrap justify-between">
-                <span class="inline-block font-xs font-grey-100 font-medium">Messenger</span>
-                <button class="modal-close" @onclick="@(e => ChatMenuOpen = false)" title="close" aria-label="close messenger">
+        <div flex="items-center row nowrap">
+            <button @onclick="OpenSettingsMenu" class="icon-button-toggle" aria-label="open settings menu" title="settings">
+                <svg style="width:24px;height:24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="cog" class="svg-inline--fa fa-cog fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M482.696 299.276l-32.61-18.827a195.168 195.168 0 0 0 0-48.899l32.61-18.827c9.576-5.528 14.195-16.902 11.046-27.501-11.214-37.749-31.175-71.728-57.535-99.595-7.634-8.07-19.817-9.836-29.437-4.282l-32.562 18.798a194.125 194.125 0 0 0-42.339-24.48V38.049c0-11.13-7.652-20.804-18.484-23.367-37.644-8.909-77.118-8.91-114.77 0-10.831 2.563-18.484 12.236-18.484 23.367v37.614a194.101 194.101 0 0 0-42.339 24.48L105.23 81.345c-9.621-5.554-21.804-3.788-29.437 4.282-26.36 27.867-46.321 61.847-57.535 99.595-3.149 10.599 1.47 21.972 11.046 27.501l32.61 18.827a195.168 195.168 0 0 0 0 48.899l-32.61 18.827c-9.576 5.528-14.195 16.902-11.046 27.501 11.214 37.748 31.175 71.728 57.535 99.595 7.634 8.07 19.817 9.836 29.437 4.283l32.562-18.798a194.08 194.08 0 0 0 42.339 24.479v37.614c0 11.13 7.652 20.804 18.484 23.367 37.645 8.909 77.118 8.91 114.77 0 10.831-2.563 18.484-12.236 18.484-23.367v-37.614a194.138 194.138 0 0 0 42.339-24.479l32.562 18.798c9.62 5.554 21.803 3.788 29.437-4.283 26.36-27.867 46.321-61.847 57.535-99.595 3.149-10.599-1.47-21.972-11.046-27.501zm-65.479 100.461l-46.309-26.74c-26.988 23.071-36.559 28.876-71.039 41.059v53.479a217.145 217.145 0 0 1-87.738 0v-53.479c-33.621-11.879-43.355-17.395-71.039-41.059l-46.309 26.74c-19.71-22.09-34.689-47.989-43.929-75.958l46.329-26.74c-6.535-35.417-6.538-46.644 0-82.079l-46.329-26.74c9.24-27.969 24.22-53.869 43.929-75.969l46.309 26.76c27.377-23.434 37.063-29.065 71.039-41.069V44.464a216.79 216.79 0 0 1 87.738 0v53.479c33.978 12.005 43.665 17.637 71.039 41.069l46.309-26.76c19.709 22.099 34.689 47.999 43.929 75.969l-46.329 26.74c6.536 35.426 6.538 46.644 0 82.079l46.329 26.74c-9.24 27.968-24.219 53.868-43.929 75.957zM256 160c-52.935 0-96 43.065-96 96s43.065 96 96 96 96-43.065 96-96-43.065-96-96-96zm0 160c-35.29 0-64-28.71-64-64s28.71-64 64-64 64 28.71 64 64-28.71 64-64 64z"></path></svg>
+            </button>
+        </div>
+    </div>
+    @if (DiceMenuOpen){
+        <div class="dice-modal">
+            <button title="d4" @onclick="@(e => SetActiveDie("d4"))" class="@(ActiveDie == "d4" ? "is-active" : "")">
+                <i>
+                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d4" class="svg-inline--fa fa-dice-d4 fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M504.9 289.03L280.84 11.86C274.45 3.96 265.23 0 256 0s-18.45 3.96-24.85 11.86L7.1 289.03c-11.31 14-8.84 34.57 5.47 45.49l224.05 170.94c5.72 4.37 12.55 6.55 19.38 6.55s13.66-2.18 19.38-6.55l224.05-170.94c14.31-10.92 16.78-31.5 5.47-45.49zM31.99 309.14L240 51.75v416.04L31.99 309.14zM256.02 480h.03l-.01.01-.02-.01zM272 467.82v-416l208.02 257.26L272 467.82z"></path></svg>
+                </i>
+            </button>
+            <button title="d6" @onclick="@(e => SetActiveDie("d6"))" class="@(ActiveDie == "d6" ? "is-active" : "")">
+                <i>
+                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d6" class="svg-inline--fa fa-dice-d6 fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M431.88 116.13L239.88 4.3a31.478 31.478 0 0 0-31.76 0l-192 111.84C6.15 121.94 0 132.75 0 144.46v223.09c0 11.71 6.15 22.51 16.12 28.32l192 111.83a31.478 31.478 0 0 0 31.76 0l192-111.83c9.97-5.81 16.12-16.62 16.12-28.32V144.46c0-11.71-6.15-22.52-16.12-28.33zM224 32.08l175.75 102.86L224 237.48 47.83 134.7 224 32.08zM32.21 162.65L208 265.18v205.37L32 367.54l.21-204.89zM240 470.84V265.18l175.98-102.64-.21 205.67L240 470.84z"></path></svg>
+                </i>
+            </button>
+            <button title="d8" @onclick="@(e => SetActiveDie("d8"))" class="@(ActiveDie == "d8" ? "is-active" : "")">
+                <i>
+                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d8" class="svg-inline--fa fa-dice-d8 fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M502.1 232.1L279.9 9.9C273.3 3.3 264.6 0 256 0s-17.3 3.3-23.9 9.9L9.9 232.1c-13.2 13.2-13.2 34.5 0 47.7L232.1 502c6.6 6.6 15.2 9.9 23.9 9.9s17.3-3.3 23.9-9.9l222.2-222.2c13.2-13.1 13.2-34.5 0-47.7zM240 464.7L61.2 285.9 240 362.5zm0-137L43.7 243.6 240 47.3zm32 137V362.5l178.8-76.6zm0-137V47.3l196.3 196.3z"></path></svg>
+                </i>
+            </button>
+            <button title="d10" @onclick="@(e => SetActiveDie("d10"))" class="@(ActiveDie == "d10" ? "is-active" : "")">
+                <i>
+                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d10" class="svg-inline--fa fa-dice-d10 fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M503.88 261.29L279.8 10.64C273.45 3.55 264.72 0 256 0s-17.45 3.55-23.8 10.64L8.12 261.29c-11.81 13.21-10.6 33.5 2.69 45.22l224.08 197.52c6.03 5.32 13.57 7.97 21.11 7.97 7.54 0 15.08-2.66 21.11-7.97L501.19 306.5c13.29-11.71 14.49-32.01 2.69-45.21zM256 297.95l-75.86-50.57 75.86-177 75.86 177L256 297.95zm-107.28-58.24L47.69 264.97 220.97 71.12l-72.25 168.59zm214.56 0L291.03 71.12 464.5 265.01l-101.22-25.3zM31.91 282.62l.01.04-.03-.02.02-.02zm17.03 15.03l108.34-27.09 82.76 55.19v140.22L48.94 297.65zM271.96 465.9V325.75l82.76-55.19 108.2 27.06L271.96 465.9z"></path></svg>
+                </i>
+            </button>
+            <button title="d12" @onclick="@(e => SetActiveDie("d12"))" class="@(ActiveDie == "d12" ? "is-active" : "")">
+                <i>
+                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d12" class="svg-inline--fa fa-dice-d12 fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M505.24 178.49l-47.7-95.41a63.972 63.972 0 0 0-28.62-28.62l-95.41-47.7A63.905 63.905 0 0 0 304.89 0h-97.78c-9.94 0-19.73 2.31-28.62 6.76l-95.41 47.7a63.972 63.972 0 0 0-28.62 28.62l-47.7 95.41A63.874 63.874 0 0 0 0 207.11v97.78c0 9.94 2.31 19.73 6.76 28.62l47.7 95.41a63.972 63.972 0 0 0 28.62 28.62l95.41 47.7a64.07 64.07 0 0 0 28.62 6.76h97.78c9.94 0 19.73-2.31 28.62-6.76l95.41-47.7a63.972 63.972 0 0 0 28.62-28.62l47.7-95.41a64.07 64.07 0 0 0 6.76-28.62v-97.78c0-9.94-2.31-19.74-6.76-28.62zm-29.55 12.44l-95.58 109.23L272 246.11V140.22l156.94-42.8 46.75 93.51zM308.8 480H203.2l-55.29-152.06L256 273.89l108.09 54.05L308.8 480zM199.55 32h112.89l82.85 41.42L256 111.41 116.71 73.42 199.55 32zM83.06 97.42L240 140.22V246.1l-108.11 54.05-95.58-109.22 46.75-93.51zM32 312.45v-77.88l81.99 93.7 48.42 133.16-74.56-37.28L32 312.45zm392.15 111.7l-74.56 37.28 48.42-133.16 81.99-93.7v77.88l-55.85 111.7z"></path></svg>
+                </i>
+            </button>
+            <button title="d20" @onclick="@(e => SetActiveDie("d20"))" class="@(ActiveDie == "d20" ? "is-active" : "")">
+                <i>
+                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d20" class="svg-inline--fa fa-dice-d20 fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M431.88 116.13L239.88 4.3a31.478 31.478 0 0 0-31.76 0l-192 111.84C6.15 121.94 0 132.75 0 144.46v223.09c0 11.71 6.15 22.51 16.12 28.32l192 111.83a31.478 31.478 0 0 0 31.76 0l192-111.83c9.97-5.81 16.12-16.62 16.12-28.32V144.46c0-11.71-6.15-22.52-16.12-28.33zM224 57.62L318.7 176H129.3L224 57.62zM124.62 208h198.75L224 369.47 124.62 208zm68.28 171.99L55.92 362.87l44.43-133.28 92.55 150.4zm154.75-150.41l44.43 133.28-136.98 17.13 92.55-150.41zm7.17-59.69L262.67 54.72l138.01 80.78-45.86 34.39zm-261.64 0l-46.24-34.68 138.54-80.7-92.3 115.38zm-16.01 27.98l-45.13 135.4.17-169.12 44.96 33.72zM208 414.12v56.43L85.4 398.8 208 414.12zm155.6-15.45L240 470.84v-56.72l123.6-15.45zm7.23-200.8l45.15-33.86-.17 168.79-44.98-134.93zM224.14 480h.17l-.09.05-.08-.05z"></path></svg>
+                </i>
+            </button>
+            <button title="d100" @onclick="@(e => SetActiveDie("d100"))" class="@(ActiveDie == "d100" ? "is-active" : "")">
+                <i>
+                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="badge-percent" class="svg-inline--fa fa-badge-percent fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M349.66 173.65l-11.31-11.31c-3.12-3.12-8.19-3.12-11.31 0l-164.7 164.69c-3.12 3.12-3.12 8.19 0 11.31l11.31 11.31c3.12 3.12 8.19 3.12 11.31 0l164.69-164.69c3.13-3.12 3.13-8.18.01-11.31zM240 192c0-26.47-21.53-48-48-48s-48 21.53-48 48 21.53 48 48 48 48-21.53 48-48zm-64 0c0-8.83 7.19-16 16-16s16 7.17 16 16-7.19 16-16 16-16-7.17-16-16zm144 80c-26.47 0-48 21.53-48 48s21.53 48 48 48 48-21.53 48-48-21.53-48-48-48zm0 64c-8.81 0-16-7.17-16-16s7.19-16 16-16 16 7.17 16 16-7.19 16-16 16zm192-80c0-35.5-19.4-68.2-49.6-85.5 9.1-33.6-.3-70.4-25.4-95.5s-61.9-34.5-95.5-25.4C324.2 19.4 291.5 0 256 0s-68.2 19.4-85.5 49.6c-33.6-9.1-70.4.3-95.5 25.4s-34.5 61.9-25.4 95.5C19.4 187.8 0 220.5 0 256s19.4 68.2 49.6 85.5c-9.1 33.6.3 70.4 25.4 95.5 26.5 26.5 63.4 34.1 95.5 25.4 17.4 30.2 50 49.6 85.5 49.6s68.1-19.4 85.5-49.6c32.7 8.9 69.4.7 95.5-25.4 25.1-25.1 34.5-61.9 25.4-95.5 30.2-17.3 49.6-50 49.6-85.5zm-91.1 68.3c5.3 11.8 29.5 54.1-6.5 90.1-28.9 28.9-57.5 21.3-90.1 6.5C319.7 433 307 480 256 480c-52.1 0-64.7-49.5-68.3-59.1-32.6 14.8-61.3 22.2-90.1-6.5-36.8-36.7-10.9-80.5-6.5-90.1C79 319.7 32 307 32 256c0-52.1 49.5-64.7 59.1-68.3-5.3-11.8-29.5-54.1 6.5-90.1 36.8-36.9 80.8-10.7 90.1-6.5C192.3 79 205 32 256 32c52.1 0 64.7 49.5 68.3 59.1 11.8-5.3 54.1-29.5 90.1 6.5 36.8 36.7 10.9 80.5 6.5 90.1C433 192.3 480 205 480 256c0 52.1-49.5 64.7-59.1 68.3z"></path></svg>
+                </i>
+            </button>
+            <div class="w-full mt-0.5" flex="row nowrap items-center">
+                <div class="input mr-0.5" style="flex:1;">
+                    <input required type="number" @bind="RollCount" min="1" />
+                </div>
+                <button @onclick="RollDice" class="button -primary -solid -round" title="roll dice" aria-label="roll dice">
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sync-alt" class="svg-inline--fa fa-sync-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M370.72 133.28C339.458 104.008 298.888 87.962 255.848 88c-77.458.068-144.328 53.178-162.791 126.85-1.344 5.363-6.122 9.15-11.651 9.15H24.103c-7.498 0-13.194-6.807-11.807-14.176C33.933 94.924 134.813 8 256 8c66.448 0 126.791 26.136 171.315 68.685L463.03 40.97C478.149 25.851 504 36.559 504 57.941V192c0 13.255-10.745 24-24 24H345.941c-21.382 0-32.09-25.851-16.971-40.971l41.75-41.749zM32 296h134.059c21.382 0 32.09 25.851 16.971 40.971l-41.75 41.75c31.262 29.273 71.835 45.319 114.876 45.28 77.418-.07 144.315-53.144 162.787-126.849 1.344-5.363 6.122-9.15 11.651-9.15h57.304c7.498 0 13.194 6.807 11.807 14.176C478.067 417.076 377.187 504 256 504c-66.448 0-126.791-26.136-171.315-68.685L48.97 471.03C33.851 486.149 8 475.441 8 454.059V320c0-13.255 10.745-24 24-24z"></path></svg>
+                    </i>
+                </button>
+            </div>
+        </div>
+    }
+    @if (EntitySpawnMenuOpen){
+        <div 
+            class="entity-spawn-modal" 
+            style="top: @(RightClickPosition[1] != -1 ? RightClickPosition[1].ToString() + "px" : "calc(36px + 1rem)");left: @(RightClickPosition[0] != -1 ? RightClickPosition[0].ToString() : "168")px;"
+        >
+            <button @onclick="OpenMonsterLookupMenu">
+                <i>
+                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dragon" class="svg-inline--fa fa-dragon fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M481.01 119.95c14.92.86 27.35-9.89 30.88-24.58L453.47 80c-6.49 27.12 15.51 39.26 27.54 39.95zm54.5 131.8c-29.84-16.98-55.61-31.64-55.61-51.38V192h16.96l28.62 22.03c8.34 6.42 18.74 9.97 29.27 9.97h29.18c21.15 0 40.09-14.17 46.02-34.45l7.4-25.16c5.84-19.8 1.88-41.44-10.62-57.91L569.8 31.59C554.78 11.81 530.98 0 506.14 0H297.16c-19.47 0-33.09 24.04-15.4 41.25l37.49 30.25-32.55 13.42c-16.19 7.94-19.14 32.81 1.13 42.64l48.11 19.25v50.89l-190.3-47.88c-19.18-4.86-39.68 2.83-50.99 19.08L3.76 299.12c-5.03 7.91-5 17.72.03 25.59 1.69 2.62 9.54 13.11 24.99 10.91l115.02-21.8-12.07 17.3c-5.03 7.91-5 17.72.03 25.59 6.7 10.45 17.87 11.86 24.15 11.05l202.87-27.39c8.33 16.71 18.17 32.35 31.17 45.73-130.55 8.75-252.39 36.8-364.13 61.33C10.86 450.7.01 464.1.01 479.31c0 18 14.75 32.64 32.87 32.64l474.01.05c42.65 0 83.14-19.77 108.29-52.89 23.4-30.8 30.49-68.73 19.9-106.8-14.5-52.15-61.68-79-99.57-100.56zM41.72 300.62l79.17-113.41c3.75-5.39 10.59-7.86 17-6.36l84.07 21.02L170 276.3 41.72 300.62zm127.18 33.1l86.23-123.48 80.79 20.5c0 47.9 8.68 72.63 10.6 79L168.9 333.72zM506.89 480H32c230.53-56.77 352.62-62.36 400.47-64.02 15.54-.53 21.22-20.83 8.22-29.34-48.96-32.23-72.76-80.92-72.76-148.83V135.98c0-6.55-3.97-12.42-10.06-14.86l-38.15-15.23 36.71-15.09c5.22-2.16 8.94-6.91 9.75-12.5s-1.41-11.2-5.81-14.75L321.15 32h184.99c14.9 0 29.18 7.08 38.18 18.95l56.92 74.91c6.38 8.38 8.4 19.39 5.44 29.48l-7.4 25.19c-2 6.75-8.31 11.47-15.34 11.47h-29.18c-3.56 0-6.9-1.14-9.75-3.33l-32.96-25.36a16.01 16.01 0 0 0-9.75-3.31h-38.4c-8.84 0-16 7.16-16 16v24.38c0 38.34 34.87 58.19 71.8 79.19 36.18 20.59 73.58 41.89 84.57 81.33 19.36 69.86-41.14 119.1-97.38 119.1z"></path></svg>
+                </i>
+                <span>Spawn Creature</span>
+            </button>
+            <button @onclick="OpenNPCMenu">
+                <i>
+                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="street-view" class="svg-inline--fa fa-street-view fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M368 360.15v30.87c62.27 8.42 104 23.6 104 40.99 0 26.51-96.71 48-216 48S40 458.51 40 432c0-17.38 41.73-32.56 104-40.99v-30.87C58.82 373.14 0 400.39 0 432c0 44.18 114.62 80 256 80s256-35.82 256-80c0-31.61-58.82-58.86-144-71.85zM176 320v80c0 26.47 21.53 48 48 48h64c26.47 0 48-21.53 48-48v-80c26.47 0 48-21.53 48-48v-64c0-34.53-22.11-63.75-52.82-74.93C339.14 119.84 344 104.54 344 88c0-48.52-39.48-88-88-88s-88 39.48-88 88c0 16.54 4.86 31.84 12.82 45.07C150.11 144.25 128 173.47 128 208v64c0 26.47 21.53 48 48 48zm80-288c30.93 0 56 25.07 56 56s-25.07 56-56 56-56-25.07-56-56 25.07-56 56-56zm-96 176c0-25.76 20.44-46.68 45.93-47.79C220.17 170.11 237.38 176 256 176s35.83-5.89 50.07-15.79C331.56 161.32 352 182.24 352 208v64c0 8.83-7.19 16-16 16h-32v112c0 8.83-7.19 16-16 16h-64c-8.81 0-16-7.17-16-16V288h-32c-8.81 0-16-7.17-16-16v-64z"></path></svg>
+                </i>
+                <span>Spawn NPC</span>
+            </button>
+            <button @onclick="OpenCustomCreatureMenu">
+                <i>
+                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="paw-claws" class="svg-inline--fa fa-paw-claws fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M318.55 222.61c40.16 10.56 69.55-34.86 77.46-63.87 8.44-30.94 3.01-61.05-12.01-78.75L320 0v74.96c-15.94 11.26-29.49 30.37-36.02 54.29-11.84 43.42 3.64 85.22 34.57 93.36zm-3.7-84.93c18.22-66.79 66.59-47.08 50.29 12.65-18.19 66.71-66.59 47.12-50.29-12.65zm178.65 52.69L448 128v66.94c-19.83 6.55-37.51 24.43-44.72 48.46-10.4 34.65 4.77 68.38 33.89 75.34 30.46 7.29 61.64-17.11 71.55-50.13 8.85-29.51-1.55-59.5-15.22-78.24zm-15.43 69.03c-12.72 42.35-56.89 35.65-44.15-6.81 12.69-42.26 56.91-35.72 44.15 6.81zM256 256c-79.41 0-191.99 122.76-191.99 200.25 0 34.91 26.81 55.75 71.74 55.75 48.84 0 81.09-25.08 120.26-25.08 39.51 0 71.84 25.08 120.26 25.08 44.93 0 71.74-20.85 71.74-55.75C447.99 378.76 335.41 256 256 256zm120.26 224c-20.3 0-37.81-5.77-56.34-11.88-19.68-6.49-40.02-13.19-63.91-13.19-23.65 0-43.85 6.67-63.39 13.12-18.64 6.15-36.25 11.96-56.87 11.96-39.74 0-39.74-17.88-39.74-23.75C96.01 393.35 196.19 288 256 288s159.99 105.35 159.99 168.25c0 5.87 0 23.75-39.73 23.75zM108.73 243.39c-7.21-24.03-24.89-41.91-44.72-48.46V128L18.5 190.37C4.81 209.13-5.57 239.11 3.29 268.61c10 33.3 41.36 57.35 71.55 50.13 29.11-6.97 44.29-40.7 33.89-75.35zM33.94 259.4c-12.84-42.77 31.51-48.87 44.15-6.81 12.8 42.69-31.5 48.95-44.15 6.81zm159.51-36.79c30.94-8.14 46.42-49.94 34.58-93.36-6.53-23.92-20.07-43.04-36.02-54.29V0L128 79.99c-15.02 17.7-20.45 47.82-12.01 78.75 7.65 28.05 37.08 74.5 77.46 63.87zm3.7-84.93c16.2 59.39-32 79.74-50.3 12.65-16.19-59.39 32-79.75 50.3-12.65z"></path></svg>
+                </i>
+                <span>Create Custom Creature</span>
+            </button>
+        </div>
+    }
+    @if (TabletopMenuOpen){
+        <div class="tabletop-modal">
+            <button @onclick="UploadTabletopImage">
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="file-upload" class="svg-inline--fa fa-file-upload fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M369.9 97.98L286.02 14.1c-9-9-21.2-14.1-33.89-14.1H47.99C21.5.1 0 21.6 0 48.09v415.92C0 490.5 21.5 512 47.99 512h288.02c26.49 0 47.99-21.5 47.99-47.99V131.97c0-12.69-5.1-24.99-14.1-33.99zM256.03 32.59c2.8.7 5.3 2.1 7.4 4.2l83.88 83.88c2.1 2.1 3.5 4.6 4.2 7.4h-95.48V32.59zm95.98 431.42c0 8.8-7.2 16-16 16H47.99c-8.8 0-16-7.2-16-16V48.09c0-8.8 7.2-16.09 16-16.09h176.04v104.07c0 13.3 10.7 23.93 24 23.93h103.98v304.01zm-180.1-247.32l-68.12 71.75c-7.81 8.2-9.94 20.31-5.44 30.83 4.41 10.31 14 16.72 25 16.72H176V424c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-88.02h52.66c11 0 20.59-6.41 25-16.72 4.5-10.52 2.38-22.62-5.44-30.81l-68.12-71.78c-10.69-11.19-29.51-11.2-40.19.02zm-38.75 87.29l58.84-62 58.84 62H133.16z"></path></svg>
+                    </i>
+                    <span>Load Tabletop Image</span>
+                </button>
+                <button class="danger" @onclick="RemoveTabletopImage">
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="exclamation-triangle" class="svg-inline--fa fa-exclamation-triangle fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M270.2 160h35.5c3.4 0 6.1 2.8 6 6.2l-7.5 196c-.1 3.2-2.8 5.8-6 5.8h-20.5c-3.2 0-5.9-2.5-6-5.8l-7.5-196c-.1-3.4 2.6-6.2 6-6.2zM288 388c-15.5 0-28 12.5-28 28s12.5 28 28 28 28-12.5 28-28-12.5-28-28-28zm281.5 52L329.6 24c-18.4-32-64.7-32-83.2 0L6.5 440c-18.4 31.9 4.6 72 41.6 72H528c36.8 0 60-40 41.5-72zM528 480H48c-12.3 0-20-13.3-13.9-24l240-416c6.1-10.6 21.6-10.7 27.7 0l240 416c6.2 10.6-1.5 24-13.8 24z"></path></svg>
+                    </i>
+                    <span>Clear Tabletop</span>
+                </button>
+        </div>
+    }
+    @if (ImageUploadOpen){
+        <div class="image-upload-modal">
+            <div class="file-upload-input input mb-1">
+                <input class="js-image-input" required type="text" id="imageURL" @bind="InputImageURL" placeholder="Image URL" autocomplete="no" autocapitalize="off" />
+                <i>
+                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="file-image" class="svg-inline--fa fa-file-image fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M159 336l-39.5-39.5c-4.7-4.7-12.3-4.7-17 0l-39 39L63 448h256V304l-55.5-55.5c-4.7-4.7-12.3-4.7-17 0L159 336zm96-50.7l32 32V416H95.1l.3-67.2 15.6-15.6 48 48c20.3-20.3 77.7-77.6 96-95.9zM127 256c35.3 0 64-28.7 64-64s-28.7-64-64-64-64 28.7-64 64 28.7 64 64 64zm0-96c17.6 0 32 14.4 32 32s-14.4 32-32 32-32-14.4-32-32 14.4-32 32-32zm242.9-62.1L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM256 32.5c2.8.7 5.3 2.1 7.4 4.2l83.9 83.9c2.1 2.1 3.5 4.6 4.2 7.4H256V32.5zM352 464c0 8.8-7.2 16-16 16H48c-8.8 0-16-7.2-16-16V48c0-8.8 7.2-16 16-16h176v104c0 13.3 10.7 24 24 24h104v304z"></path></svg>
+                </i>
+            </div>
+            <div class="select mb-1">
+                <select @bind="SelectedGridType">
+                    <option value="1">Visible Grid</option>
+                    <option value="2">Invisible Grid</option>
+                    <option value="3">Gridless</option>
+                </select>
+                <i>
+                    <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M31.3 192h257.3c17.8 0 26.7 21.5 14.1 34.1L174.1 354.8c-7.8 7.8-20.5 7.8-28.3 0L17.2 226.1C4.6 213.5 13.5 192 31.3 192z"></path></svg>
+                </i>
+            </div>
+            <button class="button -solid -primary w-full" @onclick="LoadTabletop">Load Tabletop</button>
+        </div>
+    }
+    @if (MonsterLookupMenuOpen){
+        <div class="monster-lookup-modal">
+            <div class="input">
+                <input class="js-monster-lookup" required type="text" @oninput="LookupMonster" placeholder="Search for a monster" autocomplete="no" autocapitalize="off" />
+                @if (Creatures.Count != 0){
+                    <div class="lookup-list">
+                        @for (int i = 0; i < Creatures.Count; i++){
+                            int index = i;
+                            <button @onclick="@(e => SpawnCreature(index))">@Creatures[i]</button>
+                        }
+                    </div>
+                }
+            </div>
+            <p class="block w-full mt-0.75 px-0.25 font-grey-700 font-xs line-snug">Monsters provided by the 5E SRD. If a monster is not listed create a custom creature instead.</p>
+        </div>
+    }
+    @if (CustomCreatureMenuOpen){
+        <form class="custom-creature-modal" @onsubmit="SpawnCustomCreature">
+            <div class="input mb-1">
+                <label for="custom-creature-name">Creature's Name</label>
+                <input required id="custom-creature-name" type="text" @bind="CustomCreature.BaseName" autocomplete="no" autocapitalize="off" />
+            </div>
+            <div class="w-full mb-1" grid="columns 2 gap-1">
+                <div class="input">
+                    <label for="custom-creature-ac">Armor Class</label>
+                    <input required id="custom-creature-ac" type="number" @bind="CustomCreature.BaseAC" min="0" />
+                </div>
+                <div class="input">
+                    <label for="custom-creature-hp">Hit Points</label>
+                    <input required id="custom-creature-hp" type="number" @bind="CustomCreature.BaseHP" min="0" />
+                </div>
+            </div>
+            <button class="button -solid -primary w-full" type="submit">Spawn creature</button>
+        </form>
+    }
+    @if (NPCMenuOpen){
+        <form class="custom-creature-modal" @onsubmit="SpawnNPC">
+            <div class="input mb-1">
+                <label for="custom-creature-name">Creature's Name</label>
+                <input class="js-npc-input" required id="npc-name" type="text" @bind="NewNPC.BaseName" autocomplete="no" autocapitalize="off" />
+            </div>
+            <div class="w-full mb-1" grid="columns 2 gap-1">
+                <div class="input">
+                    <label for="custom-creature-ac">Armor Class</label>
+                    <input required id="npc-ac" type="number" @bind="NewNPC.BaseAC" min="0" />
+                </div>
+                <div class="input">
+                    <label for="custom-creature-hp">Hit Points</label>
+                    <input required id="npc-hp" type="number" @bind="NewNPC.BaseHP" min="0" />
+                </div>
+            </div>
+            <button class="button -solid -primary w-full" type="submit">Spawn NPC</button>
+        </form>
+    }
+    @if (SettingsMenu != null){
+        <div class="settings-modal">
+            @switch(SettingsMenu){
+                case "sound":
+                    <button @onclick="@(e => SettingsMenu = "settings")">
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="angle-left" class="svg-inline--fa fa-angle-left fa-w-6" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512"><path fill="currentColor" d="M25.1 247.5l117.8-116c4.7-4.7 12.3-4.7 17 0l7.1 7.1c4.7 4.7 4.7 12.3 0 17L64.7 256l102.2 100.4c4.7 4.7 4.7 12.3 0 17l-7.1 7.1c-4.7 4.7-12.3 4.7-17 0L25 264.5c-4.6-4.7-4.6-12.3.1-17z"></path></svg>
+                        </i>
+                        <span>Back</span>
+                    </button>
+                    <button @onclick="TogglePingSound">
+                        <i>
+                            @if (PlayPingSound){
+                                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-up" class="svg-inline--fa fa-volume-up fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M342.91 193.57c-7.81-3.8-17.5-.48-21.34 7.5-3.81 7.97-.44 17.53 7.53 21.34C343.22 229.2 352 242.06 352 256s-8.78 26.8-22.9 33.58c-7.97 3.81-11.34 13.38-7.53 21.34 3.86 8.05 13.54 11.29 21.34 7.5C368.25 306.28 384 282.36 384 256s-15.75-50.29-41.09-62.43zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67L139.31 320H32V192h107.31L224 107.33v297.34zM421.51 1.83c-7.89-4.08-17.53-1.12-21.66 6.7-4.13 7.81-1.13 17.5 6.7 21.61 84.76 44.55 137.4 131.1 137.4 225.85s-52.64 181.3-137.4 225.85c-7.82 4.11-10.83 13.8-6.7 21.61 4.1 7.75 13.68 10.84 21.66 6.7C516.78 460.06 576 362.67 576 255.99c0-106.67-59.22-204.06-154.49-254.16zM480 255.99c0-66.12-34.02-126.62-88.81-157.87-7.69-4.38-17.59-1.78-22.04 5.89-4.45 7.66-1.77 17.44 5.96 21.86 44.77 25.55 72.61 75.4 72.61 130.12s-27.84 104.58-72.61 130.12c-7.72 4.42-10.4 14.2-5.96 21.86 4.3 7.38 14.06 10.44 22.04 5.89C445.98 382.62 480 322.12 480 255.99z"></path></svg>
+                            }else{
+                                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-mute" class="svg-inline--fa fa-volume-mute fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M454.63 256l55.03-55.03c3.12-3.12 3.12-8.19 0-11.31l-11.31-11.31c-3.12-3.12-8.19-3.12-11.31 0L432 233.37l-55.03-55.03c-3.12-3.12-8.19-3.12-11.31 0l-11.31 11.31c-3.12 3.12-3.12 8.19 0 11.31L409.37 256l-55.03 55.03c-3.12 3.12-3.12 8.19 0 11.31l11.31 11.31c3.12 3.12 8.19 3.12 11.31 0L432 278.63l55.03 55.03c3.12 3.12 8.19 3.12 11.31 0l11.31-11.31c3.12-3.12 3.12-8.19 0-11.31L454.63 256zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67l-75.32-75.3-9.37-9.37H32V192h107.31l9.37-9.37 75.32-75.3v297.34z"></path></svg>
+                            }
+                        </i>
+                        <span>Pings</span>
+                    </button>
+                    <button @onclick="ToggleNotificationSound">
+                        <i>
+                            @if (PlayNotificationSound){
+                                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-up" class="svg-inline--fa fa-volume-up fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M342.91 193.57c-7.81-3.8-17.5-.48-21.34 7.5-3.81 7.97-.44 17.53 7.53 21.34C343.22 229.2 352 242.06 352 256s-8.78 26.8-22.9 33.58c-7.97 3.81-11.34 13.38-7.53 21.34 3.86 8.05 13.54 11.29 21.34 7.5C368.25 306.28 384 282.36 384 256s-15.75-50.29-41.09-62.43zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67L139.31 320H32V192h107.31L224 107.33v297.34zM421.51 1.83c-7.89-4.08-17.53-1.12-21.66 6.7-4.13 7.81-1.13 17.5 6.7 21.61 84.76 44.55 137.4 131.1 137.4 225.85s-52.64 181.3-137.4 225.85c-7.82 4.11-10.83 13.8-6.7 21.61 4.1 7.75 13.68 10.84 21.66 6.7C516.78 460.06 576 362.67 576 255.99c0-106.67-59.22-204.06-154.49-254.16zM480 255.99c0-66.12-34.02-126.62-88.81-157.87-7.69-4.38-17.59-1.78-22.04 5.89-4.45 7.66-1.77 17.44 5.96 21.86 44.77 25.55 72.61 75.4 72.61 130.12s-27.84 104.58-72.61 130.12c-7.72 4.42-10.4 14.2-5.96 21.86 4.3 7.38 14.06 10.44 22.04 5.89C445.98 382.62 480 322.12 480 255.99z"></path></svg>
+                            }else{
+                                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-mute" class="svg-inline--fa fa-volume-mute fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M454.63 256l55.03-55.03c3.12-3.12 3.12-8.19 0-11.31l-11.31-11.31c-3.12-3.12-8.19-3.12-11.31 0L432 233.37l-55.03-55.03c-3.12-3.12-8.19-3.12-11.31 0l-11.31 11.31c-3.12 3.12-3.12 8.19 0 11.31L409.37 256l-55.03 55.03c-3.12 3.12-3.12 8.19 0 11.31l11.31 11.31c3.12 3.12 8.19 3.12 11.31 0L432 278.63l55.03 55.03c3.12 3.12 8.19 3.12 11.31 0l11.31-11.31c3.12-3.12 3.12-8.19 0-11.31L454.63 256zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67l-75.32-75.3-9.37-9.37H32V192h107.31l9.37-9.37 75.32-75.3v297.34z"></path></svg>
+                            }
+                        </i>
+                        <span>Notificaitons</span>
+                    </button>
+                    <button @onclick="ToggleAlertSound">
+                        <i>
+                            @if (PlayAlertSound){
+                                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-up" class="svg-inline--fa fa-volume-up fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M342.91 193.57c-7.81-3.8-17.5-.48-21.34 7.5-3.81 7.97-.44 17.53 7.53 21.34C343.22 229.2 352 242.06 352 256s-8.78 26.8-22.9 33.58c-7.97 3.81-11.34 13.38-7.53 21.34 3.86 8.05 13.54 11.29 21.34 7.5C368.25 306.28 384 282.36 384 256s-15.75-50.29-41.09-62.43zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67L139.31 320H32V192h107.31L224 107.33v297.34zM421.51 1.83c-7.89-4.08-17.53-1.12-21.66 6.7-4.13 7.81-1.13 17.5 6.7 21.61 84.76 44.55 137.4 131.1 137.4 225.85s-52.64 181.3-137.4 225.85c-7.82 4.11-10.83 13.8-6.7 21.61 4.1 7.75 13.68 10.84 21.66 6.7C516.78 460.06 576 362.67 576 255.99c0-106.67-59.22-204.06-154.49-254.16zM480 255.99c0-66.12-34.02-126.62-88.81-157.87-7.69-4.38-17.59-1.78-22.04 5.89-4.45 7.66-1.77 17.44 5.96 21.86 44.77 25.55 72.61 75.4 72.61 130.12s-27.84 104.58-72.61 130.12c-7.72 4.42-10.4 14.2-5.96 21.86 4.3 7.38 14.06 10.44 22.04 5.89C445.98 382.62 480 322.12 480 255.99z"></path></svg>
+                            }else{
+                                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-mute" class="svg-inline--fa fa-volume-mute fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M454.63 256l55.03-55.03c3.12-3.12 3.12-8.19 0-11.31l-11.31-11.31c-3.12-3.12-8.19-3.12-11.31 0L432 233.37l-55.03-55.03c-3.12-3.12-8.19-3.12-11.31 0l-11.31 11.31c-3.12 3.12-3.12 8.19 0 11.31L409.37 256l-55.03 55.03c-3.12 3.12-3.12 8.19 0 11.31l11.31 11.31c3.12 3.12 8.19 3.12 11.31 0L432 278.63l55.03 55.03c3.12 3.12 8.19 3.12 11.31 0l11.31-11.31c3.12-3.12 3.12-8.19 0-11.31L454.63 256zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67l-75.32-75.3-9.37-9.37H32V192h107.31l9.37-9.37 75.32-75.3v297.34z"></path></svg>
+                            }
+                        </i>
+                        <span>Alerts</span>
+                    </button>
+                    <button @onclick="ToggleLoadingSound">
+                        <i>
+                            @if (PlayLoadingSound){
+                                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-up" class="svg-inline--fa fa-volume-up fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M342.91 193.57c-7.81-3.8-17.5-.48-21.34 7.5-3.81 7.97-.44 17.53 7.53 21.34C343.22 229.2 352 242.06 352 256s-8.78 26.8-22.9 33.58c-7.97 3.81-11.34 13.38-7.53 21.34 3.86 8.05 13.54 11.29 21.34 7.5C368.25 306.28 384 282.36 384 256s-15.75-50.29-41.09-62.43zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67L139.31 320H32V192h107.31L224 107.33v297.34zM421.51 1.83c-7.89-4.08-17.53-1.12-21.66 6.7-4.13 7.81-1.13 17.5 6.7 21.61 84.76 44.55 137.4 131.1 137.4 225.85s-52.64 181.3-137.4 225.85c-7.82 4.11-10.83 13.8-6.7 21.61 4.1 7.75 13.68 10.84 21.66 6.7C516.78 460.06 576 362.67 576 255.99c0-106.67-59.22-204.06-154.49-254.16zM480 255.99c0-66.12-34.02-126.62-88.81-157.87-7.69-4.38-17.59-1.78-22.04 5.89-4.45 7.66-1.77 17.44 5.96 21.86 44.77 25.55 72.61 75.4 72.61 130.12s-27.84 104.58-72.61 130.12c-7.72 4.42-10.4 14.2-5.96 21.86 4.3 7.38 14.06 10.44 22.04 5.89C445.98 382.62 480 322.12 480 255.99z"></path></svg>
+                            }else{
+                                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-mute" class="svg-inline--fa fa-volume-mute fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M454.63 256l55.03-55.03c3.12-3.12 3.12-8.19 0-11.31l-11.31-11.31c-3.12-3.12-8.19-3.12-11.31 0L432 233.37l-55.03-55.03c-3.12-3.12-8.19-3.12-11.31 0l-11.31 11.31c-3.12 3.12-3.12 8.19 0 11.31L409.37 256l-55.03 55.03c-3.12 3.12-3.12 8.19 0 11.31l11.31 11.31c3.12 3.12 8.19 3.12 11.31 0L432 278.63l55.03 55.03c3.12 3.12 8.19 3.12 11.31 0l11.31-11.31c3.12-3.12 3.12-8.19 0-11.31L454.63 256zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67l-75.32-75.3-9.37-9.37H32V192h107.31l9.37-9.37 75.32-75.3v297.34z"></path></svg>
+                            }
+                        </i>
+                        <span>Loading</span>
+                    </button>
+                    break;
+                default:
+                    <button @onclick="@(e => SettingsMenu = "sound")">
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-up" class="svg-inline--fa fa-volume-up fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M342.91 193.57c-7.81-3.8-17.5-.48-21.34 7.5-3.81 7.97-.44 17.53 7.53 21.34C343.22 229.2 352 242.06 352 256s-8.78 26.8-22.9 33.58c-7.97 3.81-11.34 13.38-7.53 21.34 3.86 8.05 13.54 11.29 21.34 7.5C368.25 306.28 384 282.36 384 256s-15.75-50.29-41.09-62.43zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67L139.31 320H32V192h107.31L224 107.33v297.34zM421.51 1.83c-7.89-4.08-17.53-1.12-21.66 6.7-4.13 7.81-1.13 17.5 6.7 21.61 84.76 44.55 137.4 131.1 137.4 225.85s-52.64 181.3-137.4 225.85c-7.82 4.11-10.83 13.8-6.7 21.61 4.1 7.75 13.68 10.84 21.66 6.7C516.78 460.06 576 362.67 576 255.99c0-106.67-59.22-204.06-154.49-254.16zM480 255.99c0-66.12-34.02-126.62-88.81-157.87-7.69-4.38-17.59-1.78-22.04 5.89-4.45 7.66-1.77 17.44 5.96 21.86 44.77 25.55 72.61 75.4 72.61 130.12s-27.84 104.58-72.61 130.12c-7.72 4.42-10.4 14.2-5.96 21.86 4.3 7.38 14.06 10.44 22.04 5.89C445.98 382.62 480 322.12 480 255.99z"></path></svg>
+                        </i>
+                        <span>Sound settings</span>
+                    </button>
+                    <a href="/" class="danger">
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="sign-out" class="svg-inline--fa fa-sign-out fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M48 64h132c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H48c-8.8 0-16 7.2-16 16v288c0 8.8 7.2 16 16 16h132c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48zm279 19.5l-7.1 7.1c-4.7 4.7-4.7 12.3 0 17l132 131.4H172c-6.6 0-12 5.4-12 12v10c0 6.6 5.4 12 12 12h279.9L320 404.4c-4.7 4.7-4.7 12.3 0 17l7.1 7.1c4.7 4.7 12.3 4.7 17 0l164.5-164c4.7-4.7 4.7-12.3 0-17L344 83.5c-4.7-4.7-12.3-4.7-17 0z"></path></svg>
+                        </i>
+                        <span>Leave room</span>
+                    </a>
+                    break;
+            }
+        </div>
+    }
+    <div class="combat-modal" style="display: @(CombatMenuOpen ? "block" : "none");left:0.5rem;top:calc(36px + 1rem);">
+        <div style="cursor: move;" class="w-full bg-grey-800 p-0.5 js-combat-modal" flex="items-center row nowrap justify-between">
+            <span class="inline-block font-xs font-grey-100 font-medium">Combat Order</span>
+            <div flex="items-center row nowrap">
+                @if (Tabletop.IsGameMaster){
+                    <button @onclick="SyncCombatOrder" class="sync" title="sync list" aria-label="sync combat order list">
+                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="sync-alt" class="svg-inline--fa fa-sync-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M457.373 9.387l-50.095 50.102C365.411 27.211 312.953 8 256 8 123.228 8 14.824 112.338 8.31 243.493 7.971 250.311 13.475 256 20.301 256h10.015c6.352 0 11.647-4.949 11.977-11.293C48.159 131.913 141.389 42 256 42c47.554 0 91.487 15.512 127.02 41.75l-53.615 53.622c-20.1 20.1-5.855 54.628 22.627 54.628H480c17.673 0 32-14.327 32-32V32.015c0-28.475-34.564-42.691-54.627-22.628zM480 160H352L480 32v128zm11.699 96h-10.014c-6.353 0-11.647 4.949-11.977 11.293C463.84 380.203 370.504 470 256 470c-47.525 0-91.468-15.509-127.016-41.757l53.612-53.616c20.099-20.1 5.855-54.627-22.627-54.627H32c-17.673 0-32 14.327-32 32v127.978c0 28.614 34.615 42.641 54.627 22.627l50.092-50.096C146.587 484.788 199.046 504 256 504c132.773 0 241.176-104.338 247.69-235.493.339-6.818-5.165-12.507-11.991-12.507zM32 480V352h128L32 480z"></path></svg>
+                    </button>
+                }
+                <button class="modal-close" @onclick="@(e => CombatMenuOpen = false)" title="close" aria-label="close combat order list">
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
                 </button>
             </div>
-            @if (Tabletop.Players.Count != 0){
-                @if (Tabletop.IsGameMaster){
-                    <div class="container">
-                        <div>
+        </div>
+        @if (Tabletop.CombatOrder.Count > 0){
+            <ul class="mb-0.5">
+                @for (int i = 0; i < Tabletop.CombatOrder.Count; i++){
+                    Entity Entity = Tabletop.CombatOrder[i];
+                    int OrderPosition = i;
+                    <li 
+                        class="entity" 
+                        draggable="@(Tabletop.IsGameMaster ? "true" : "false")" 
+                        ondragover="event.preventDefault();" 
+                        @ondrop="@(e => UpdateEntityCombatOrderPosition(OrderPosition))" 
+                        @ondragstart="@(e => MovingEntityUID = Entity.UID)" 
+                        title="@Entity.Name"
+                    >
+                        <div flex="items-center">
+                            @if (Tabletop.IsGameMaster){
+                                <i class="handle">
+                                    <svg style="pointer-events: none;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="grip-lines" class="svg-inline--fa fa-grip-lines fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M440 192H8c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8h432c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8zm0 96H8c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8h432c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8z"></path></svg>
+                                </i>
+                            }
+                            <div 
+                                class="@(Tabletop.IsGameMaster ? "flex" : "ml-0.75")" 
+                            >
+                                @if (Tabletop.IsGameMaster){
+                                    <div class="ml-0.25 mr-0.5 gm-status @(Entity.IsTurn ? "active" : "")"></div>
+                                }
+                                <span>@Entity.Name</span>
+                            </div>
+                        </div>
+                        @if (Tabletop.IsGameMaster){
+                            <div flex="row nowrap items-center">
+                                <button title="Ping @Entity.Name" class="ping-player" @onclick="@(e => Hub.PingEntity(Entity.UID))">
+                                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="share" class="svg-inline--fa fa-share fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M564.907 196.35L388.91 12.366C364.216-13.45 320 3.746 320 40.016v88.154C154.548 130.155 0 160.103 0 331.19c0 94.98 55.84 150.231 89.13 174.571 24.233 17.722 58.021-4.992 49.68-34.51C100.937 336.887 165.575 321.972 320 320.16V408c0 36.239 44.19 53.494 68.91 27.65l175.998-184c14.79-15.47 14.79-39.83-.001-55.3zm-23.127 33.18l-176 184c-4.933 5.16-13.78 1.73-13.78-5.53V288c-171.396 0-295.313 9.707-243.98 191.7C72 453.36 32 405.59 32 331.19 32 171.18 194.886 160 352 160V40c0-7.262 8.851-10.69 13.78-5.53l176 184a7.978 7.978 0 0 1 0 11.06z"></path></svg>
+                                </button>
+                                <button title="Remove @Entity.Name" class="remove" @onclick="@(e => Hub.RemoveEntityFromCombatOrder(Entity.UID))">
+                                    <svg style="width:14px;height:14px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
+                                </button>
+                            </div>
+                        }else{
+                            <div class="status @(Entity.IsTurn ? "active" : "")"></div>
+                        }
+                    </li>
+                }
+            </ul>
+        }else if (Tabletop.IsGameMaster){
+            <p class="px-0.5 py-1 font-xs font-grey-700 w-full block text-center">Press the Sync button to load the combat order.</p>
+        }else{
+            <p class="px-0.5 py-1 font-xs font-grey-700 w-full block text-center">Waiting for your GM to load the combat order.</p>
+        }
+    </div>
+    <div class="chat-modal" style="display: @(ChatMenuOpen ? "block" : "none");left:0.5rem;top:calc(36px + 1rem);@(!Tabletop.IsGameMaster ? "width:420px;" : "")">
+        <div style="cursor: move;" class="w-full bg-grey-800 p-0.5 js-chat-modal" flex="items-center row nowrap justify-between">
+            <span class="inline-block font-xs font-grey-100 font-medium">Messenger</span>
+            <button class="modal-close" @onclick="@(e => ChatMenuOpen = false)" title="close" aria-label="close messenger">
+                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
+            </button>
+        </div>
+        @if (Tabletop.Players.Count != 0){
+            @if (Tabletop.IsGameMaster){
+                <div class="container">
+                    <div>
+                        @for (int i = 0; i < Tabletop.Players.Count; i++){
+                            PlayerEntity Player = Tabletop.Players[i];
+                            <button title="@Player.Name" class="chat-toggle-button @(Player.UID == ActiveChatPlayerUID ? "is-active" : "")" @onclick="@(e => SetActivePlayerUID(Player.UID))">
+                                @Player.Name
+                                @if (Player.UnreadMessages){
+                                    <i class="badge"></i>
+                                }
+                            </button>
+                        }
+                    </div>
+                    <div>
+                        @if (ActiveChatPlayerUID != null){
                             @for (int i = 0; i < Tabletop.Players.Count; i++){
                                 PlayerEntity Player = Tabletop.Players[i];
-                                <button title="@Player.Name" class="chat-toggle-button @(Player.UID == ActiveChatPlayerUID ? "is-active" : "")" @onclick="@(e => SetActivePlayerUID(Player.UID))">
-                                    @Player.Name
-                                    @if (Player.UnreadMessages){
-                                        <i class="badge"></i>
-                                    }
-                                </button>
-                            }
-                        </div>
-                        <div>
-                            @if (ActiveChatPlayerUID != null){
-                                @for (int i = 0; i < Tabletop.Players.Count; i++){
-                                    PlayerEntity Player = Tabletop.Players[i];
-                                    if (Player.UID == ActiveChatPlayerUID){
-                                        <ul class="js-chat-messages">
-                                            <li class="font-xs font-grey-700 text-center py-0.5">Beginning of message history with @Player.Name.</li>
-                                            @if (Player.Messages.Count > 0){
-                                                @for (int k = 0; k < Player.Messages.Count; k++){
-                                                    <li class="@(Player.Messages[k].Author == "GM" ? "outgoing" : "incoming")">
-                                                        <span class="msg">@Player.Messages[k].Msg</span>
-                                                        <span class="author">@Player.Messages[k].Author</span>
-                                                    </li>
-                                                }
+                                if (Player.UID == ActiveChatPlayerUID){
+                                    <ul class="js-chat-messages">
+                                        <li class="font-xs font-grey-700 text-center py-0.5">Beginning of message history with @Player.Name.</li>
+                                        @if (Player.Messages.Count > 0){
+                                            @for (int k = 0; k < Player.Messages.Count; k++){
+                                                <li class="@(Player.Messages[k].Author == "GM" ? "outgoing" : "incoming")">
+                                                    <span class="msg">@Player.Messages[k].Msg</span>
+                                                    <span class="author">@Player.Messages[k].Author</span>
+                                                </li>
                                             }
-                                        </ul>
-                                        <textarea placeholder="Send @Player.Name a message..." class="js-messenger-input" @onkeyup="@(e => SendMessage(e.Key))"></textarea>
-                                    }
+                                        }
+                                    </ul>
+                                    <textarea placeholder="Send @Player.Name a message..." class="js-messenger-input" @onkeyup="@(e => SendMessage(e.Key))"></textarea>
                                 }
-                            }else{
-                                <p class="font-xs font-grey-700 w-full h-full" flex="items-center justify-center">
-                                    <span class="inline-block">Select a player to begin sending messages.</span>
-                                </p>
                             }
-                        </div>
+                        }else{
+                            <p class="font-xs font-grey-700 w-full h-full" flex="items-center justify-center">
+                                <span class="inline-block">Select a player to begin sending messages.</span>
+                            </p>
+                        }
                     </div>
-                }else{
-                    <div class="container -player">
-                        <ul class="js-chat-messages">
-                            <li class="font-xs font-grey-700 text-center py-0.5">Beginning of Game Master message history.</li>
-                            @if (Tabletop.Messages.Count > 0){
-                                @for (int k = 0; k < Tabletop.Messages.Count; k++){
-                                    <li class="@(Tabletop.Messages[k].Author == "GM" ? "incoming" : "outgoing")">
-                                        <span class="msg">@Tabletop.Messages[k].Msg</span>
-                                        <span class="author">@Tabletop.Messages[k].Author</span>
-                                    </li>
-                                }
-                            }else{
-                            }
-                        </ul>
-                        <textarea placeholder="Send the Game Master a message..." class="js-messenger-input" @onkeyup="@(e => SendMessage(e.Key))"></textarea>
-                    </div>
-                }
+                </div>
             }else{
-                @if (Tabletop.IsGameMaster){
-                    <p class="px-0.5 py-1 font-xs font-grey-700 w-full block text-center">Waiting for players to join the room.</p>
-                }
+                <div class="container -player">
+                    <ul class="js-chat-messages">
+                        <li class="font-xs font-grey-700 text-center py-0.5">Beginning of Game Master message history.</li>
+                        @if (Tabletop.Messages.Count > 0){
+                            @for (int k = 0; k < Tabletop.Messages.Count; k++){
+                                <li class="@(Tabletop.Messages[k].Author == "GM" ? "incoming" : "outgoing")">
+                                    <span class="msg">@Tabletop.Messages[k].Msg</span>
+                                    <span class="author">@Tabletop.Messages[k].Author</span>
+                                </li>
+                            }
+                        }else{
+                        }
+                    </ul>
+                    <textarea placeholder="Send the Game Master a message..." class="js-messenger-input" @onkeyup="@(e => SendMessage(e.Key))"></textarea>
+                </div>
             }
-        </div>
+        }else{
+            @if (Tabletop.IsGameMaster){
+                <p class="px-0.5 py-1 font-xs font-grey-700 w-full block text-center">Waiting for players to join the room.</p>
+            }
+        }
     </div>
-    @if (InfoMenuOpen || SettingsMenuOpen || ImageUploadOpen || EntitySpawnMenuOpen || MonsterLookupMenuOpen || CustomCreatureMenuOpen || NPCMenuOpen || DiceMenuOpen){
+    @if (InfoMenuOpen || TabletopMenuOpen || ImageUploadOpen || EntitySpawnMenuOpen || MonsterLookupMenuOpen || CustomCreatureMenuOpen || NPCMenuOpen || DiceMenuOpen || SettingsMenu != null){
         <button @onclick="CloseAllModals" class="modal-backdrop" aria-label="close menu"></button>
     }
 </div>
