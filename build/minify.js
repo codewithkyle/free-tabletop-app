@@ -5,7 +5,7 @@ const path = require("path");
 const cwd = process.cwd();
 
 const options = {
-    ecma: 2017,
+    ecma: 2019,
     compress: {
         drop_console: true,
         keep_infinity: true,
@@ -14,12 +14,14 @@ const options = {
         keep_fnames: true,
         unused: false,
         keep_classnames: true,
+        collapse_vars: false,
+        reduce_funcs: false,
+        reduce_vars: false,
+        unused: false,
     },
-    mangle: {
-        module: true,
-        keep_fnames: true,
-        keep_classnames: true,
-    },
+    mangle: false,
+    keep_classnames: true,
+    keep_fnames: true,
 };
 
 async function run(){
