@@ -181,10 +181,10 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void RemoveTabletopImage()
+        public async Task RemoveTabletopImage()
         {
             CloseAllModals();
-            Hub.ClearTabletop();
+            await Hub.ClearTabletop();
         }
 
         public async Task LoadTabletop()
@@ -366,7 +366,7 @@ namespace FreeTabletop.Client.Pages
             }
         }
 
-        public void HandleRightClick(double x, double y, int gridX, int gridY, bool ctrlKeyPressed)
+        public async Task HandleRightClick(double x, double y, int gridX, int gridY, bool ctrlKeyPressed)
         {
             if (Tabletop.IsGameMaster && !ctrlKeyPressed)
             {
@@ -380,7 +380,7 @@ namespace FreeTabletop.Client.Pages
             }
             else if (Tabletop.IsGameMaster && ctrlKeyPressed || !Tabletop.IsGameMaster)
             {
-                Hub.Ping(x, y);
+                await Hub.Ping(x, y);
             }
         }
 
