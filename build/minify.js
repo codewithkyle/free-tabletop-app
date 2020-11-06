@@ -13,10 +13,12 @@ const options = {
         dead_code: false,
         keep_fnames: true,
         unused: false,
+        keep_classnames: true,
     },
     mangle: {
         module: true,
         keep_fnames: true,
+        keep_classnames: true,
     },
 };
 
