@@ -9,7 +9,20 @@
         <base href="/" />
 
         <script>
-            navigator.serviceWorker.register("service-worker.js");
+            navigator.serviceWorker.register("service-worker.js").then(()=>{
+                const sw = navigator?.serviceWorker.controller;
+                sw.addEventListener("message", (e) =>{
+                    const { type } = e.data;
+                    switch(type){
+                        case "reload":
+                            location.reload();
+                            break;
+                        default:
+                            console.warn(`Unhandled Service Worker message type: ${type}`);
+                            break;
+                    }
+                });
+            });
         </script>
 
         <link href="manifest.json" rel="manifest" />
