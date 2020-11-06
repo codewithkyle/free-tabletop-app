@@ -220,11 +220,11 @@ async function GetVersion(){
     });
     if (request.ok){
         const response = await request.json();
-        return `v${response.build}`;
-    }else{
-        return "unknown";
+        document.title = `Free Tabletop v${response.build}`;
     }
+    return;
 }
+GetVersion();
 
 function Reinstall(){
     const sw:ServiceWorker = navigator?.serviceWorker?.controller ?? null;
