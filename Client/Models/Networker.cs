@@ -13,7 +13,7 @@ namespace FreeTabletop.Client.Models
 
         public static async Task Connect(System.Uri url)
         {
-            if (IsConnected){
+            if (IsConnected || hubConnection != null){
                 await hubConnection.DisposeAsync();
             }
             hubConnection = new HubConnectionBuilder()
