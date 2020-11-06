@@ -234,5 +234,10 @@ namespace FreeTabletop.Client.Controllers
         {
             await Networker.hubConnection.SendAsync("Player:Message", msg, activePlayerUID);
         }
+
+        public async Task Disconnect()
+        {
+            await Networker.hubConnection.SendAsync("Player:Disconnect");
+        }
     }
 }

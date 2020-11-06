@@ -14,12 +14,12 @@ namespace FreeTabletop.Server.Models
         {
             IsConnected = true;
             UID = newUID;
+            StaleUIDs.Add(UID);
         }
 
         public void Disconnect()
         {
             IsConnected = false;
-            StaleUIDs.Add(UID);
         }
     }
 }

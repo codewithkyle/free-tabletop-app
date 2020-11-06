@@ -101,13 +101,14 @@ namespace FreeTabletop.Client.Pages
             return base.OnAfterRenderAsync(firstRender);
         }
 
-        public void UpdatePlayerStatus(bool isGM, string uid)
+        public async Task UpdatePlayerStatus(bool isGM, string uid)
         {
             Tabletop.IsGameMaster = isGM;
             Tabletop.UID = uid;
+            await JSRuntime.InvokeVoidAsync("SetPlayerUID", Tabletop.UID);
             if (isGM)
             {
-                JSRuntime.InvokeVoidAsync("SyncMonsterData");
+                await JSRuntime.InvokeVoidAsync("SyncMonsterData");
             }
             StateHasChanged();
         }
@@ -607,6 +608,12 @@ namespace FreeTabletop.Client.Pages
             }
             JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "loading", PlayLoadingSound);
             StateHasChanged();
+        }
+
+        public async Task LeaveRoom()
+        {
+            await Hub.Disconnect();
+            NavigationManager.NavigateTo("/");
         }
     }
 }

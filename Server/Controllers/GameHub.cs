@@ -12,9 +12,8 @@ namespace FreeTabletop.Server.Controllers
     {
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            GlobalData.DisconnectPlayer(Context.ConnectionId);
             Player player = GetPlayer(Context.ConnectionId);
-            if (player != null)
+            if (player != null && player.IsConnected)
             {
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
@@ -24,6 +23,7 @@ namespace FreeTabletop.Server.Controllers
                     await SendTabletopInfoToRoom(room);
                 }
             }
+            GlobalData.DisconnectPlayer(Context.ConnectionId);
             await base.OnDisconnectedAsync(exception);
         }
 
@@ -359,6 +359,23 @@ namespace FreeTabletop.Server.Controllers
             string roomCode = GlobalData.CreateRoom(Context.ConnectionId);
             await Groups.AddToGroupAsync(Context.ConnectionId, roomCode);
             await Clients.Caller.SendAsync("Load:GM", roomCode, Context.ConnectionId);
+        }
+
+        [HubMethodName("Player:Disconnect")]
+        public async Task DisconnectPlayer()
+        {
+            GlobalData.DisconnectPlayer(Context.ConnectionId);
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.RoomCode);
+                    await SendPlayerDisconnectionNotification(room, player.Name);
+                    await SendTabletopInfoToRoom(room);
+                }
+            }
         }
 
         [HubMethodName("Player:LookupRoom")]

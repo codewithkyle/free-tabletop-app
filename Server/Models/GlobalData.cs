@@ -133,6 +133,7 @@ public static class GlobalData
         player.RoomCode = roomCode;
         player.Type = "friend";
         player.Messages = new List<Message>();
+        player.StaleUIDs.Add(UID);
         Players.Add(player);
         return player;
     }
@@ -144,6 +145,7 @@ public static class GlobalData
         player.UID = UID;
         player.RoomCode = roomCode;
         player.IsGameMaster = true;
+        player.StaleUIDs.Add(UID);
         return player;
     }
 
