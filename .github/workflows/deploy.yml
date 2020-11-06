@@ -32,7 +32,7 @@ jobs:
         KEY: ${{ secrets.SSHKEY }}
       with:
         source: "./compiled"
-        target: "/var/www/free-tabletop-app/compiled"
+        target: "/var/www/free-tabletop-app"
 
     - name: Restart App
       uses: appleboy/ssh-action@master
