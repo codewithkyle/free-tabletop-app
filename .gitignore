@@ -23,8 +23,6 @@ mono_crash.*
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
-x64/
-x86/
 [Aa][Rr][Mm]/
 [Aa][Rr][Mm]64/
 bld/
@@ -73,7 +71,6 @@ StyleCopReport.xml
 *.obj
 *.iobj
 *.pch
-*.pdb
 *.ipdb
 *.pgc
 *.pgd
@@ -344,10 +341,3 @@ healthchecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
-
-# Published files
-!public/publish
-!public/publish/*.pdb
-!public/publish/BlazorDebugProxy/*.pdb
-!public/publish/BlazorDebugProxy/x64
-!public/publish/BlazorDebugProxy/x86
