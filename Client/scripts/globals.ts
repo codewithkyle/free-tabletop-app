@@ -230,7 +230,10 @@ function Reinstall(){
     if (sw){
         sw.postMessage({
             type: "reinstall",
-        });   
+        });
+        setTimeout(()=>{
+            location.reload();
+        }, 300);
     }
 }
 

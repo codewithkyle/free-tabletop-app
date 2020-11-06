@@ -48,15 +48,6 @@ self.onmessage = async (event) => {
     switch (type){
         case "reinstall":
             await cachebust();
-            self.clients.matchAll().then(clients => {
-                clients.map(client => {
-                    if (client.visibilityState === "visible") {
-                        client.postMessage({
-                            type: "reload",
-                        });
-                    }
-                });
-            });
             break;
         default:
             break;
