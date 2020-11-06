@@ -250,7 +250,17 @@ function Install(){
 }
 
 async function CheckForUpdate(){
-    const latestVersion = await GetVersion();
+    let latestVersion = null;
+    const request = await fetch(`${location.origin}/app.json`, {
+        headers: new Headers({
+            "Accept": "application/json",
+        }),
+        cache: "no-cache",
+    });
+    if (request.ok){
+        const response = await request.json();
+        latestVersion = response.build;
+    }
     const loadedVersion = localStorage.getItem("version");
     if (loadedVersion !== latestVersion && loadedVersion !== null){
         const sw:ServiceWorker = navigator?.serviceWorker?.controller ?? null;

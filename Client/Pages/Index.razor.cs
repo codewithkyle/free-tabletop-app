@@ -49,30 +49,30 @@ namespace FreeTabletop.Client.Pages
                 Networker.hubConnection.On<string, string>("Load:GM", GoToRoom);
                 Networker.hubConnection.On<string, string>("Load:Player", GoToRoom);
 
-                Networker.hubConnection.On("Get:PlayerName", () =>
+                Networker.hubConnection.On("Get:PlayerName", async () =>
                 {
                     view = "player";
                     StateHasChanged();
-                    FocusElement("#name");
+                    await FocusElement("#name");
                 });
 
-                Networker.hubConnection.On("Error:RoomNotFound", () =>
+                Networker.hubConnection.On("Error:RoomNotFound", async () =>
                 {
                     errorMessage = "Room not found";
                     room.RoomCode = "";
                     StateHasChanged();
-                    FocusElement("#okay-button");
+                    await FocusElement("#okay-button");
                 });
 
-                Networker.hubConnection.On("Error:RoomIsLocked", () =>
+                Networker.hubConnection.On("Error:RoomIsLocked", async () =>
                 {
                     errorMessage = "Room " + room.RoomCode.ToUpper() + " is locked";
                     StateHasChanged();
-                    FocusElement("#okay-button");
+                    await FocusElement("#okay-button");
                 });
             }
 
-            FocusElement("#roomCode");
+            await FocusElement("#roomCode");
         }
 
         private void MessageReset()
