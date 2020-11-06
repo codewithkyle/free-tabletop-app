@@ -57,4 +57,4 @@ self.onmessage = async (event) => {
         default:
             break;
     }
-}/* Manifest version: fWUrjCeO */
+}/* Manifest version: SUYdncbh */
