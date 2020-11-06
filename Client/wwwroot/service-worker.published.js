@@ -50,7 +50,7 @@ self.onmessage = async (event) => {
             await cachebust();
             self.clients.matchAll().then(clients => {
                 clients.map(client => {
-                    if (client.visibilityState === "visible" && client.url === url) {
+                    if (client.visibilityState === "visible") {
                         client.postMessage({
                             type: "reload",
                         });
