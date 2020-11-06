@@ -59,6 +59,8 @@ namespace FreeTabletop.Client.Pages
         public bool PlayAlertSound = true;
         public bool PlayNotificationSound = true;
         public bool PlayLoadingSound = true;
+        
+        public string AppVersion = "unknown";
 
         protected override async Task OnInitializedAsync()
         {
@@ -67,6 +69,7 @@ namespace FreeTabletop.Client.Pages
             PlayAlertSound = await JSRuntime.InvokeAsync<bool>("GetAlertSoundSetting");
             PlayNotificationSound = await JSRuntime.InvokeAsync<bool>("GetNotificationSoundSetting");
             PlayLoadingSound = await JSRuntime.InvokeAsync<bool>("GetLoadingSoundSetting");
+            AppVersion = await JSRuntime.InvokeAsync<string>("GetVersion");
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
@@ -614,6 +617,16 @@ namespace FreeTabletop.Client.Pages
         {
             await Hub.Disconnect();
             NavigationManager.NavigateTo("/");
+        }
+
+        public async Task Reinstall()
+        {
+            await JSRuntime.InvokeVoidAsync("Reinstall");
+        }
+
+        public async Task InstallPWA()
+        {
+            await JSRuntime.InvokeVoidAsync("Install");
         }
     }
 }

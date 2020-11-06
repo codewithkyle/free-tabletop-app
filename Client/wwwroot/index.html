@@ -8,6 +8,10 @@
         <meta name="description" content="Jump into a D&D tabletop session with your friends, hassle free." />
         <base href="/" />
 
+        <script>
+            navigator.serviceWorker.register("service-worker.js");
+        </script>
+
         <link href="manifest.json" rel="manifest" />
 
         <link rel="icon" type="image/png" href="/icons/icon-16x16.png" sizes="16x16">
@@ -86,9 +90,5 @@
         <script src="/js/dice.js"></script>
 
         <script src="_framework/blazor.webassembly.js"></script>
-        <script>
-            // navigator.serviceWorker.register("service-worker.js");
-            navigator.serviceWorker.register("service-worker.killer.js");
-        </script>
     </body>
 </html>

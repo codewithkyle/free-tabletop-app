@@ -210,3 +210,37 @@ function GetAlertSoundSetting(){
 function GetLoadingSoundSetting(){
     return localStorage.getItem("loadingDisabled") ? false : true;
 }
+
+async function GetVersion(){
+    const request = await fetch(`${location.origin}/app.json`, {
+        headers: new Headers({
+            "Accept": "application/json",
+        })
+    });
+    if (request.ok){
+        const response = await request.json();
+        return `v${response.build}`;
+    }else{
+        return "unknown";
+    }
+}
+
+function Reinstall(){
+    const sw = navigator?.serviceWorker?.controller ?? null;
+    if (sw){
+        sw.postMessage({
+            type: "reinstall",
+        });   
+    }
+}
+
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+    deferredInstallPrompt = e;
+});
+function Install(){
+    deferredInstallPrompt.prompt();
+    deferredInstallPrompt.userChoice.then(() => {
+        deferredInstallPrompt = null;
+    });
+}

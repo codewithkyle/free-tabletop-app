@@ -25,7 +25,7 @@ const options = {
 };
 
 async function run(){
-    const files = glob(`${cwd}/_js/*.js`, (err, files) => {
+    glob(`${cwd}/_js/*.js`, (err, files) => {
         if (err){
             console.log(err);
             process.exit(1);
@@ -38,7 +38,7 @@ async function run(){
                     console.log(err);
                     process.exit(1);
                 }
-                const file = files[i].replace(/.*\//, "");
+                const file = files[i].replace(/.*[\\\/]/, "");
                 const data = buffer.toString();
                 const code = {};
                 code[file] = data;
@@ -50,7 +50,7 @@ async function run(){
                         }
                         finished++;
                         if (finished === files.length){
-                            return;
+                            process.exit(0);
                         }
                     }); 
                 });
