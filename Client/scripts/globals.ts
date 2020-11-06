@@ -225,8 +225,19 @@ async function GetVersion(){
     }
 }
 
+const sw:ServiceWorker = navigator?.serviceWorker?.controller ?? null;
+sw?.addEventListener("message", (e:MessageEvent) =>{
+    const { type } = e.data;
+    switch(type){
+        case "reinstall-finished":
+            location.reload();
+            break;
+        default:
+            console.warn(`Unhandled Service Worker message type: ${type}`);
+            break;
+    }
+});
 function Reinstall(){
-    const sw = navigator?.serviceWorker?.controller ?? null;
     if (sw){
         sw.postMessage({
             type: "reinstall",
