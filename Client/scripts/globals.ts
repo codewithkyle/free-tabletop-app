@@ -1,5 +1,3 @@
-// App Reset
-
 document.onkeydown = (event: KeyboardEvent) => {
     const key = event.key.toLowerCase();
     if (key === "f5") {
@@ -11,39 +9,39 @@ document.onkeydown = (event: KeyboardEvent) => {
     }
 };
 
-// Global Functions
-
-function ResetSession(){
-    sessionStorage.clear();
-}
-
 function SetPlayerUID(uid: string) {
     localStorage.setItem("PlayerUID", uid);
 }
 function GetPlayerUID() {
     return localStorage.getItem("PlayerUID");
 }
+
 function ClearStorage() {
     localStorage.clear();
-    sessionStorage.clear();
+    localStorage.clear();
 }
+
 function CopyToClipboard(value: string) {
     if ("clipboard" in navigator) {
         navigator.clipboard.writeText(value);
     }
 }
+
 function ForceHome() {
     location.href = location.origin;
 }
+
 function FocusElement(selector: string) {
     const el: HTMLElement = document.body.querySelector(selector);
     if (el) {
         el.focus();
     }
 }
+
 function Debug(thing: any) {
     console.log(thing);
 }
+
 async function GetGridSize(url: string) {
     let grid = [0, 0];
     if (url.length) {
@@ -65,169 +63,36 @@ async function GetGridSize(url: string) {
     }
     return grid;
 }
+
 function ClearHighlightedCells() {
     const cells = Array.from(document.body.querySelectorAll("td.highlight"));
     for (let i = 0; i < cells.length; i++) {
         cells[i].className = "";
     }
 }
-function uid(): string {
-    return new Array(4)
-        .fill(0)
-        .map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16))
-        .join("-");
-}
 
-// DB Worker
-let dbWorker: Worker = null;
-let lastDBWorkerUid = null;
-function SyncMonsterData() {
-    if (!dbWorker) {
-        dbWorker = new Worker(`/js/db-worker.js`);
-    }
-}
-
-function LookupCreature(query: string) {
-    return new Promise((resolve) => {
-        if (!dbWorker) {
-            resolve([]);
-        }
-        lastDBWorkerUid = uid();
-        dbWorker.onmessage = (e: MessageEvent) => {
-            const data = e.data;
-            if (data.messageUid === lastDBWorkerUid) {
-                const creature = { ...data.creature };
-                creature.BaseName = toUpper(creature.BaseName);
-                resolve(JSON.stringify(creature));
-            } else {
-                resolve(JSON.stringify([]));
-            }
-        };
-        dbWorker.postMessage({
-            type: "lookup",
-            query: query,
-            messageUid: lastDBWorkerUid,
-        });
-    });
-}
-function AddCustomCreature(creature: string) {
-    if (!dbWorker) {
-        return;
-    }
-    dbWorker.postMessage({
-        type: "add",
-        creature: creature,
-    });
-}
-function GetCreatures() {
-    return new Promise((resolve) => {
-        if (!dbWorker) {
-            resolve([]);
-        }
-        lastDBWorkerUid = uid();
-        dbWorker.onmessage = (e: MessageEvent) => {
-            const data = e.data;
-            if (data.messageUid === lastDBWorkerUid) {
-                resolve(JSON.stringify(data.creatures));
-            } else {
-                resolve(JSON.stringify([]));
-            }
-        };
-        dbWorker.postMessage({
-            type: "get",
-            messageUid: lastDBWorkerUid,
-        });
-    });
-}
-
-// Notifications
-function PlayerConnected(name: string) {
-    toast({
-        title: `${name} Joined`,
-        message: `${name} has joined to the room.`,
-        duration: 5,
-        classes: "-green",
-    });
-    PlaySound("alert.wav");
-}
-function PlayerDisconnected(name: string) {
-    toast({
-        title: `${name} Disconnected`,
-        message: `${name} has disconnected from the room.`,
-        duration: 5,
-        classes: "-red",
-    });
-}
-function PlayerReconnected(name: string) {
-    toast({
-        title: `${name} Reconnected`,
-        message: `${name} has reconnected to the room.`,
-        duration: 5,
-        classes: "-green",
-    });
-}
-function PlayerKicked(name: string) {
-    toast({
-        title: `${name} Disconnected`,
-        message: `${name} was kicked from the room.`,
-        duration: 5,
-        classes: "-red",
-    });
-}
-function TakeTurn() {
-    toast({
-        title: `You're Up`,
-        message: `It's your turn for combat, use it wisely.`,
-        duration: 5,
-    });
-    PlaySound("alert.wav");
-}
-function OnDeck() {
-    toast({
-        title: `On Deck`,
-        message: `You're up next for combat. Start planning your turn.`,
-        duration: 5,
-    });
-}
-function toUpper(str: string) {
-    return str
-        .toLowerCase()
-        .split(" ")
-        .map(function (word) {
-            return word[0].toUpperCase() + word.substr(1);
-        })
-        .join(" ");
-}
-function EntityOnDeck(name: string) {
-    const fixedName = toUpper(name);
-    toast({
-        title: `${fixedName} Is On Deck`,
-        message: `${fixedName} is up next for combat.`,
-        duration: 5,
-    });
-}
 function PlaySound(name:string){
     switch(name){
         case "alert.wav":
-            if (!sessionStorage.getItem("alertDisabled")){
+            if (!localStorage.getItem("alertDisabled")){
                 var audio = new Audio(`${location.origin}/sfx/${name}`);
                 audio.play();
             }
             break;
         case "loading.wav":
-            if (!sessionStorage.getItem("loadingDisabled")){
+            if (!localStorage.getItem("loadingDisabled")){
                 var audio = new Audio(`${location.origin}/sfx/${name}`);
                 audio.play();
             }
             break;
         case "message.wav":
-            if (!sessionStorage.getItem("notificationDisabled")){
+            if (!localStorage.getItem("notificationDisabled")){
                 var audio = new Audio(`${location.origin}/sfx/${name}`);
                 audio.play();
             }
             break;
         case "ping.mp3":
-            if (!sessionStorage.getItem("pingDisabled")){
+            if (!localStorage.getItem("pingDisabled")){
                 var audio = new Audio(`${location.origin}/sfx/${name}`);
                 audio.volume = 0.75;
                 audio.play();
@@ -239,8 +104,9 @@ function PlaySound(name:string){
             break;
     }
 }
+
 function Ping(x:number, y:number){
-    if (!sessionStorage.getItem("pingDisabled")){
+    if (!localStorage.getItem("pingDisabled")){
         var audio = new Audio(`${location.origin}/sfx/ping.mp3`);
         audio.volume = 0.75;
         audio.play();
@@ -262,155 +128,6 @@ function Ping(x:number, y:number){
     }, 2000);
 }
 
-// Combat window
-function StartCombatDrag(){
-    const modal:HTMLElement = document.body.querySelector(".combat-modal");
-    const el:HTMLElement = document.body.querySelector(".js-combat-modal");
-    let dragging = false;
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    el.addEventListener("mousedown", (e:MouseEvent)=>{
-        e.preventDefault();
-        // get the mouse cursor position at startup:
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        dragging = true;
-    });
-    el.addEventListener("touchstart", (e:TouchEvent)=>{
-        e.preventDefault();
-        // get the mouse cursor position at startup:
-        pos3 = e.touches[0].clientX;
-        pos4 = e.touches[0].clientY;
-        dragging = true;
-    });
-
-    document.addEventListener("mouseup", (e:Event)=>{
-        e.preventDefault();
-        dragging = false;
-    });
-    document.addEventListener("touchend", (e:Event)=>{
-        e.preventDefault();
-        dragging = false;
-    });
-
-    document.addEventListener("mousemove", (e:MouseEvent)=>{
-        if (dragging){
-            e.preventDefault();
-            // calculate the new cursor position:
-            pos1 = pos3 - e.clientX;
-            pos2 = pos4 - e.clientY;
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            // set the element's new position:
-            modal.style.top = (modal.offsetTop - pos2) + "px";
-            modal.style.left = (modal.offsetLeft - pos1) + "px";
-        }
-    });
-    document.addEventListener("touchmove", (e:TouchEvent)=>{
-        if (dragging){
-            e.preventDefault();
-            // calculate the new cursor position:
-            pos1 = pos3 - e.touches[0].clientX;
-            pos2 = pos4 - e.touches[0].clientY;
-            pos3 = e.touches[0].clientX;
-            pos4 = e.touches[0].clientY;
-            // set the element's new position:
-            modal.style.top = (modal.offsetTop - pos2) + "px";
-            modal.style.left = (modal.offsetLeft - pos1) + "px";
-        }
-    });
-}
-function ResetCombatModal(){
-    const modal:HTMLElement = document.body.querySelector(".combat-modal");
-    modal.style.left = '0px';
-    modal.style.top = "calc(36px + 0.5rem)";
-}
-
-// Messenger window
-function StartChatDrag(){
-    const modal:HTMLElement = document.body.querySelector(".chat-modal");
-    const el:HTMLElement = document.body.querySelector(".js-chat-modal");
-    let dragging = false;
-    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-    el.addEventListener("mousedown", (e:MouseEvent)=>{
-        e.preventDefault();
-        // get the mouse cursor position at startup:
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-        dragging = true;
-    });
-    el.addEventListener("touchstart", (e:TouchEvent)=>{
-        e.preventDefault();
-        // get the mouse cursor position at startup:
-        pos3 = e.touches[0].clientX;
-        pos4 = e.touches[0].clientY;
-        dragging = true;
-    });
-
-    document.addEventListener("mouseup", (e:Event)=>{
-        e.preventDefault();
-        dragging = false;
-    });
-    document.addEventListener("touchend", (e:Event)=>{
-        e.preventDefault();
-        dragging = false;
-    });
-
-    document.addEventListener("mousemove", (e:MouseEvent)=>{
-        if (dragging){
-            e.preventDefault();
-            // calculate the new cursor position:
-            pos1 = pos3 - e.clientX;
-            pos2 = pos4 - e.clientY;
-            pos3 = e.clientX;
-            pos4 = e.clientY;
-            // set the element's new position:
-            modal.style.top = (modal.offsetTop - pos2) + "px";
-            modal.style.left = (modal.offsetLeft - pos1) + "px";
-        }
-    });
-    document.addEventListener("touchmove", (e:TouchEvent)=>{
-        if (dragging){
-            e.preventDefault();
-            // calculate the new cursor position:
-            pos1 = pos3 - e.touches[0].clientX;
-            pos2 = pos4 - e.touches[0].clientY;
-            pos3 = e.touches[0].clientX;
-            pos4 = e.touches[0].clientY;
-            // set the element's new position:
-            modal.style.top = (modal.offsetTop - pos2) + "px";
-            modal.style.left = (modal.offsetLeft - pos1) + "px";
-        }
-    });
-}
-function ResetChatModal(){
-    const modal:HTMLElement = document.body.querySelector(".chat-modal");
-    modal.style.left = '0px';
-    modal.style.top = "calc(36px + 0.5rem)";
-}
-function ResetChatMessage(){
-    const textarea:HTMLTextAreaElement = document.body.querySelector(".js-messenger-input");
-    textarea.value = "";
-    textarea.innerHTML = "";
-    textarea.style.height = `0px`;
-}
-function GetChatMessage(){
-    const textarea:HTMLTextAreaElement = document.body.querySelector(".js-messenger-input");
-    return textarea.value;
-}
-function AdjustChatMessageHeight(){
-    const textarea:HTMLTextAreaElement = document.body.querySelector(".js-messenger-input");
-    textarea.style.height = `${textarea.scrollHeight}px`;
-}
-function ScrollChatMessages(){
-    const container:HTMLElement = document.body.querySelector(".js-chat-messages");
-    if (container){
-        container.scrollTo({
-            top: container.scrollHeight,
-            left: 0,
-            behavior: "auto",
-        });
-    }
-}
 function DragTabletop(){
     const tabletop:HTMLElement = document.body.querySelector(".js-tabletop");
     if (tabletop){
@@ -472,10 +189,24 @@ function DragTabletop(){
         });
     }
 }
+
 function ToggleSoundStatus(type:string, enabled:boolean){
     if (enabled){
-        sessionStorage.removeItem(`${type}Disabled`);
+        localStorage.removeItem(`${type}Disabled`);
     }else{
-        sessionStorage.setItem(`${type}Disabled`, "true");
+        localStorage.setItem(`${type}Disabled`, "true");
     }
+}
+
+function GetPingSoundSetting(){
+    return localStorage.getItem("pingDisabled") ? false : true;
+}
+function GetNotificationSoundSetting(){
+    return localStorage.getItem("notificationDisabled") ? false : true;
+}
+function GetAlertSoundSetting(){
+    return localStorage.getItem("alertDisabled") ? false : true;
+}
+function GetLoadingSoundSetting(){
+    return localStorage.getItem("loadingDisabled") ? false : true;
 }

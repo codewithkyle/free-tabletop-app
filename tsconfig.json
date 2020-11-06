@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "./Client/wwwroot/js",
+        "outDir": "./_js",
         "module": "None",
         "allowJs": true,
         "checkJs": false,

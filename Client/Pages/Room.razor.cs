@@ -63,7 +63,10 @@ namespace FreeTabletop.Client.Pages
         protected override async Task OnInitializedAsync()
         {
             await Hub.Connect(RoomCode, this, NavigationManager, JSRuntime, Tabletop);
-            await JSRuntime.InvokeVoidAsync("ResetSession");
+            PlayPingSound = await JSRuntime.InvokeAsync<bool>("GetPingSoundSetting");
+            PlayAlertSound = await JSRuntime.InvokeAsync<bool>("GetAlertSoundSetting");
+            PlayNotificationSound = await JSRuntime.InvokeAsync<bool>("GetNotificationSoundSetting");
+            PlayLoadingSound = await JSRuntime.InvokeAsync<bool>("GetLoadingSoundSetting");
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
