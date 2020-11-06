@@ -1,5 +1,5 @@
 {
-    "version": "0.1.24",
+    "version": "0.1.1",
     "scripts": {
         "reset": "rm -rf ./Client/wwwroot/css && mkdir ./Client/wwwroot/css && rm -rf ./Client/wwwroot/js && mkdir ./Client/wwwroot/js && rm -rf ./_js",
         "build": "npm run reset && npm-run-all build:* && mv ./_js/* ./Client/wwwroot/js/ && npm run start:server",
@@ -11,7 +11,7 @@
         "start:client": "dotnet run --project ./Client",
         "start:server": "dotnet run --project ./Server",
         "production": "npm run reset && npm run build:brixi && npm run build:css && npm run build:js && node ./build/minify.js && node ./build/release.js && npm run publish",
-        "publish": "dotnet build && dotnet publish -c Release --self-contained -r linux-x64 && rm -rf ./compiled && mkdir ./compiled && mv ./Server/bin/Release/netcoreapp3.1/linux-x64/publish/* ./compiled"
+        "publish": "dotnet build && dotnet publish -c Release --self-contained -r linux-x64 && mkdir ./compiled && mv ./Server/bin/Release/netcoreapp3.1/linux-x64/publish/* ./compiled"
     },
     "dependencies": {
         "@codewithkyle/notifyjs": "^2.0.3",
