@@ -215,7 +215,8 @@ async function GetVersion(){
     const request = await fetch(`${location.origin}/app.json`, {
         headers: new Headers({
             "Accept": "application/json",
-        })
+        }),
+        cache: "no-cache",
     });
     if (request.ok){
         const response = await request.json();
@@ -247,3 +248,31 @@ function Install(){
         deferredInstallPrompt = null;
     });
 }
+
+async function CheckForUpdate(){
+    const latestVersion = await GetVersion();
+    const loadedVersion = localStorage.getItem("version");
+    if (loadedVersion !== latestVersion && loadedVersion !== null){
+        const sw:ServiceWorker = navigator?.serviceWorker?.controller ?? null;
+        if (sw){
+            sw.postMessage({
+                type: "reinstall",
+            });
+        }
+        localStorage.setItem("version", latestVersion);
+        snackbar({
+            message: `Free Tabletop ${latestVersion} has been installed.`,
+            buttons: [
+                {
+                    label: "reload",
+                    callback: ()=>{location.reload();},
+                }
+            ],
+            duration: Infinity,
+            force: true,
+        });
+    }else{
+        localStorage.setItem("version", latestVersion);
+    }
+}
+CheckForUpdate();

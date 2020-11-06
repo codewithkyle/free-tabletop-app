@@ -6,7 +6,7 @@ self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
 const cacheNamePrefix = 'free-tabletop-';
 const cacheName = `${cacheNamePrefix}${self.assetsManifest.version}`;
 const offlineAssetsInclude = [ /\.dll$/, /\.pdb$/, /\.wasm/, /\.html/, /\.js$/, /\.json$/, /\.css$/, /\.woff$/, /\.mp3$/, /\.wav$/, ];
-const offlineAssetsExclude = [ /^service-worker\.js$/, ];
+const offlineAssetsExclude = [ /^service-worker\.js$/, /^app\.json$/, ];
 
 async function onInstall(event) {
     self.skipWaiting();
@@ -53,4 +53,4 @@ self.onmessage = async (event) => {
         default:
             break;
     }
-}/* Manifest version: 0crio0II */
+}/* Manifest version: K587KyWB */
