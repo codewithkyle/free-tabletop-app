@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4] - 2020-11-06
+
+### Fixed
+
+- Firefox CSS issues (removed CSS lazy loading)
+
 ## [0.1.3] - 2020-11-06
 
 ### Added
@@ -14,5 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - initial beta build
 - CI/CD pipeline
 
-[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/v0.1.4...v0.1.3
 [0.1.3]: https://github.com/olivierlacan/keep-a-changelog/releases/tag/v0.1.3
