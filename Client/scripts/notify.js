@@ -27,10 +27,10 @@ class SnackbarComponent extends HTMLElement {
                     const button = document.createElement("button");
                     button.innerText = this.settings.buttons[i].label;
                     button.dataset.index = `${i}`;
-                    for (let k = 0; k < this.settings.buttons[i].classes.length; k++) {
+                    for (let k = 0; k < this.settings.buttons[i]?.classes?.length; k++) {
                         button.classList.add(this.settings.buttons[i].classes[k]);
                     }
-                    if (this.settings.buttons[i].ariaLabel) {
+                    if (this.settings.buttons[i]?.ariaLabel) {
                         button.setAttribute("aria-label", this.settings.buttons[i].ariaLabel);
                     }
                     button.addEventListener("click", this.handleActionButtonClick);
