@@ -10,7 +10,7 @@
 
         <script>
             navigator.serviceWorker.register("service-worker.js").then(()=>{
-                const sw = navigator?.serviceWorker.controller;
+                const sw = navigator.serviceWorker.controller;
                 sw.addEventListener("message", (e) =>{
                     const { type } = e.data;
                     switch(type){
