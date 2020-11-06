@@ -270,6 +270,7 @@ async function CheckForUpdate(){
             ],
             duration: Infinity,
             force: true,
+            closeable: false,
         });
     }else{
         localStorage.setItem("version", latestVersion);
