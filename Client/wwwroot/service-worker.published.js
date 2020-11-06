@@ -50,8 +50,14 @@ self.onmessage = async (event) => {
             await cachebust();
             await onInstall();
             await onActivate();
-            self.postMessage({
-                type: "reinstall-finished",
+            self.clients.matchAll().then(clients => {
+                clients.map(client => {
+                    if (client.visibilityState === "visible" && client.url === url) {
+                        client.postMessage({
+                            type: "reinstall-finished",
+                        });
+                    }
+                });
             });
             break;
         default:
