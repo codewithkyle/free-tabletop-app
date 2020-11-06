@@ -1,5 +1,5 @@
 {
-    "version": "0.1.14",
+    "version": "0.1.15",
     "scripts": {
         "reset": "rm -rf ./Client/wwwroot/css && mkdir ./Client/wwwroot/css && rm -rf ./Client/wwwroot/js && mkdir ./Client/wwwroot/js && rm -rf ./_js",
         "build": "npm run reset && npm-run-all build:* && mv ./_js/* ./Client/wwwroot/js/ && npm run start:server",
