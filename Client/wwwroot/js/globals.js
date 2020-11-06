@@ -231,6 +231,7 @@ function Install() {
 async function CheckForUpdate() {
     var _a, _b;
     let latestVersion = null;
+    const loadedVersion = localStorage.getItem("version");
     const request = await fetch(`${location.origin}/app.json`, {
         headers: new Headers({
             "Accept": "application/json",
@@ -240,28 +241,30 @@ async function CheckForUpdate() {
     if (request.ok) {
         const response = await request.json();
         latestVersion = response.build;
+        localStorage.setItem("version", latestVersion);
     }
-    const loadedVersion = localStorage.getItem("version");
     if (loadedVersion !== latestVersion && loadedVersion !== null) {
         const sw = (_b = (_a = navigator === null || navigator === void 0 ? void 0 : navigator.serviceWorker) === null || _a === void 0 ? void 0 : _a.controller) !== null && _b !== void 0 ? _b : null;
         if (sw) {
             sw.postMessage({
                 type: "reinstall",
             });
+            snackbar({
+                message: `Free Tabletop ${latestVersion} has been installed.`,
+                buttons: [
+                    {
+                        label: "reload",
+                        callback: () => { location.reload(); },
+                    }
+                ],
+                duration: Infinity,
+                force: true,
+                closeable: false,
+            });
         }
-        localStorage.setItem("version", latestVersion);
-        snackbar({
-            message: `Free Tabletop ${latestVersion} has been installed.`,
-            buttons: [
-                {
-                    label: "reload",
-                    callback: () => { location.reload(); },
-                }
-            ],
-            duration: Infinity,
-            force: true,
-            closeable: false,
-        });
+        else {
+            console.log("no sw");
+        }
     }
     else {
         localStorage.setItem("version", latestVersion);
