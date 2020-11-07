@@ -10,12 +10,12 @@ snackbar-component {
     max-width: 90vw;
     opacity: 0;
     z-index: 9000;
-    transform-origin: top left;
+    transform-origin: center;
     animation: notificationPop 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
     position: fixed;
-    top: 2rem;
+    top: 50%;
     left: 50%;
-    transform: scale(0.87) translateX(-50%);
+    transform: scale(0.87) translate(-50%, -50%);
 
     p {
         padding: 0.875rem 1rem;
@@ -130,10 +130,10 @@ snackbar-component {
 @keyframes notificationPop {
     from {
         opacity: 0;
-        transform: scale(0.87) translateX(-50%);
+        transform: scale(0.87) translate(-50%, -50%);
     }
     to {
         opacity: 1;
-        transform: scale(1) translateX(-50%);
+        transform: scale(1) translate(-50%, -50%);
     }
 }
