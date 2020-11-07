@@ -192,20 +192,26 @@ function GetAlertSoundSetting() {
 function GetLoadingSoundSetting() {
     return localStorage.getItem("loadingDisabled") ? false : true;
 }
-async function GetVersion() {
-    const request = await fetch(`${location.origin}/app.json`, {
-        headers: new Headers({
-            "Accept": "application/json",
-        }),
-        cache: "no-cache",
-    });
-    if (request.ok) {
-        const response = await request.json();
-        document.title = `Free Tabletop v${response.build}`;
+async function SetVersionDisplay() {
+    let version = localStorage.getItem("version");
+    if (!version) {
+        const request = await fetch(`${location.origin}/app.json`, {
+            headers: new Headers({
+                "Accept": "application/json",
+            }),
+            cache: "no-cache",
+        });
+        if (request.ok) {
+            const response = await request.json();
+            document.title = `Free Tabletop v${response.build}`;
+            localStorage.setItem("version", response.build);
+        }
     }
-    return;
+    else {
+        document.title = `Free Tabletop v${version}`;
+    }
 }
-GetVersion();
+SetVersionDisplay();
 function Reinstall() {
     var _a, _b;
     const sw = (_b = (_a = navigator === null || navigator === void 0 ? void 0 : navigator.serviceWorker) === null || _a === void 0 ? void 0 : _a.controller) !== null && _b !== void 0 ? _b : null;
@@ -250,7 +256,7 @@ async function CheckForUpdate() {
                 type: "reinstall",
             });
             snackbar({
-                message: `Free Tabletop ${latestVersion} has been installed.`,
+                message: `An update for Free Tabletop has been installed.`,
                 buttons: [
                     {
                         label: "reload",
@@ -261,9 +267,13 @@ async function CheckForUpdate() {
                 force: true,
                 closeable: false,
             });
+            const app = document.body.querySelector("app");
+            app.style.display = "none";
         }
         else {
-            console.log("no sw");
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
         }
     }
     else {
