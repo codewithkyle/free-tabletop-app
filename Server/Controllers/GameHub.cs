@@ -256,7 +256,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:Ping")]
-        public async Task Ping(double x, double y)
+        public async Task Ping(int x, int y)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null)
@@ -538,7 +538,7 @@ namespace FreeTabletop.Server.Controllers
             await Clients.Group(room.RoomCode).SendAsync("Notification:EntityOnDeck", name);
         }
 
-        private async Task SendPing(Room room, double x, double y)
+        private async Task SendPing(Room room, int x, int y)
         {
             await Clients.Group(room.RoomCode).SendAsync("Notification:Ping", x, y);
         }

@@ -380,7 +380,7 @@ namespace FreeTabletop.Client.Pages
             }
             else if (Tabletop.IsGameMaster && ctrlKeyPressed || !Tabletop.IsGameMaster)
             {
-                await Hub.Ping(x, y);
+                await Hub.Ping(gridX, gridY);
             }
         }
 
@@ -449,7 +449,7 @@ namespace FreeTabletop.Client.Pages
             await Hub.UpdateEntityAC(entity, AC);
         }
 
-        public void RenderPing(double x, double y)
+        public void RenderPing(int x, int y)
         {
             JSRuntime.InvokeVoidAsync("Ping", x, y);
         }

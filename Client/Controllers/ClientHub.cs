@@ -68,7 +68,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On("Notification:TakeTurn", TakeTurnNotification);
                 Networker.hubConnection.On("Notification:OnDeck", OnDeckNotification);
                 Networker.hubConnection.On<string>("Notification:EntityOnDeck", EntityOnDeckNotification);
-                Networker.hubConnection.On<double, double>("Notification:Ping", Room.RenderPing);
+                Networker.hubConnection.On<int, int>("Notification:Ping", Room.RenderPing);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -225,7 +225,7 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:UpdateEntityHP", entity.UID, hp);
         }
 
-        public async Task Ping(double x, double y)
+        public async Task Ping(int x, int y)
         {
             await Networker.hubConnection.SendAsync("Room:Ping", x, y);
         }

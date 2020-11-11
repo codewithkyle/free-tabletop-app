@@ -111,10 +111,16 @@ function Ping(x:number, y:number){
         audio.volume = 0.75;
         audio.play();
     }
+
+    // CSS selectors don't start at 0 because they're not cool like arrays
+    x++;
+    y++;
+    const cell = document.body.querySelector(`.js-tabletop table tbody tr:nth-child(${y}) td:nth-child(${x})`);
+    const cellBounds = cell.getBoundingClientRect();
     
     const el = document.createElement("div");
     el.className = "ping";
-    el.style.cssText = `top:${y - 24}px;left:${x - 24}px;`;
+    el.style.cssText = `top:${cellBounds.top + cellBounds.height / 2 - 24}px;left:${cellBounds.left + cellBounds.width / 2 - 24}px;`;
 
     el.innerHTML = `
         <i>
