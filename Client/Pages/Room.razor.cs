@@ -625,5 +625,10 @@ namespace FreeTabletop.Client.Pages
         {
             await JSRuntime.InvokeVoidAsync("Install");
         }
+
+        public async Task RemoveEntity(string uid)
+        {
+            await Hub.RemoveEntity(uid);
+        }
     }
 }

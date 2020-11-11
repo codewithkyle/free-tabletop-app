@@ -108,6 +108,22 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:RemoveEntity")]
+        public async Task RemoveEntity(string uid)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.RemoveEntity(uid);
+                    await RenderCreatureEntities(room);
+                    await RenderNPCEntities(room);
+                }
+            }
+        }
+
         [HubMethodName("Room:MoveEntity")]
         public async Task MoveEntity(string entityUid, int[] newPosition)
         {

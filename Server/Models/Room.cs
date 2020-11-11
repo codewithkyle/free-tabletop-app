@@ -511,5 +511,32 @@ namespace FreeTabletop.Server.Models
             }
             return messages;
         }
+
+        public void RemoveEntity(string uid)
+        {
+            bool FoundEntity = false;
+            for (int i = 0; i < NPCs.Count; i++)
+            {
+                if (NPCs[i].UID == uid)
+                {
+                    FoundEntity = true;
+                    NPCs.RemoveAt(i);
+                    break;
+                }
+            }
+            for (int i = 0; i < Creatures.Count; i++)
+            {
+                if (FoundEntity)
+                {
+                    break;
+                }
+                if (Creatures[i].UID == uid)
+                {
+                    FoundEntity = true;
+                    Creatures.RemoveAt(i);
+                    break;
+                }
+            }
+        }
     }
 }
