@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- dice menu can be kept open
+- dice menu can be moved
+- NPCs can be removed
+- Creatures can be removed
+
+### Fixed
+
+- pinging is placed relative to the cell clicked
+- remove number input ticker (due to Blazor bug)
+
 ## [0.1.6] - 2020-11-07
 
 ### Fixed
