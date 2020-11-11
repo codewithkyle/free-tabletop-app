@@ -94,8 +94,9 @@ namespace FreeTabletop.Client.Pages
             }
             if (firstRender)
             {
-                JSRuntime.InvokeAsync<string>("StartCombatDrag");
-                JSRuntime.InvokeAsync<string>("StartChatDrag");
+                JSRuntime.InvokeVoidAsync("StartCombatDrag");
+                JSRuntime.InvokeVoidAsync("StartChatDrag");
+                JSRuntime.InvokeVoidAsync("StartDiceDrag");
                 JSRuntime.InvokeVoidAsync("PlaySound", "success.wav");
             }
             return base.OnAfterRenderAsync(firstRender);
@@ -151,7 +152,6 @@ namespace FreeTabletop.Client.Pages
             DidAutofocus = false;
             RightClickPosition[0] = -1;
             RightClickPosition[1] = -1;
-            DiceMenuOpen = false;
             SettingsMenu = null;
         }
 
@@ -387,14 +387,8 @@ namespace FreeTabletop.Client.Pages
         public void ToggleDiceMenu()
         {
             CloseAllModals();
-            if (DiceMenuOpen)
-            {
-                DiceMenuOpen = false;
-            }
-            else
-            {
-                DiceMenuOpen = true;
-            }
+            DiceMenuOpen = true;
+            JSRuntime.InvokeVoidAsync("ResetDiceModal");
             StateHasChanged();
         }
 
