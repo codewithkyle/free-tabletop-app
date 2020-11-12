@@ -269,6 +269,20 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:AnnounceRoll")]
+        public void AnnounceRoll(int diceCount, string die, string results)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    AnnounceRoll(room, diceCount, die, results, player.Name, player.UID);
+                }
+            }
+        }
+
         [HubMethodName("Room:PingEntity")]
         public async Task PingEntity(string uid)
         {
@@ -541,6 +555,17 @@ namespace FreeTabletop.Server.Controllers
         private async Task SendPing(Room room, int x, int y)
         {
             await Clients.Group(room.RoomCode).SendAsync("Notification:Ping", x, y);
+        }
+
+        private void AnnounceRoll(Room room, int diceCount, string die, string results, string name, string callerUID)
+        {
+            for (int i = 0; i < room.Players.Count; i++)
+            {
+                if (room.Players[i].UID != callerUID)
+                {
+                    Clients.Client(room.Players[i].UID).SendAsync("Notification:Roll", diceCount, die, results, name);
+                }
+            }
         }
     }
 }

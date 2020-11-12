@@ -69,6 +69,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On("Notification:OnDeck", OnDeckNotification);
                 Networker.hubConnection.On<string>("Notification:EntityOnDeck", EntityOnDeckNotification);
                 Networker.hubConnection.On<int, int>("Notification:Ping", Room.RenderPing);
+                Networker.hubConnection.On<int, string, string, string>("Notification:Roll", Room.RenderRollNotification);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -111,6 +112,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Notification:OnDeck");
             Networker.hubConnection.Remove("Notification:EntityOnDeck");
             Networker.hubConnection.Remove("Notification:Ping");
+            Networker.hubConnection.Remove("Notification:Roll");
             Networker.hubConnection.Remove("Set:Messages");
             Networker.hubConnection.Remove("Set:Players");
         }
@@ -243,6 +245,11 @@ namespace FreeTabletop.Client.Controllers
         public async Task RemoveEntity(string uid)
         {
             await Networker.hubConnection.SendAsync("Room:RemoveEntity", uid);
+        }
+
+        public async Task AnnounceRoll(int diceCount, string die, string results)
+        {
+            await Networker.hubConnection.SendAsync("Room:AnnounceRoll", diceCount, die, results);
         }
     }
 }

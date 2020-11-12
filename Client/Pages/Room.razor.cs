@@ -398,10 +398,12 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void RollDice()
+        public async Task RollDice()
         {
             CloseAllModals();
-            JSRuntime.InvokeVoidAsync("RollDice", RollCount.ToString() + ActiveDie);
+            string RollResults = await JSRuntime.InvokeAsync<string>("RollDice", RollCount.ToString() + ActiveDie);
+            await JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
+            await Hub.AnnounceRoll(RollCount, ActiveDie, RollResults);
             RollCount = 1;
         }
 
@@ -623,6 +625,12 @@ namespace FreeTabletop.Client.Pages
         public async Task RemoveEntity(string uid)
         {
             await Hub.RemoveEntity(uid);
+        }
+
+        public async Task RenderRollNotification(int diceCount, string die, string results, string name)
+        {
+            await JSRuntime.InvokeVoidAsync("AnnounceRoll", diceCount, die, results, name);
+            await JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
         }
     }
 }
