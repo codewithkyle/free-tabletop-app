@@ -73,7 +73,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:LoadImage")]
-        public async Task LoadImage(String imageURL, string gridType, int[] gridSize)
+        public async Task LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -81,7 +81,7 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    room.LoadImage(imageURL, gridType, gridSize);
+                    room.LoadImage(imageURL, gridType, gridSize, cellSize);
                     await ClearTabletop(room);
                     await LoadTabletopImage(room);
                     if (gridType != "3")
@@ -104,6 +104,22 @@ namespace FreeTabletop.Server.Controllers
                 {
                     room.ClearTabletop();
                     await ClearTabletop(room);
+                }
+            }
+        }
+
+        [HubMethodName("Room:RemoveEntity")]
+        public async Task RemoveEntity(string uid)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.RemoveEntity(uid);
+                    await RenderCreatureEntities(room);
+                    await RenderNPCEntities(room);
                 }
             }
         }
@@ -240,7 +256,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:Ping")]
-        public async Task Ping(double x, double y)
+        public async Task Ping(int x, int y)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null)
@@ -249,6 +265,20 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     await SendPing(room, x, y);
+                }
+            }
+        }
+
+        [HubMethodName("Room:AnnounceRoll")]
+        public void AnnounceRoll(int diceCount, string die, string results)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    AnnounceRoll(room, diceCount, die, results, player.Name, player.UID);
                 }
             }
         }
@@ -474,7 +504,7 @@ namespace FreeTabletop.Server.Controllers
 
         private async Task LoadTabletopImage(Room room)
         {
-            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid);
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize);
         }
 
         private async Task RenderPlayerEntities(Room room)
@@ -522,9 +552,20 @@ namespace FreeTabletop.Server.Controllers
             await Clients.Group(room.RoomCode).SendAsync("Notification:EntityOnDeck", name);
         }
 
-        private async Task SendPing(Room room, double x, double y)
+        private async Task SendPing(Room room, int x, int y)
         {
             await Clients.Group(room.RoomCode).SendAsync("Notification:Ping", x, y);
+        }
+
+        private void AnnounceRoll(Room room, int diceCount, string die, string results, string name, string callerUID)
+        {
+            for (int i = 0; i < room.Players.Count; i++)
+            {
+                if (room.Players[i].UID != callerUID)
+                {
+                    Clients.Client(room.Players[i].UID).SendAsync("Notification:Roll", diceCount, die, results, name);
+                }
+            }
         }
     }
 }

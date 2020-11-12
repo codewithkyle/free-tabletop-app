@@ -60,6 +60,10 @@ namespace FreeTabletop.Client.Pages
         public bool PlayNotificationSound = true;
         public bool PlayLoadingSound = true;
 
+        public int GridCellSize = 32;
+
+        public bool TabletopSettingsOpen = false;
+
         protected override async Task OnInitializedAsync()
         {
             await Hub.Connect(RoomCode, this, NavigationManager, JSRuntime, Tabletop);
@@ -94,8 +98,9 @@ namespace FreeTabletop.Client.Pages
             }
             if (firstRender)
             {
-                JSRuntime.InvokeAsync<string>("StartCombatDrag");
-                JSRuntime.InvokeAsync<string>("StartChatDrag");
+                JSRuntime.InvokeVoidAsync("StartCombatDrag");
+                JSRuntime.InvokeVoidAsync("StartChatDrag");
+                JSRuntime.InvokeVoidAsync("StartDiceDrag");
                 JSRuntime.InvokeVoidAsync("PlaySound", "success.wav");
             }
             return base.OnAfterRenderAsync(firstRender);
@@ -151,7 +156,6 @@ namespace FreeTabletop.Client.Pages
             DidAutofocus = false;
             RightClickPosition[0] = -1;
             RightClickPosition[1] = -1;
-            DiceMenuOpen = false;
             SettingsMenu = null;
         }
 
@@ -178,6 +182,7 @@ namespace FreeTabletop.Client.Pages
         {
             TabletopMenuOpen = false;
             ImageUploadOpen = true;
+            TabletopSettingsOpen = false;
             StateHasChanged();
         }
 
@@ -192,18 +197,20 @@ namespace FreeTabletop.Client.Pages
             if (InputImageURL.Length != 0)
             {
                 CloseAllModals();
-                int[] GridSize = await JSRuntime.InvokeAsync<int[]>("GetGridSize", InputImageURL);
-                await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridSize);
+                int[] GridSize = await JSRuntime.InvokeAsync<int[]>("GetGridSize", InputImageURL, GridCellSize);
+                await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridSize, GridCellSize);
                 InputImageURL = null;
                 SelectedGridType = "1";
+                GridCellSize = 32;
             }
         }
 
-        public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid)
+        public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid, int cellSize)
         {
             Tabletop.Image = imageURL;
             Tabletop.GridType = gridType;
             Tabletop.Grid = grid;
+            Tabletop.CellSize = cellSize;
             StateHasChanged();
             JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
             JSRuntime.InvokeVoidAsync("DragTabletop");
@@ -380,21 +387,15 @@ namespace FreeTabletop.Client.Pages
             }
             else if (Tabletop.IsGameMaster && ctrlKeyPressed || !Tabletop.IsGameMaster)
             {
-                await Hub.Ping(x, y);
+                await Hub.Ping(gridX, gridY);
             }
         }
 
         public void ToggleDiceMenu()
         {
             CloseAllModals();
-            if (DiceMenuOpen)
-            {
-                DiceMenuOpen = false;
-            }
-            else
-            {
-                DiceMenuOpen = true;
-            }
+            DiceMenuOpen = true;
+            JSRuntime.InvokeVoidAsync("ResetDiceModal");
             StateHasChanged();
         }
 
@@ -404,10 +405,12 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void RollDice()
+        public async Task RollDice()
         {
             CloseAllModals();
-            JSRuntime.InvokeVoidAsync("RollDice", RollCount.ToString() + ActiveDie);
+            string RollResults = await JSRuntime.InvokeAsync<string>("RollDice", RollCount.ToString() + ActiveDie);
+            await JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
+            await Hub.AnnounceRoll(RollCount, ActiveDie, RollResults);
             RollCount = 1;
         }
 
@@ -449,7 +452,7 @@ namespace FreeTabletop.Client.Pages
             await Hub.UpdateEntityAC(entity, AC);
         }
 
-        public void RenderPing(double x, double y)
+        public void RenderPing(int x, int y)
         {
             JSRuntime.InvokeVoidAsync("Ping", x, y);
         }
@@ -624,6 +627,30 @@ namespace FreeTabletop.Client.Pages
         public async Task InstallPWA()
         {
             await JSRuntime.InvokeVoidAsync("Install");
+        }
+
+        public async Task RemoveEntity(string uid)
+        {
+            await Hub.RemoveEntity(uid);
+        }
+
+        public async Task RenderRollNotification(int diceCount, string die, string results, string name)
+        {
+            await JSRuntime.InvokeVoidAsync("AnnounceRoll", diceCount, die, results, name);
+            await JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
+        }
+
+        public void ToggleTabletopSettings()
+        {
+            if (TabletopSettingsOpen)
+            {
+                TabletopSettingsOpen = false;
+            }
+            else
+            {
+                TabletopSettingsOpen = true;
+            }
+            StateHasChanged();
         }
     }
 }

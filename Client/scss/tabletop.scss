@@ -24,8 +24,6 @@
 
     .pawn {
         position: absolute;
-        width: 32px;
-        height: 32px;
         display: inline-flex;
         justify-content: center;
         align-items: center;
@@ -119,7 +117,7 @@
         .creature-hud {
             position: absolute;
             bottom: 100%;
-            width: 250px;
+            width: 300px;
             border-radius: 0.25rem;
             background-color: var(--white);
             box-shadow: var(--shadow-md);
@@ -175,29 +173,53 @@
                     align-items: center;
 
                     &:hover,
-                    &:focus {
-                        &::before {
-                            opacity: 0.87;
-                            transform: scale(1.5);
-                        }
-                    }
-
-                    &:active {
-                        &::before {
+                    &:focus{
+                        svg{
                             opacity: 1;
-                            transform: scale(2);
+                            transform: scale(1);
                         }
                     }
+                    &:active{
+                        opacity: 1;
+                        transform: scale(1.15);
+                    }
 
-                    &::before {
-                        content: "";
-                        display: inline-block;
-                        width: 4px;
-                        height: 4px;
-                        background-color: var(--white);
-                        border-radius: 50%;
+                    svg{
+                        width: 10px;
+                        height: 10px;
+                        color: var(--white);
                         opacity: 0.6;
+                        transform: scale(0.87);
                         transition: all 150ms var(--ease-in-out);
+                        transform-origin: center;
+                    }
+
+                    &.dot{
+                        &:hover,
+                        &:focus {
+                            &::before {
+                                opacity: 0.87;
+                                transform: scale(1.5);
+                            }
+                        }
+
+                        &:active {
+                            &::before {
+                                opacity: 1;
+                                transform: scale(2);
+                            }
+                        }
+
+                        &::before {
+                            content: "";
+                            display: inline-block;
+                            width: 4px;
+                            height: 4px;
+                            background-color: var(--white);
+                            border-radius: 50%;
+                            opacity: 0.6;
+                            transition: all 150ms var(--ease-in-out);
+                        }
                     }
                 }
             }
@@ -285,7 +307,7 @@
             font-size: var(--font-xs);
             font-weight: var(--font-medium);
             color: var(--white);
-            transform: translateY(-26px);
+            bottom: 100%;
             box-shadow: var(--shadow-md);
             visibility: hidden;
             opacity: 0;
@@ -327,8 +349,6 @@
 
             td {
                 position: absolute;
-                width: 32px;
-                height: 32px;
                 display: inline-flex;
                 justify-content: center;
                 align-items: center;

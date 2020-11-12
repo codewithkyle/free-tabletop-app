@@ -21,6 +21,8 @@ namespace FreeTabletop.Server.Models
 
         public List<Entity> CombatOrder = new List<Entity>();
 
+        public int CellSize = 32;
+
         public void AddPlayer(Player player)
         {
             player.RoomCode = RoomCode;
@@ -103,11 +105,12 @@ namespace FreeTabletop.Server.Models
             return players;
         }
 
-        public void LoadImage(String imageURL, string gridType, int[] gridSize)
+        public void LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize)
         {
             ImageURL = imageURL;
             GridType = gridType;
             Grid = gridSize;
+            CellSize = cellSize;
         }
 
         public void ClearTabletop()
@@ -510,6 +513,33 @@ namespace FreeTabletop.Server.Models
                 }
             }
             return messages;
+        }
+
+        public void RemoveEntity(string uid)
+        {
+            bool FoundEntity = false;
+            for (int i = 0; i < NPCs.Count; i++)
+            {
+                if (NPCs[i].UID == uid)
+                {
+                    FoundEntity = true;
+                    NPCs.RemoveAt(i);
+                    break;
+                }
+            }
+            for (int i = 0; i < Creatures.Count; i++)
+            {
+                if (FoundEntity)
+                {
+                    break;
+                }
+                if (Creatures[i].UID == uid)
+                {
+                    FoundEntity = true;
+                    Creatures.RemoveAt(i);
+                    break;
+                }
+            }
         }
     }
 }

@@ -42,7 +42,7 @@ function Debug(thing: any) {
     console.log(thing);
 }
 
-async function GetGridSize(url: string) {
+async function GetGridSize(url: string, customSize:number) {
     let grid = [0, 0];
     if (url.length) {
         grid = await new Promise((resolve) => {
@@ -51,11 +51,13 @@ async function GetGridSize(url: string) {
             tempImg.className = "temp-image";
             tempImg.addEventListener("load", () => {
                 const bounds = tempImg.getBoundingClientRect();
-                const width = Math.floor(bounds.width / 32);
-                const height = Math.floor(bounds.height / 32);
+                const width = Math.floor(bounds.width / customSize);
+                const height = Math.floor(bounds.height / customSize);
+                tempImg.remove();
                 resolve([width, height]);
             });
             tempImg.addEventListener("error", () => {
+                tempImg.remove();
                 resolve([0, 0]);
             });
             document.body.appendChild(tempImg);
@@ -111,10 +113,16 @@ function Ping(x:number, y:number){
         audio.volume = 0.75;
         audio.play();
     }
+
+    // CSS selectors don't start at 0 because they're not cool like arrays
+    x++;
+    y++;
+    const cell = document.body.querySelector(`.js-tabletop table tbody tr:nth-child(${y}) td:nth-child(${x})`);
+    const cellBounds = cell.getBoundingClientRect();
     
     const el = document.createElement("div");
     el.className = "ping";
-    el.style.cssText = `top:${y - 24}px;left:${x - 24}px;`;
+    el.style.cssText = `top:${cellBounds.top + cellBounds.height / 2 - 24}px;left:${cellBounds.left + cellBounds.width / 2 - 24}px;`;
 
     el.innerHTML = `
         <i>

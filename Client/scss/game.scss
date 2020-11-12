@@ -19,6 +19,11 @@
         align-items: center;
         width: calc(100vw - 1rem);
         justify-content: space-between;
+        pointer-events: none;
+
+        button{
+            pointer-events: all;
+        }
     }
 
     .icon-button-toggle {
@@ -293,100 +298,151 @@
     }
 
     .dice-modal {
-        background-color: var(--white);
-        border-radius: 0.25rem;
-        border: 1px solid var(--grey-200);
         box-shadow: var(--shadow-sm);
-        padding: 0.5rem;
         position: absolute;
-        top: calc(36px + 1rem);
-        left: calc(36px + 0.25rem + 0.5rem);
-        width: 270px;
-        display: flex;
-        flex-flow: row wrap;
+        width: 300px;
         z-index: 1000;
+        border-radius: 0.25rem;
+        overflow: hidden;
 
-        .button {
-            color: var(--white);
-            width: 36px;
-            height: 36px;
-            padding: 0;
-            border-radius: 50%;
-
-            &:hover,
-            &:focus,
-            &:active {
-                color: var(--white);
-            }
-
-            i {
-                margin-right: 0;
-            }
-        }
-
-        button {
+        .modal-close {
+            width: 24px;
+            height: 24px;
             display: inline-flex;
-            width: 36px;
-            height: 36px;
-            align-items: center;
             justify-content: center;
-            cursor: pointer;
-            color: var(--grey-700);
-            font-size: var(--font-sm);
-            transition: all 150ms var(--ease-in-out);
-            overflow: hidden;
-            border-radius: 0.25rem;
-            position: relative;
-
-            &.is-active {
-                color: var(--grey-800);
-
-                &::before {
-                    background-color: var(--grey-500);
-                }
-            }
+            align-items: center;
+            color: var(--grey-100);
 
             &:hover,
             &:focus {
-                color: var(--grey-800);
+                color: var(--white);
 
                 &::before {
-                    background-color: var(--grey-500);
+                    opacity: 0.05;
+                    transform: scale(1);
                 }
             }
 
             &:active {
-                color: var(--primary-700);
+                color: var(--white);
 
                 &::before {
-                    background-color: var(--primary-500);
+                    opacity: 0.1;
+                    transform: scale(1.15);
                 }
             }
 
             &::before {
                 content: "";
                 display: inline-block;
-                width: 100%;
-                height: 100%;
                 position: absolute;
                 top: 0;
                 left: 0;
-                transition: all 150ms var(--ease-in-out);
+                width: 100%;
+                height: 100%;
+                background-color: var(--white);
+                opacity: 0;
                 border-radius: 50%;
-                opacity: 0.15;
-                background-color: transparent;
+                transform: scale(0);
+                transition: all 150ms var(--ease-bounce);
             }
 
-            i {
-                display: inline-flex;
-                width: 24px;
-                height: 24px;
-                justify-content: center;
-                align-items: center;
+            svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
+        
+        .dice-box{
+            background-color: var(--white);
+            border-radius: 0.25rem;
+            border-width: 0 1px 1px 1px;
+            border-style: solid;
+            border-color: var(--grey-200);
+            padding: 0.5rem;
 
-                svg {
-                    width: 18px;
-                    height: 18px;
+            .button {
+                color: var(--white);
+                width: 36px;
+                height: 36px;
+                padding: 0;
+                border-radius: 50%;
+    
+                &:hover,
+                &:focus,
+                &:active {
+                    color: var(--white);
+                }
+    
+                i {
+                    margin-right: 0;
+                }
+            }
+    
+            button {
+                display: inline-flex;
+                width: 36px;
+                height: 36px;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: var(--grey-700);
+                font-size: var(--font-sm);
+                transition: all 150ms var(--ease-in-out);
+                overflow: hidden;
+                border-radius: 0.25rem;
+                position: relative;
+    
+                &.is-active {
+                    color: var(--grey-800);
+    
+                    &::before {
+                        background-color: var(--grey-500);
+                    }
+                }
+    
+                &:hover,
+                &:focus {
+                    color: var(--grey-800);
+    
+                    &::before {
+                        background-color: var(--grey-500);
+                    }
+                }
+    
+                &:active {
+                    color: var(--primary-700);
+    
+                    &::before {
+                        background-color: var(--primary-500);
+                    }
+                }
+    
+                &::before {
+                    content: "";
+                    display: inline-block;
+                    width: 100%;
+                    height: 100%;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    transition: all 150ms var(--ease-in-out);
+                    border-radius: 50%;
+                    opacity: 0.15;
+                    background-color: transparent;
+                }
+    
+                i {
+                    display: inline-flex;
+                    width: 24px;
+                    height: 24px;
+                    justify-content: center;
+                    align-items: center;
+    
+                    svg {
+                        width: 18px;
+                        height: 18px;
+                    }
                 }
             }
         }
@@ -1170,9 +1226,8 @@
                 color: var(--grey-700);
                 margin-right: 0.5rem;
                 position: absolute;
-                top: 50%;
+                bottom: calc((48px - 24px) / 2);
                 left: 0.5rem;
-                transform: translateY(-50%);
 
                 svg {
                     width: 18px;
@@ -1182,6 +1237,63 @@
 
             input {
                 padding-left: calc(1rem + 24px);
+            }
+        }
+
+        .tabletop-settings-toggle{
+            display: flex;
+            width: 100%;
+            height: 48px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            color: var(--grey-700);
+            transition: all 150ms var(--ease-in-out);
+            position: relative;
+            font-weight: var(--font-medium);
+
+            &:hover,
+            &:focus{
+                color: var(--grey-800);
+
+                &::before{
+                    opacity: 0.1;
+                }
+            }
+            &:active{
+                color: var(--grey-800);
+
+                &::before{
+                    opacity: 0.15;
+                }
+            }
+            
+            &::before{
+                content: "";
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                border-radius: 0.25rem;
+                background-color: var(--grey-500);
+                opacity: 0;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transition: all 150ms var(--ease-in-out);
+            }
+
+            i{
+                width: 24px;
+                height: 24px;
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+
+                svg{
+                    width: 16px;
+                    height: 16px;
+                    transition: all 150ms var(--ease-in-out);
+                }
             }
         }
     }

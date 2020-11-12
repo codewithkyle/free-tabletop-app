@@ -36,7 +36,7 @@ function FocusElement(selector) {
 function Debug(thing) {
     console.log(thing);
 }
-async function GetGridSize(url) {
+async function GetGridSize(url, customSize) {
     let grid = [0, 0];
     if (url.length) {
         grid = await new Promise((resolve) => {
@@ -45,11 +45,13 @@ async function GetGridSize(url) {
             tempImg.className = "temp-image";
             tempImg.addEventListener("load", () => {
                 const bounds = tempImg.getBoundingClientRect();
-                const width = Math.floor(bounds.width / 32);
-                const height = Math.floor(bounds.height / 32);
+                const width = Math.floor(bounds.width / customSize);
+                const height = Math.floor(bounds.height / customSize);
+                tempImg.remove();
                 resolve([width, height]);
             });
             tempImg.addEventListener("error", () => {
+                tempImg.remove();
                 resolve([0, 0]);
             });
             document.body.appendChild(tempImg);
@@ -102,9 +104,14 @@ function Ping(x, y) {
         audio.volume = 0.75;
         audio.play();
     }
+    // CSS selectors don't start at 0 because they're not cool like arrays
+    x++;
+    y++;
+    const cell = document.body.querySelector(`.js-tabletop table tbody tr:nth-child(${y}) td:nth-child(${x})`);
+    const cellBounds = cell.getBoundingClientRect();
     const el = document.createElement("div");
     el.className = "ping";
-    el.style.cssText = `top:${y - 24}px;left:${x - 24}px;`;
+    el.style.cssText = `top:${cellBounds.top + cellBounds.height / 2 - 24}px;left:${cellBounds.left + cellBounds.width / 2 - 24}px;`;
     el.innerHTML = `
         <i>
             <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="info" class="svg-inline--fa fa-info fa-w-6" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512"><path fill="currentColor" d="M20 424.229h20V279.771H20c-11.046 0-20-8.954-20-20V212c0-11.046 8.954-20 20-20h112c11.046 0 20 8.954 20 20v212.229h20c11.046 0 20 8.954 20 20V492c0 11.046-8.954 20-20 20H20c-11.046 0-20-8.954-20-20v-47.771c0-11.046 8.954-20 20-20zM96 0C56.235 0 24 32.235 24 72s32.235 72 72 72 72-32.235 72-72S135.764 0 96 0z"></path></svg>
