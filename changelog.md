@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - NPCs can be removed
 - Creatures can be removed
 - dice rolls are announced to everyone in the room
+- Tabletop settings dropdown
+- ability to set custom grid sizes (32px minimum)
 
 ### Fixed
 

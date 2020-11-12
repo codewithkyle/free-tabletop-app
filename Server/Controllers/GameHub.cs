@@ -73,7 +73,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:LoadImage")]
-        public async Task LoadImage(String imageURL, string gridType, int[] gridSize)
+        public async Task LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -81,7 +81,7 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    room.LoadImage(imageURL, gridType, gridSize);
+                    room.LoadImage(imageURL, gridType, gridSize, cellSize);
                     await ClearTabletop(room);
                     await LoadTabletopImage(room);
                     if (gridType != "3")
@@ -504,7 +504,7 @@ namespace FreeTabletop.Server.Controllers
 
         private async Task LoadTabletopImage(Room room)
         {
-            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid);
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize);
         }
 
         private async Task RenderPlayerEntities(Room room)

@@ -36,7 +36,7 @@ function FocusElement(selector) {
 function Debug(thing) {
     console.log(thing);
 }
-async function GetGridSize(url) {
+async function GetGridSize(url, customSize) {
     let grid = [0, 0];
     if (url.length) {
         grid = await new Promise((resolve) => {
@@ -45,11 +45,13 @@ async function GetGridSize(url) {
             tempImg.className = "temp-image";
             tempImg.addEventListener("load", () => {
                 const bounds = tempImg.getBoundingClientRect();
-                const width = Math.floor(bounds.width / 32);
-                const height = Math.floor(bounds.height / 32);
+                const width = Math.floor(bounds.width / customSize);
+                const height = Math.floor(bounds.height / customSize);
+                tempImg.remove();
                 resolve([width, height]);
             });
             tempImg.addEventListener("error", () => {
+                tempImg.remove();
                 resolve([0, 0]);
             });
             document.body.appendChild(tempImg);

@@ -21,6 +21,8 @@ namespace FreeTabletop.Server.Models
 
         public List<Entity> CombatOrder = new List<Entity>();
 
+        public int CellSize = 32;
+
         public void AddPlayer(Player player)
         {
             player.RoomCode = RoomCode;
@@ -103,11 +105,12 @@ namespace FreeTabletop.Server.Models
             return players;
         }
 
-        public void LoadImage(String imageURL, string gridType, int[] gridSize)
+        public void LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize)
         {
             ImageURL = imageURL;
             GridType = gridType;
             Grid = gridSize;
+            CellSize = cellSize;
         }
 
         public void ClearTabletop()

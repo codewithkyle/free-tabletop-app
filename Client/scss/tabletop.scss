@@ -24,8 +24,6 @@
 
     .pawn {
         position: absolute;
-        width: 32px;
-        height: 32px;
         display: inline-flex;
         justify-content: center;
         align-items: center;
@@ -309,7 +307,7 @@
             font-size: var(--font-xs);
             font-weight: var(--font-medium);
             color: var(--white);
-            transform: translateY(-26px);
+            bottom: 100%;
             box-shadow: var(--shadow-md);
             visibility: hidden;
             opacity: 0;
@@ -351,8 +349,6 @@
 
             td {
                 position: absolute;
-                width: 32px;
-                height: 32px;
                 display: inline-flex;
                 justify-content: center;
                 align-items: center;

@@ -60,6 +60,10 @@ namespace FreeTabletop.Client.Pages
         public bool PlayNotificationSound = true;
         public bool PlayLoadingSound = true;
 
+        public int GridCellSize = 32;
+
+        public bool TabletopSettingsOpen = false;
+
         protected override async Task OnInitializedAsync()
         {
             await Hub.Connect(RoomCode, this, NavigationManager, JSRuntime, Tabletop);
@@ -178,6 +182,7 @@ namespace FreeTabletop.Client.Pages
         {
             TabletopMenuOpen = false;
             ImageUploadOpen = true;
+            TabletopSettingsOpen = false;
             StateHasChanged();
         }
 
@@ -192,18 +197,20 @@ namespace FreeTabletop.Client.Pages
             if (InputImageURL.Length != 0)
             {
                 CloseAllModals();
-                int[] GridSize = await JSRuntime.InvokeAsync<int[]>("GetGridSize", InputImageURL);
-                await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridSize);
+                int[] GridSize = await JSRuntime.InvokeAsync<int[]>("GetGridSize", InputImageURL, GridCellSize);
+                await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridSize, GridCellSize);
                 InputImageURL = null;
                 SelectedGridType = "1";
+                GridCellSize = 32;
             }
         }
 
-        public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid)
+        public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid, int cellSize)
         {
             Tabletop.Image = imageURL;
             Tabletop.GridType = gridType;
             Tabletop.Grid = grid;
+            Tabletop.CellSize = cellSize;
             StateHasChanged();
             JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
             JSRuntime.InvokeVoidAsync("DragTabletop");
@@ -631,6 +638,19 @@ namespace FreeTabletop.Client.Pages
         {
             await JSRuntime.InvokeVoidAsync("AnnounceRoll", diceCount, die, results, name);
             await JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
+        }
+
+        public void ToggleTabletopSettings()
+        {
+            if (TabletopSettingsOpen)
+            {
+                TabletopSettingsOpen = false;
+            }
+            else
+            {
+                TabletopSettingsOpen = true;
+            }
+            StateHasChanged();
         }
     }
 }
