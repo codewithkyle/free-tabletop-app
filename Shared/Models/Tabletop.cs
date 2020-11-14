@@ -20,6 +20,7 @@ namespace FreeTabletop.Shared.Models
         public string GameMasterUID { get; set; }
         public int CellSize { get; set; }
         public int[] Size { get; set; }
+        public List<Cell> Cells = new List<Cell>();
 
         public void MoveLocalEntitiy(string uid, int[] newPosition)
         {

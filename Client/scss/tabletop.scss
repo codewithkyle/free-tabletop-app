@@ -31,6 +31,7 @@
         transition: all 900ms 300ms var(--ease-in-out), z-index 0ms linear;
 
         &.-player {
+            z-index: 6;
             & > i {
                 background-color: var(--blue-600);
                 border-color: darken(#3182ce, 7);

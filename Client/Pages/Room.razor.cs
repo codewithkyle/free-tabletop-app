@@ -210,14 +210,15 @@ namespace FreeTabletop.Client.Pages
                 TabletopImageLoaded = false;
                 Tabletop.GridType = null;
                 int[] GridData = await JSRuntime.InvokeAsync<int[]>("GetGridSize", InputImageURL, GridCellSize);
-                await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridData, GridCellSize);
+                await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridData, GridCellSize, FogOfWar);
+                FogOfWar = true;
                 InputImageURL = null;
                 SelectedGridType = "1";
                 GridCellSize = 32;
             }
         }
 
-        public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid, int cellSize, int[] tabletopSize)
+        public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid, int cellSize, int[] tabletopSize, List<Cell> cells)
         {
             if (Tabletop.Image != imageURL){
                 TabletopImageLoaded = false;
@@ -227,6 +228,7 @@ namespace FreeTabletop.Client.Pages
             Tabletop.Grid = grid;
             Tabletop.CellSize = cellSize;
             Tabletop.Size = tabletopSize;
+            Tabletop.Cells = cells;
             StateHasChanged();
         }
 
@@ -402,6 +404,15 @@ namespace FreeTabletop.Client.Pages
             else if (Tabletop.IsGameMaster && ctrlKeyPressed || !Tabletop.IsGameMaster)
             {
                 await Hub.Ping(gridX, gridY);
+            }
+        }
+
+        public void HandleLeftClick(int gridX, int gridY, bool ctrlKeyPressed)
+        {
+            if (Tabletop.IsGameMaster && ctrlKeyPressed)
+            {
+                Hub.EnableCell(gridX, gridY);
+                UpdateCellVisiblity(gridX, gridY);
             }
         }
 
@@ -673,6 +684,7 @@ namespace FreeTabletop.Client.Pages
             if (Tabletop.GridType != null){
                 JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
             }
+            JSRuntime.InvokeVoidAsync("FastFogOfWar");
             StateHasChanged();
         }
 
@@ -686,6 +698,19 @@ namespace FreeTabletop.Client.Pages
             {
                 FogOfWar = true;
             }
+        }
+
+        public void UpdateCellVisiblity(int x, int y)
+        {
+            for (int c = 0; c < Tabletop.Cells.Count; c++)
+            {
+                if (Tabletop.Cells[c].Position[0] == x && Tabletop.Cells[c].Position[1] == y)
+                {
+                    Tabletop.Cells[c].IsBlackout = false;
+                    break;
+                }
+            }
+            StateHasChanged();
         }
     }
 }

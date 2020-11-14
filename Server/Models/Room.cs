@@ -24,6 +24,10 @@ namespace FreeTabletop.Server.Models
 
         public int CellSize = 32;
 
+        public bool FogOfWar = true;
+
+        public List<Cell> Cells = new List<Cell>();
+
         public void AddPlayer(Player player)
         {
             player.RoomCode = RoomCode;
@@ -106,13 +110,29 @@ namespace FreeTabletop.Server.Models
             return players;
         }
 
-        public void LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize)
+        public void LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize, bool fogOfWar)
         {
             ImageURL = imageURL;
             GridType = gridType;
             Grid = gridSize;
             CellSize = cellSize;
             TabletopSize = tabletopSize;
+            FogOfWar = fogOfWar;
+            if (FogOfWar)
+            {
+                List<Cell> NewCells = new List<Cell>();
+                for (int y = 0; y < Grid[1]; y++)
+                {
+                    for (int x = 0; x < Grid[0]; x++)
+                    {
+                        Cell Cell = new Cell();
+                        int[] Position = {x, y};
+                        Cell.Position = Position;
+                        NewCells.Add(Cell);
+                    }
+                }
+                Cells = NewCells;
+            }
         }
 
         public void ClearTabletop()
@@ -121,6 +141,7 @@ namespace FreeTabletop.Server.Models
             GridType = "1";
             Creatures = new List<Creature>();
             NPCs = new List<NPC>();
+            Cells = new List<Cell>();
         }
 
         public void ResetPlayerPawnPositions()
@@ -539,6 +560,18 @@ namespace FreeTabletop.Server.Models
                 {
                     FoundEntity = true;
                     Creatures.RemoveAt(i);
+                    break;
+                }
+            }
+        }
+
+        public void EnableCell(int x, int y)
+        {
+            for (int c = 0; c < Cells.Count; c++)
+            {
+                if (Cells[c].Position[0] == x && Cells[c].Position[1] == y)
+                {
+                    Cells[c].IsBlackout = false;
                     break;
                 }
             }
