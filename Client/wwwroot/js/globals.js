@@ -239,17 +239,3 @@ async function CheckForUpdate() {
     }
 }
 CheckForUpdate();
-function FastFogOfWar() {
-    const cells = Array.from(document.body.querySelectorAll(".js-cell"));
-    if (cells.length) {
-        for (let i = 0; i < cells.length; i++) {
-            cells[i].addEventListener("click", () => {
-                console.log("fast fog removal");
-                const fogCell = document.body.querySelector(`.js-fog[data-x="${cells[i].dataset.x}"][data-y="${cells[i].dataset.y}]"]`);
-                if (fogCell) {
-                    fogCell.remove();
-                }
-            });
-        }
-    }
-}
