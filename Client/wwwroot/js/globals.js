@@ -130,64 +130,6 @@ function Ping(x, y) {
         el.remove();
     }, 2000);
 }
-let tabletop;
-function DragTabletop() {
-    if (!tabletop) {
-        tabletop = document.body.querySelector(".js-tabletop");
-        let pos = { top: 0, left: 0, x: 0, y: 0 };
-        let movingTabletop = false;
-        tabletop.addEventListener("mousedown", (e) => {
-            if (e.button === 0 && e.target instanceof HTMLTableCellElement) {
-                pos = {
-                    left: tabletop.scrollLeft,
-                    top: tabletop.scrollTop,
-                    x: e.clientX,
-                    y: e.clientY,
-                };
-                movingTabletop = true;
-            }
-        });
-        tabletop.addEventListener("touchstart", (e) => {
-            if (e.target instanceof HTMLTableCellElement) {
-                pos = {
-                    left: tabletop.scrollLeft,
-                    top: tabletop.scrollTop,
-                    x: e.touches[0].clientX,
-                    y: e.touches[0].clientY,
-                };
-                movingTabletop = true;
-            }
-        });
-        document.addEventListener('mousemove', (e) => {
-            if (movingTabletop) {
-                const dx = e.clientX - pos.x;
-                const dy = e.clientY - pos.y;
-                tabletop.scrollTo({
-                    top: pos.top - dy,
-                    left: pos.left - dx,
-                    behavior: "auto",
-                });
-            }
-        });
-        document.addEventListener("touchmove", (e) => {
-            if (movingTabletop) {
-                const dx = e.touches[0].clientX - pos.x;
-                const dy = e.touches[0].clientY - pos.y;
-                tabletop.scrollTo({
-                    top: pos.top - dy,
-                    left: pos.left - dx,
-                    behavior: "auto",
-                });
-            }
-        });
-        document.addEventListener('mouseup', (e) => {
-            movingTabletop = false;
-        });
-        document.addEventListener("touchend", (e) => {
-            movingTabletop = false;
-        });
-    }
-}
 function ToggleSoundStatus(type, enabled) {
     if (enabled) {
         localStorage.removeItem(`${type}Disabled`);
