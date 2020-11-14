@@ -197,84 +197,6 @@
             <button @onclick="ToggleInfoMenu" class="icon-button-toggle" aria-label="open tabletop info menu" title="tabletop info">
                 <svg style="width: 24px;height: 24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="info" class="svg-inline--fa fa-info fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M208 368.667V208c0-15.495-7.38-29.299-18.811-38.081C210.442 152.296 224 125.701 224 96c0-52.935-43.065-96-96-96S32 43.065 32 96c0 24.564 9.274 47.004 24.504 64H56c-26.467 0-48 21.533-48 48v48c0 23.742 17.327 43.514 40 47.333v65.333C25.327 372.486 8 392.258 8 416v48c0 26.467 21.533 48 48 48h144c26.467 0 48-21.533 48-48v-48c0-23.742-17.327-43.514-40-47.333zM128 32c35.346 0 64 28.654 64 64s-28.654 64-64 64-64-28.654-64-64 28.654-64 64-64zm88 432c0 8.837-7.163 16-16 16H56c-8.837 0-16-7.163-16-16v-48c0-8.837 7.163-16 16-16h24V272H56c-8.837 0-16-7.163-16-16v-48c0-8.837 7.163-16 16-16h104c8.837 0 16 7.163 16 16v192h24c8.837 0 16 7.163 16 16v48z"></path></svg>
             </button>
-            @if (InfoMenuOpen){
-                <dl class="info-modal">
-                    <dt>Room:</dt>
-                    <dd>
-                        <button class="bttn" title="Click to copy room code" @onclick="CopyRoomCodeToClipboard">
-                            <span>@Tabletop.RoomCode</span>
-                            <i>
-                                <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="clone" class="svg-inline--fa fa-clone fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 0H144c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h320c26.51 0 48-21.49 48-48v-48h48c26.51 0 48-21.49 48-48V48c0-26.51-21.49-48-48-48zM362 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h42v224c0 26.51 21.49 48 48 48h224v42a6 6 0 0 1-6 6zm96-96H150a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h308a6 6 0 0 1 6 6v308a6 6 0 0 1-6 6z"></path></svg>
-                            </i>
-                        </button>
-                    </dd>
-
-                    <dt>Players:</dt>
-                    <dd class="player-menu">
-                        <span class="pl-0.5">@Tabletop.Players.Count</span>
-                        @if(@Tabletop.Players.Count > 0){
-                            <i>
-                                <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="chevron-right" class="svg-inline--fa fa-chevron-right fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M24.707 38.101L4.908 57.899c-4.686 4.686-4.686 12.284 0 16.971L185.607 256 4.908 437.13c-4.686 4.686-4.686 12.284 0 16.971L24.707 473.9c4.686 4.686 12.284 4.686 16.971 0l209.414-209.414c4.686-4.686 4.686-12.284 0-16.971L41.678 38.101c-4.687-4.687-12.285-4.687-16.971 0z"></path></svg>
-                            </i>
-                            <ul class="player-menu-modal">
-                                @for(int i = 0; i < @Tabletop.Players.Count; i++){
-                                    <li>
-                                        <span>@Tabletop.Players[i].Name</span>
-                                        <div class="ml-0.5" flex="items-center row nowrap">
-                                            @if(@Tabletop.Players[i].IsConnected){
-                                                <i class="font-grey-500" title="Status: Connected" aria-hidden="true">
-                                                    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="wifi" class="svg-inline--fa fa-wifi fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M634.91 154.88C457.74-8.99 182.19-8.93 5.09 154.88c-6.66 6.16-6.79 16.59-.35 22.98l34.24 33.97c6.14 6.1 16.02 6.23 22.4.38 145.92-133.68 371.3-133.71 517.25 0 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.97c6.43-6.39 6.3-16.82-.36-22.98zM320 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm202.67-83.59c-115.26-101.93-290.21-101.82-405.34 0-6.9 6.1-7.12 16.69-.57 23.15l34.44 33.99c6 5.92 15.66 6.32 22.05.8 83.95-72.57 209.74-72.41 293.49 0 6.39 5.52 16.05 5.13 22.05-.8l34.44-33.99c6.56-6.46 6.33-17.06-.56-23.15z"></path></svg>
-                                                </i>
-                                            }else{
-                                                <i class="font-danger-600" title="Status: Disconnected" aria-hidden="true">
-                                                    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="wifi-slash" class="svg-inline--fa fa-wifi-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M5.09 154.87c-6.66 6.16-6.79 16.59-.35 22.97l34.24 33.96c6.14 6.09 16.02 6.23 22.4.38 6.99-6.4 14.31-12.22 21.65-18.01l-64.96-50.21c-4.3 3.71-8.79 7.04-12.98 10.91zm471.75 181.9l45.42-45.21c6.52-6.46 6.29-17.06-.57-23.17-64.94-57.74-148.91-82.66-230.34-74.98l-83.16-64.27c125.94-38.36 267.75-11.01 370.43 83.05 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.96c6.44-6.39 6.3-16.82-.35-22.97C496.46 26.82 298.08-.76 133.42 71.35L45.47 3.37C38.49-2.05 28.43-.8 23.01 6.18L3.37 31.45C-2.05 38.42-.8 48.47 6.18 53.9l588.36 454.73c6.98 5.43 17.03 4.17 22.46-2.81l19.64-25.27c5.42-6.97 4.17-17.03-2.81-22.45L476.84 336.77zm-358.53-68.38c-6.86 6.1-7.08 16.7-.57 23.17l34.28 34.01c5.97 5.93 15.59 6.32 21.94.8 13.35-11.6 28.01-20.66 43.15-28.55l-68.36-52.83c-10.48 7.15-20.74 14.78-30.44 23.4zM256 416c0 35.35 28.65 64 64 64 31.91 0 58.15-23.42 62.99-53.98l-88.7-68.56C271.77 367.37 256 389.82 256 416z"></path></svg>
-                                                </i>
-                                            }
-                                            @if(@Tabletop.IsGameMaster){
-                                                PlayerEntity player = Tabletop.Players[i];
-                                                <button @onclick="@(e => Hub.KickPlayer(player))" title="Kick player" aria-label="kick @Tabletop.Players[i].Name">
-                                                    <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-slash" class="svg-inline--fa fa-user-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M633.8 458.1L362.3 248.3C412.1 230.7 448 183.8 448 128 448 57.3 390.7 0 320 0c-67.1 0-121.5 51.8-126.9 117.4L45.5 3.4C38.5-2 28.5-.8 23 6.2L3.4 31.4c-5.4 7-4.2 17 2.8 22.4l588.4 454.7c7 5.4 17 4.2 22.5-2.8l19.6-25.3c5.4-6.8 4.1-16.9-2.9-22.3zM96 422.4V464c0 26.5 21.5 48 48 48h350.2L207.4 290.3C144.2 301.3 96 356 96 422.4z"></path></svg>
-                                                </button>
-                                            }
-                                        </div>
-                                    </li>
-                                }
-                            </ul>
-                        }
-                    </dd>
-
-                    <dt>Status:</dt>
-                    <dd>
-                        @if(@Tabletop.IsGameMaster){
-                            <button class="bttn" @onclick="Hub.ToggleRoomLock" title="Lock or unlock the room">
-                                @if(@Tabletop.IsLocked){
-                                    <span>Locked</span>
-                                    <i>
-                                        <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 192h-32v-46.6C368 65.8 304 .2 224.4 0 144.8-.2 80 64.5 80 144v48H48c-26.5 0-48 21.5-48 48v224c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V240c0-26.5-21.5-48-48-48zm-272-48c0-52.9 43.1-96 96-96s96 43.1 96 96v48H128v-48zm272 320H48V240h352v224z"></path></svg>
-                                    </i>
-                                }else{
-                                    <span>Unlocked</span>
-                                    <i>
-                                        <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="unlock" class="svg-inline--fa fa-unlock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 240H128v-94.8c0-52.8 42.1-96.7 95-97.2 53.4-.6 97 42.7 97 96v24c0 13.3 10.7 24 24 24s24-10.7 24-24v-22.6C368 65.8 304 .2 224.3 0 144.8-.2 80 64.5 80 144v96H48c-26.5 0-48 21.5-48 48v176c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V288c0-26.5-21.5-48-48-48zm0 224H48V288h352v176z"></path></svg>
-                                    </i>
-                                }
-                            </button>
-                        }else{
-                            @if(@Tabletop.IsLocked){
-                                <span class="pl-0.5">Locked</span>
-                                <i>
-                                    <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 192h-32v-46.6C368 65.8 304 .2 224.4 0 144.8-.2 80 64.5 80 144v48H48c-26.5 0-48 21.5-48 48v224c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V240c0-26.5-21.5-48-48-48zm-272-48c0-52.9 43.1-96 96-96s96 43.1 96 96v48H128v-48zm272 320H48V240h352v224z"></path></svg>
-                                </i>
-                            }else{
-                                <span class="pl-0.5">Unlocked</span>
-                                <i>
-                                    <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="unlock" class="svg-inline--fa fa-unlock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 240H128v-94.8c0-52.8 42.1-96.7 95-97.2 53.4-.6 97 42.7 97 96v24c0 13.3 10.7 24 24 24s24-10.7 24-24v-22.6C368 65.8 304 .2 224.3 0 144.8-.2 80 64.5 80 144v96H48c-26.5 0-48 21.5-48 48v176c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V288c0-26.5-21.5-48-48-48zm0 224H48V288h352v176z"></path></svg>
-                                </i>
-                            }
-                        }
-                    </dd>
-                </dl>
-            }
             <button @onclick="ToggleDiceMenu" class="icon-button-toggle" aria-label="open dice roller menu" title="dice roller">
                 <svg style="width: 26px;height: 26px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice" class="svg-inline--fa fa-dice fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M480 328c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zM224 200c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm96 0c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm-192 0c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm96 96c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm0-192c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm352 88H439.38c-2.89-5.17-6.26-10.15-10.65-14.54L270.54 19.28C257.69 6.42 240.84 0 224 0s-33.69 6.42-46.54 19.28L19.28 177.46c-25.7 25.7-25.7 67.38 0 93.08l158.18 158.18C190.31 441.57 207.16 448 224 448s33.69-6.43 46.54-19.28L320 379.26V448c0 35.35 28.65 64 64 64h192c35.35 0 64-28.65 64-64V256c0-35.35-28.65-64-64-64zM247.27 405.45c-6.21 6.21-14.48 9.64-23.27 9.64s-17.05-3.42-23.27-9.64L42.55 247.27c-6.21-6.22-9.64-14.48-9.64-23.27s3.42-17.05 9.64-23.27L200.73 42.55c6.21-6.21 14.48-9.64 23.27-9.64s17.05 3.42 23.27 9.64l158.18 158.18c6.22 6.21 9.64 14.48 9.64 23.27s-3.42 17.05-9.64 23.27L247.27 405.45zM608 448c0 17.64-14.36 32-32 32H384c-17.64 0-32-14.36-32-32V347.26l76.72-76.72C441.57 257.69 448 240.84 448 224h128c17.64 0 32 14.36 32 32v192z"></path></svg>
             </button>
@@ -306,6 +228,84 @@
             </button>
         </div>
     </div>
+    @if (InfoMenuOpen){
+        <dl class="info-modal">
+            <dt>Room:</dt>
+            <dd>
+                <button class="bttn" title="Click to copy room code" @onclick="CopyRoomCodeToClipboard">
+                    <span>@Tabletop.RoomCode</span>
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="clone" class="svg-inline--fa fa-clone fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 0H144c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h320c26.51 0 48-21.49 48-48v-48h48c26.51 0 48-21.49 48-48V48c0-26.51-21.49-48-48-48zM362 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h42v224c0 26.51 21.49 48 48 48h224v42a6 6 0 0 1-6 6zm96-96H150a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h308a6 6 0 0 1 6 6v308a6 6 0 0 1-6 6z"></path></svg>
+                    </i>
+                </button>
+            </dd>
+
+            <dt>Players:</dt>
+            <dd class="player-menu">
+                <span class="pl-0.5">@Tabletop.Players.Count</span>
+                @if(@Tabletop.Players.Count > 0){
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="chevron-right" class="svg-inline--fa fa-chevron-right fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M24.707 38.101L4.908 57.899c-4.686 4.686-4.686 12.284 0 16.971L185.607 256 4.908 437.13c-4.686 4.686-4.686 12.284 0 16.971L24.707 473.9c4.686 4.686 12.284 4.686 16.971 0l209.414-209.414c4.686-4.686 4.686-12.284 0-16.971L41.678 38.101c-4.687-4.687-12.285-4.687-16.971 0z"></path></svg>
+                    </i>
+                    <ul class="player-menu-modal">
+                        @for(int i = 0; i < @Tabletop.Players.Count; i++){
+                            <li>
+                                <span>@Tabletop.Players[i].Name</span>
+                                <div class="ml-0.5" flex="items-center row nowrap">
+                                    @if(@Tabletop.Players[i].IsConnected){
+                                        <i class="font-grey-500" title="Status: Connected" aria-hidden="true">
+                                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="wifi" class="svg-inline--fa fa-wifi fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M634.91 154.88C457.74-8.99 182.19-8.93 5.09 154.88c-6.66 6.16-6.79 16.59-.35 22.98l34.24 33.97c6.14 6.1 16.02 6.23 22.4.38 145.92-133.68 371.3-133.71 517.25 0 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.97c6.43-6.39 6.3-16.82-.36-22.98zM320 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm202.67-83.59c-115.26-101.93-290.21-101.82-405.34 0-6.9 6.1-7.12 16.69-.57 23.15l34.44 33.99c6 5.92 15.66 6.32 22.05.8 83.95-72.57 209.74-72.41 293.49 0 6.39 5.52 16.05 5.13 22.05-.8l34.44-33.99c6.56-6.46 6.33-17.06-.56-23.15z"></path></svg>
+                                        </i>
+                                    }else{
+                                        <i class="font-danger-600" title="Status: Disconnected" aria-hidden="true">
+                                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="wifi-slash" class="svg-inline--fa fa-wifi-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M5.09 154.87c-6.66 6.16-6.79 16.59-.35 22.97l34.24 33.96c6.14 6.09 16.02 6.23 22.4.38 6.99-6.4 14.31-12.22 21.65-18.01l-64.96-50.21c-4.3 3.71-8.79 7.04-12.98 10.91zm471.75 181.9l45.42-45.21c6.52-6.46 6.29-17.06-.57-23.17-64.94-57.74-148.91-82.66-230.34-74.98l-83.16-64.27c125.94-38.36 267.75-11.01 370.43 83.05 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.96c6.44-6.39 6.3-16.82-.35-22.97C496.46 26.82 298.08-.76 133.42 71.35L45.47 3.37C38.49-2.05 28.43-.8 23.01 6.18L3.37 31.45C-2.05 38.42-.8 48.47 6.18 53.9l588.36 454.73c6.98 5.43 17.03 4.17 22.46-2.81l19.64-25.27c5.42-6.97 4.17-17.03-2.81-22.45L476.84 336.77zm-358.53-68.38c-6.86 6.1-7.08 16.7-.57 23.17l34.28 34.01c5.97 5.93 15.59 6.32 21.94.8 13.35-11.6 28.01-20.66 43.15-28.55l-68.36-52.83c-10.48 7.15-20.74 14.78-30.44 23.4zM256 416c0 35.35 28.65 64 64 64 31.91 0 58.15-23.42 62.99-53.98l-88.7-68.56C271.77 367.37 256 389.82 256 416z"></path></svg>
+                                        </i>
+                                    }
+                                    @if(@Tabletop.IsGameMaster){
+                                        PlayerEntity player = Tabletop.Players[i];
+                                        <button @onclick="@(e => Hub.KickPlayer(player))" title="Kick player" aria-label="kick @Tabletop.Players[i].Name">
+                                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-slash" class="svg-inline--fa fa-user-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M633.8 458.1L362.3 248.3C412.1 230.7 448 183.8 448 128 448 57.3 390.7 0 320 0c-67.1 0-121.5 51.8-126.9 117.4L45.5 3.4C38.5-2 28.5-.8 23 6.2L3.4 31.4c-5.4 7-4.2 17 2.8 22.4l588.4 454.7c7 5.4 17 4.2 22.5-2.8l19.6-25.3c5.4-6.8 4.1-16.9-2.9-22.3zM96 422.4V464c0 26.5 21.5 48 48 48h350.2L207.4 290.3C144.2 301.3 96 356 96 422.4z"></path></svg>
+                                        </button>
+                                    }
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                }
+            </dd>
+
+            <dt>Status:</dt>
+            <dd>
+                @if(@Tabletop.IsGameMaster){
+                    <button class="bttn" @onclick="Hub.ToggleRoomLock" title="Lock or unlock the room">
+                        @if(@Tabletop.IsLocked){
+                            <span>Locked</span>
+                            <i>
+                                <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 192h-32v-46.6C368 65.8 304 .2 224.4 0 144.8-.2 80 64.5 80 144v48H48c-26.5 0-48 21.5-48 48v224c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V240c0-26.5-21.5-48-48-48zm-272-48c0-52.9 43.1-96 96-96s96 43.1 96 96v48H128v-48zm272 320H48V240h352v224z"></path></svg>
+                            </i>
+                        }else{
+                            <span>Unlocked</span>
+                            <i>
+                                <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="unlock" class="svg-inline--fa fa-unlock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 240H128v-94.8c0-52.8 42.1-96.7 95-97.2 53.4-.6 97 42.7 97 96v24c0 13.3 10.7 24 24 24s24-10.7 24-24v-22.6C368 65.8 304 .2 224.3 0 144.8-.2 80 64.5 80 144v96H48c-26.5 0-48 21.5-48 48v176c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V288c0-26.5-21.5-48-48-48zm0 224H48V288h352v176z"></path></svg>
+                            </i>
+                        }
+                    </button>
+                }else{
+                    @if(@Tabletop.IsLocked){
+                        <span class="pl-0.5">Locked</span>
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="lock" class="svg-inline--fa fa-lock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 192h-32v-46.6C368 65.8 304 .2 224.4 0 144.8-.2 80 64.5 80 144v48H48c-26.5 0-48 21.5-48 48v224c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V240c0-26.5-21.5-48-48-48zm-272-48c0-52.9 43.1-96 96-96s96 43.1 96 96v48H128v-48zm272 320H48V240h352v224z"></path></svg>
+                        </i>
+                    }else{
+                        <span class="pl-0.5">Unlocked</span>
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="unlock" class="svg-inline--fa fa-unlock fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M400 240H128v-94.8c0-52.8 42.1-96.7 95-97.2 53.4-.6 97 42.7 97 96v24c0 13.3 10.7 24 24 24s24-10.7 24-24v-22.6C368 65.8 304 .2 224.3 0 144.8-.2 80 64.5 80 144v96H48c-26.5 0-48 21.5-48 48v176c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V288c0-26.5-21.5-48-48-48zm0 224H48V288h352v176z"></path></svg>
+                        </i>
+                    }
+                }
+            </dd>
+        </dl>
+    }
     @if (EntitySpawnMenuOpen){
         <div 
             class="entity-spawn-modal" 

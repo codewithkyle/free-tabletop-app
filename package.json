@@ -11,15 +11,22 @@
         "start:client": "dotnet run --project ./Client",
         "start:server": "dotnet run --project ./Server",
         "production": "npm run reset && npm run build:brixi && npm run build:css && npm run build:js && node ./build/minify.js && node ./build/release.js && npm run publish",
-        "publish": "dotnet build && dotnet publish -c Release --self-contained -r linux-x64 && mkdir ./compiled && mv ./Server/bin/Release/netcoreapp3.1/linux-x64/publish/* ./compiled"
+        "publish": "dotnet build && dotnet publish -c Release --self-contained -r linux-x64 && mkdir ./compiled && mv ./Server/bin/Release/netcoreapp3.1/linux-x64/publish/* ./compiled",
+        "bundle": "snowpack install"
     },
     "dependencies": {
-        "@codewithkyle/notifyjs": "^2.0.3",
+        "@codewithkyle/notifyjs": "^2.1.0",
         "brixi": "^0.2.3",
         "cssmonster": "^0.2.1",
         "glob": "^7.1.6",
         "npm-run-all": "^4.1.5",
+        "snowpack": "^2.17.1",
         "terser": "^5.3.8",
         "typescript": "^4.0.5"
+    },
+    "snowpack": {
+        "install": [
+            "@codewithkyle/notifyjs"
+        ]
     }
 }
