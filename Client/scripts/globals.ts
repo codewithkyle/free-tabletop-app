@@ -1,41 +1,47 @@
 document.onkeydown = (event: KeyboardEvent) => {
-    const key = event.key.toLowerCase();
-    if (key === "f5") {
-        event.returnValue = false;
-        return false;
-    } else if (key === "r" && (event.ctrlKey || event.metaKey)) {
-        event.returnValue = false;
-        return false;
+    if (event instanceof KeyboardEvent){
+        const key = event.key.toLowerCase();
+        if (key === "f5") {
+            event.returnValue = false;
+            return false;
+        } else if (key === "r" && (event.ctrlKey || event.metaKey)) {
+            event.returnValue = false;
+            return false;
+        }
     }
 };
 
-function SetPlayerUID(uid: string) {
+async function SetPlayerUID(uid: string) {
     localStorage.setItem("PlayerUID", uid);
+    return;
 }
 function GetPlayerUID() {
     return localStorage.getItem("PlayerUID");
 }
 
-function ClearStorage() {
+async function ClearStorage() {
     localStorage.clear();
-    localStorage.clear();
+    sessionStorage.clear();
+    return;
 }
 
-function CopyToClipboard(value: string) {
+async function CopyToClipboard(value: string) {
     if ("clipboard" in navigator) {
         navigator.clipboard.writeText(value);
     }
+    return;
 }
 
 function ForceHome() {
     location.href = location.origin;
 }
 
-function FocusElement(selector: string) {
+async function FocusElement(selector: string) {
     const el: HTMLElement = document.body.querySelector(selector);
     if (el) {
         el.focus();
     }
+    return;
 }
 
 function Debug(thing: any) {
@@ -43,37 +49,38 @@ function Debug(thing: any) {
 }
 
 async function GetGridSize(url: string, customSize:number) {
-    let grid = [0, 0];
+    let grid = [0, 0, 300, 300];
     if (url.length) {
         grid = await new Promise((resolve) => {
             const tempImg = document.createElement("img");
-            tempImg.src = url;
             tempImg.className = "temp-image";
             tempImg.addEventListener("load", () => {
                 const bounds = tempImg.getBoundingClientRect();
                 const width = Math.floor(bounds.width / customSize);
                 const height = Math.floor(bounds.height / customSize);
                 tempImg.remove();
-                resolve([width, height]);
+                resolve([width, height, bounds.width, bounds.height]);
             });
             tempImg.addEventListener("error", () => {
                 tempImg.remove();
-                resolve([0, 0]);
+                resolve([0, 0, 300, 300]);
             });
+            tempImg.src = url;
             document.body.appendChild(tempImg);
         });
     }
     return grid;
 }
 
-function ClearHighlightedCells() {
+async function ClearHighlightedCells() {
     const cells = Array.from(document.body.querySelectorAll("td.highlight"));
     for (let i = 0; i < cells.length; i++) {
         cells[i].className = "";
     }
+    return;
 }
 
-function PlaySound(name:string){
+async function PlaySound(name:string){
     switch(name){
         case "alert.wav":
             if (!localStorage.getItem("alertDisabled")){
@@ -105,6 +112,7 @@ function PlaySound(name:string){
             audio.play();
             break;
     }
+    return;
 }
 
 function Ping(x:number, y:number){
@@ -134,68 +142,6 @@ function Ping(x:number, y:number){
     setTimeout(()=>{
         el.remove();
     }, 2000);
-}
-
-function DragTabletop(){
-    const tabletop:HTMLElement = document.body.querySelector(".js-tabletop");
-    if (tabletop){
-        let pos = { top: 0, left: 0, x: 0, y: 0 };
-        let movingTabletop = false;
-        tabletop.addEventListener("mousedown", (e:MouseEvent)=>{
-            if (e.button === 0 && e.target instanceof HTMLTableCellElement){
-                pos = {
-                    left: tabletop.scrollLeft,
-                    top: tabletop.scrollTop,
-                    x: e.clientX,
-                    y: e.clientY,
-                };
-                movingTabletop = true;
-            }
-        });
-        tabletop.addEventListener("touchstart", (e:TouchEvent)=>{
-            if (e.target instanceof HTMLTableCellElement){
-                pos = {
-                    left: tabletop.scrollLeft,
-                    top: tabletop.scrollTop,
-                    x: e.touches[0].clientX,
-                    y: e.touches[0].clientY,
-                };
-                movingTabletop = true;
-            }
-        });
-
-        document.addEventListener('mousemove', (e:MouseEvent) => {
-            if (movingTabletop){
-                const dx = e.clientX - pos.x;
-                const dy = e.clientY - pos.y;
-
-                tabletop.scrollTo({
-                    top: pos.top - dy,
-                    left: pos.left - dx,
-                    behavior: "auto",
-                });
-            }
-        });
-        document.addEventListener("touchmove", (e:TouchEvent) => {
-            if (movingTabletop){
-                const dx = e.touches[0].clientX - pos.x;
-                const dy = e.touches[0].clientY - pos.y;
-
-                tabletop.scrollTo({
-                    top: pos.top - dy,
-                    left: pos.left - dx,
-                    behavior: "auto",
-                });
-            }
-        });
-
-        document.addEventListener('mouseup', (e:MouseEvent) => {
-            movingTabletop = false;
-        });
-        document.addEventListener("touchend", (e:MouseEvent) => {
-            movingTabletop = false;
-        });
-    }
 }
 
 function ToggleSoundStatus(type:string, enabled:boolean){

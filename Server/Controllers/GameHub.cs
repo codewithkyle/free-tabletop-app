@@ -72,8 +72,8 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
-        [HubMethodName("Room:LoadImage")]
-        public async Task LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize)
+        [HubMethodName("Room:EnableCell")]
+        public async Task EnableCell(int x, int y)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -81,8 +81,25 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    room.LoadImage(imageURL, gridType, gridSize, cellSize);
-                    await ClearTabletop(room);
+                    room.EnableCell(x, y);
+                    await Clients.Group(room.RoomCode).SendAsync("Tabletop:UpdateCellVisiblity", x, y);
+                }
+            }
+        }
+
+        [HubMethodName("Room:LoadImage")]
+        public async Task LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize, bool fogOfWar)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.ClearTabletop();
+                    room.LoadImage(imageURL, gridType, gridSize, cellSize, tabletopSize, fogOfWar);
+                    await RenderCreatureEntities(room);
+                    await RenderNPCEntities(room);
                     await LoadTabletopImage(room);
                     if (gridType != "3")
                     {
@@ -504,7 +521,7 @@ namespace FreeTabletop.Server.Controllers
 
         private async Task LoadTabletopImage(Room room)
         {
-            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize);
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize, room.TabletopSize, room.Cells);
         }
 
         private async Task RenderPlayerEntities(Room room)

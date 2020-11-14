@@ -55,11 +55,12 @@ namespace FreeTabletop.Client.Controllers
 
                 Networker.hubConnection.On("Player:Kick", HandleKick);
 
-                Networker.hubConnection.On<String, string, int[], int>("Tabletop:LoadImage", Room.RenderTabletopFromImage);
+                Networker.hubConnection.On<String, string, int[], int, int[], List<Cell>>("Tabletop:LoadImage", Room.RenderTabletopFromImage);
                 Networker.hubConnection.On("Tabletop:Clear", Room.ClearTabletop);
                 Networker.hubConnection.On<List<PlayerEntity>>("Tabletop:RenderPlayerEntities", Room.RenderPlayerEntities);
                 Networker.hubConnection.On<List<Creature>>("Tabletop:RenderCreatureEntities", Room.RenderCreatureEntities);
                 Networker.hubConnection.On<List<NPC>>("Tabletop:RenderNPCEntities", Room.RenderNPCEntities);
+                Networker.hubConnection.On<int, int>("Tabletop:UpdateCellVisiblity", Room.UpdateCellVisiblity);
 
                 Networker.hubConnection.On<string>("Notification:PlayerConnected", ConnectedNotification);
                 Networker.hubConnection.On<string>("Notification:PlayerDisconnected", DisconnectedNotification);
@@ -115,6 +116,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Notification:Roll");
             Networker.hubConnection.Remove("Set:Messages");
             Networker.hubConnection.Remove("Set:Players");
+            Networker.hubConnection.Remove("Tabletop:UpdateCellVisiblity");
         }
 
         private async Task UpdateUID(string uid)
@@ -144,9 +146,11 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:KickPlayer", player.UID);
         }
 
-        public async Task LoadTabletop(String imageURL, string gridType, int[] gridSize, int gridCellSize)
+        public async Task LoadTabletop(String imageURL, string gridType, int[] gridData, int gridCellSize, bool fogOfWar)
         {
-            await Networker.hubConnection.SendAsync("Room:LoadImage", imageURL, gridType, gridSize, gridCellSize);
+            int[] GridSize = {gridData[0], gridData[1]};
+            int[] TabletopSize = {gridData[2], gridData[3]};
+            await Networker.hubConnection.SendAsync("Room:LoadImage", imageURL, gridType, GridSize, gridCellSize, TabletopSize, fogOfWar);
         }
 
         public async Task ClearTabletop()
@@ -250,6 +254,11 @@ namespace FreeTabletop.Client.Controllers
         public async Task AnnounceRoll(int diceCount, string die, string results)
         {
             await Networker.hubConnection.SendAsync("Room:AnnounceRoll", diceCount, die, results);
+        }
+
+        public void EnableCell(int gridX, int gridY)
+        {
+            Networker.hubConnection.SendAsync("Room:EnableCell", gridX, gridY);
         }
     }
 }

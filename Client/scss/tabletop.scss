@@ -31,6 +31,7 @@
         transition: all 900ms 300ms var(--ease-in-out), z-index 0ms linear;
 
         &.-player {
+            z-index: 6;
             & > i {
                 background-color: var(--blue-600);
                 border-color: darken(#3182ce, 7);
@@ -334,7 +335,6 @@
     }
 
     table {
-        display: block;
         position: absolute;
         top: 0;
         left: 0;
@@ -383,6 +383,27 @@
                     z-index: 1;
                 }
             }
+        }
+    }
+
+    .tabletop-loading{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: center;
+        transform: translate(-50%, -50%);
+        text-align: center;
+
+        svg{
+            display: block;
+            color: var(--grey-700);
+            width: 48px;
+            height: 48px;
+            margin: 0 auto;
+        }
+
+        p{
+            white-space: nowrap;
         }
     }
 }

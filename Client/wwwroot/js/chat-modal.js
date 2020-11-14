@@ -57,19 +57,21 @@ function ResetChatModal() {
     modal.style.left = '0px';
     modal.style.top = "calc(36px + 0.5rem)";
 }
-function ResetChatMessage() {
+async function ResetChatMessage() {
     const textarea = document.body.querySelector(".js-messenger-input");
     textarea.value = "";
     textarea.innerHTML = "";
     textarea.style.height = `0px`;
+    return;
 }
 function GetChatMessage() {
     const textarea = document.body.querySelector(".js-messenger-input");
     return textarea.value;
 }
-function AdjustChatMessageHeight() {
+async function AdjustChatMessageHeight() {
     const textarea = document.body.querySelector(".js-messenger-input");
     textarea.style.height = `${textarea.scrollHeight}px`;
+    return;
 }
 function ScrollChatMessages() {
     const container = document.body.querySelector(".js-chat-messages");
