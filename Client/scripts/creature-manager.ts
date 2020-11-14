@@ -1,10 +1,11 @@
 let dbWorker: Worker = null;
 let lastDBWorkerUid = null;
 
-function SyncMonsterData() {
+async function SyncMonsterData() {
     if (!dbWorker) {
         dbWorker = new Worker(`/js/db-worker.js`);
     }
+    return;
 }
 
 function LookupCreature(query: string) {
@@ -31,7 +32,7 @@ function LookupCreature(query: string) {
     });
 }
 
-function AddCustomCreature(creature: string) {
+async function AddCustomCreature(creature: string) {
     if (!dbWorker) {
         return;
     }
@@ -39,6 +40,7 @@ function AddCustomCreature(creature: string) {
         type: "add",
         creature: creature,
     });
+    return;
 }
 
 function GetCreatures() {

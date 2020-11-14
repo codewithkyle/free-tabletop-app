@@ -64,6 +64,8 @@ namespace FreeTabletop.Client.Pages
 
         public bool TabletopSettingsOpen = false;
 
+        public bool TabletopImageLoaded = false;
+
         protected override async Task OnInitializedAsync()
         {
             await Hub.Connect(RoomCode, this, NavigationManager, JSRuntime, Tabletop);
@@ -101,6 +103,7 @@ namespace FreeTabletop.Client.Pages
                 JSRuntime.InvokeVoidAsync("StartCombatDrag");
                 JSRuntime.InvokeVoidAsync("StartChatDrag");
                 JSRuntime.InvokeVoidAsync("StartDiceDrag");
+                JSRuntime.InvokeVoidAsync("DragTabletop");
                 JSRuntime.InvokeVoidAsync("PlaySound", "success.wav");
             }
             return base.OnAfterRenderAsync(firstRender);
@@ -197,23 +200,28 @@ namespace FreeTabletop.Client.Pages
             if (InputImageURL.Length != 0)
             {
                 CloseAllModals();
-                int[] GridSize = await JSRuntime.InvokeAsync<int[]>("GetGridSize", InputImageURL, GridCellSize);
-                await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridSize, GridCellSize);
+                Tabletop.Image = InputImageURL;
+                TabletopImageLoaded = false;
+                Tabletop.GridType = null;
+                int[] GridData = await JSRuntime.InvokeAsync<int[]>("GetGridSize", InputImageURL, GridCellSize);
+                await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridData, GridCellSize);
                 InputImageURL = null;
                 SelectedGridType = "1";
                 GridCellSize = 32;
             }
         }
 
-        public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid, int cellSize)
+        public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid, int cellSize, int[] tabletopSize)
         {
-            Tabletop.Image = imageURL;
+            if (Tabletop.Image != imageURL){
+                TabletopImageLoaded = false;
+                Tabletop.Image = imageURL;
+            }
             Tabletop.GridType = gridType;
             Tabletop.Grid = grid;
             Tabletop.CellSize = cellSize;
+            Tabletop.Size = tabletopSize;
             StateHasChanged();
-            JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
-            JSRuntime.InvokeVoidAsync("DragTabletop");
         }
 
         public void ClearTabletop()
@@ -619,14 +627,14 @@ namespace FreeTabletop.Client.Pages
             NavigationManager.NavigateTo("/");
         }
 
-        public async Task Reinstall()
+        public void Reinstall()
         {
-            await JSRuntime.InvokeVoidAsync("Reinstall");
+            JSRuntime.InvokeVoidAsync("Reinstall");
         }
 
-        public async Task InstallPWA()
+        public void InstallPWA()
         {
-            await JSRuntime.InvokeVoidAsync("Install");
+            JSRuntime.InvokeVoidAsync("Install");
         }
 
         public async Task RemoveEntity(string uid)
@@ -634,10 +642,10 @@ namespace FreeTabletop.Client.Pages
             await Hub.RemoveEntity(uid);
         }
 
-        public async Task RenderRollNotification(int diceCount, string die, string results, string name)
+        public void RenderRollNotification(int diceCount, string die, string results, string name)
         {
-            await JSRuntime.InvokeVoidAsync("AnnounceRoll", diceCount, die, results, name);
-            await JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
+            JSRuntime.InvokeVoidAsync("AnnounceRoll", diceCount, die, results, name);
+            JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
         }
 
         public void ToggleTabletopSettings()
@@ -649,6 +657,15 @@ namespace FreeTabletop.Client.Pages
             else
             {
                 TabletopSettingsOpen = true;
+            }
+            StateHasChanged();
+        }
+
+        public void FinalizeTabletopLoading()
+        {
+            TabletopImageLoaded = true;
+            if (Tabletop.GridType != null){
+                JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
             }
             StateHasChanged();
         }

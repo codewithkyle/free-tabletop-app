@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- tabletop loading animation
+
+### Fixed
+
+- JavaScript performance issues
+
 ## [0.2.0] - 2020-11-11
 
 ### Added

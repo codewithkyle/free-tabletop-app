@@ -334,7 +334,6 @@
     }
 
     table {
-        display: block;
         position: absolute;
         top: 0;
         left: 0;
@@ -383,6 +382,27 @@
                     z-index: 1;
                 }
             }
+        }
+    }
+
+    .tabletop-loading{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: center;
+        transform: translate(-50%, -50%);
+        text-align: center;
+
+        svg{
+            display: block;
+            color: var(--grey-700);
+            width: 48px;
+            height: 48px;
+            margin: 0 auto;
+        }
+
+        p{
+            white-space: nowrap;
         }
     }
 }

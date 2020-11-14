@@ -61,11 +61,12 @@ function ResetChatModal(){
     modal.style.top = "calc(36px + 0.5rem)";
 }
 
-function ResetChatMessage(){
+async function ResetChatMessage(){
     const textarea:HTMLTextAreaElement = document.body.querySelector(".js-messenger-input");
     textarea.value = "";
     textarea.innerHTML = "";
     textarea.style.height = `0px`;
+    return;
 }
 
 function GetChatMessage(){
@@ -73,9 +74,10 @@ function GetChatMessage(){
     return textarea.value;
 }
 
-function AdjustChatMessageHeight(){
+async function AdjustChatMessageHeight(){
     const textarea:HTMLTextAreaElement = document.body.querySelector(".js-messenger-input");
     textarea.style.height = `${textarea.scrollHeight}px`;
+    return;
 }
 
 function ScrollChatMessages(){

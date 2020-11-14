@@ -1,43 +1,49 @@
 document.onkeydown = (event) => {
-    const key = event.key.toLowerCase();
-    if (key === "f5") {
-        event.returnValue = false;
-        return false;
-    }
-    else if (key === "r" && (event.ctrlKey || event.metaKey)) {
-        event.returnValue = false;
-        return false;
+    if (event instanceof KeyboardEvent) {
+        const key = event.key.toLowerCase();
+        if (key === "f5") {
+            event.returnValue = false;
+            return false;
+        }
+        else if (key === "r" && (event.ctrlKey || event.metaKey)) {
+            event.returnValue = false;
+            return false;
+        }
     }
 };
-function SetPlayerUID(uid) {
+async function SetPlayerUID(uid) {
     localStorage.setItem("PlayerUID", uid);
+    return;
 }
 function GetPlayerUID() {
     return localStorage.getItem("PlayerUID");
 }
-function ClearStorage() {
+async function ClearStorage() {
     localStorage.clear();
-    localStorage.clear();
+    sessionStorage.clear();
+    return;
 }
-function CopyToClipboard(value) {
+async function CopyToClipboard(value) {
     if ("clipboard" in navigator) {
         navigator.clipboard.writeText(value);
     }
+    return;
 }
 function ForceHome() {
     location.href = location.origin;
 }
-function FocusElement(selector) {
+async function FocusElement(selector) {
     const el = document.body.querySelector(selector);
     if (el) {
         el.focus();
     }
+    return;
 }
 function Debug(thing) {
     console.log(thing);
 }
 async function GetGridSize(url, customSize) {
-    let grid = [0, 0];
+    let grid = [0, 0, 0, 0];
     if (url.length) {
         grid = await new Promise((resolve) => {
             const tempImg = document.createElement("img");
@@ -48,24 +54,25 @@ async function GetGridSize(url, customSize) {
                 const width = Math.floor(bounds.width / customSize);
                 const height = Math.floor(bounds.height / customSize);
                 tempImg.remove();
-                resolve([width, height]);
+                resolve([width, height, bounds.width, bounds.height]);
             });
             tempImg.addEventListener("error", () => {
                 tempImg.remove();
-                resolve([0, 0]);
+                resolve([0, 0, 0, 0]);
             });
             document.body.appendChild(tempImg);
         });
     }
     return grid;
 }
-function ClearHighlightedCells() {
+async function ClearHighlightedCells() {
     const cells = Array.from(document.body.querySelectorAll("td.highlight"));
     for (let i = 0; i < cells.length; i++) {
         cells[i].className = "";
     }
+    return;
 }
-function PlaySound(name) {
+async function PlaySound(name) {
     switch (name) {
         case "alert.wav":
             if (!localStorage.getItem("alertDisabled")) {
@@ -97,6 +104,7 @@ function PlaySound(name) {
             audio.play();
             break;
     }
+    return;
 }
 function Ping(x, y) {
     if (!localStorage.getItem("pingDisabled")) {
@@ -122,9 +130,10 @@ function Ping(x, y) {
         el.remove();
     }, 2000);
 }
+let tabletop;
 function DragTabletop() {
-    const tabletop = document.body.querySelector(".js-tabletop");
-    if (tabletop) {
+    if (!tabletop) {
+        tabletop = document.body.querySelector(".js-tabletop");
         let pos = { top: 0, left: 0, x: 0, y: 0 };
         let movingTabletop = false;
         tabletop.addEventListener("mousedown", (e) => {

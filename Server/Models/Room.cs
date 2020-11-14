@@ -14,6 +14,7 @@ namespace FreeTabletop.Server.Models
         public string GridType = "1";
 
         public int[] Grid = { 0, 0 };
+        public int[] TabletopSize = {0, 0};
 
         public List<Creature> Creatures = new List<Creature>();
 
@@ -105,12 +106,13 @@ namespace FreeTabletop.Server.Models
             return players;
         }
 
-        public void LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize)
+        public void LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize)
         {
             ImageURL = imageURL;
             GridType = gridType;
             Grid = gridSize;
             CellSize = cellSize;
+            TabletopSize = tabletopSize;
         }
 
         public void ClearTabletop()
