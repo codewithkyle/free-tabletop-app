@@ -684,7 +684,6 @@ namespace FreeTabletop.Client.Pages
             if (Tabletop.GridType != null){
                 JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
             }
-            JSRuntime.InvokeVoidAsync("FastFogOfWar");
             StateHasChanged();
         }
 
