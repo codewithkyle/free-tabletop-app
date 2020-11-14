@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.3.0] - 2020-11-14
+
 ### Added
 
 - tabletop loading animation
@@ -63,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - initial beta build
 - CI/CD pipeline
 
+[0.3.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.1.6...v0.2.0
 [0.1.6]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.1.5...v0.1.6
 [0.1.5]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.1.4...v0.1.5
