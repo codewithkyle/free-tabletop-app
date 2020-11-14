@@ -11,10 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - tabletop loading animation
 - tabletop image loading error notification
+- image loading sfx
 
 ### Fixed
 
 - JavaScript performance issues
+- tabletop touch/click and drag bug
 
 ## [0.2.0] - 2020-11-11
 
