@@ -15,6 +15,7 @@
             <img 
                 style="opacity: @(TabletopImageLoaded && Tabletop.GridType != null ? "1" : "0");transition: opacity 300ms var(--ease-in);" 
                 @onload="FinalizeTabletopLoading"
+                onerror="AccounceError('Failed to load map. Try again with a valid image.')"
                 draggable="false" 
                 src="@Tabletop.Image" 
             />

@@ -1,3 +1,12 @@
+function AccounceError(message) {
+    toast({
+        title: `Something Went Wrong`,
+        message: message,
+        duration: 10,
+        classes: "-red",
+    });
+    PlaySound("alert.wav");
+}
 function PlayerConnected(name) {
     toast({
         title: `${name} Joined`,

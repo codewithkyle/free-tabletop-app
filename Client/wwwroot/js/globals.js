@@ -43,11 +43,10 @@ function Debug(thing) {
     console.log(thing);
 }
 async function GetGridSize(url, customSize) {
-    let grid = [0, 0, 0, 0];
+    let grid = [0, 0, 300, 300];
     if (url.length) {
         grid = await new Promise((resolve) => {
             const tempImg = document.createElement("img");
-            tempImg.src = url;
             tempImg.className = "temp-image";
             tempImg.addEventListener("load", () => {
                 const bounds = tempImg.getBoundingClientRect();
@@ -58,8 +57,9 @@ async function GetGridSize(url, customSize) {
             });
             tempImg.addEventListener("error", () => {
                 tempImg.remove();
-                resolve([0, 0, 0, 0]);
+                resolve([0, 0, 300, 300]);
             });
+            tempImg.src = url;
             document.body.appendChild(tempImg);
         });
     }
