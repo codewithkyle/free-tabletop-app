@@ -65,6 +65,7 @@ namespace FreeTabletop.Client.Pages
         public bool TabletopSettingsOpen = false;
 
         public bool TabletopImageLoaded = false;
+        public bool FogOfWar = true;
 
         protected override async Task OnInitializedAsync()
         {
@@ -199,6 +200,11 @@ namespace FreeTabletop.Client.Pages
         {
             if (InputImageURL.Length != 0)
             {
+                if (InputImageURL == Tabletop.Image)
+                {
+                    await Hub.ClearTabletop();
+                }
+                
                 CloseAllModals();
                 Tabletop.Image = InputImageURL;
                 TabletopImageLoaded = false;
@@ -668,6 +674,18 @@ namespace FreeTabletop.Client.Pages
                 JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
             }
             StateHasChanged();
+        }
+
+        public void ToggleFogOfWar()
+        {
+            if (FogOfWar)
+            {
+                FogOfWar = false;
+            }
+            else
+            {
+                FogOfWar = true;
+            }
         }
     }
 }

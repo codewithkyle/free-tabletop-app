@@ -5,6 +5,7 @@ node_modules
 /Client/scss/brixi.css
 /_js
 web_modules
+compiled
 
 # User-specific files
 *.rsuser
