@@ -234,27 +234,23 @@
                         <span class="nametag">@Tabletop.Players[p].Name</span>
                     </tabletop-pawn>
                 }
-                <div style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:5;pointer-events:none;">
+                <div style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:5;pointer-events:none;opacity: @(Tabletop.IsGameMaster ? "0.6" : "1");">
                     @for (int c = 0; c < Tabletop.Cells.Count; c++){
                         string BackgroundColor = "transparent";
                         int LocalIndex = c;
                         int x = Tabletop.Cells[c].Position[0];
                         int y = Tabletop.Cells[c].Position[1];
                         if (Tabletop.Cells[c].IsBlackout){
-                            if (Tabletop.IsGameMaster){
-                                BackgroundColor = "rgba(25,25,25,0.6)";
-                            }else{
-                                BackgroundColor = "rgb(25,25,25)";
-                            }
+                            BackgroundColor = "rgb(25,25,25)";
                         }
                         <div style="
                                 position:absolute;
                                 background: @BackgroundColor;
                                 content-visibility:auto;
-                                top: @(y * Tabletop.CellSize)px;
-                                left: @(x * Tabletop.CellSize)px;
-                                width: @(Tabletop.CellSize)px;
-                                height: @(Tabletop.CellSize)px;
+                                top: @(y * Tabletop.CellSize - 1)px;
+                                left: @(x * Tabletop.CellSize - 1)px;
+                                width: @(Tabletop.CellSize + 2)px;
+                                height: @(Tabletop.CellSize + 2)px;
                                 pointer-events: @((Tabletop.IsGameMaster || BackgroundColor == "transparent") ? "none" : "all");
                             "
                             data-index="@LocalIndex"
