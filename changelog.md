@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- fog of war reset on connect/reconnect bug
+- fog of war performance issues
+
 ## [0.3.0] - 2020-11-14
 
 ### Added

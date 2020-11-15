@@ -259,9 +259,7 @@ namespace FreeTabletop.Client.Pages
         public async Task HandleDrop(int x, int y)
         {
             int[] Position = { x, y };
-            await JSRuntime.InvokeVoidAsync("ClearHighlightedCells");
             await Hub.MoveEntity(MovingEntityUID, Position);
-            await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
         }
 
         public void HandleDragStart(string uid)
@@ -407,12 +405,11 @@ namespace FreeTabletop.Client.Pages
             }
         }
 
-        public void HandleLeftClick(int gridX, int gridY, bool ctrlKeyPressed)
+        public void HandleLeftClick(bool ctrlKeyPressed, int cellIndex)
         {
             if (Tabletop.IsGameMaster && ctrlKeyPressed)
             {
-                Hub.EnableCell(gridX, gridY);
-                UpdateCellVisiblity(gridX, gridY);
+                Hub.EnableCell(cellIndex);
             }
         }
 
@@ -699,17 +696,13 @@ namespace FreeTabletop.Client.Pages
             }
         }
 
-        public void UpdateCellVisiblity(int x, int y)
+        public void UpdateCellVisiblity(int index)
         {
-            for (int c = 0; c < Tabletop.Cells.Count; c++)
+            if (!Tabletop.IsGameMaster)
             {
-                if (Tabletop.Cells[c].Position[0] == x && Tabletop.Cells[c].Position[1] == y)
-                {
-                    Tabletop.Cells[c].IsBlackout = false;
-                    break;
-                }
+                Tabletop.Cells[index].IsBlackout = false;
+                JSRuntime.InvokeVoidAsync("ClearFogCell", index);
             }
-            StateHasChanged();
         }
     }
 }

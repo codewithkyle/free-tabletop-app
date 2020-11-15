@@ -72,14 +72,6 @@ async function GetGridSize(url: string, customSize:number) {
     return grid;
 }
 
-async function ClearHighlightedCells() {
-    const cells = Array.from(document.body.querySelectorAll("td.highlight"));
-    for (let i = 0; i < cells.length; i++) {
-        cells[i].className = "";
-    }
-    return;
-}
-
 async function PlaySound(name:string){
     switch(name){
         case "alert.wav":
@@ -252,3 +244,10 @@ async function CheckForUpdate(){
     }
 }
 CheckForUpdate();
+
+function ClearFogCell(index:number){
+    const cell:HTMLElement = document.body.querySelector(`.js-fog[data-index="${index}"]`);
+    if (cell){
+        cell.style.background = "transparent";
+    }
+}

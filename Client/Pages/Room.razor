@@ -26,39 +26,36 @@
                 src="@Tabletop.Image" 
             />
             @if (TabletopImageLoaded && Tabletop.GridType != "3" && Tabletop.GridType != null){
-                <table style="display: @(TabletopImageLoaded ? "block" : "none");">
-                    <tbody>
-                        @for (int y = 0; y < Tabletop.Grid[1]; y++){
-                            <tr>
-                                @for (int x = 0; x < Tabletop.Grid[0]; x++){
-                                    int LocalX = x;
-                                    int LocalY = y;
-                                    <td 
-                                        class="js-cell"
-                                        @ondrop="@(e => HandleDrop(LocalX, LocalY))" 
-                                        style="
-                                            content-visibility:auto;
-                                            top: @(y * Tabletop.CellSize)px;
-                                            left: @(x * Tabletop.CellSize)px;
-                                            width: @(Tabletop.CellSize)px;
-                                            height: @(Tabletop.CellSize)px;
-                                        " 
-                                        data-x="@x" 
-                                        data-y="@y" 
-                                        data-type="@Tabletop.GridType"
-                                        ondragover="event.preventDefault();" 
-                                        ondragenter="event.target.className = 'highlight';"
-                                        ondragleave="event.target.className = '';"
-                                        @oncontextmenu="@(e => HandleRightClick(e.ClientX, e.ClientY, LocalX, LocalY, e.CtrlKey))"
-                                        @oncontextmenu:preventDefault="true" 
-                                        @onclick="@(e => HandleLeftClick(LocalX, LocalY, e.CtrlKey))"
-                                    >
-                                    </td>
-                                }
-                            </tr>
+                int CellIndex = 0;
+                <div class="table" style="display: @(TabletopImageLoaded ? "block" : "none");">
+                    @for (int y = 0; y < Tabletop.Grid[1]; y++){
+                        @for (int x = 0; x < Tabletop.Grid[0]; x++){
+                            int LocalX = x;
+                            int LocalY = y;
+                            int LocalCellIndex = CellIndex;
+                            CellIndex++;
+                            <tabletop-cell 
+                                @ondrop="@(e => HandleDrop(LocalX, LocalY))" 
+                                style="
+                                    content-visibility:auto;
+                                    top: @(y * Tabletop.CellSize)px;
+                                    left: @(x * Tabletop.CellSize)px;
+                                    width: @(Tabletop.CellSize)px;
+                                    height: @(Tabletop.CellSize)px;
+                                " 
+                                data-x="@x" 
+                                data-y="@y" 
+                                data-index="@LocalCellIndex"
+                                data-type="@Tabletop.GridType"
+                                ondragover="event.preventDefault();" 
+                                @oncontextmenu="@(e => HandleRightClick(e.ClientX, e.ClientY, LocalX, LocalY, e.CtrlKey))"
+                                @oncontextmenu:preventDefault="true" 
+                                @onclick="@(e => HandleLeftClick(e.CtrlKey, LocalCellIndex))"
+                            >
+                            </tabletop-cell>
                         }
-                    </tbody>
-                </table>
+                    }
+                </div>
                 @for (int i = 0; i < Tabletop.Creatures.Count; i++){
                     Creature Creature = Tabletop.Creatures[i];
                     int x = Creature.Position[0];
@@ -218,7 +215,8 @@
                 }
                 <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events: none;z-index:5;">
                     @for (int c = 0; c < Tabletop.Cells.Count; c++){
-                        string BackgroundColor = null;
+                        string BackgroundColor = "transparent";
+                        int LocalIndex = c;
                         int x = Tabletop.Cells[c].Position[0];
                         int y = Tabletop.Cells[c].Position[1];
                         if (Tabletop.Cells[c].IsBlackout){
@@ -228,21 +226,20 @@
                                 BackgroundColor = "rgba(51,51,51,1)";
                             }
                         }
-                        if (BackgroundColor != null){
-                            <div style="
-                                    position:absolute;
-                                    background: @BackgroundColor;
-                                    content-visibility:auto;
-                                    top: @(y * Tabletop.CellSize)px;
-                                    left: @(x * Tabletop.CellSize)px;
-                                    width: @(Tabletop.CellSize)px;
-                                    height: @(Tabletop.CellSize)px;
-                                "
-                                data-x="@x" 
-                                data-y="@y" 
-                                class="js-fog"
-                            ></div>
-                        }
+                        <div style="
+                                position:absolute;
+                                background: @BackgroundColor;
+                                content-visibility:auto;
+                                top: @(y * Tabletop.CellSize)px;
+                                left: @(x * Tabletop.CellSize)px;
+                                width: @(Tabletop.CellSize)px;
+                                height: @(Tabletop.CellSize)px;
+                            "
+                            data-index="@LocalIndex"
+                            data-x="@x" 
+                            data-y="@y" 
+                            class="js-fog"
+                        ></div>
                     }
                 </div>
             }

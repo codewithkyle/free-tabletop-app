@@ -128,6 +128,7 @@ namespace FreeTabletop.Server.Models
                         Cell Cell = new Cell();
                         int[] Position = {x, y};
                         Cell.Position = Position;
+                        Cell.IsBlackout = true;
                         NewCells.Add(Cell);
                     }
                 }
@@ -565,16 +566,9 @@ namespace FreeTabletop.Server.Models
             }
         }
 
-        public void EnableCell(int x, int y)
+        public void EnableCell(int cellIndex)
         {
-            for (int c = 0; c < Cells.Count; c++)
-            {
-                if (Cells[c].Position[0] == x && Cells[c].Position[1] == y)
-                {
-                    Cells[c].IsBlackout = false;
-                    break;
-                }
-            }
+            Cells[cellIndex].IsBlackout = false;
         }
     }
 }

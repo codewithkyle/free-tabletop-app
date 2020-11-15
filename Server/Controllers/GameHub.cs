@@ -19,8 +19,7 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.RoomCode);
-                    await SendPlayerDisconnectionNotification(room, player.Name);
-                    await SendTabletopInfoToRoom(room);
+                    await SendPlayerDisconnectionNotification(room, player.Name, player.UID);
                 }
             }
             GlobalData.DisconnectPlayer(Context.ConnectionId);
@@ -73,7 +72,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:EnableCell")]
-        public async Task EnableCell(int x, int y)
+        public async Task EnableCell(int cellIndex)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -81,8 +80,8 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    room.EnableCell(x, y);
-                    await Clients.Group(room.RoomCode).SendAsync("Tabletop:UpdateCellVisiblity", x, y);
+                    room.EnableCell(cellIndex);
+                    await Clients.Group(room.RoomCode).SendAsync("Tabletop:UpdateCellVisiblity", cellIndex);
                 }
             }
         }
@@ -419,8 +418,7 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.RoomCode);
-                    await SendPlayerDisconnectionNotification(room, player.Name);
-                    await SendTabletopInfoToRoom(room);
+                    await SendPlayerDisconnectionNotification(room, player.Name, player.UID);
                 }
             }
         }
@@ -471,7 +469,6 @@ namespace FreeTabletop.Server.Controllers
                 await SendPlayerConnectionNotification(room, name);
                 await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
                 await Clients.Caller.SendAsync("Load:Player", roomCode, Context.ConnectionId);
-                await SendTabletopInfoToRoom(room);
             }
         }
 
@@ -545,9 +542,9 @@ namespace FreeTabletop.Server.Controllers
             await Clients.Group(room.RoomCode).SendAsync("Notification:PlayerConnected", name);
         }
 
-        private async Task SendPlayerDisconnectionNotification(Room room, string name)
+        private async Task SendPlayerDisconnectionNotification(Room room, string name, string playerUID)
         {
-            await Clients.Group(room.RoomCode).SendAsync("Notification:PlayerDisconnected", name);
+            await Clients.Group(room.RoomCode).SendAsync("Notification:PlayerDisconnected", name, playerUID);
         }
 
         private async Task SendPlayerReconnectionNotification(Room room, string name)

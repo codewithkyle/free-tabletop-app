@@ -7,6 +7,6 @@ namespace FreeTabletop.Shared.Models
     {
         public int[] Position { get; set; } = {0, 0};
 
-        public bool IsBlackout = true;
+        public bool IsBlackout {get; set;}
     }
 }

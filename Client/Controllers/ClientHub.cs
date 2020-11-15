@@ -60,10 +60,10 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<List<PlayerEntity>>("Tabletop:RenderPlayerEntities", Room.RenderPlayerEntities);
                 Networker.hubConnection.On<List<Creature>>("Tabletop:RenderCreatureEntities", Room.RenderCreatureEntities);
                 Networker.hubConnection.On<List<NPC>>("Tabletop:RenderNPCEntities", Room.RenderNPCEntities);
-                Networker.hubConnection.On<int, int>("Tabletop:UpdateCellVisiblity", Room.UpdateCellVisiblity);
+                Networker.hubConnection.On<int>("Tabletop:UpdateCellVisiblity", Room.UpdateCellVisiblity);
 
                 Networker.hubConnection.On<string>("Notification:PlayerConnected", ConnectedNotification);
-                Networker.hubConnection.On<string>("Notification:PlayerDisconnected", DisconnectedNotification);
+                Networker.hubConnection.On<string, string>("Notification:PlayerDisconnected", DisconnectedNotification);
                 Networker.hubConnection.On<string>("Notification:PlayerReconnected", ReconnectedNotification);
                 Networker.hubConnection.On<string>("Notification:PlayerKicked", KickNotification);
                 Networker.hubConnection.On("Notification:TakeTurn", TakeTurnNotification);
@@ -191,9 +191,17 @@ namespace FreeTabletop.Client.Controllers
         {
             JSRuntime.InvokeVoidAsync("PlayerConnected", name);
         }
-        private void DisconnectedNotification(string name)
+        private void DisconnectedNotification(string name, string uid)
         {
             JSRuntime.InvokeVoidAsync("PlayerDisconnected", name);
+            for (int i = 0; i < Tabletop.Players.Count; i++)
+            {
+                if (Tabletop.Players[i].UID == uid)
+                {
+                    Tabletop.Players[i].IsConnected = false;
+                    break;
+                }
+            }
         }
         private void ReconnectedNotification(string name)
         {
@@ -256,9 +264,9 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:AnnounceRoll", diceCount, die, results);
         }
 
-        public void EnableCell(int gridX, int gridY)
+        public void EnableCell(int cellIndex)
         {
-            Networker.hubConnection.SendAsync("Room:EnableCell", gridX, gridY);
+            Networker.hubConnection.SendAsync("Room:EnableCell", cellIndex);
         }
     }
 }
