@@ -705,5 +705,11 @@ namespace FreeTabletop.Client.Pages
                 JSRuntime.InvokeVoidAsync("ClearFogCell", index);
             }
         }
+
+        public void UpdateLock(bool IsLocked)
+        {
+            Tabletop.IsLocked = IsLocked;
+            StateHasChanged();
+        }
     }
 }

@@ -62,6 +62,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<List<NPC>>("Tabletop:RenderNPCEntities", Room.RenderNPCEntities);
                 Networker.hubConnection.On<int>("Tabletop:UpdateCellVisiblity", Room.UpdateCellVisiblity);
                 Networker.hubConnection.On<string, int[]>("Tabletop:UpdateEntityPosition", UpdateEntityPosition);
+                Networker.hubConnection.On<bool>("Tabletop:UpdateLock", Room.UpdateLock);
 
                 Networker.hubConnection.On<string>("Notification:PlayerConnected", ConnectedNotification);
                 Networker.hubConnection.On<string, string>("Notification:PlayerDisconnected", DisconnectedNotification);
@@ -119,6 +120,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Set:Players");
             Networker.hubConnection.Remove("Tabletop:UpdateCellVisiblity");
             Networker.hubConnection.Remove("Tabletop:UpdateEntityPosition");
+            Networker.hubConnection.Remove("Tabletop:UpdateLock");
         }
 
         private async Task UpdateUID(string uid)

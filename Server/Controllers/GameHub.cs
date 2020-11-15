@@ -57,7 +57,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:ToggleLock")]
-        public async Task ToggleRoomLock()
+        public void ToggleRoomLock()
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -66,7 +66,7 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     room.ToggleLock();
-                    await SendTabletopInfoToRoom(room);
+                    Clients.Group(room.RoomCode).SendAsync("Tabletop:UpdateLock", room.IsLocked);
                 }
             }
         }
@@ -458,14 +458,46 @@ namespace FreeTabletop.Server.Controllers
                     Player player = GlobalData.GetPlayerByStaleUID(savedUID);
                     if (player != null)
                     {
-                        await SendPlayerReconnectionNotification(room, player.Name);
-                        await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
-                        player.Reconnect(Context.ConnectionId);
-                        await Clients.Caller.SendAsync("Load:Player", room.RoomCode, Context.ConnectionId);
+                        if (room.IsLocked)
+                        {
+                            if (player.RoomCode == room.RoomCode)
+                            {
+                                await SendPlayerReconnectionNotification(room, player.Name);
+                                await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
+                                player.Reconnect(Context.ConnectionId);
+                                await Clients.Caller.SendAsync("Load:Player", room.RoomCode, Context.ConnectionId);
+                            }
+                            else
+                            {
+                                await Clients.Caller.SendAsync("Error:RoomIsLocked");
+                            }
+                            
+                        }
+                        else
+                        {
+                            if (player.RoomCode == room.RoomCode)
+                            {
+                                await SendPlayerReconnectionNotification(room, player.Name);
+                                await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
+                                player.Reconnect(Context.ConnectionId);
+                                await Clients.Caller.SendAsync("Load:Player", room.RoomCode, Context.ConnectionId);
+                            }
+                            else
+                            {
+                                await Clients.Caller.SendAsync("Get:PlayerName");
+                            }
+                        }
                     }
                     else
                     {
-                        await Clients.Caller.SendAsync("Get:PlayerName");
+                        if (room.IsLocked)
+                        {
+                            await Clients.Caller.SendAsync("Error:RoomIsLocked");
+                        }
+                        else
+                        {
+                            await Clients.Caller.SendAsync("Get:PlayerName");
+                        }
                     }
                 }
             }
