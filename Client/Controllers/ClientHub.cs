@@ -61,6 +61,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<List<Creature>>("Tabletop:RenderCreatureEntities", Room.RenderCreatureEntities);
                 Networker.hubConnection.On<List<NPC>>("Tabletop:RenderNPCEntities", Room.RenderNPCEntities);
                 Networker.hubConnection.On<int>("Tabletop:UpdateCellVisiblity", Room.UpdateCellVisiblity);
+                Networker.hubConnection.On<string, int[]>("Tabletop:UpdateEntityPosition", UpdateEntityPosition);
 
                 Networker.hubConnection.On<string>("Notification:PlayerConnected", ConnectedNotification);
                 Networker.hubConnection.On<string, string>("Notification:PlayerDisconnected", DisconnectedNotification);
@@ -117,6 +118,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Set:Messages");
             Networker.hubConnection.Remove("Set:Players");
             Networker.hubConnection.Remove("Tabletop:UpdateCellVisiblity");
+            Networker.hubConnection.Remove("Tabletop:UpdateEntityPosition");
         }
 
         private async Task UpdateUID(string uid)
@@ -158,9 +160,9 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:ClearTabletop");
         }
 
-        public async Task MoveEntity(string entityUID, int[] newPosition)
+        public void MoveEntity(string entityUID, int[] newPosition)
         {
-            await Networker.hubConnection.SendAsync("Room:MoveEntity", entityUID, newPosition);
+            Networker.hubConnection.SendAsync("Room:MoveEntity", entityUID, newPosition);
         }
 
         public async Task SpawnCreature(Creature creature)
@@ -267,6 +269,11 @@ namespace FreeTabletop.Client.Controllers
         public void EnableCell(int cellIndex)
         {
             Networker.hubConnection.SendAsync("Room:EnableCell", cellIndex);
+        }
+
+        public void UpdateEntityPosition(string uid, int[] position)
+        {
+            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", uid, position, Tabletop.CellSize);
         }
     }
 }

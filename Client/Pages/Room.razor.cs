@@ -256,10 +256,11 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public async Task HandleDrop(int x, int y)
+        public void HandleDrop(int x, int y)
         {
             int[] Position = { x, y };
-            await Hub.MoveEntity(MovingEntityUID, Position);
+            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", MovingEntityUID, Position, Tabletop.CellSize);
+            Hub.MoveEntity(MovingEntityUID, Position);
         }
 
         public void HandleDragStart(string uid)

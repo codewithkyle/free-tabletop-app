@@ -251,3 +251,11 @@ function ClearFogCell(index:number){
         cell.style.background = "transparent";
     }
 }
+
+function UpdateEntityPosition(uid:string, position:Array<number>, cellSize:number){
+    const pawn:HTMLElement = document.body.querySelector(`tabletop-pawn[data-uid="${uid}"]`);
+    if (pawn){
+        // @ts-expect-error
+        pawn.UpdatePosition(position[0], position[1], cellSize);
+    }
+}
