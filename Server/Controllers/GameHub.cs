@@ -19,8 +19,7 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.RoomCode);
-                    await SendPlayerDisconnectionNotification(room, player.Name);
-                    await SendTabletopInfoToRoom(room);
+                    await SendPlayerDisconnectionNotification(room, player.Name, player.UID);
                 }
             }
             GlobalData.DisconnectPlayer(Context.ConnectionId);
@@ -58,7 +57,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:ToggleLock")]
-        public async Task ToggleRoomLock()
+        public void ToggleRoomLock()
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -67,13 +66,13 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     room.ToggleLock();
-                    await SendTabletopInfoToRoom(room);
+                    Clients.Group(room.RoomCode).SendAsync("Tabletop:UpdateLock", room.IsLocked);
                 }
             }
         }
 
         [HubMethodName("Room:EnableCell")]
-        public async Task EnableCell(int x, int y)
+        public async Task EnableCell(int cellIndex)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -81,8 +80,8 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    room.EnableCell(x, y);
-                    await Clients.Group(room.RoomCode).SendAsync("Tabletop:UpdateCellVisiblity", x, y);
+                    room.EnableCell(cellIndex);
+                    await Clients.Group(room.RoomCode).SendAsync("Tabletop:UpdateCellVisiblity", cellIndex);
                 }
             }
         }
@@ -142,7 +141,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:MoveEntity")]
-        public async Task MoveEntity(string entityUid, int[] newPosition)
+        public void MoveEntity(string entityUid, int[] newPosition)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null)
@@ -152,12 +151,10 @@ namespace FreeTabletop.Server.Controllers
                     Room room = GetRoom(player.RoomCode);
                     if (room != null)
                     {
-                        if (room.IsPositionValid(newPosition))
+                        bool HasUpdate = room.UpdateEntityPosition(entityUid, newPosition);
+                        if (HasUpdate)
                         {
-                            room.UpdateEntityPosition(entityUid, newPosition);
-                            await RenderPlayerEntities(room);
-                            await RenderCreatureEntities(room);
-                            await RenderNPCEntities(room);
+                            UpdateEntityPosition(room, entityUid, newPosition);
                         }
                     }
                 }
@@ -342,7 +339,21 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    await SendTabletopInfoToRoom(room);
+                    List<PlayerEntity> players = room.BuildPlayerEntities();
+                    Player gameMaster = room.GetGameMaster();
+                    await Clients.Caller.SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.UID);
+                    
+                    if (room.ImageURL != null && room.ImageURL.Length != 0)
+                    {
+                        await Clients.Caller.SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize, room.TabletopSize, room.Cells);
+                        if (room.GridType != "3")
+                        {
+                            await Clients.Caller.SendAsync("Tabletop:RenderPlayerEntities", players);
+                            await Clients.Caller.SendAsync("Tabletop:RenderCreatureEntities", room.Creatures);
+                            await Clients.Caller.SendAsync("Tabletop:RenderNPCEntities", room.NPCs);
+                            await Clients.Caller.SendAsync("Sync:CombatOrder", room.CombatOrder);
+                        }
+                    }
                     if (!player.IsGameMaster)
                     {
                         List<Message> Messages = room.GetPlayerMessages(player.UID);
@@ -365,6 +376,7 @@ namespace FreeTabletop.Server.Controllers
                     await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
                     player.Reconnect(Context.ConnectionId);
                     await Clients.Caller.SendAsync("Set:PlayerUID", Context.ConnectionId);
+                    await SendTabletopInfoToRoom(room);
                 }
                 else
                 {
@@ -419,8 +431,7 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     await Groups.RemoveFromGroupAsync(Context.ConnectionId, room.RoomCode);
-                    await SendPlayerDisconnectionNotification(room, player.Name);
-                    await SendTabletopInfoToRoom(room);
+                    await SendPlayerDisconnectionNotification(room, player.Name, player.UID);
                 }
             }
         }
@@ -447,14 +458,46 @@ namespace FreeTabletop.Server.Controllers
                     Player player = GlobalData.GetPlayerByStaleUID(savedUID);
                     if (player != null)
                     {
-                        await SendPlayerReconnectionNotification(room, player.Name);
-                        await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
-                        player.Reconnect(Context.ConnectionId);
-                        await Clients.Caller.SendAsync("Load:Player", room.RoomCode, Context.ConnectionId);
+                        if (room.IsLocked)
+                        {
+                            if (player.RoomCode == room.RoomCode)
+                            {
+                                await SendPlayerReconnectionNotification(room, player.Name);
+                                await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
+                                player.Reconnect(Context.ConnectionId);
+                                await Clients.Caller.SendAsync("Load:Player", room.RoomCode, Context.ConnectionId);
+                            }
+                            else
+                            {
+                                await Clients.Caller.SendAsync("Error:RoomIsLocked");
+                            }
+                            
+                        }
+                        else
+                        {
+                            if (player.RoomCode == room.RoomCode)
+                            {
+                                await SendPlayerReconnectionNotification(room, player.Name);
+                                await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
+                                player.Reconnect(Context.ConnectionId);
+                                await Clients.Caller.SendAsync("Load:Player", room.RoomCode, Context.ConnectionId);
+                            }
+                            else
+                            {
+                                await Clients.Caller.SendAsync("Get:PlayerName");
+                            }
+                        }
                     }
                     else
                     {
-                        await Clients.Caller.SendAsync("Get:PlayerName");
+                        if (room.IsLocked)
+                        {
+                            await Clients.Caller.SendAsync("Error:RoomIsLocked");
+                        }
+                        else
+                        {
+                            await Clients.Caller.SendAsync("Get:PlayerName");
+                        }
                     }
                 }
             }
@@ -532,6 +575,7 @@ namespace FreeTabletop.Server.Controllers
 
         private async Task RenderCreatureEntities(Room room)
         {
+            
             await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderCreatureEntities", room.Creatures);
         }
 
@@ -545,9 +589,9 @@ namespace FreeTabletop.Server.Controllers
             await Clients.Group(room.RoomCode).SendAsync("Notification:PlayerConnected", name);
         }
 
-        private async Task SendPlayerDisconnectionNotification(Room room, string name)
+        private async Task SendPlayerDisconnectionNotification(Room room, string name, string playerUID)
         {
-            await Clients.Group(room.RoomCode).SendAsync("Notification:PlayerDisconnected", name);
+            await Clients.Group(room.RoomCode).SendAsync("Notification:PlayerDisconnected", name, playerUID);
         }
 
         private async Task SendPlayerReconnectionNotification(Room room, string name)
@@ -583,6 +627,11 @@ namespace FreeTabletop.Server.Controllers
                     Clients.Client(room.Players[i].UID).SendAsync("Notification:Roll", diceCount, die, results, name);
                 }
             }
+        }
+
+        private void UpdateEntityPosition(Room room, string uid, int[] position)
+        {
+            Clients.Group(room.RoomCode).SendAsync("Tabletop:UpdateEntityPosition", uid, position);
         }
     }
 }

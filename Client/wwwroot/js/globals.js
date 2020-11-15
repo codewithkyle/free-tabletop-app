@@ -65,13 +65,6 @@ async function GetGridSize(url, customSize) {
     }
     return grid;
 }
-async function ClearHighlightedCells() {
-    const cells = Array.from(document.body.querySelectorAll("td.highlight"));
-    for (let i = 0; i < cells.length; i++) {
-        cells[i].className = "";
-    }
-    return;
-}
 async function PlaySound(name) {
     switch (name) {
         case "alert.wav":
@@ -239,3 +232,16 @@ async function CheckForUpdate() {
     }
 }
 CheckForUpdate();
+function ClearFogCell(index) {
+    const cell = document.body.querySelector(`.js-fog[data-index="${index}"]`);
+    if (cell) {
+        cell.style.background = "transparent";
+    }
+}
+function UpdateEntityPosition(uid, position, cellSize) {
+    const pawn = document.body.querySelector(`tabletop-pawn[data-uid="${uid}"]`);
+    if (pawn) {
+        // @ts-expect-error
+        pawn.UpdatePosition(position[0], position[1], cellSize);
+    }
+}

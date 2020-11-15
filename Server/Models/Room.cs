@@ -104,6 +104,7 @@ namespace FreeTabletop.Server.Models
                     player.IsConnected = Players[i].IsConnected;
                     player.Position = Players[i].Position;
                     player.Messages = Players[i].Messages;
+                    player.Position = Players[i].Position;
                     players.Add(player);
                 }
             }
@@ -128,6 +129,7 @@ namespace FreeTabletop.Server.Models
                         Cell Cell = new Cell();
                         int[] Position = {x, y};
                         Cell.Position = Position;
+                        Cell.IsBlackout = true;
                         NewCells.Add(Cell);
                     }
                 }
@@ -154,8 +156,8 @@ namespace FreeTabletop.Server.Models
             {
                 if (!Players[i].IsGameMaster)
                 {
-                    Players[i].Position[0] = X;
-                    Players[i].Position[1] = Y;
+                    int[] Position = {X, Y};
+                    Players[i].UpdatePosition(Position);
                     X++;
                     if (X > Grid[0])
                     {
@@ -166,15 +168,24 @@ namespace FreeTabletop.Server.Models
             }
         }
 
-        public bool IsPositionValid(int[] newPosition)
+        public bool UpdateEntityPosition(string uid, int[] newPosition)
         {
+            bool Updated = false;
             bool IsValidPosition = true;
+            Entity EntityToMove = null;
             for (int i = 0; i < Players.Count; i++)
             {
-                if (Players[i].Position[0] == newPosition[0] && Players[i].Position[1] == newPosition[1])
+                if (!Players[i].IsGameMaster)
                 {
-                    IsValidPosition = false;
-                    break;
+                    if (Players[i].Position[0] == newPosition[0] && Players[i].Position[1] == newPosition[1])
+                    {
+                        IsValidPosition = false;
+                        break;
+                    }
+                    else if (Players[i].UID == uid)
+                    {
+                        EntityToMove = Players[i];
+                    }
                 }
             }
             if (IsValidPosition)
@@ -185,6 +196,10 @@ namespace FreeTabletop.Server.Models
                     {
                         IsValidPosition = false;
                         break;
+                    }
+                    else if (Creatures[i].UID == uid)
+                    {
+                        EntityToMove = Creatures[i];
                     }
                 }
             }
@@ -197,47 +212,18 @@ namespace FreeTabletop.Server.Models
                         IsValidPosition = false;
                         break;
                     }
-                }
-            }
-            return IsValidPosition;
-        }
-
-        public void UpdateEntityPosition(string uid, int[] newPosition)
-        {
-            bool Updated = false;
-            for (int i = 0; i < Players.Count; i++)
-            {
-                if (Players[i].UID == uid)
-                {
-                    Updated = true;
-                    Players[i].UpdatePosition(newPosition);
-                    break;
-                }
-            }
-            if (!Updated)
-            {
-                for (int i = 0; i < Creatures.Count; i++)
-                {
-                    if (Creatures[i].UID == uid)
+                    else if (NPCs[i].UID == uid)
                     {
-                        Updated = true;
-                        Creatures[i].UpdatePosition(newPosition);
-                        break;
+                        EntityToMove = NPCs[i];
                     }
                 }
             }
-            if (!Updated)
+            if (IsValidPosition && EntityToMove != null)
             {
-                for (int i = 0; i < NPCs.Count; i++)
-                {
-                    if (NPCs[i].UID == uid)
-                    {
-                        Updated = true;
-                        NPCs[i].UpdatePosition(newPosition);
-                        break;
-                    }
-                }
+                EntityToMove.UpdatePosition(newPosition);
+                Updated = true;
             }
+            return Updated;
         }
 
         public void SpawnCreature(Creature creature)
@@ -565,16 +551,9 @@ namespace FreeTabletop.Server.Models
             }
         }
 
-        public void EnableCell(int x, int y)
+        public void EnableCell(int cellIndex)
         {
-            for (int c = 0; c < Cells.Count; c++)
-            {
-                if (Cells[c].Position[0] == x && Cells[c].Position[1] == y)
-                {
-                    Cells[c].IsBlackout = false;
-                    break;
-                }
-            }
+            Cells[cellIndex].IsBlackout = false;
         }
     }
 }

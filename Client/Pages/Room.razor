@@ -26,44 +26,48 @@
                 src="@Tabletop.Image" 
             />
             @if (TabletopImageLoaded && Tabletop.GridType != "3" && Tabletop.GridType != null){
-                <table style="display: @(TabletopImageLoaded ? "block" : "none");">
-                    <tbody>
-                        @for (int y = 0; y < Tabletop.Grid[1]; y++){
-                            <tr>
-                                @for (int x = 0; x < Tabletop.Grid[0]; x++){
-                                    int LocalX = x;
-                                    int LocalY = y;
-                                    <td 
-                                        class="js-cell"
-                                        @ondrop="@(e => HandleDrop(LocalX, LocalY))" 
-                                        style="
-                                            content-visibility:auto;
-                                            top: @(y * Tabletop.CellSize)px;
-                                            left: @(x * Tabletop.CellSize)px;
-                                            width: @(Tabletop.CellSize)px;
-                                            height: @(Tabletop.CellSize)px;
-                                        " 
-                                        data-x="@x" 
-                                        data-y="@y" 
-                                        data-type="@Tabletop.GridType"
-                                        ondragover="event.preventDefault();" 
-                                        ondragenter="event.target.className = 'highlight';"
-                                        ondragleave="event.target.className = '';"
-                                        @oncontextmenu="@(e => HandleRightClick(e.ClientX, e.ClientY, LocalX, LocalY, e.CtrlKey))"
-                                        @oncontextmenu:preventDefault="true" 
-                                        @onclick="@(e => HandleLeftClick(LocalX, LocalY, e.CtrlKey))"
-                                    >
-                                    </td>
-                                }
-                            </tr>
+                int CellIndex = 0;
+                <div class="table" style="display: @(TabletopImageLoaded ? "block" : "none");">
+                    @for (int y = 0; y < Tabletop.Grid[1]; y++){
+                        @for (int x = 0; x < Tabletop.Grid[0]; x++){
+                            int LocalX = x;
+                            int LocalY = y;
+                            int LocalCellIndex = CellIndex;
+                            CellIndex++;
+                            <tabletop-cell 
+                                @ondrop="@(e => HandleDrop(LocalX, LocalY))" 
+                                style="
+                                    content-visibility:auto;
+                                    top: @(y * Tabletop.CellSize)px;
+                                    left: @(x * Tabletop.CellSize)px;
+                                    width: @(Tabletop.CellSize)px;
+                                    height: @(Tabletop.CellSize)px;
+                                " 
+                                data-x="@x" 
+                                data-y="@y" 
+                                data-index="@LocalCellIndex"
+                                data-type="@Tabletop.GridType"
+                                ondragover="event.preventDefault();" 
+                                @oncontextmenu="@(e => HandleRightClick(e.ClientX, e.ClientY, LocalX, LocalY, e.CtrlKey))"
+                                @oncontextmenu:preventDefault="true" 
+                                @onclick="@(e => HandleLeftClick(e.CtrlKey, LocalCellIndex))"
+                            >
+                            </tabletop-cell>
                         }
-                    </tbody>
-                </table>
+                    }
+                </div>
                 @for (int i = 0; i < Tabletop.Creatures.Count; i++){
                     Creature Creature = Tabletop.Creatures[i];
                     int x = Creature.Position[0];
                     int y = Creature.Position[1];
-                    <div class="pawn @(Creature.IsAlive ? "-foe" : "-dead")" style="top: @(y * Tabletop.CellSize)px;left: @(x * Tabletop.CellSize)px;width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" oncontextmenu="return false;">
+                    <tabletop-pawn 
+                        class="pawn @(Creature.IsAlive ? "-foe" : "-dead")" 
+                        style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
+                        oncontextmenu="return false;"
+                        data-uid="@Creature.UID"
+                        data-x="@x"
+                        data-y="@y"
+                    >
                         <i 
                             @ondragstart="@(e => HandleDragStart(Creature.UID))" 
                             draggable="@((Tabletop.IsGameMaster) ? "true" : "false")"
@@ -155,13 +159,20 @@
                         }else{
                             <span class="nametag">@Creature.Name</span>
                         }
-                    </div>
+                    </tabletop-pawn>
                 }
                 @for (int i = 0; i < Tabletop.NPCs.Count; i++){
                     NPC NPC = Tabletop.NPCs[i];
                     int x = NPC.Position[0];
                     int y = NPC.Position[1];
-                    <div class="pawn @(NPC.IsAlive ? "-npc" : "-dead")" style="top: @(y * Tabletop.CellSize)px;left: @(x * Tabletop.CellSize)px;width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" oncontextmenu="return false;">
+                    <tabletop-pawn 
+                        class="pawn @(NPC.IsAlive ? "-npc" : "-dead")" 
+                        style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
+                        oncontextmenu="return false;"
+                        data-uid="@NPC.UID"
+                        data-x="@x"
+                        data-y="@y"
+                    >
                         <i 
                             @ondragstart="@(e => HandleDragStart(NPC.UID))" 
                             draggable="@((Tabletop.IsGameMaster) ? "true" : "false")"
@@ -200,54 +211,66 @@
                         }else{
                             <span class="nametag">@NPC.Name</span>
                         }
-                    </div>
+                    </tabletop-pawn>
                 }
                 @for (int p = 0; p < Tabletop.Players.Count; p++){
                     bool IsPlayer = Tabletop.Players[p].UID == Tabletop.UID;
                     string PawnType = "-friend";
-                    PlayerEntity player = Tabletop.Players[p];
+                    PlayerEntity Player = Tabletop.Players[p];
                     if (IsPlayer){
                         PawnType = "-player js-player-pawn";
                     }
                     int x = Tabletop.Players[p].Position[0];
                     int y = Tabletop.Players[p].Position[1];
-                    <div class="pawn @PawnType" style="top: @(y * Tabletop.CellSize)px;left: @(x * Tabletop.CellSize)px;width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" oncontextmenu="return false;">
-                        <i @ondragstart="@(e => HandleDragStart(player.UID))" draggable="@((IsPlayer || Tabletop.IsGameMaster) ? "true" : "false")"></i>
+                    <tabletop-pawn 
+                        class="pawn @PawnType" 
+                        style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
+                        oncontextmenu="return false;"
+                        data-uid="@Player.UID"
+                        data-x="@x"
+                        data-y="@y"
+                    >
+                        <i @ondragstart="@(e => HandleDragStart(Player.UID))" draggable="@((IsPlayer || Tabletop.IsGameMaster) ? "true" : "false")"></i>
                         <span class="nametag">@Tabletop.Players[p].Name</span>
-                    </div>
+                    </tabletop-pawn>
                 }
-                <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events: none;z-index:5;">
+                <div style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:5;pointer-events:none;">
                     @for (int c = 0; c < Tabletop.Cells.Count; c++){
-                        string BackgroundColor = null;
+                        string BackgroundColor = "transparent";
+                        int LocalIndex = c;
                         int x = Tabletop.Cells[c].Position[0];
                         int y = Tabletop.Cells[c].Position[1];
                         if (Tabletop.Cells[c].IsBlackout){
                             if (Tabletop.IsGameMaster){
-                                BackgroundColor = "rgba(51,51,51,0.6)";
+                                BackgroundColor = "rgba(25,25,25,0.6)";
                             }else{
-                                BackgroundColor = "rgba(51,51,51,1)";
+                                BackgroundColor = "rgb(25,25,25)";
                             }
                         }
-                        if (BackgroundColor != null){
-                            <div style="
-                                    position:absolute;
-                                    background: @BackgroundColor;
-                                    content-visibility:auto;
-                                    top: @(y * Tabletop.CellSize)px;
-                                    left: @(x * Tabletop.CellSize)px;
-                                    width: @(Tabletop.CellSize)px;
-                                    height: @(Tabletop.CellSize)px;
-                                "
-                                data-x="@x" 
-                                data-y="@y" 
-                                class="js-fog"
-                            ></div>
-                        }
+                        <div style="
+                                position:absolute;
+                                background: @BackgroundColor;
+                                content-visibility:auto;
+                                top: @(y * Tabletop.CellSize)px;
+                                left: @(x * Tabletop.CellSize)px;
+                                width: @(Tabletop.CellSize)px;
+                                height: @(Tabletop.CellSize)px;
+                                pointer-events: @((Tabletop.IsGameMaster || BackgroundColor == "transparent") ? "none" : "all");
+                            "
+                            data-index="@LocalIndex"
+                            data-x="@x" 
+                            data-y="@y" 
+                            class="js-fog"
+                        ></div>
                     }
                 </div>
             }
         }else{
-            <p class="block text-center font-grey-700 font-sm p-2">Waiting for the Game Master to load a map.</p>
+            if (Tabletop.IsGameMaster){
+                <p class="block text-center font-grey-700 font-sm p-2">Load a map to begin.</p>
+            }else{
+                <p class="block text-center font-grey-700 font-sm p-2">Waiting for the Game Master to load a map.</p>
+            }
         }
     </tabletop-component>
     <div class="tabletop-info">

@@ -134,6 +134,8 @@ public static class GlobalData
         player.Type = "friend";
         player.Messages = new List<Message>();
         player.StaleUIDs.Add(UID);
+        int[] Position = {0,0};
+        player.Position = Position;
         Players.Add(player);
         return player;
     }

@@ -60,10 +60,12 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<List<PlayerEntity>>("Tabletop:RenderPlayerEntities", Room.RenderPlayerEntities);
                 Networker.hubConnection.On<List<Creature>>("Tabletop:RenderCreatureEntities", Room.RenderCreatureEntities);
                 Networker.hubConnection.On<List<NPC>>("Tabletop:RenderNPCEntities", Room.RenderNPCEntities);
-                Networker.hubConnection.On<int, int>("Tabletop:UpdateCellVisiblity", Room.UpdateCellVisiblity);
+                Networker.hubConnection.On<int>("Tabletop:UpdateCellVisiblity", Room.UpdateCellVisiblity);
+                Networker.hubConnection.On<string, int[]>("Tabletop:UpdateEntityPosition", UpdateEntityPosition);
+                Networker.hubConnection.On<bool>("Tabletop:UpdateLock", Room.UpdateLock);
 
                 Networker.hubConnection.On<string>("Notification:PlayerConnected", ConnectedNotification);
-                Networker.hubConnection.On<string>("Notification:PlayerDisconnected", DisconnectedNotification);
+                Networker.hubConnection.On<string, string>("Notification:PlayerDisconnected", DisconnectedNotification);
                 Networker.hubConnection.On<string>("Notification:PlayerReconnected", ReconnectedNotification);
                 Networker.hubConnection.On<string>("Notification:PlayerKicked", KickNotification);
                 Networker.hubConnection.On("Notification:TakeTurn", TakeTurnNotification);
@@ -117,6 +119,8 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Set:Messages");
             Networker.hubConnection.Remove("Set:Players");
             Networker.hubConnection.Remove("Tabletop:UpdateCellVisiblity");
+            Networker.hubConnection.Remove("Tabletop:UpdateEntityPosition");
+            Networker.hubConnection.Remove("Tabletop:UpdateLock");
         }
 
         private async Task UpdateUID(string uid)
@@ -158,9 +162,9 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:ClearTabletop");
         }
 
-        public async Task MoveEntity(string entityUID, int[] newPosition)
+        public void MoveEntity(string entityUID, int[] newPosition)
         {
-            await Networker.hubConnection.SendAsync("Room:MoveEntity", entityUID, newPosition);
+            Networker.hubConnection.SendAsync("Room:MoveEntity", entityUID, newPosition);
         }
 
         public async Task SpawnCreature(Creature creature)
@@ -191,9 +195,17 @@ namespace FreeTabletop.Client.Controllers
         {
             JSRuntime.InvokeVoidAsync("PlayerConnected", name);
         }
-        private void DisconnectedNotification(string name)
+        private void DisconnectedNotification(string name, string uid)
         {
             JSRuntime.InvokeVoidAsync("PlayerDisconnected", name);
+            for (int i = 0; i < Tabletop.Players.Count; i++)
+            {
+                if (Tabletop.Players[i].UID == uid)
+                {
+                    Tabletop.Players[i].IsConnected = false;
+                    break;
+                }
+            }
         }
         private void ReconnectedNotification(string name)
         {
@@ -256,9 +268,14 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:AnnounceRoll", diceCount, die, results);
         }
 
-        public void EnableCell(int gridX, int gridY)
+        public void EnableCell(int cellIndex)
         {
-            Networker.hubConnection.SendAsync("Room:EnableCell", gridX, gridY);
+            Networker.hubConnection.SendAsync("Room:EnableCell", cellIndex);
+        }
+
+        public void UpdateEntityPosition(string uid, int[] position)
+        {
+            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", uid, position, Tabletop.CellSize);
         }
     }
 }
