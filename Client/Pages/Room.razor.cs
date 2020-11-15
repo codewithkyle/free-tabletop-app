@@ -702,7 +702,7 @@ namespace FreeTabletop.Client.Pages
             if (!Tabletop.IsGameMaster)
             {
                 Tabletop.Cells[index].IsBlackout = false;
-                JSRuntime.InvokeVoidAsync("ClearFogCell", index);
+                StateHasChanged();
             }
         }
 
