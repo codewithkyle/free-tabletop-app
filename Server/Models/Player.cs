@@ -6,7 +6,7 @@ namespace FreeTabletop.Server.Models
     public class Player : PlayerEntity
     {
         public string RoomCode { get; set; }
-        public bool IsGameMaster = false;
+        public bool IsGameMaster {get; set;}
 
         public List<string> StaleUIDs = new List<string>();
 

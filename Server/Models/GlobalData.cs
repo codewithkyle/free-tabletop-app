@@ -136,6 +136,7 @@ public static class GlobalData
         player.StaleUIDs.Add(UID);
         int[] Position = {0,0};
         player.Position = Position;
+        player.IsGameMaster = false;
         Players.Add(player);
         return player;
     }
