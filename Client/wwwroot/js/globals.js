@@ -112,7 +112,6 @@ class PingComponent extends HTMLElement {
 customElements.define("ping-icon", PingComponent);
 function Ping(x, y) {
     const cell = document.body.querySelector(`tabletop-cell[data-x="${x}"][data-y="${y}"]`);
-    console.log(cell);
     const cellBounds = cell.getBoundingClientRect();
     const el = document.createElement("ping-icon");
     el.className = "ping";
@@ -239,10 +238,15 @@ function ClearFogCell(index) {
         cell.style.background = "transparent";
     }
 }
-function UpdateEntityPosition(uid, position, cellSize) {
+function UpdateEntityPosition(uid, position, cellSize, isGM) {
     const pawn = document.body.querySelector(`tabletop-pawn[data-uid="${uid}"]`);
     if (pawn) {
         // @ts-expect-error
         pawn.UpdatePosition(position[0], position[1], cellSize);
+        console.log(isGM);
+        if (!isGM) {
+            // @ts-expect-error
+            pawn.UpdateVisibility(position[0], position[1]);
+        }
     }
 }

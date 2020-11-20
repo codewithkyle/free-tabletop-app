@@ -252,10 +252,15 @@ function ClearFogCell(index:number){
     }
 }
 
-function UpdateEntityPosition(uid:string, position:Array<number>, cellSize:number){
+function UpdateEntityPosition(uid:string, position:Array<number>, cellSize:number, isGM:boolean){
     const pawn:HTMLElement = document.body.querySelector(`tabletop-pawn[data-uid="${uid}"]`);
     if (pawn){
         // @ts-expect-error
         pawn.UpdatePosition(position[0], position[1], cellSize);
+        console.log(isGM);
+        if (!isGM){
+            // @ts-expect-error
+            pawn.UpdateVisibility(position[0], position[1]);
+        }
     }
 }
