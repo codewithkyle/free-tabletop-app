@@ -99,18 +99,22 @@ async function PlaySound(name) {
     }
     return;
 }
-function Ping(x, y) {
-    if (!localStorage.getItem("pingDisabled")) {
-        var audio = new Audio(`${location.origin}/sfx/ping.mp3`);
-        audio.volume = 0.75;
-        audio.play();
+class PingComponent extends HTMLElement {
+    connectedCallback() {
+        if (!localStorage.getItem("pingDisabled")) {
+            var audio = new Audio(`${location.origin}/sfx/ping.mp3`);
+            audio.volume = 0.75;
+            audio.play();
+        }
+        setTimeout(this.remove.bind(this), 2000);
     }
-    // CSS selectors don't start at 0 because they're not cool like arrays
-    x++;
-    y++;
-    const cell = document.body.querySelector(`.js-tabletop table tbody tr:nth-child(${y}) td:nth-child(${x})`);
+}
+customElements.define("ping-icon", PingComponent);
+function Ping(x, y) {
+    const cell = document.body.querySelector(`tabletop-cell[data-x="${x}"][data-y="${y}"]`);
+    console.log(cell);
     const cellBounds = cell.getBoundingClientRect();
-    const el = document.createElement("div");
+    const el = document.createElement("ping-icon");
     el.className = "ping";
     el.style.cssText = `top:${cellBounds.top + cellBounds.height / 2 - 24}px;left:${cellBounds.left + cellBounds.width / 2 - 24}px;`;
     el.innerHTML = `
@@ -119,9 +123,6 @@ function Ping(x, y) {
         </i>
     `;
     document.body.appendChild(el);
-    setTimeout(() => {
-        el.remove();
-    }, 2000);
 }
 function ToggleSoundStatus(type, enabled) {
     if (enabled) {
