@@ -60,9 +60,20 @@
                     Creature Creature = Tabletop.Creatures[i];
                     int x = Creature.Position[0];
                     int y = Creature.Position[1];
+                    bool IsVisible = Tabletop.IsGameMaster;
+                    @if (!IsVisible){
+                        for (int c = 0; c < Tabletop.Cells.Count; c++){
+                            if (Tabletop.Cells[c].Position[0] == x && Tabletop.Cells[c].Position[1] == y){
+                                if (Tabletop.Cells[c].Style == "clear"){
+                                    IsVisible = true;
+                                }
+                                break;
+                            }
+                        }
+                    }
                     <tabletop-pawn 
                         class="pawn @(Creature.IsAlive ? "-foe" : "-dead")" 
-                        style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
+                        style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;display:@(IsVisible ? "inline-flex" : "none");" 
                         oncontextmenu="return false;"
                         data-uid="@Creature.UID"
                         data-x="@x"
@@ -165,9 +176,20 @@
                     NPC NPC = Tabletop.NPCs[i];
                     int x = NPC.Position[0];
                     int y = NPC.Position[1];
+                    bool IsVisible = Tabletop.IsGameMaster;
+                    @if (!IsVisible){
+                        for (int c = 0; c < Tabletop.Cells.Count; c++){
+                            if (Tabletop.Cells[c].Position[0] == x && Tabletop.Cells[c].Position[1] == y){
+                                if (Tabletop.Cells[c].Style == "clear"){
+                                    IsVisible = true;
+                                }
+                                break;
+                            }
+                        }
+                    }
                     <tabletop-pawn 
                         class="pawn @(NPC.IsAlive ? "-npc" : "-dead")" 
-                        style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
+                        style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;display:@(IsVisible ? "inline-flex" : "none");" 
                         oncontextmenu="return false;"
                         data-uid="@NPC.UID"
                         data-x="@x"
@@ -234,13 +256,15 @@
                         <span class="nametag">@Tabletop.Players[p].Name</span>
                     </tabletop-pawn>
                 }
-                <div style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:5;pointer-events:none;opacity: @(Tabletop.IsGameMaster ? "0.6" : "1");">
+                <div 
+                    style="position:absolute;top:0;left:0;width:100%;height:100%;z-index:5;pointer-events:none;opacity: @(Tabletop.IsGameMaster ? "0.6" : "1");" 
+                >
                     @for (int c = 0; c < Tabletop.Cells.Count; c++){
                         string BackgroundColor = "transparent";
                         int LocalIndex = c;
                         int x = Tabletop.Cells[c].Position[0];
                         int y = Tabletop.Cells[c].Position[1];
-                        if (Tabletop.Cells[c].IsBlackout){
+                        if (Tabletop.Cells[c].Style == "fog"){
                             BackgroundColor = "rgb(25,25,25)";
                         }
                         <div style="
@@ -251,12 +275,12 @@
                                 left: @(x * Tabletop.CellSize - 1)px;
                                 width: @(Tabletop.CellSize + 2)px;
                                 height: @(Tabletop.CellSize + 2)px;
-                                pointer-events: @((Tabletop.IsGameMaster || BackgroundColor == "transparent") ? "none" : "all");
                             "
                             data-index="@LocalIndex"
                             data-x="@x" 
                             data-y="@y" 
-                            class="js-fog"
+                            class="js-fog" 
+                            oncontextmenu="return;" 
                         ></div>
                     }
                 </div>

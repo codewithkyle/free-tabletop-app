@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.3.3] - 2020-11-20
+
+### Fixed
+
+- ping icon rendering bug
+- players can ping into the fog of war
+
 ## [0.3.2] - 2020-11-15
 
 ### Fixed
@@ -81,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - initial beta build
 - CI/CD pipeline
 
+[0.3.3]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.3.1...v0.3.2
 [0.3.1]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.3.0...v0.3.1
 [0.3.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.2.0...v0.3.0

@@ -259,7 +259,7 @@ namespace FreeTabletop.Client.Pages
         public void HandleDrop(int x, int y)
         {
             int[] Position = { x, y };
-            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", MovingEntityUID, Position, Tabletop.CellSize);
+            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", MovingEntityUID, Position, Tabletop.CellSize, Tabletop.IsGameMaster);
             Hub.MoveEntity(MovingEntityUID, Position);
         }
 
@@ -701,7 +701,7 @@ namespace FreeTabletop.Client.Pages
         {
             if (!Tabletop.IsGameMaster)
             {
-                Tabletop.Cells[index].IsBlackout = false;
+                Tabletop.Cells[index].Style = "clear";
                 StateHasChanged();
             }
         }
