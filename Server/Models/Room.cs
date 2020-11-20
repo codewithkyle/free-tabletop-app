@@ -119,21 +119,25 @@ namespace FreeTabletop.Server.Models
             CellSize = cellSize;
             TabletopSize = tabletopSize;
             FogOfWar = fogOfWar;
-            if (FogOfWar)
+
+            Cells = new List<Cell>();
+            for (int y = 0; y < Grid[1]; y++)
             {
-                List<Cell> NewCells = new List<Cell>();
-                for (int y = 0; y < Grid[1]; y++)
+                for (int x = 0; x < Grid[0]; x++)
                 {
-                    for (int x = 0; x < Grid[0]; x++)
+                    Cell Cell = new Cell();
+                    int[] Position = {x, y};
+                    Cell.Position = Position;
+                    if (FogOfWar)
                     {
-                        Cell Cell = new Cell();
-                        int[] Position = {x, y};
-                        Cell.Position = Position;
-                        Cell.IsBlackout = true;
-                        NewCells.Add(Cell);
+                        Cell.Style = "fog";
                     }
+                    else
+                    {
+                        Cell.Style = "clear";
+                    }
+                    Cells.Add(Cell);
                 }
-                Cells = NewCells;
             }
         }
 
@@ -553,7 +557,7 @@ namespace FreeTabletop.Server.Models
 
         public void EnableCell(int cellIndex)
         {
-            Cells[cellIndex].IsBlackout = false;
+            Cells[cellIndex].Style = "clear";
         }
     }
 }

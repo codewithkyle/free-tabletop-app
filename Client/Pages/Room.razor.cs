@@ -701,7 +701,7 @@ namespace FreeTabletop.Client.Pages
         {
             if (!Tabletop.IsGameMaster)
             {
-                Tabletop.Cells[index].IsBlackout = false;
+                Tabletop.Cells[index].Style = "clear";
                 StateHasChanged();
             }
         }

@@ -64,7 +64,7 @@
                     @if (!IsVisible){
                         for (int c = 0; c < Tabletop.Cells.Count; c++){
                             if (Tabletop.Cells[c].Position[0] == x && Tabletop.Cells[c].Position[1] == y){
-                                if (!Tabletop.Cells[c].IsBlackout){
+                                if (Tabletop.Cells[c].Style == "clear"){
                                     IsVisible = true;
                                 }
                                 break;
@@ -180,7 +180,7 @@
                     @if (!IsVisible){
                         for (int c = 0; c < Tabletop.Cells.Count; c++){
                             if (Tabletop.Cells[c].Position[0] == x && Tabletop.Cells[c].Position[1] == y){
-                                if (!Tabletop.Cells[c].IsBlackout){
+                                if (Tabletop.Cells[c].Style == "clear"){
                                     IsVisible = true;
                                 }
                                 break;
@@ -264,7 +264,7 @@
                         int LocalIndex = c;
                         int x = Tabletop.Cells[c].Position[0];
                         int y = Tabletop.Cells[c].Position[1];
-                        if (Tabletop.Cells[c].IsBlackout){
+                        if (Tabletop.Cells[c].Style == "fog"){
                             BackgroundColor = "rgb(25,25,25)";
                         }
                         <div style="
