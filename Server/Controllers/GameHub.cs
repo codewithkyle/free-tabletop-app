@@ -376,8 +376,8 @@ namespace FreeTabletop.Server.Controllers
                     await Groups.AddToGroupAsync(Context.ConnectionId, room.RoomCode);
                     player.Reconnect(Context.ConnectionId);
                     await Clients.Caller.SendAsync("Set:PlayerUID", Context.ConnectionId);
-                    await SendTabletopInfoToRoom(room);
                     await Clients.Caller.SendAsync("Set:PlayerStatus", player.IsGameMaster, player.UID);
+                    await SendTabletopInfoToRoom(room);
                 }
                 else
                 {
