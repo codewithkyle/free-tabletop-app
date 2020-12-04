@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.4] - 2020-12-04
 
+### Fixed
+
+- combat order no longer resets when syncing
+
 ### Removed
 
 - temporarily disabled messenger functionality
