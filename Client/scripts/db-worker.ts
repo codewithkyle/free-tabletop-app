@@ -195,14 +195,14 @@ self.onmessage = (e: MessageEvent) => {
                 name: creature.BaseName.trim().toLowerCase(),
                 ac: creature.BaseAC,
                 hp: creature.BaseHP,
-                str: null,
-                int: null,
-                wis: null,
-                cha: null,
-                dex: null,
-                con: null,
-                actions: null,
-                abilities: null,
+                str: 0,
+                int: 0,
+                wis: 0,
+                cha: 0,
+                dex: 0,
+                con: 0,
+                actions: JSON.stringify([]),
+                abilities: JSON.stringify([]),
             };
             PutCreaturesInLocalDB([newCreature]);
             break;

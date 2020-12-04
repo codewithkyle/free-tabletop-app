@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - combat order no longer resets when syncing
+- custom creature spawning bug
 
 ### Removed
 
