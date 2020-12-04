@@ -482,6 +482,7 @@ namespace FreeTabletop.Client.Pages
 
         public void OpenChatModal()
         {
+            return;
             CloseAllModals();
             ChatMenuOpen = true;
             HasUnreadMessages = false;

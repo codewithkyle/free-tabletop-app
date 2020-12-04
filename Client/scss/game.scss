@@ -76,6 +76,17 @@
             }
         }
 
+        &:disabled{
+            cursor: not-allowed !important;
+            color: var(--grey-400) !important;
+            border-color: var(--grey-400) !important;
+            box-shadow: none !important;
+            
+            &::before{
+                display: none !important;
+            }
+        }
+
         .badge{
             position: absolute;
             top: -4px;
