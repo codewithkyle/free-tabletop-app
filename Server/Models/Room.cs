@@ -256,21 +256,21 @@ namespace FreeTabletop.Server.Models
 
         public List<Entity> BuildCombatOrder()
         {
-            CombatOrder = new List<Entity>();
+            List<Entity> NewCombatOrder = new List<Entity>();
 
             for (int i = 0; i < Players.Count; i++)
             {
                 if (!Players[i].IsGameMaster)
                 {
-                    CombatOrder.Add(Players[i]);
+                    NewCombatOrder.Add(Players[i]);
                 }
             }
             for (int i = 0; i < NPCs.Count; i++)
             {
                 bool IsAllowed = true;
-                for (int k = 0; k < CombatOrder.Count; k++)
+                for (int k = 0; k < NewCombatOrder.Count; k++)
                 {
-                    if (CombatOrder[k].Name == NPCs[i].Name)
+                    if (NewCombatOrder[k].Name == NPCs[i].Name)
                     {
                         IsAllowed = false;
                         break;
@@ -278,15 +278,15 @@ namespace FreeTabletop.Server.Models
                 }
                 if (IsAllowed)
                 {
-                    CombatOrder.Add(NPCs[i]);
+                    NewCombatOrder.Add(NPCs[i]);
                 }
             }
             for (int i = 0; i < Creatures.Count; i++)
             {
                 bool IsNewCreature = true;
-                for (int k = 0; k < CombatOrder.Count; k++)
+                for (int k = 0; k < NewCombatOrder.Count; k++)
                 {
-                    if (CombatOrder[k].Name == Creatures[i].BaseName)
+                    if (NewCombatOrder[k].Name == Creatures[i].BaseName)
                     {
                         IsNewCreature = false;
                         break;
@@ -294,7 +294,24 @@ namespace FreeTabletop.Server.Models
                 }
                 if (IsNewCreature)
                 {
-                    CombatOrder.Add(Creatures[i]);
+                    NewCombatOrder.Add(Creatures[i]);
+                }
+            }
+
+            for (int i = 0; i < NewCombatOrder.Count; i++)
+            {
+                bool IsNew = true;
+                for (int k = 0; k < CombatOrder.Count; k++)
+                {
+                    if (CombatOrder[k].Name == NewCombatOrder[i].Name)
+                    {
+                        IsNew = false;
+                        break;
+                    }
+                }
+                if (IsNew)
+                {
+                    CombatOrder.Add(NewCombatOrder[i]);
                 }
             }
 
