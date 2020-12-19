@@ -1,5 +1,5 @@
 class Pawn extends HTMLElement {
-    UpdatePosition(x, y, cellSize, tabletopSize) {
+    UpdatePosition(x, y, cellSize) {
         const cellX = Math.floor(x / cellSize);
         const cellY = Math.floor(y / cellSize);
         this.style.transform = `translate(${cellX * cellSize}px, ${cellY * cellSize}px)`;

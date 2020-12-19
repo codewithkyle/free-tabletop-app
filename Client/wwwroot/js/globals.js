@@ -99,30 +99,6 @@ async function PlaySound(name) {
     }
     return;
 }
-class PingComponent extends HTMLElement {
-    connectedCallback() {
-        if (!localStorage.getItem("pingDisabled")) {
-            var audio = new Audio(`${location.origin}/sfx/ping.mp3`);
-            audio.volume = 0.75;
-            audio.play();
-        }
-        setTimeout(this.remove.bind(this), 2000);
-    }
-}
-customElements.define("ping-icon", PingComponent);
-function Ping(x, y) {
-    const cell = document.body.querySelector(`tabletop-cell[data-x="${x}"][data-y="${y}"]`);
-    const cellBounds = cell.getBoundingClientRect();
-    const el = document.createElement("ping-icon");
-    el.className = "ping";
-    el.style.cssText = `top:${cellBounds.top + cellBounds.height / 2 - 24}px;left:${cellBounds.left + cellBounds.width / 2 - 24}px;`;
-    el.innerHTML = `
-        <i>
-            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="info" class="svg-inline--fa fa-info fa-w-6" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512"><path fill="currentColor" d="M20 424.229h20V279.771H20c-11.046 0-20-8.954-20-20V212c0-11.046 8.954-20 20-20h112c11.046 0 20 8.954 20 20v212.229h20c11.046 0 20 8.954 20 20V492c0 11.046-8.954 20-20 20H20c-11.046 0-20-8.954-20-20v-47.771c0-11.046 8.954-20 20-20zM96 0C56.235 0 24 32.235 24 72s32.235 72 72 72 72-32.235 72-72S135.764 0 96 0z"></path></svg>
-        </i>
-    `;
-    document.body.appendChild(el);
-}
 function ToggleSoundStatus(type, enabled) {
     if (enabled) {
         localStorage.removeItem(`${type}Disabled`);
@@ -238,10 +214,10 @@ function ClearFogCell(index) {
         cell.style.background = "transparent";
     }
 }
-function UpdateEntityPosition(uid, position, cellSize, tabletopSize) {
+function UpdateEntityPosition(uid, position, cellSize) {
     const pawn = document.body.querySelector(`tabletop-pawn[data-uid="${uid}"]`);
     if (pawn) {
         // @ts-expect-error
-        pawn.UpdatePosition(position[0], position[1], cellSize, tabletopSize);
+        pawn.UpdatePosition(position[0], position[1], cellSize);
     }
 }

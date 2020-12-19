@@ -390,21 +390,23 @@ namespace FreeTabletop.Client.Pages
             }
         }
 
-        public async Task HandleRightClick(double x, double y, int gridX, int gridY, bool ctrlKeyPressed)
+        public async Task HandleRightClick(double x, double y, bool ctrlKeyPressed)
         {
+            int[] cellPosition = await JSRuntime.InvokeAsync<int[]>("GetCellPosition", x, y, Tabletop.CellSize);
             if (Tabletop.IsGameMaster && !ctrlKeyPressed)
             {
                 CloseAllModals();
                 RightClickPosition[0] = x;
                 RightClickPosition[1] = y;
                 EntitySpawnMenuOpen = true;
-                RightClickGridPosition[0] = gridX;
-                RightClickGridPosition[1] = gridY;
+                RightClickGridPosition[0] = cellPosition[0];
+                RightClickGridPosition[1] = cellPosition[1];
                 StateHasChanged();
             }
             else if (Tabletop.IsGameMaster && ctrlKeyPressed || !Tabletop.IsGameMaster)
             {
-                await Hub.Ping(gridX, gridY);
+                int[] pingPosition = await JSRuntime.InvokeAsync<int[]>("CalculateLocalPosition", x, y);
+                await Hub.Ping(pingPosition[0], pingPosition[1]);
             }
         }
 
