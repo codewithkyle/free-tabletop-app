@@ -1,3 +1,4 @@
+let tabletop = null;
 class Tabletop extends HTMLElement {
     constructor() {
         super();
@@ -51,7 +52,50 @@ class Tabletop extends HTMLElement {
         this.pos = { top: 0, left: 0, x: 0, y: 0 };
         this.movingTabletop = false;
     }
+    generateCanvas() {
+        this.canvas = document.createElement("canvas");
+        this.canvas.width = window.innerWidth / 2;
+        this.canvas.height = window.innerHeight / 2;
+        this.appendChild(this.canvas);
+        this.ctx = this.canvas.getContext('2d');
+    }
+    loadImage(url, size) {
+        if (!this.canvas) {
+            this.generateCanvas();
+        }
+        this.setAttribute("state", "loading");
+        this.canvas.width = 400;
+        this.canvas.height = 400;
+        let audio = null;
+        if (!localStorage.getItem("loadingDisabled")) {
+            audio = new Audio(`${location.origin}/sfx/loading.wav`);
+            audio.loop = true;
+            audio.play();
+        }
+        const img = new Image();
+        img.onload = () => {
+            this.canvas.width = size[0];
+            this.canvas.height = size[1];
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            this.ctx.drawImage(img, 0, 0);
+            this.setAttribute("state", "loaded");
+            const bounds = this.getBoundingClientRect();
+            this.scrollTo({
+                top: bounds.height / 4,
+                left: bounds.width / 4,
+                behavior: "auto"
+            });
+            if (audio) {
+                audio.pause();
+            }
+        };
+        img.src = url;
+    }
+    clearImage() {
+        this.setAttribute("state", "waiting");
+    }
     connectedCallback() {
+        tabletop = this;
         this.addEventListener("mousedown", this.mouseDown);
         this.addEventListener("touchstart", this.touchDown);
         document.addEventListener('mousemove', this.mouseMove);
@@ -69,3 +113,13 @@ class Tabletop extends HTMLElement {
     }
 }
 customElements.define('tabletop-component', Tabletop);
+function LoadImage(url, cellSize, tabletopSize) {
+    if (tabletop) {
+        tabletop.loadImage(url, tabletopSize);
+    }
+}
+function ClearImage() {
+    if (tabletop) {
+        tabletop.clearImage();
+    }
+}

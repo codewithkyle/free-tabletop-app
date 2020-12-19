@@ -16,8 +16,25 @@
         border-width: 1px;
     }
 
-    img {
-        display: block;
+    &[state="loading"]{
+        tabletop-loading-spinner{
+            display: block;
+        }
+        canvas{
+            display: block;
+            opacity: 0;
+            visibility: hidden;
+        }
+    }
+
+    &[state="loaded"]{
+        canvas{
+            display: block;
+        }
+    }
+
+    canvas {
+        display: none;
         user-select: none;
         z-index: 1;
     }
@@ -383,13 +400,14 @@
         }
     }
 
-    .tabletop-loading{
+    tabletop-loading-spinner{
         position: absolute;
         top: 50%;
         left: 50%;
         transform-origin: center;
         transform: translate(-50%, -50%);
         text-align: center;
+        display: none;
 
         svg{
             display: block;

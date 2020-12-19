@@ -220,21 +220,22 @@ namespace FreeTabletop.Client.Pages
 
         public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid, int cellSize, int[] tabletopSize, List<Cell> cells)
         {
+            JSRuntime.InvokeVoidAsync("LoadImage", imageURL, cellSize, tabletopSize);
             if (Tabletop.Image != imageURL){
-                TabletopImageLoaded = false;
                 Tabletop.Image = imageURL;
             }
-            Tabletop.GridType = gridType;
-            Tabletop.Grid = grid;
-            Tabletop.CellSize = cellSize;
-            Tabletop.Size = tabletopSize;
-            Tabletop.Cells = cells;
+            // Tabletop.GridType = gridType;
+            // Tabletop.Grid = grid;
+            // Tabletop.CellSize = cellSize;
+            // Tabletop.Size = tabletopSize;
+            // Tabletop.Cells = cells;
             StateHasChanged();
         }
 
         public void ClearTabletop()
         {
             Tabletop.Image = null;
+            JSRuntime.InvokeVoidAsync("ClearImage");
             StateHasChanged();
         }
 
