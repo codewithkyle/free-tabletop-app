@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- refactored tabletop render system to use the `<canvas>` element
+
 ## [0.3.4] - 2020-12-04
 
 ### Fixed
