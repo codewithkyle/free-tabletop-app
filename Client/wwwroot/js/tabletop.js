@@ -65,7 +65,7 @@ class Tabletop extends HTMLElement {
         }
         this.setAttribute("state", "loading");
         this.canvas.width = 400;
-        this.canvas.height = 400;
+        this.canvas.height = 250;
         let audio = null;
         if (!localStorage.getItem("loadingDisabled")) {
             audio = new Audio(`${location.origin}/sfx/loading.wav`);
@@ -81,8 +81,8 @@ class Tabletop extends HTMLElement {
             this.setAttribute("state", "loaded");
             const bounds = this.getBoundingClientRect();
             this.scrollTo({
-                top: bounds.height / 4,
-                left: bounds.width / 4,
+                top: (size[1] - bounds.height) / 2,
+                left: (size[0] - bounds.width) / 2,
                 behavior: "auto"
             });
             if (audio) {
@@ -93,6 +93,12 @@ class Tabletop extends HTMLElement {
     }
     clearImage() {
         this.setAttribute("state", "waiting");
+    }
+    caclNewPawnLocation(clientX, clientY, entityUid) {
+        const tabletop = this.getBoundingClientRect();
+        const x = Math.round(clientX - tabletop.left + this.scrollLeft);
+        const y = Math.round(clientY - tabletop.top + this.scrollTop);
+        return [x, y];
     }
     connectedCallback() {
         tabletop = this;
@@ -121,5 +127,14 @@ function LoadImage(url, cellSize, tabletopSize) {
 function ClearImage() {
     if (tabletop) {
         tabletop.clearImage();
+    }
+}
+function CalculateNewPawnLocation(event, entityUid) {
+    if (tabletop) {
+        const pos = tabletop.caclNewPawnLocation(event.clientX, event.clientY, entityUid);
+        return pos;
+    }
+    else {
+        return [0, 0];
     }
 }

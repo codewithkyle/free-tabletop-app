@@ -275,7 +275,7 @@ namespace FreeTabletop.Client.Controllers
 
         public void UpdateEntityPosition(string uid, int[] position)
         {
-            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", uid, position, Tabletop.CellSize, Tabletop.IsGameMaster);
+            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", uid, position, Tabletop.CellSize);
         }
     }
 }

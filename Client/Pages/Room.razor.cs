@@ -7,6 +7,7 @@ using FreeTabletop.Shared.Models;
 using FreeTabletop.Client.Controllers;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Components.Web;
 
 namespace FreeTabletop.Client.Pages
 {
@@ -226,8 +227,8 @@ namespace FreeTabletop.Client.Pages
             }
             // Tabletop.GridType = gridType;
             // Tabletop.Grid = grid;
-            // Tabletop.CellSize = cellSize;
-            // Tabletop.Size = tabletopSize;
+            Tabletop.CellSize = cellSize;
+            Tabletop.Size = tabletopSize;
             // Tabletop.Cells = cells;
             StateHasChanged();
         }
@@ -257,11 +258,11 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void HandleDrop(int x, int y)
+        public async Task HandleDrop(DragEventArgs e)
         {
-            int[] Position = { x, y };
-            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", MovingEntityUID, Position, Tabletop.CellSize, Tabletop.IsGameMaster);
-            Hub.MoveEntity(MovingEntityUID, Position);
+            int[] newPosition = await JSRuntime.InvokeAsync<int[]>("CalculateNewPawnLocation", e);
+            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", MovingEntityUID, newPosition, Tabletop.CellSize);
+            Hub.MoveEntity(MovingEntityUID, newPosition);
         }
 
         public void HandleDragStart(string uid)

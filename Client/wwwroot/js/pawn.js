@@ -1,6 +1,8 @@
 class Pawn extends HTMLElement {
-    UpdatePosition(x, y, cellSize) {
-        this.style.transform = `translate(${x * cellSize}px, ${y * cellSize}px)`;
+    UpdatePosition(x, y, cellSize, tabletopSize) {
+        const cellX = Math.floor(x / cellSize);
+        const cellY = Math.floor(y / cellSize);
+        this.style.transform = `translate(${cellX * cellSize}px, ${cellY * cellSize}px)`;
     }
     UpdateVisibility(x, y) {
         const cell = document.body.querySelector(`.js-fog[data-x="${x}"][data-y="${y}"]`);

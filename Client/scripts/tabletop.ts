@@ -95,8 +95,8 @@ class Tabletop extends HTMLElement{
             this.setAttribute("state", "loaded");
             const bounds = this.getBoundingClientRect();
             this.scrollTo({
-                top: bounds.height / 4,
-                left: bounds.width / 4,
+                top: (size[1] - bounds.height) / 2,
+                left: (size[0] - bounds.width) / 2,
                 behavior: "auto"
             });
             if (audio){
@@ -108,6 +108,13 @@ class Tabletop extends HTMLElement{
 
     public clearImage(){
         this.setAttribute("state", "waiting");
+    }
+
+    public caclNewPawnLocation(clientX:number, clientY:number, entityUid:string):Array<number>{
+        const tabletop = this.getBoundingClientRect();
+        const x = Math.round(clientX - tabletop.left + this.scrollLeft);
+        const y = Math.round(clientY - tabletop.top + this.scrollTop);
+        return [x, y];
     }
 
     connectedCallback(){
@@ -144,5 +151,13 @@ function LoadImage(url:string, cellSize:Array<number>, tabletopSize:Array<number
 function ClearImage(){
     if (tabletop){
         tabletop.clearImage();
+    }
+}
+function CalculateNewPawnLocation(event:any, entityUid:string):Array<number>{
+    if (tabletop){
+        const pos = tabletop.caclNewPawnLocation(event.clientX, event.clientY, entityUid);
+        return pos;
+    } else {
+        return [0,0];
     }
 }
