@@ -195,6 +195,9 @@
                         transition: all 150ms var(--ease-in-out);
                         font-weight: var(--font-medium);
                         font-size: var(--font-sm);
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
 
                         &:hover,
                         &:focus-within {
