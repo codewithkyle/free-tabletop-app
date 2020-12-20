@@ -421,9 +421,15 @@ namespace FreeTabletop.Client.Pages
         public void ToggleDiceMenu()
         {
             CloseAllModals();
-            DiceMenuOpen = true;
-            JSRuntime.InvokeVoidAsync("ResetDiceModal");
-            StateHasChanged();
+            if (DiceMenuOpen)
+            {
+                DiceMenuOpen = false;
+            }
+            else
+            {
+                DiceMenuOpen = true;
+            }
+            JSRuntime.InvokeVoidAsync("ToggleModal", "js-dice-modal", DiceMenuOpen);
         }
 
         public void SetActiveDie(string die)
@@ -444,9 +450,15 @@ namespace FreeTabletop.Client.Pages
         public void ToggleCombatMenu()
         {
             CloseAllModals();
-            CombatMenuOpen = true;
-            JSRuntime.InvokeVoidAsync("ResetCombatModal");
-            StateHasChanged();
+            if (CombatMenuOpen)
+            {
+                CombatMenuOpen = false;
+            }
+            else
+            {
+                CombatMenuOpen = true;
+            }
+            JSRuntime.InvokeVoidAsync("ToggleModal", "js-combat-modal", CombatMenuOpen);
         }
 
         public async Task SyncCombatOrder()
@@ -484,18 +496,20 @@ namespace FreeTabletop.Client.Pages
             JSRuntime.InvokeVoidAsync("Ping", x, y);
         }
 
-        public void OpenChatModal()
+        public void ToggleChatModal()
         {
-            return;
             CloseAllModals();
-            ChatMenuOpen = true;
-            HasUnreadMessages = false;
-            JSRuntime.InvokeVoidAsync("ResetChatModal");
-            if (!Tabletop.IsGameMaster)
+            if (ChatMenuOpen)
             {
-                ActiveChatPlayerUID = Tabletop.GameMasterUID;
+                ChatMenuOpen = false;
+                HasUnreadMessages = false;
             }
-            StateHasChanged();
+            else
+            {
+                ChatMenuOpen = true;
+            }
+            HasUnreadMessages = false;
+            JSRuntime.InvokeVoidAsync("ToggleModal", "js-chat-modal", ChatMenuOpen);
         }
 
         public async Task SendMessage(string Key)

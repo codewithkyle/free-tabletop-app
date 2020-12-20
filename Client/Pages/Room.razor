@@ -203,7 +203,7 @@
             <button @onclick="ToggleDiceMenu" class="icon-button-toggle" aria-label="open dice roller menu" title="dice roller">
                 <svg style="width: 26px;height: 26px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice" class="svg-inline--fa fa-dice fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M480 328c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zM224 200c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm96 0c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm-192 0c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm96 96c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm0-192c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm352 88H439.38c-2.89-5.17-6.26-10.15-10.65-14.54L270.54 19.28C257.69 6.42 240.84 0 224 0s-33.69 6.42-46.54 19.28L19.28 177.46c-25.7 25.7-25.7 67.38 0 93.08l158.18 158.18C190.31 441.57 207.16 448 224 448s33.69-6.43 46.54-19.28L320 379.26V448c0 35.35 28.65 64 64 64h192c35.35 0 64-28.65 64-64V256c0-35.35-28.65-64-64-64zM247.27 405.45c-6.21 6.21-14.48 9.64-23.27 9.64s-17.05-3.42-23.27-9.64L42.55 247.27c-6.21-6.22-9.64-14.48-9.64-23.27s3.42-17.05 9.64-23.27L200.73 42.55c6.21-6.21 14.48-9.64 23.27-9.64s17.05 3.42 23.27 9.64l158.18 158.18c6.22 6.21 9.64 14.48 9.64 23.27s-3.42 17.05-9.64 23.27L247.27 405.45zM608 448c0 17.64-14.36 32-32 32H384c-17.64 0-32-14.36-32-32V347.26l76.72-76.72C441.57 257.69 448 240.84 448 224h128c17.64 0 32 14.36 32 32v192z"></path></svg>
             </button>
-            <button @onclick="OpenChatModal" disabled class="icon-button-toggle" aria-label="open messenger window" title="open messenger">
+            <button @onclick="ToggleChatModal" disabled class="icon-button-toggle" aria-label="open messenger window" title="open messenger">
                 <svg style="width: 24px;height: 24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="comments-alt" class="svg-inline--fa fa-comments-alt fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M512 160h-96V64c0-35.3-28.7-64-64-64H64C28.7 0 0 28.7 0 64v160c0 35.3 28.7 64 64 64h32v52c0 7.1 5.8 12 12 12 2.4 0 4.9-.7 7.1-2.4l76.9-43.5V384c0 35.3 28.7 64 64 64h96l108.9 61.6c2.2 1.6 4.7 2.4 7.1 2.4 6.2 0 12-4.9 12-12v-52h32c35.3 0 64-28.7 64-64V224c0-35.3-28.7-64-64-64zM64 256c-17.6 0-32-14.4-32-32V64c0-17.6 14.4-32 32-32h288c17.6 0 32 14.4 32 32v160c0 17.6-14.4 32-32 32H215.6l-7.3 4.2-80.3 45.4V256zm480 128c0 17.6-14.4 32-32 32h-64v49.6l-80.2-45.4-7.3-4.2H256c-17.6 0-32-14.4-32-32v-96h128c35.3 0 64-28.7 64-64v-32h96c17.6 0 32 14.4 32 32z"></path></svg>
                 @if (HasUnreadMessages){
                     <i class="badge"></i>
@@ -523,8 +523,8 @@
                 break;
         }
     </div>
-    <div class="combat-modal" style="left:0.5rem;top:calc(36px + 1rem);visibility:@(CombatMenuOpen ? "visible" : "hidden");">
-        <div style="cursor: move;" class="w-full bg-grey-800 p-0.5 js-combat-modal" flex="items-center row nowrap justify-between">
+    <moveable-modal class="combat-modal js-combat-modal">
+        <moveable-handle>
             <span class="inline-block font-xs font-grey-100 font-medium">Combat Order</span>
             <div flex="items-center row nowrap">
                 @if (Tabletop.IsGameMaster){
@@ -532,11 +532,11 @@
                         <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="sync-alt" class="svg-inline--fa fa-sync-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M457.373 9.387l-50.095 50.102C365.411 27.211 312.953 8 256 8 123.228 8 14.824 112.338 8.31 243.493 7.971 250.311 13.475 256 20.301 256h10.015c6.352 0 11.647-4.949 11.977-11.293C48.159 131.913 141.389 42 256 42c47.554 0 91.487 15.512 127.02 41.75l-53.615 53.622c-20.1 20.1-5.855 54.628 22.627 54.628H480c17.673 0 32-14.327 32-32V32.015c0-28.475-34.564-42.691-54.627-22.628zM480 160H352L480 32v128zm11.699 96h-10.014c-6.353 0-11.647 4.949-11.977 11.293C463.84 380.203 370.504 470 256 470c-47.525 0-91.468-15.509-127.016-41.757l53.612-53.616c20.099-20.1 5.855-54.627-22.627-54.627H32c-17.673 0-32 14.327-32 32v127.978c0 28.614 34.615 42.641 54.627 22.627l50.092-50.096C146.587 484.788 199.046 504 256 504c132.773 0 241.176-104.338 247.69-235.493.339-6.818-5.165-12.507-11.991-12.507zM32 480V352h128L32 480z"></path></svg>
                     </button>
                 }
-                <button class="modal-close" @onclick="@(e => CombatMenuOpen = false)" title="close" aria-label="close combat order list">
+                <button class="modal-close" @onclick="ToggleCombatMenu" title="close" aria-label="close combat order list">
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
                 </button>
             </div>
-        </div>
+        </moveable-handle>
         @if (Tabletop.CombatOrder.Count > 0){
             <ul class="mb-0.5">
                 @for (int i = 0; i < Tabletop.CombatOrder.Count; i++){
@@ -585,14 +585,14 @@
         }else{
             <p class="px-0.5 py-1 font-xs font-grey-700 w-full block text-center">Waiting for your GM to load the combat order.</p>
         }
-    </div>
-    <div class="chat-modal" style="visibility:@(ChatMenuOpen ? "visible" : "hidden");left:0.5rem;top:calc(36px + 1rem);@(!Tabletop.IsGameMaster ? "width:420px;" : "")">
-        <div style="cursor: move;" class="w-full bg-grey-800 p-0.5 js-chat-modal" flex="items-center row nowrap justify-between">
+    </moveable-modal>
+    <moveable-modal class="chat-modal js-chat-modal">
+        <moveable-handle>
             <span class="inline-block font-xs font-grey-100 font-medium">Messenger</span>
-            <button class="modal-close" @onclick="@(e => ChatMenuOpen = false)" title="close" aria-label="close messenger">
+            <button class="modal-close" @onclick="ToggleCombatMenu" title="close" aria-label="close messenger">
                 <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
             </button>
-        </div>
+        </moveable-handle>
         @if (Tabletop.Players.Count != 0){
             @if (Tabletop.IsGameMaster){
                 <div class="container">
@@ -655,16 +655,16 @@
                 <p class="px-0.5 py-1 font-xs font-grey-700 w-full block text-center">Waiting for players to join the room.</p>
             }
         }
-    </div>
-    <div class="dice-modal" style="visibility:@(DiceMenuOpen ? "visible" : "hidden");left:0.5rem;top:calc(36px + 1rem);">
-        <div style="cursor: move;" class="w-full bg-grey-800 p-0.5 js-dice-modal" flex="items-center row nowrap justify-between">
+    </moveable-modal>
+    <moveable-modal class="dice-modal js-dice-modal">
+        <moveable-handle>
             <span class="inline-block font-xs font-grey-100 font-medium">Dice</span>
             <div flex="items-center row nowrap">
-                <button class="modal-close" @onclick="@(e => DiceMenuOpen = false)" title="close" aria-label="close dice menu">
+                <button class="modal-close" @onclick="ToggleDiceMenu" title="close" aria-label="close dice menu">
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
                 </button>
             </div>
-        </div>
+        </moveable-handle>
         <div class="dice-box">
             <button title="d4" @onclick="@(e => SetActiveDie("d4"))" class="@(ActiveDie == "d4" ? "is-active" : "")">
                 <i>
@@ -712,6 +712,6 @@
                 </button>
             </div>
         </div>
-    </div>
+    </moveable-modal>
     <button style="visibility: @(InfoMenuOpen || TabletopMenuOpen || ImageUploadOpen || EntitySpawnMenuOpen || MonsterLookupMenuOpen || CustomCreatureMenuOpen || NPCMenuOpen || SettingsMenu != null ? "visible" : "hidden");" @onclick="CloseAllModals" class="modal-backdrop" aria-label="close menu"></button>
 </div>
