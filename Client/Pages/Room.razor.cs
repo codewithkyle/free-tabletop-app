@@ -221,7 +221,7 @@ namespace FreeTabletop.Client.Pages
 
         public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid, int cellSize, int[] tabletopSize, List<Cell> cells)
         {
-            JSRuntime.InvokeVoidAsync("LoadImage", imageURL, cellSize, tabletopSize);
+            JSRuntime.InvokeVoidAsync("LoadImage", imageURL, cellSize, tabletopSize, cells, Tabletop.IsGameMaster, gridType);
             if (Tabletop.Image != imageURL){
                 Tabletop.Image = imageURL;
             }

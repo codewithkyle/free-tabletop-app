@@ -1,3 +1,8 @@
+type Cell = {
+    position: Array<number>;
+    style: "fog" | "clear" | "highlight";
+};
+
 let tabletop:Tabletop = null;
 
 class Tabletop extends HTMLElement{
@@ -5,12 +10,19 @@ class Tabletop extends HTMLElement{
     private movingTabletop:boolean;
     private canvas:HTMLCanvasElement;
     private ctx:CanvasRenderingContext2D;
-    private loadingAnimation:HTMLElement;
+    private cells: Array<Cell>;
+    private image: HTMLImageElement;
+    private cellSize: number;
+    public isGM: boolean;
+    public gridType:number;
 
     constructor(){
         super();
         this.pos = { top: 0, left: 0, x: 0, y: 0 };
         this.movingTabletop = false;
+        this.cells = [];
+        this.image = null;
+        this.cellSize = 32;
     }
 
     private mouseDown:EventListener = (e:MouseEvent)=>{
@@ -83,6 +95,45 @@ class Tabletop extends HTMLElement{
         this.ctx = this.canvas.getContext('2d');
     }
 
+    private render(){
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.drawImage(this.image, 0, 0);
+        if (this.gridType !== 3){
+            for (let i = 0; i < this.cells.length; i++){
+                switch (this.cells[i].style){
+                    case "highlight":
+                        this.ctx.fillStyle = "rgba(255, 13, 65, 0.15)";
+                        break;
+                    case "fog":
+                        this.ctx.fillStyle = `rgba(25,25,25,${this.isGM ? "0.6" : "1"})`;
+                        break;
+                    default:
+                        this.ctx.fillStyle = "transparent";
+                        break;
+                }
+                const x = this.cells[i].position[0] * this.cellSize;
+                const y = this.cells[i].position[1] * this.cellSize;
+                this.ctx.fillRect(x, y, this.cellSize, this.cellSize);
+                if (this.gridType === 1){
+                    this.ctx.strokeStyle = "rgba(0,0,0,0.6)";
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, y);
+                    this.ctx.lineTo(x, y + this.cellSize);
+                    this.ctx.stroke();
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, y);
+                    this.ctx.lineTo(x + this.cellSize, y);
+                    this.ctx.stroke();
+                }
+            }
+        }
+        this.setAttribute("state", "loaded"); 
+    }
+
+    public setCellSize(size:number){
+        this.cellSize = size;
+    }
+
     public loadImage(url:string, size:Array<number>){
         if (!this.canvas){
             this.generateCanvas();
@@ -98,13 +149,11 @@ class Tabletop extends HTMLElement{
             audio.play();
         }
 
-        const img = new Image();
-        img.onload = () => {
+        this.image = new Image();
+        this.image.onload = () => {
             this.canvas.width = size[0];
             this.canvas.height = size[1];
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.ctx.drawImage(img, 0, 0);
-            this.setAttribute("state", "loaded");
+            this.render();
             const bounds = this.getBoundingClientRect();
             this.scrollTo({
                 top: (size[1] - bounds.height) / 2,
@@ -115,7 +164,12 @@ class Tabletop extends HTMLElement{
                 audio.pause();
             }
         };
-        img.src = url;
+        this.image.src = url;
+    }
+
+    public renderCells(cells:Array<Cell>){
+        this.cells = cells;
+        this.render();
     }
 
     public clearImage(){
@@ -155,9 +209,25 @@ class Tabletop extends HTMLElement{
 }
 customElements.define('tabletop-component', Tabletop);
 
-function LoadImage(url:string, cellSize:Array<number>, tabletopSize:Array<number>):void{
+class PingComponent extends HTMLElement{
+    connectedCallback(){
+        if (!localStorage.getItem("pingDisabled")){
+            var audio = new Audio(`${location.origin}/sfx/ping.mp3`);
+            audio.volume = 0.75;
+            audio.play();
+        }
+        setTimeout(this.remove.bind(this), 2000);
+    }
+}
+customElements.define("ping-icon", PingComponent);
+
+function LoadImage(url:string, cellSize:number, tabletopSize:Array<number>, cells:Array<Cell>, isGM:boolean, gridType:string):void{
     if (tabletop){
+        tabletop.isGM = isGM;
+        tabletop.gridType = parseInt(gridType);
+        tabletop.setCellSize(cellSize);
         tabletop.loadImage(url, tabletopSize);
+        tabletop.renderCells(cells);
     }
 }
 function ClearImage(){
@@ -190,19 +260,6 @@ async function CalculateLocalPosition(x:number, y:number){
     }
     return pos;
 }
-
-class PingComponent extends HTMLElement{
-    connectedCallback(){
-        if (!localStorage.getItem("pingDisabled")){
-            var audio = new Audio(`${location.origin}/sfx/ping.mp3`);
-            audio.volume = 0.75;
-            audio.play();
-        }
-        setTimeout(this.remove.bind(this), 2000);
-    }
-}
-customElements.define("ping-icon", PingComponent);
-
 function Ping(x:number, y:number){
     if (tabletop){
         tabletop.ping(x, y);
