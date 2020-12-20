@@ -261,7 +261,7 @@ namespace FreeTabletop.Client.Pages
         public async Task HandleDrop(DragEventArgs e)
         {
             int[] newPosition = await JSRuntime.InvokeAsync<int[]>("CalculateNewPawnLocation", e);
-            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", MovingEntityUID, newPosition, Tabletop.CellSize);
+            await JSRuntime.InvokeVoidAsync("UpdateEntityPosition", MovingEntityUID, newPosition, Tabletop.CellSize);
             Hub.MoveEntity(MovingEntityUID, newPosition);
         }
 

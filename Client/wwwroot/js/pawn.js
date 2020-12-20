@@ -1,4 +1,9 @@
 class Pawn extends HTMLElement {
+    constructor() {
+        super();
+        this.HUD = this.querySelector(".nametag, .creature-hud");
+        console.log(this.HUD);
+    }
     UpdatePosition(x, y, cellSize) {
         const cellX = Math.floor(x / cellSize);
         const cellY = Math.floor(y / cellSize);
