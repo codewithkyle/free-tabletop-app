@@ -184,34 +184,39 @@ class Tabletop extends HTMLElement{
         if (!this.canvas){
             this.generateCanvas();
         }
-        this.setAttribute("state", "loading");
-        this.canvas.width = 400;
-        this.canvas.height = 250;
+        if (this.image?.src !== url){
+            this.setAttribute("state", "loading");
+            this.canvas.width = 400;
+            this.canvas.height = 250;
 
-        let audio:HTMLAudioElement = null;
-        if (!localStorage.getItem("loadingDisabled")){
-            audio = new Audio(`${location.origin}/sfx/loading.wav`);
-            audio.loop = true;
-            await audio.play();
-        }
-
-        this.image = new Image();
-        this.image.onload = () => {
-            this.canvas.width = size[0];
-            this.canvas.height = size[1];
-            const bounds = this.getBoundingClientRect();
-            this.scrollTo({
-                top: (size[1] - bounds.height) / 2,
-                left: (size[0] - bounds.width) / 2,
-                behavior: "auto"
-            });
-            if (audio){
-                audio.pause();
+            let audio:HTMLAudioElement = null;
+            if (!localStorage.getItem("loadingDisabled")){
+                audio = new Audio(`${location.origin}/sfx/loading.wav`);
+                audio.loop = true;
+                await audio.play();
             }
+
+            this.image = new Image();
+            this.image.onload = () => {
+                this.canvas.width = size[0];
+                this.canvas.height = size[1];
+                const bounds = this.getBoundingClientRect();
+                this.scrollTo({
+                    top: (size[1] - bounds.height) / 2,
+                    left: (size[0] - bounds.width) / 2,
+                    behavior: "auto"
+                });
+                if (audio){
+                    audio.pause();
+                }
+                this.render = true;
+                this.setAttribute("state", "loaded");
+            };
+            this.image.src = url;
+        } else {
             this.render = true;
             this.setAttribute("state", "loaded");
-        };
-        this.image.src = url;
+        }
     }
 
     public setCells(cells:Array<Cell>){

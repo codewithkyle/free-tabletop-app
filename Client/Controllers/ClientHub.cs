@@ -97,7 +97,16 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Player:SyncTabletopInfo");
 
             Timer = new System.Timers.Timer(1000);
-            Timer.Elapsed += (sender,args) => { Networker.hubConnection.SendAsync("Player:Heartbeat"); };
+            Timer.Elapsed += (sender,args) => {
+                try
+                {
+                    Networker.hubConnection.SendAsync("Player:Heartbeat");
+                }
+                catch
+                {
+                    JSRuntime.InvokeVoidAsync("Reload");
+                }
+            };
             Timer.AutoReset = true;
             Timer.Enabled = true;
         }

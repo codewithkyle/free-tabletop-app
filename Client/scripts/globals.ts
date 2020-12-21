@@ -250,3 +250,7 @@ function RenderPopupImage(url:string){
     `;
     document.body.appendChild(el);
 }
+
+function Reload(){
+    location.reload();
+}

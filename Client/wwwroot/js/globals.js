@@ -240,3 +240,6 @@ function RenderPopupImage(url) {
     `;
     document.body.appendChild(el);
 }
+function Reload() {
+    location.reload();
+}
