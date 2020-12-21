@@ -223,6 +223,9 @@
                 <button @onclick="ToggleCombatMenu" class="icon-button-toggle" aria-label="open combat order menu" title="combat order menu">
                     <svg style="width: 20px;height: 20px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="swords" class="svg-inline--fa fa-swords fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M507.3 443.32l-55.88-55.88L486 329.91a16.007 16.007 0 0 0-2-20.19l-34.8-34.8c-6.21-6.21-16.35-6.28-22.63 0l-27.83 27.84L112 16.01 18.27.18C7.06-1.45-1.25 8.38.17 18.28L16 112.01l286.75 286.75-27.84 27.83c-6.25 6.25-6.25 16.38 0 22.63l34.8 34.79c5.4 5.4 13.86 6.22 20.19 2l57.52-34.58 55.88 55.88c6.25 6.25 16.38 6.25 22.63 0l41.37-41.37c6.25-6.24 6.25-16.38 0-22.62zM45.85 96.61L35.54 35.54 96.6 45.87 376.13 325.4l-50.74 50.74L45.85 96.61zm408.77 376.76l-63.11-63.12-68.44 41.86-14.21-14.21L437.9 308.87l14.21 14.21-41.85 68.44 63.11 63.11-18.75 18.74zM415.39 45.85l61.07-10.31-10.33 61.06-114.14 114.14 22.63 22.63L495.99 112l15.83-93.73c1.63-11.21-8.2-19.52-18.1-18.1L399.99 16 278.62 137.37 301.24 160 415.39 45.85zM237.07 426.58l-27.84-27.83 24.12-24.12L210.73 352l-24.12 24.12-50.74-50.74L160 301.25l-22.63-22.63-24.13 24.13-27.83-27.84c-6.25-6.25-16.38-6.25-22.63 0l-34.79 34.8c-5.4 5.4-6.22 13.86-2 20.19l34.58 57.52-55.89 55.89c-6.25 6.25-6.25 16.38 0 22.63l41.37 41.37c6.25 6.25 16.38 6.25 22.63 0l55.88-55.88 57.53 34.58a16.007 16.007 0 0 0 20.19-2l34.8-34.8c.87-.87 1.34-1.96 1.97-2.97-.48-2.73-.81-5.5-.81-8.33s.34-5.61.81-8.35c-.63-1.01-1.1-2.1-1.98-2.98zm-48.15 25.52l-68.44-41.85-63.11 63.11-18.75-18.75 63.12-63.11-41.86-68.44 14.21-14.21L203.13 437.9l-14.21 14.2z"></path></svg>
                 </button>
+                <button @onclick="TogglePaintMenu" class="icon-button-toggle" aria-label="open paint menu" title="paint menu">
+                    <svg style="width: 20px;height:20px;" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M489.17 144.05C547.44 80.02 483.28 0 418.52 0c-23.39 0-46.87 10.44-64.68 35.85L187.9 284.01c-45.13 2.9-86.1 20.09-109.34 81.34-2.65 6.99-9 11.22-16.41 11.22-12.49 0-51.14-31.13-62.15-38.65C0 430.58 42.67 512 144 512c141.21 0 145.89-117.04 142.91-145.49l.02-.02 202.24-222.44zM230.96 449.18C212.54 469.63 183.28 480 144 480c-62.08 0-90.15-37.47-102.57-76.29 7.55 3.32 14.15 4.86 20.72 4.86 20.81 0 39-12.52 46.33-31.87 6.86-18.09 17.63-56.66 89.31-61.26L254.68 366c2.96 28.21-4.08 61.37-23.72 83.18zm39.4-112.03l-49.86-44.32L380.05 54.22C390.38 39.47 403.33 32 418.52 32c22.9 0 47.56 16.71 57.36 38.88 7.94 17.96 4.45 35.34-10.39 51.64L270.36 337.15z"></path></svg>
+                </button>
             }
         </div>
         <div flex="items-center row nowrap">
@@ -307,7 +310,7 @@
     </dl>
     <div 
         class="entity-spawn-modal" 
-        style="top: @(RightClickPosition[1] != -1 ? RightClickPosition[1].ToString() + "px" : "calc(36px + 1rem)");left: @(RightClickPosition[0] != -1 ? RightClickPosition[0].ToString() : "168")px;visibility:@(EntitySpawnMenuOpen ? "visible" : "hidden")"
+        style="top:0;left:0;transform: translate(@(RightClickPosition[0] != -1 ? RightClickPosition[0].ToString() : "168")px, @(RightClickPosition[1] != -1 ? RightClickPosition[1].ToString() + "px" : "calc(36px + 1rem)"));visibility:@(EntitySpawnMenuOpen ? "visible" : "hidden")"
     >
         <button @onclick="OpenMonsterLookupMenu">
             <i>
@@ -711,6 +714,36 @@
                     </i>
                 </button>
             </div>
+        </div>
+    </moveable-modal>
+    <moveable-modal class="paint-modal js-paint-modal" style="visibility: @(PaintMenuOpen ? "visible" : "hidden");">
+        <moveable-handle>
+            <span class="inline-block font-xs font-grey-100 font-medium">Painter</span>
+            <div flex="items-center row nowrap">
+                <button class="modal-close" @onclick="@(e => SetPaintType(PaintOption.None))" title="close" aria-label="close paint menu">
+                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
+                </button>
+            </div>
+        </moveable-handle>
+        <div class="w-full block p-0.5">
+            <button class="bttn @(PaintType == PaintOption.Eraser ? "active" : "")" @onclick="@(e => SetPaintType(PaintOption.Eraser))">
+                <i>
+                    <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M497.94 273.94a48 48 0 0 0 0-67.88l-160-160a48 48 0 0 0-67.88 0l-256 256a48 48 0 0 0 0 67.88l96 96A48 48 0 0 0 144 480h356a12 12 0 0 0 12-12v-8a12 12 0 0 0-12-12H323.88l174.06-174.06zM292.69 68.69a16 16 0 0 1 22.62 0l160 160a16 16 0 0 1 0 22.62L358.63 368 176 185.37zM144 448a15.88 15.88 0 0 1-11.31-4.69l-96-96a16 16 0 0 1 0-22.62L153.37 208 336 390.63l-52.69 52.68A15.88 15.88 0 0 1 272 448z"></path></svg>
+                </i>
+                <span>Eraser</span>
+            </button>
+            <button class="bttn @(PaintType == PaintOption.Fog ? "active" : "")" @onclick="@(e => SetPaintType(PaintOption.Fog))">
+                <i>
+                    <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M168 320h304c57.3 0 104-46.7 104-104 0-54.8-42.6-99.8-96.3-103.7C475.8 67.4 437.9 32 392 32c-17.8 0-34.8 5.3-49.2 15.2C320.3 17.7 285.5 0 248 0c-66.2 0-120 53.8-120 120v.4c-38.3 16-64 53.5-64 95.6 0 57.3 46.7 104 104 104zm-18.7-173.2l13.3-3.6-2-17.2c-.3-2-.6-4-.6-6 0-48.5 39.5-88 88-88 32.2 0 61.8 17.9 77.2 46.8l10.6 19.8L351 82.1C361.9 70.4 376.4 64 392 64c30.9 0 56 25.1 56 56 0 1.6-.3 3.1-.8 6.9l-2.5 20 23.5-2.4c1.2-.2 2.5-.4 3.8-.4 39.7 0 72 32.3 72 72s-32.3 72-72 72H168c-39.7 0-72-32.3-72-72 0-32.4 21.9-60.8 53.3-69.3zM216 480H72c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8h144c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8zm416 0H296c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8h336c4.4 0 8-3.6 8-8v-16c0-4.4-3.6-8-8-8zm-56-72v-16c0-4.4-3.6-8-8-8H8c-4.4 0-8 3.6-8 8v16c0 4.4 3.6 8 8 8h560c4.4 0 8-3.6 8-8z"></path></svg>
+                </i>
+                <span>Paint Fog</span>
+            </button>
+            <button class="bttn @(PaintType == PaintOption.Highlighter ? "active" : "")" @onclick="@(e => SetPaintType(PaintOption.Highlighter))">
+                <i>
+                    <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 544 512"><path fill="currentColor" d="M528.61 75.91l-60.49-60.52C457.91 5.16 444.45 0 430.98 0a52.38 52.38 0 0 0-34.75 13.15L110.59 261.8c-10.29 9.08-14.33 23.35-10.33 36.49l12.49 41.02-36.54 36.56c-6.74 6.75-6.74 17.68 0 24.43l.25.26L0 479.98 99.88 512l43.99-44.01.02.02c6.75 6.75 17.69 6.75 24.44 0l36.46-36.47 40.91 12.53c18.01 5.51 31.41-4.54 36.51-10.32l248.65-285.9c18.35-20.82 17.37-52.32-2.25-71.94zM91.05 475.55l-32.21-10.33 40.26-42.03 22.14 22.15-30.19 30.21zm167.16-62.99c-.63.72-1.4.94-2.32.94-.26 0-.54-.02-.83-.05l-40.91-12.53-18.39-5.63-39.65 39.67-46.85-46.88 39.71-39.72-5.6-18.38-12.49-41.02c-.34-1.13.01-2.36.73-3l44.97-39.15 120.74 120.8-39.11 44.95zm248.51-285.73L318.36 343.4l-117.6-117.66L417.4 37.15c4.5-3.97 17.55-9.68 28.1.88l60.48 60.52c7.65 7.65 8.04 20 .74 28.28z"></path></svg>
+                </i>
+                <span>Highlighter</span>
+            </button>
         </div>
     </moveable-modal>
     <button style="visibility: @(InfoMenuOpen || TabletopMenuOpen || ImageUploadOpen || EntitySpawnMenuOpen || MonsterLookupMenuOpen || CustomCreatureMenuOpen || NPCMenuOpen || SettingsMenu != null ? "visible" : "hidden");" @onclick="CloseAllModals" class="modal-backdrop" aria-label="close menu"></button>

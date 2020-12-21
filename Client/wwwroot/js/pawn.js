@@ -1,9 +1,4 @@
 class Pawn extends HTMLElement {
-    constructor() {
-        super();
-        this.HUD = this.querySelector(".nametag, .creature-hud");
-        console.log(this.HUD);
-    }
     UpdatePosition(x, y, cellSize) {
         const cellX = Math.floor(x / cellSize);
         const cellY = Math.floor(y / cellSize);
@@ -19,6 +14,9 @@ class Pawn extends HTMLElement {
                 this.style.display = "none";
             }
         }
+    }
+    setHUD(el) {
+        this.HUD = el;
     }
 }
 customElements.define("tabletop-pawn", Pawn);

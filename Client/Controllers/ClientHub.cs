@@ -60,7 +60,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<List<PlayerEntity>>("Tabletop:RenderPlayerEntities", Room.RenderPlayerEntities);
                 Networker.hubConnection.On<List<Creature>>("Tabletop:RenderCreatureEntities", Room.RenderCreatureEntities);
                 Networker.hubConnection.On<List<NPC>>("Tabletop:RenderNPCEntities", Room.RenderNPCEntities);
-                Networker.hubConnection.On<int>("Tabletop:UpdateCellVisiblity", Room.UpdateCellVisiblity);
+                Networker.hubConnection.On<int, string>("Tabletop:SyncCells", Room.SyncCells);
                 Networker.hubConnection.On<string, int[]>("Tabletop:UpdateEntityPosition", UpdateEntityPosition);
                 Networker.hubConnection.On<bool>("Tabletop:UpdateLock", Room.UpdateLock);
 
@@ -118,7 +118,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Notification:Roll");
             Networker.hubConnection.Remove("Set:Messages");
             Networker.hubConnection.Remove("Set:Players");
-            Networker.hubConnection.Remove("Tabletop:UpdateCellVisiblity");
+            Networker.hubConnection.Remove("Tabletop:SyncCells");
             Networker.hubConnection.Remove("Tabletop:UpdateEntityPosition");
             Networker.hubConnection.Remove("Tabletop:UpdateLock");
         }
@@ -268,9 +268,9 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:AnnounceRoll", diceCount, die, results);
         }
 
-        public void EnableCell(int cellIndex)
+        public void ChangeCellStyle(int cellIndex, string style)
         {
-            Networker.hubConnection.SendAsync("Room:EnableCell", cellIndex);
+            Networker.hubConnection.SendAsync("Room:ChangeCellStyle", cellIndex, style);
         }
 
         public void UpdateEntityPosition(string uid, int[] position)

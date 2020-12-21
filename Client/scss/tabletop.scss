@@ -33,6 +33,14 @@
         }
     }
 
+    &[painter="active"]{
+        cursor: cell;
+
+        .pawn{
+            pointer-events: none;
+        }
+    }
+
     canvas {
         display: none;
         user-select: none;

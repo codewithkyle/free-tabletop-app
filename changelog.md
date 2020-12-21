@@ -7,11 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- tabletop painter functionality
+    - eraser
+    - paint fog of war
+    - highlight cells
+
 ### Fixed
 
 - refactored tabletop render system to use the `<canvas>` element
 - moved cell rendering to use the `<canvas>` element
 - modal CSS performance issues
+- fog of war performance issues
 
 ## [0.3.4] - 2020-12-04
 

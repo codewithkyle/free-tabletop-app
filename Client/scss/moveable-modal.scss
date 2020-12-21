@@ -13,54 +13,6 @@ moveable-modal{
         overflow: hidden;
         z-index: 1000;
 
-        .modal-close {
-            width: 24px;
-            height: 24px;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--grey-100);
-
-            &:hover,
-            &:focus {
-                color: var(--white);
-
-                &::before {
-                    opacity: 0.05;
-                    transform: scale(1);
-                }
-            }
-
-            &:active {
-                color: var(--white);
-
-                &::before {
-                    opacity: 0.1;
-                    transform: scale(1.15);
-                }
-            }
-
-            &::before {
-                content: "";
-                display: inline-block;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: var(--white);
-                opacity: 0;
-                border-radius: 50%;
-                transform: scale(0);
-                transition: all 150ms var(--ease-bounce);
-            }
-
-            svg {
-                width: 16px;
-                height: 16px;
-            }
-        }
-
         .container{
             display: grid;
             width: 100%;
@@ -276,8 +228,7 @@ moveable-modal{
         overflow: hidden;
         z-index: 1000;
 
-        .sync,
-        .modal-close {
+        .sync{
             width: 24px;
             height: 24px;
             display: inline-flex;
@@ -591,54 +542,6 @@ moveable-modal{
         z-index: 1000;
         border-radius: 0.25rem;
         overflow: hidden;
-
-        .modal-close {
-            width: 24px;
-            height: 24px;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--grey-100);
-
-            &:hover,
-            &:focus {
-                color: var(--white);
-
-                &::before {
-                    opacity: 0.05;
-                    transform: scale(1);
-                }
-            }
-
-            &:active {
-                color: var(--white);
-
-                &::before {
-                    opacity: 0.1;
-                    transform: scale(1.15);
-                }
-            }
-
-            &::before {
-                content: "";
-                display: inline-block;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: var(--white);
-                opacity: 0;
-                border-radius: 50%;
-                transform: scale(0);
-                transition: all 150ms var(--ease-bounce);
-            }
-
-            svg {
-                width: 16px;
-                height: 16px;
-            }
-        }
         
         .dice-box{
             background-color: var(--white);
@@ -735,6 +638,94 @@ moveable-modal{
         }
     }
 
+    &.paint-modal{
+        background-color: var(--white);
+        border-radius: 0.25rem;
+        box-shadow: var(--shadow-lg);
+        position: absolute;
+        width: 300px;
+        overflow: hidden;
+        z-index: 1000;
+
+        .bttn {
+            display: flex;
+            width: 100%;
+            height: 36px;
+            align-items: center;
+            padding: 0 0.5rem;
+            cursor: pointer;
+            color: var(--grey-700);
+            font-size: var(--font-sm);
+            transition: all 150ms var(--ease-in-out);
+            overflow: hidden;
+            border-radius: 0.25rem;
+            position: relative;
+
+            &:hover,
+            &:focus {
+                color: var(--grey-800);
+
+                &::before {
+                    background-color: var(--grey-500);
+                }
+            }
+
+            &:active {
+                color: var(--primary-700);
+
+                &::before {
+                    background-color: var(--primary-500);
+                }
+            }
+
+            &::before {
+                content: "";
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                transition: all 150ms var(--ease-in-out);
+                border-radius: 0.25rem;
+                opacity: 0.15;
+                background-color: transparent;
+            }
+
+            &.danger {
+                &:active {
+                    color: var(--danger-800);
+
+                    &::before {
+                        background-color: var(--danger-500);
+                    }
+                }
+            }
+
+            &.active{
+                color: var(--primary-700);
+
+                &::before {
+                    background-color: var(--primary-500);
+                }
+            }
+
+            i {
+                display: inline-flex;
+                width: 24px;
+                height: 24px;
+                justify-content: center;
+                align-items: center;
+                margin-right: 0.5rem;
+
+                svg {
+                    width: 18px;
+                    height: 18px;
+                }
+            }
+        }
+    }
+
     moveable-handle{
         cursor: move;
         width: 100%;
@@ -752,6 +743,54 @@ moveable-modal{
 
         &:active{
             background-color: var(--grey-900);
+        }
+
+        .modal-close {
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--grey-100);
+
+            &:hover,
+            &:focus {
+                color: var(--white);
+
+                &::before {
+                    opacity: 0.05;
+                    transform: scale(1);
+                }
+            }
+
+            &:active {
+                color: var(--white);
+
+                &::before {
+                    opacity: 0.1;
+                    transform: scale(1.15);
+                }
+            }
+
+            &::before {
+                content: "";
+                display: inline-block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: var(--white);
+                opacity: 0;
+                border-radius: 50%;
+                transform: scale(0);
+                transition: all 150ms var(--ease-bounce);
+            }
+
+            svg {
+                width: 16px;
+                height: 16px;
+            }
         }
     }
 }

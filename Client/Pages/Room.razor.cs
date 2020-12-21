@@ -67,6 +67,14 @@ namespace FreeTabletop.Client.Pages
 
         public bool TabletopImageLoaded = false;
         public bool FogOfWar = true;
+        public bool PaintMenuOpen = false;
+        public enum PaintOption {
+            None,
+            Eraser,
+            Fog,
+            Highlighter
+        };
+        public PaintOption PaintType = PaintOption.None;
 
         protected override async Task OnInitializedAsync()
         {
@@ -225,11 +233,9 @@ namespace FreeTabletop.Client.Pages
             if (Tabletop.Image != imageURL){
                 Tabletop.Image = imageURL;
             }
-            // Tabletop.GridType = gridType;
-            // Tabletop.Grid = grid;
             Tabletop.CellSize = cellSize;
             Tabletop.Size = tabletopSize;
-            // Tabletop.Cells = cells;
+            Tabletop.Cells = cells;
             StateHasChanged();
         }
 
@@ -392,7 +398,7 @@ namespace FreeTabletop.Client.Pages
 
         public async Task HandleRightClick(double x, double y, bool ctrlKeyPressed)
         {
-            int[] cellPosition = await JSRuntime.InvokeAsync<int[]>("GetCellPosition", x, y, Tabletop.CellSize);
+            int[] cellPosition = await JSRuntime.InvokeAsync<int[]>("GetCellPosition", x, y);
             if (Tabletop.IsGameMaster && !ctrlKeyPressed)
             {
                 CloseAllModals();
@@ -407,14 +413,6 @@ namespace FreeTabletop.Client.Pages
             {
                 int[] pingPosition = await JSRuntime.InvokeAsync<int[]>("CalculateLocalPosition", x, y);
                 await Hub.Ping(pingPosition[0], pingPosition[1]);
-            }
-        }
-
-        public void HandleLeftClick(bool ctrlKeyPressed, int cellIndex)
-        {
-            if (Tabletop.IsGameMaster && ctrlKeyPressed)
-            {
-                Hub.EnableCell(cellIndex);
             }
         }
 
@@ -716,12 +714,12 @@ namespace FreeTabletop.Client.Pages
             }
         }
 
-        public void UpdateCellVisiblity(int index)
+        public void SyncCells(int index, string style)
         {
             if (!Tabletop.IsGameMaster)
             {
-                Tabletop.Cells[index].Style = "clear";
-                StateHasChanged();
+                Tabletop.Cells[index].Style = style;
+                JSRuntime.InvokeVoidAsync("SyncCell", index, style);
             }
         }
 
@@ -729,6 +727,42 @@ namespace FreeTabletop.Client.Pages
         {
             Tabletop.IsLocked = IsLocked;
             StateHasChanged();
+        }
+
+        public void TogglePaintMenu()
+        {
+            CloseAllModals();
+            if (PaintMenuOpen)
+            {
+                PaintMenuOpen = false;
+            }
+            else
+            {
+                PaintMenuOpen = true;
+            }
+            JSRuntime.InvokeVoidAsync("ToggleModal", "js-paint-modal", PaintMenuOpen);
+        }
+
+        public async Task SetPaintType(PaintOption option)
+        {
+            CloseAllModals();
+            PaintType = option;
+            if (PaintType == PaintOption.None)
+            {
+                PaintMenuOpen = false;
+                await JSRuntime.InvokeVoidAsync("ToggleModal", "js-paint-modal", PaintMenuOpen);
+                List<Cell> cells = await JSRuntime.InvokeAsync<List<Cell>>("GetCells");
+                for (int i = 0; i < cells.Count; i++)
+                {
+                    if (Tabletop.Cells[i].Style != cells[i].Style)
+                    {
+                        Tabletop.Cells[i].Style = cells[i].Style;
+                        Hub.ChangeCellStyle(i, Tabletop.Cells[i].Style);
+                    }
+                    
+                }
+            }
+            await JSRuntime.InvokeVoidAsync("SetPaintMode", PaintType);
         }
     }
 }
