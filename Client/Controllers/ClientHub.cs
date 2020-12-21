@@ -63,6 +63,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<int, string>("Tabletop:SyncCells", Room.SyncCells);
                 Networker.hubConnection.On<string, int[]>("Tabletop:UpdateEntityPosition", UpdateEntityPosition);
                 Networker.hubConnection.On<bool>("Tabletop:UpdateLock", Room.UpdateLock);
+                Networker.hubConnection.On<string>("Tabletop:LoadPopupImage", RenderPopupImage);
 
                 Networker.hubConnection.On<string>("Notification:PlayerConnected", ConnectedNotification);
                 Networker.hubConnection.On<string, string>("Notification:PlayerDisconnected", DisconnectedNotification);
@@ -121,6 +122,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Tabletop:SyncCells");
             Networker.hubConnection.Remove("Tabletop:UpdateEntityPosition");
             Networker.hubConnection.Remove("Tabletop:UpdateLock");
+            Networker.hubConnection.Remove("Tabletop:LoadPopupImage");
         }
 
         private async Task UpdateUID(string uid)
@@ -276,6 +278,17 @@ namespace FreeTabletop.Client.Controllers
         public void UpdateEntityPosition(string uid, int[] position)
         {
             JSRuntime.InvokeVoidAsync("UpdateEntityPosition", uid, position, Tabletop.CellSize);
+        }
+
+        public void LoadPopupImage(string url)
+        {
+            Networker.hubConnection.SendAsync("Room:LoadPopupImage", url);
+        }
+
+        public void RenderPopupImage(string url)
+        {
+            Console.WriteLine("Here");
+            JSRuntime.InvokeVoidAsync("RenderPopupImage", url);
         }
     }
 }

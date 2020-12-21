@@ -85,6 +85,20 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:LoadPopupImage")]
+        public void LoadPopupImage(string url)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadPopupImage", url);
+                }
+            }
+        }
+
         [HubMethodName("Room:LoadImage")]
         public async Task LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize, bool fogOfWar)
         {

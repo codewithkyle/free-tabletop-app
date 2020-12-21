@@ -75,6 +75,7 @@ namespace FreeTabletop.Client.Pages
             Highlighter
         };
         public PaintOption PaintType = PaintOption.None;
+        public bool PopupImageModalOpen = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -169,6 +170,7 @@ namespace FreeTabletop.Client.Pages
             DidAutofocus = false;
             RightClickPosition[0] = -1;
             RightClickPosition[1] = -1;
+            PopupImageModalOpen = false;
             SettingsMenu = null;
         }
 
@@ -763,6 +765,22 @@ namespace FreeTabletop.Client.Pages
                 }
             }
             await JSRuntime.InvokeVoidAsync("SetPaintMode", PaintType);
+        }
+
+        public void UploadPopupImage()
+        {
+            CloseAllModals();
+            PopupImageModalOpen = true;
+            StateHasChanged();
+        }
+
+        public void LoadPopupImage()
+        {
+            if (InputImageURL.Length != 0){
+                CloseAllModals();
+                Hub.LoadPopupImage(InputImageURL);
+                InputImageURL = null;
+            }
         }
     }
 }

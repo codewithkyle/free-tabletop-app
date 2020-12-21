@@ -5,6 +5,7 @@ class Draggable extends HTMLElement{
     private pos3:number;
     private pos4:number;
     private handle:HTMLElement;
+    private closeButton:HTMLButtonElement;
 
     constructor(){
         super();
@@ -13,6 +14,7 @@ class Draggable extends HTMLElement{
         this.pos2 = 0;
         this.pos3 = 0;
         this.pos4 = 0;
+        this.closeButton = null;
     }
 
     private handleMouseDown:EventListener = (e:MouseEvent|TouchEvent) => {
@@ -99,6 +101,11 @@ class Draggable extends HTMLElement{
 
         this.dataset.top = "0";
         this.dataset.left = "0";
+
+        this.closeButton = this.querySelector(".js-close-button");
+        if (this.closeButton){
+            this.closeButton.addEventListener("click", () => { this.remove(); });
+        }
     }
 }
 class DraggableHandle extends HTMLElement{

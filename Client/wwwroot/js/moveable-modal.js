@@ -58,6 +58,7 @@ class Draggable extends HTMLElement {
         this.pos2 = 0;
         this.pos3 = 0;
         this.pos4 = 0;
+        this.closeButton = null;
     }
     toggleVisability(visible) {
         if (visible) {
@@ -83,6 +84,10 @@ class Draggable extends HTMLElement {
         window.addEventListener("touchcancel", this.handleMouseMove);
         this.dataset.top = "0";
         this.dataset.left = "0";
+        this.closeButton = this.querySelector(".js-close-button");
+        if (this.closeButton) {
+            this.closeButton.addEventListener("click", () => { this.remove(); });
+        }
     }
 }
 class DraggableHandle extends HTMLElement {

@@ -9,10 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- tabletop painter functionality
+- tabletop painter
     - eraser
     - paint fog of war
     - highlight cells
+- popup images
 
 ### Fixed
 

@@ -638,6 +638,32 @@ moveable-modal{
         }
     }
 
+    &.popup-image-modal{
+        background-color: var(--white);
+        border-radius: 0.25rem;
+        box-shadow: var(--shadow-lg);
+        position: absolute;
+        overflow: hidden;
+        z-index: 1000;
+        visibility: visible;
+
+        .container{
+            display: block;
+            width: 100%;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            position: relative;
+
+            img{
+                opacity: 0;
+                transition: opacity 150ms var(--ease-in-out);
+                object-fit: contain;
+                width: 640px;
+                height: 450px;
+            }
+        }
+    }
+
     &.paint-modal{
         background-color: var(--white);
         border-radius: 0.25rem;
