@@ -3,6 +3,7 @@ class Tabletop extends HTMLElement {
     constructor() {
         super();
         this.down = (e) => {
+            console.log(e);
             this.mouseDown = true;
             let x = 0;
             let y = 0;
@@ -16,14 +17,16 @@ class Tabletop extends HTMLElement {
                 x = e.touches[0].clientX;
                 y = e.touches[0].clientY;
             }
-            if (this.paintMode === "None" && e.currentTarget instanceof Tabletop) {
-                this.pos = {
-                    left: this.scrollLeft,
-                    top: this.scrollTop,
-                    x: x,
-                    y: y,
-                };
-                this.movingTabletop = true;
+            if (this.paintMode === "None") {
+                if (e.target instanceof Tabletop || e.target instanceof HTMLCanvasElement) {
+                    this.pos = {
+                        left: this.scrollLeft,
+                        top: this.scrollTop,
+                        x: x,
+                        y: y,
+                    };
+                    this.movingTabletop = true;
+                }
             }
             if (this.paintMode !== "None") {
                 this.paintCell(this.convertViewportToTabletopPosition(x, y));
@@ -316,4 +319,14 @@ async function GetCells() {
         output = tabletop.getMutatedCells();
     }
     return output;
+}
+function LocatePawn() {
+    const player = document.body.querySelector(".js-player-pawn");
+    if (player) {
+        player.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+            inline: "center",
+        });
+    }
 }

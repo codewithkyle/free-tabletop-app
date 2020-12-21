@@ -797,5 +797,10 @@ namespace FreeTabletop.Client.Pages
                 }
             }
         }
+
+        public void CenterOnPawn()
+        {
+            JSRuntime.InvokeVoidAsync("LocatePawn");
+        }
     }
 }
