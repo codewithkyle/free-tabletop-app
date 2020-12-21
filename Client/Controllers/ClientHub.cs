@@ -7,6 +7,7 @@ using FreeTabletop.Shared.Models;
 using Microsoft.JSInterop;
 using FreeTabletop.Client.Pages;
 using FreeTabletop.Client.Models;
+using System.Timers;
 
 namespace FreeTabletop.Client.Controllers
 {
@@ -21,6 +22,8 @@ namespace FreeTabletop.Client.Controllers
         private Tabletop Tabletop { get; set; }
 
         string RoomCode { get; set; }
+
+        private static Timer Timer;
 
         public async Task Connect(string roomCode, RoomBase room, NavigationManager navManager, IJSRuntime jsRuntime, Tabletop tabletop)
         {
@@ -60,9 +63,10 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<List<PlayerEntity>>("Tabletop:RenderPlayerEntities", Room.RenderPlayerEntities);
                 Networker.hubConnection.On<List<Creature>>("Tabletop:RenderCreatureEntities", Room.RenderCreatureEntities);
                 Networker.hubConnection.On<List<NPC>>("Tabletop:RenderNPCEntities", Room.RenderNPCEntities);
-                Networker.hubConnection.On<int>("Tabletop:UpdateCellVisiblity", Room.UpdateCellVisiblity);
+                Networker.hubConnection.On<int, string>("Tabletop:SyncCells", Room.SyncCells);
                 Networker.hubConnection.On<string, int[]>("Tabletop:UpdateEntityPosition", UpdateEntityPosition);
                 Networker.hubConnection.On<bool>("Tabletop:UpdateLock", Room.UpdateLock);
+                Networker.hubConnection.On<string>("Tabletop:LoadPopupImage", RenderPopupImage);
 
                 Networker.hubConnection.On<string>("Notification:PlayerConnected", ConnectedNotification);
                 Networker.hubConnection.On<string, string>("Notification:PlayerDisconnected", DisconnectedNotification);
@@ -91,6 +95,20 @@ namespace FreeTabletop.Client.Controllers
 
             await Networker.hubConnection.SendAsync("Player:GetStatus");
             await Networker.hubConnection.SendAsync("Player:SyncTabletopInfo");
+
+            Timer = new System.Timers.Timer(1000);
+            Timer.Elapsed += (sender,args) => {
+                try
+                {
+                    Networker.hubConnection.SendAsync("Player:Heartbeat");
+                }
+                catch
+                {
+                    JSRuntime.InvokeVoidAsync("Reload");
+                }
+            };
+            Timer.AutoReset = true;
+            Timer.Enabled = true;
         }
 
         private void MessageReset()
@@ -118,9 +136,10 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Notification:Roll");
             Networker.hubConnection.Remove("Set:Messages");
             Networker.hubConnection.Remove("Set:Players");
-            Networker.hubConnection.Remove("Tabletop:UpdateCellVisiblity");
+            Networker.hubConnection.Remove("Tabletop:SyncCells");
             Networker.hubConnection.Remove("Tabletop:UpdateEntityPosition");
             Networker.hubConnection.Remove("Tabletop:UpdateLock");
+            Networker.hubConnection.Remove("Tabletop:LoadPopupImage");
         }
 
         private async Task UpdateUID(string uid)
@@ -258,9 +277,9 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Player:Disconnect");
         }
 
-        public async Task RemoveEntity(string uid)
+        public void RemoveEntity(string uid)
         {
-            await Networker.hubConnection.SendAsync("Room:RemoveEntity", uid);
+            Networker.hubConnection.SendAsync("Room:RemoveEntity", uid);
         }
 
         public async Task AnnounceRoll(int diceCount, string die, string results)
@@ -268,14 +287,25 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:AnnounceRoll", diceCount, die, results);
         }
 
-        public void EnableCell(int cellIndex)
+        public void ChangeCellStyle(int cellIndex, string style)
         {
-            Networker.hubConnection.SendAsync("Room:EnableCell", cellIndex);
+            Networker.hubConnection.SendAsync("Room:ChangeCellStyle", cellIndex, style);
         }
 
         public void UpdateEntityPosition(string uid, int[] position)
         {
-            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", uid, position, Tabletop.CellSize, Tabletop.IsGameMaster);
+            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", uid, position, Tabletop.CellSize);
+        }
+
+        public void LoadPopupImage(string url)
+        {
+            Networker.hubConnection.SendAsync("Room:LoadPopupImage", url);
+        }
+
+        public void RenderPopupImage(string url)
+        {
+            Console.WriteLine("Here");
+            JSRuntime.InvokeVoidAsync("RenderPopupImage", url);
         }
     }
 }

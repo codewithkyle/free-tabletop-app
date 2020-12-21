@@ -7,6 +7,8 @@ using FreeTabletop.Shared.Models;
 using FreeTabletop.Client.Controllers;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Components.Web;
+using FreeTabletop.Client.Models;
 
 namespace FreeTabletop.Client.Pages
 {
@@ -66,6 +68,15 @@ namespace FreeTabletop.Client.Pages
 
         public bool TabletopImageLoaded = false;
         public bool FogOfWar = true;
+        public bool PaintMenuOpen = false;
+        public enum PaintOption {
+            None,
+            Eraser,
+            Fog,
+            Highlighter
+        };
+        public PaintOption PaintType = PaintOption.None;
+        public bool PopupImageModalOpen = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -160,6 +171,7 @@ namespace FreeTabletop.Client.Pages
             DidAutofocus = false;
             RightClickPosition[0] = -1;
             RightClickPosition[1] = -1;
+            PopupImageModalOpen = false;
             SettingsMenu = null;
         }
 
@@ -220,12 +232,10 @@ namespace FreeTabletop.Client.Pages
 
         public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid, int cellSize, int[] tabletopSize, List<Cell> cells)
         {
+            JSRuntime.InvokeVoidAsync("LoadImage", imageURL, cellSize, tabletopSize, cells, Tabletop.IsGameMaster, gridType);
             if (Tabletop.Image != imageURL){
-                TabletopImageLoaded = false;
                 Tabletop.Image = imageURL;
             }
-            Tabletop.GridType = gridType;
-            Tabletop.Grid = grid;
             Tabletop.CellSize = cellSize;
             Tabletop.Size = tabletopSize;
             Tabletop.Cells = cells;
@@ -235,6 +245,7 @@ namespace FreeTabletop.Client.Pages
         public void ClearTabletop()
         {
             Tabletop.Image = null;
+            JSRuntime.InvokeVoidAsync("ClearImage");
             StateHasChanged();
         }
 
@@ -256,11 +267,11 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void HandleDrop(int x, int y)
+        public async Task HandleDrop(DragEventArgs e)
         {
-            int[] Position = { x, y };
-            JSRuntime.InvokeVoidAsync("UpdateEntityPosition", MovingEntityUID, Position, Tabletop.CellSize, Tabletop.IsGameMaster);
-            Hub.MoveEntity(MovingEntityUID, Position);
+            int[] newPosition = await JSRuntime.InvokeAsync<int[]>("CalculateNewPawnLocation", e);
+            await JSRuntime.InvokeVoidAsync("UpdateEntityPosition", MovingEntityUID, newPosition, Tabletop.CellSize);
+            Hub.MoveEntity(MovingEntityUID, newPosition);
         }
 
         public void HandleDragStart(string uid)
@@ -388,38 +399,38 @@ namespace FreeTabletop.Client.Pages
             }
         }
 
-        public async Task HandleRightClick(double x, double y, int gridX, int gridY, bool ctrlKeyPressed)
+        public async Task HandleRightClick(double x, double y, bool ctrlKeyPressed)
         {
+            int[] cellPosition = await JSRuntime.InvokeAsync<int[]>("GetCellPosition", x, y);
             if (Tabletop.IsGameMaster && !ctrlKeyPressed)
             {
                 CloseAllModals();
                 RightClickPosition[0] = x;
                 RightClickPosition[1] = y;
                 EntitySpawnMenuOpen = true;
-                RightClickGridPosition[0] = gridX;
-                RightClickGridPosition[1] = gridY;
+                RightClickGridPosition[0] = cellPosition[0];
+                RightClickGridPosition[1] = cellPosition[1];
                 StateHasChanged();
             }
             else if (Tabletop.IsGameMaster && ctrlKeyPressed || !Tabletop.IsGameMaster)
             {
-                await Hub.Ping(gridX, gridY);
-            }
-        }
-
-        public void HandleLeftClick(bool ctrlKeyPressed, int cellIndex)
-        {
-            if (Tabletop.IsGameMaster && ctrlKeyPressed)
-            {
-                Hub.EnableCell(cellIndex);
+                int[] pingPosition = await JSRuntime.InvokeAsync<int[]>("CalculateLocalPosition", x, y);
+                await Hub.Ping(pingPosition[0], pingPosition[1]);
             }
         }
 
         public void ToggleDiceMenu()
         {
             CloseAllModals();
-            DiceMenuOpen = true;
-            JSRuntime.InvokeVoidAsync("ResetDiceModal");
-            StateHasChanged();
+            if (DiceMenuOpen)
+            {
+                DiceMenuOpen = false;
+            }
+            else
+            {
+                DiceMenuOpen = true;
+            }
+            JSRuntime.InvokeVoidAsync("ToggleModal", "js-dice-modal", DiceMenuOpen);
         }
 
         public void SetActiveDie(string die)
@@ -440,9 +451,15 @@ namespace FreeTabletop.Client.Pages
         public void ToggleCombatMenu()
         {
             CloseAllModals();
-            CombatMenuOpen = true;
-            JSRuntime.InvokeVoidAsync("ResetCombatModal");
-            StateHasChanged();
+            if (CombatMenuOpen)
+            {
+                CombatMenuOpen = false;
+            }
+            else
+            {
+                CombatMenuOpen = true;
+            }
+            JSRuntime.InvokeVoidAsync("ToggleModal", "js-combat-modal", CombatMenuOpen);
         }
 
         public async Task SyncCombatOrder()
@@ -480,18 +497,20 @@ namespace FreeTabletop.Client.Pages
             JSRuntime.InvokeVoidAsync("Ping", x, y);
         }
 
-        public void OpenChatModal()
+        public void ToggleChatModal()
         {
-            return;
             CloseAllModals();
-            ChatMenuOpen = true;
-            HasUnreadMessages = false;
-            JSRuntime.InvokeVoidAsync("ResetChatModal");
-            if (!Tabletop.IsGameMaster)
+            if (ChatMenuOpen)
             {
-                ActiveChatPlayerUID = Tabletop.GameMasterUID;
+                ChatMenuOpen = false;
+                HasUnreadMessages = false;
             }
-            StateHasChanged();
+            else
+            {
+                ChatMenuOpen = true;
+            }
+            HasUnreadMessages = false;
+            JSRuntime.InvokeVoidAsync("ToggleModal", "js-chat-modal", ChatMenuOpen);
         }
 
         public async Task SendMessage(string Key)
@@ -653,9 +672,9 @@ namespace FreeTabletop.Client.Pages
             JSRuntime.InvokeVoidAsync("Install");
         }
 
-        public async Task RemoveEntity(string uid)
+        public void RemoveEntity(string uid)
         {
-            await Hub.RemoveEntity(uid);
+            Hub.RemoveEntity(uid);
         }
 
         public void RenderRollNotification(int diceCount, string die, string results, string name)
@@ -698,19 +717,90 @@ namespace FreeTabletop.Client.Pages
             }
         }
 
-        public void UpdateCellVisiblity(int index)
+        public void SyncCells(int index, string style)
         {
-            if (!Tabletop.IsGameMaster)
-            {
-                Tabletop.Cells[index].Style = "clear";
-                StateHasChanged();
-            }
+            Tabletop.Cells[index].Style = style;
+            JSRuntime.InvokeVoidAsync("SyncCell", index, style);
         }
 
         public void UpdateLock(bool IsLocked)
         {
             Tabletop.IsLocked = IsLocked;
             StateHasChanged();
+        }
+
+        public void TogglePaintMenu()
+        {
+            CloseAllModals();
+            if (PaintMenuOpen)
+            {
+                PaintMenuOpen = false;
+            }
+            else
+            {
+                PaintMenuOpen = true;
+            }
+            JSRuntime.InvokeVoidAsync("ToggleModal", "js-paint-modal", PaintMenuOpen);
+        }
+
+        public async Task SetPaintType(PaintOption option)
+        {
+            CloseAllModals();
+            PaintType = option;
+            if (PaintType == PaintOption.None)
+            {
+                PaintMenuOpen = false;
+                await JSRuntime.InvokeVoidAsync("ToggleModal", "js-paint-modal", PaintMenuOpen);
+                List<MutatedCell> cells = await JSRuntime.InvokeAsync<List<MutatedCell>>("GetCells");
+                for (int i = 0; i < cells.Count; i++)
+                {
+                    if (Tabletop.Cells[cells[i].index].Style != cells[i].style)
+                    {
+                        Tabletop.Cells[cells[i].index].Style = cells[i].style;
+                        Hub.ChangeCellStyle(cells[i].index, cells[i].style);
+                    }
+                    
+                }
+            }
+            await JSRuntime.InvokeVoidAsync("SetPaintMode", PaintType);
+        }
+
+        public void UploadPopupImage()
+        {
+            CloseAllModals();
+            PopupImageModalOpen = true;
+            StateHasChanged();
+        }
+
+        public void LoadPopupImage()
+        {
+            if (InputImageURL.Length != 0){
+                CloseAllModals();
+                Hub.LoadPopupImage(InputImageURL);
+                InputImageURL = null;
+            }
+        }
+
+        public async Task HandleMouseUp()
+        {
+            if (PaintMenuOpen)
+            {
+                List<MutatedCell> cells = await JSRuntime.InvokeAsync<List<MutatedCell>>("GetCells");
+                for (int i = 0; i < cells.Count; i++)
+                {
+                    if (Tabletop.Cells[cells[i].index].Style != cells[i].style)
+                    {
+                        Tabletop.Cells[cells[i].index].Style = cells[i].style;
+                        Hub.ChangeCellStyle(cells[i].index, cells[i].style);
+                    }
+                    
+                }
+            }
+        }
+
+        public void CenterOnPawn()
+        {
+            JSRuntime.InvokeVoidAsync("LocatePawn");
         }
     }
 }

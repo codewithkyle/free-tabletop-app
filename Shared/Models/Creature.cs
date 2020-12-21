@@ -15,22 +15,16 @@ namespace FreeTabletop.Shared.Models
         public int Constitution { get; set; }
         public int Wisdom { get; set; }
         public int Charisma { get; set; }
-        public List<Ability> Actions { get; set; }
-        public List<Ability> Abilities { get; set; }
+        public List<Ability> Actions { get; set; } = new List<Ability>();
+        public List<Ability> Abilities { get; set; } = new List<Ability>();
         public string ActionsString { get; set; }
         public string AbilitiesString { get; set; }
-        public int View = 1;
 
         public void Main(int[] pos)
         {
             Position = pos;
             Abilities = JsonConvert.DeserializeObject<List<Ability>>(AbilitiesString);
             Actions = JsonConvert.DeserializeObject<List<Ability>>(ActionsString);
-        }
-
-        public void SetView(int view)
-        {
-            View = view;
         }
 
         public string CalculateModifier(int value)

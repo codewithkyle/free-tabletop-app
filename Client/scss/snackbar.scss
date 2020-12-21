@@ -10,7 +10,7 @@ snackbar-component {
     max-width: 90vw;
     opacity: 0;
     z-index: 9000;
-    transform-origin: center;
+    transform-origin: bottom center;
     animation: notificationPop 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
     position: fixed;
     top: 50%;

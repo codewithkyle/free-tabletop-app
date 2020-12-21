@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using FreeTabletop.Server.Models;
@@ -71,8 +70,23 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
-        [HubMethodName("Room:EnableCell")]
-        public async Task EnableCell(int cellIndex)
+        [HubMethodName("Room:ChangeCellStyle")]
+        public void ChangeCellStyles(int index, string style)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.UpdateCellStyle(index, style);
+                    Clients.Group(room.RoomCode).SendAsync("Tabletop:SyncCells", index, style);
+                }
+            }
+        }
+
+        [HubMethodName("Room:LoadPopupImage")]
+        public void LoadPopupImage(string url)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -80,8 +94,7 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    room.EnableCell(cellIndex);
-                    await Clients.Group(room.RoomCode).SendAsync("Tabletop:UpdateCellVisiblity", cellIndex);
+                    Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadPopupImage", url);
                 }
             }
         }
@@ -382,6 +395,23 @@ namespace FreeTabletop.Server.Controllers
                 else
                 {
                     await Clients.Caller.SendAsync("Error:PlayerNotFound");
+                }
+            }
+        }
+
+        [HubMethodName("Player:Heartbeat")]
+        public void Heartbeat()
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    player.Heartbeat++;
+                    if (player.Heartbeat == int.MaxValue){
+                        player.Heartbeat = 0;
+                    }
                 }
             }
         }

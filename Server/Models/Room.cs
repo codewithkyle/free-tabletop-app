@@ -572,9 +572,9 @@ namespace FreeTabletop.Server.Models
             }
         }
 
-        public void EnableCell(int cellIndex)
+        public void UpdateCellStyle(int index, string style)
         {
-            Cells[cellIndex].Style = "clear";
+            Cells[index].Style = style;
         }
     }
 }

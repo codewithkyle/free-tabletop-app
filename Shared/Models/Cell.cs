@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-
 namespace FreeTabletop.Shared.Models
 {
     public class Cell

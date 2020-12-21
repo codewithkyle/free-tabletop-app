@@ -16,8 +16,33 @@
         border-width: 1px;
     }
 
-    img {
-        display: block;
+    &[state="loading"]{
+        tabletop-loading-spinner{
+            display: block;
+        }
+        canvas{
+            display: block;
+            opacity: 0;
+            visibility: hidden;
+        }
+    }
+
+    &[state="loaded"]{
+        canvas{
+            display: block;
+        }
+    }
+
+    &[painter="active"]{
+        cursor: url("../fill-cursor.png"), cell;
+
+        .pawn{
+            pointer-events: none;
+        }
+    }
+
+    canvas {
+        display: none;
         user-select: none;
         z-index: 1;
     }
@@ -118,7 +143,8 @@
 
         .creature-hud {
             position: absolute;
-            bottom: 100%;
+            top: 0;
+            left: 0;
             width: 300px;
             border-radius: 0.25rem;
             background-color: var(--white);
@@ -128,19 +154,6 @@
             transition: all 0ms linear;
             z-index: 101;
 
-            &::before {
-                z-index: -1;
-                content: "";
-                display: inline-block;
-                width: 10px;
-                height: 10px;
-                position: absolute;
-                left: 50%;
-                bottom: 0;
-                transform: translate(-50%, 5px) rotate(45deg);
-                background-color: var(--white);
-                box-shadow: var(--shadow-md);
-            }
             &::after {
                 content: "";
                 position: absolute;
@@ -148,6 +161,22 @@
                 top: 100%;
                 height: 0.75rem;
                 width: 100%;
+            }
+
+            &[data-view="1"]{
+                [data-view="1"]{
+                    display: block;
+                }
+            }
+            &[data-view="2"]{
+                [data-view="2"]{
+                    display: block;
+                }
+            }
+            &[data-view="3"]{
+                [data-view="3"]{
+                    display: block;
+                }
             }
 
             header {
@@ -225,6 +254,12 @@
                     }
                 }
             }
+
+            [data-view]{
+                display: none;
+            }
+
+            
 
             .creature-input {
                 position: relative;
@@ -342,54 +377,16 @@
         width: 100%;
         height: 100%;
         z-index: 3;
-
-        tabletop-cell {
-            position: absolute;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-
-            &[data-type="1"] {
-                border-color: rgba(0, 0, 0, 0.6);
-                border-style: solid;
-                border-width: 1px 1px 0 0;
-            }
-
-            &.highlight {
-                &::after {
-                    background-color: rgb(17, 207, 255);
-                    opacity: 0.4;
-                }
-            }
-
-            &:hover {
-                &::after {
-                    opacity: 0.87;
-                }
-            }
-
-            &::after {
-                content: "";
-                display: inline-block;
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                background-color: var(--white);
-                opacity: 0;
-                transition: all 150ms var(--ease-in-out);
-                pointer-events: none;
-                z-index: 1;
-            }
-        }
     }
 
-    .tabletop-loading{
+    tabletop-loading-spinner{
         position: absolute;
         top: 50%;
         left: 50%;
         transform-origin: center;
         transform: translate(-50%, -50%);
         text-align: center;
+        display: none;
 
         svg{
             display: block;

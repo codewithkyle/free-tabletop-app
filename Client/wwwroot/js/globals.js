@@ -99,30 +99,6 @@ async function PlaySound(name) {
     }
     return;
 }
-class PingComponent extends HTMLElement {
-    connectedCallback() {
-        if (!localStorage.getItem("pingDisabled")) {
-            var audio = new Audio(`${location.origin}/sfx/ping.mp3`);
-            audio.volume = 0.75;
-            audio.play();
-        }
-        setTimeout(this.remove.bind(this), 2000);
-    }
-}
-customElements.define("ping-icon", PingComponent);
-function Ping(x, y) {
-    const cell = document.body.querySelector(`tabletop-cell[data-x="${x}"][data-y="${y}"]`);
-    const cellBounds = cell.getBoundingClientRect();
-    const el = document.createElement("ping-icon");
-    el.className = "ping";
-    el.style.cssText = `top:${cellBounds.top + cellBounds.height / 2 - 24}px;left:${cellBounds.left + cellBounds.width / 2 - 24}px;`;
-    el.innerHTML = `
-        <i>
-            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="info" class="svg-inline--fa fa-info fa-w-6" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512"><path fill="currentColor" d="M20 424.229h20V279.771H20c-11.046 0-20-8.954-20-20V212c0-11.046 8.954-20 20-20h112c11.046 0 20 8.954 20 20v212.229h20c11.046 0 20 8.954 20 20V492c0 11.046-8.954 20-20 20H20c-11.046 0-20-8.954-20-20v-47.771c0-11.046 8.954-20 20-20zM96 0C56.235 0 24 32.235 24 72s32.235 72 72 72 72-32.235 72-72S135.764 0 96 0z"></path></svg>
-        </i>
-    `;
-    document.body.appendChild(el);
-}
 function ToggleSoundStatus(type, enabled) {
     if (enabled) {
         localStorage.removeItem(`${type}Disabled`);
@@ -238,15 +214,32 @@ function ClearFogCell(index) {
         cell.style.background = "transparent";
     }
 }
-function UpdateEntityPosition(uid, position, cellSize, isGM) {
+function UpdateEntityPosition(uid, position, cellSize) {
     const pawn = document.body.querySelector(`tabletop-pawn[data-uid="${uid}"]`);
     if (pawn) {
         // @ts-expect-error
         pawn.UpdatePosition(position[0], position[1], cellSize);
-        console.log(isGM);
-        if (!isGM) {
-            // @ts-expect-error
-            pawn.UpdateVisibility(position[0], position[1]);
-        }
     }
+}
+function RenderPopupImage(url) {
+    const el = document.createElement("moveable-modal");
+    el.className = "popup-image-modal";
+    el.innerHTML = `
+        <moveable-handle>
+            <span class="inline-block font-xs font-grey-100 font-medium"></span>
+            <button class="modal-close js-close-button" title="close" aria-label="close combat order list">
+                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
+            </button>
+        </moveable-handle>
+        <div class="container">
+            <i style="width: 48px;height: 48px;display: flex;justify-content: center;align-items: center;" class="font-grey-600 mx-auto spinner absolute center">
+                <svg style="width: 36px;height:36px;" aria-hidden="true" focusable="false" data-prefix="fad" data-icon="spinner-third" class="svg-inline--fa fa-spinner-third fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g class="fa-group"><path class="fa-secondary" fill="currentColor" d="M478.71 364.58zm-22 6.11l-27.83-15.9a15.92 15.92 0 0 1-6.94-19.2A184 184 0 1 1 256 72c5.89 0 11.71.29 17.46.83-.74-.07-1.48-.15-2.23-.21-8.49-.69-15.23-7.31-15.23-15.83v-32a16 16 0 0 1 15.34-16C266.24 8.46 261.18 8 256 8 119 8 8 119 8 256s111 248 248 248c98 0 182.42-56.95 222.71-139.42-4.13 7.86-14.23 10.55-22 6.11z" opacity="0.4"></path><path class="fa-primary" fill="currentColor" d="M271.23 72.62c-8.49-.69-15.23-7.31-15.23-15.83V24.73c0-9.11 7.67-16.78 16.77-16.17C401.92 17.18 504 124.67 504 256a246 246 0 0 1-25 108.24c-4 8.17-14.37 11-22.26 6.45l-27.84-15.9c-7.41-4.23-9.83-13.35-6.2-21.07A182.53 182.53 0 0 0 440 256c0-96.49-74.27-175.63-168.77-183.38z"></path></g></svg>
+            </i>
+            <img onload="style.opacity = '1';" src="${url}" draggable="false">
+        </div>
+    `;
+    document.body.appendChild(el);
+}
+function Reload() {
+    location.reload();
 }
