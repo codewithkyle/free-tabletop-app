@@ -8,6 +8,7 @@ using FreeTabletop.Client.Controllers;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components.Web;
+using FreeTabletop.Client.Models;
 
 namespace FreeTabletop.Client.Pages
 {
@@ -750,13 +751,13 @@ namespace FreeTabletop.Client.Pages
             {
                 PaintMenuOpen = false;
                 await JSRuntime.InvokeVoidAsync("ToggleModal", "js-paint-modal", PaintMenuOpen);
-                List<Cell> cells = await JSRuntime.InvokeAsync<List<Cell>>("GetCells");
+                List<MutatedCell> cells = await JSRuntime.InvokeAsync<List<MutatedCell>>("GetCells");
                 for (int i = 0; i < cells.Count; i++)
                 {
-                    if (Tabletop.Cells[i].Style != cells[i].Style)
+                    if (Tabletop.Cells[cells[i].index].Style != cells[i].style)
                     {
-                        Tabletop.Cells[i].Style = cells[i].Style;
-                        Hub.ChangeCellStyle(i, Tabletop.Cells[i].Style);
+                        Tabletop.Cells[cells[i].index].Style = cells[i].style;
+                        Hub.ChangeCellStyle(cells[i].index, cells[i].style);
                     }
                     
                 }
@@ -777,6 +778,23 @@ namespace FreeTabletop.Client.Pages
                 CloseAllModals();
                 Hub.LoadPopupImage(InputImageURL);
                 InputImageURL = null;
+            }
+        }
+
+        public async Task HandleMouseUp()
+        {
+            if (PaintMenuOpen)
+            {
+                List<MutatedCell> cells = await JSRuntime.InvokeAsync<List<MutatedCell>>("GetCells");
+                for (int i = 0; i < cells.Count; i++)
+                {
+                    if (Tabletop.Cells[cells[i].index].Style != cells[i].style)
+                    {
+                        Tabletop.Cells[cells[i].index].Style = cells[i].style;
+                        Hub.ChangeCellStyle(cells[i].index, cells[i].style);
+                    }
+                    
+                }
             }
         }
     }

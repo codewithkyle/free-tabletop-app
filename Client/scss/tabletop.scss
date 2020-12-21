@@ -34,7 +34,7 @@
     }
 
     &[painter="active"]{
-        cursor: cell;
+        cursor: url("../fill-cursor.png"), cell;
 
         .pawn{
             pointer-events: none;

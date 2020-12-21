@@ -16,7 +16,7 @@ class Tabletop extends HTMLElement {
                 x = e.touches[0].clientX;
                 y = e.touches[0].clientY;
             }
-            if (this.paintMode === "None" && e.currentTarget instanceof HTMLCanvasElement) {
+            if (this.paintMode === "None" && e.currentTarget instanceof Tabletop) {
                 this.pos = {
                     left: this.scrollLeft,
                     top: this.scrollTop,
@@ -62,6 +62,7 @@ class Tabletop extends HTMLElement {
         this.cellSize = 32;
         this.paintMode = "None";
         this.render = false;
+        this.mutatedCells = [];
         this.renderer();
     }
     ping(x, y) {
@@ -99,6 +100,10 @@ class Tabletop extends HTMLElement {
                         }
                         break;
                 }
+                this.mutatedCells.push({
+                    index: i,
+                    style: this.cells[i].style,
+                });
                 break;
             }
         }
@@ -212,6 +217,11 @@ class Tabletop extends HTMLElement {
             this.setAttribute("painter", "active");
         }
     }
+    getMutatedCells() {
+        const output = [...this.mutatedCells];
+        this.mutatedCells = [];
+        return output;
+    }
     connectedCallback() {
         tabletop = this;
         this.addEventListener("mousedown", this.down);
@@ -303,7 +313,7 @@ function SetPaintMode(mode) {
 async function GetCells() {
     let output = [];
     if (tabletop) {
-        output = tabletop.cells;
+        output = tabletop.getMutatedCells();
     }
     return output;
 }
