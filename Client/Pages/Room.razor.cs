@@ -718,11 +718,8 @@ namespace FreeTabletop.Client.Pages
 
         public void SyncCells(int index, string style)
         {
-            if (!Tabletop.IsGameMaster)
-            {
-                Tabletop.Cells[index].Style = style;
-                JSRuntime.InvokeVoidAsync("SyncCell", index, style);
-            }
+            Tabletop.Cells[index].Style = style;
+            JSRuntime.InvokeVoidAsync("SyncCell", index, style);
         }
 
         public void UpdateLock(bool IsLocked)

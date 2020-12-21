@@ -7,6 +7,7 @@ using FreeTabletop.Shared.Models;
 using Microsoft.JSInterop;
 using FreeTabletop.Client.Pages;
 using FreeTabletop.Client.Models;
+using System.Timers;
 
 namespace FreeTabletop.Client.Controllers
 {
@@ -21,6 +22,8 @@ namespace FreeTabletop.Client.Controllers
         private Tabletop Tabletop { get; set; }
 
         string RoomCode { get; set; }
+
+        private static Timer Timer;
 
         public async Task Connect(string roomCode, RoomBase room, NavigationManager navManager, IJSRuntime jsRuntime, Tabletop tabletop)
         {
@@ -92,6 +95,11 @@ namespace FreeTabletop.Client.Controllers
 
             await Networker.hubConnection.SendAsync("Player:GetStatus");
             await Networker.hubConnection.SendAsync("Player:SyncTabletopInfo");
+
+            Timer = new System.Timers.Timer(1000);
+            Timer.Elapsed += (sender,args) => { Networker.hubConnection.SendAsync("Player:Heartbeat"); };
+            Timer.AutoReset = true;
+            Timer.Enabled = true;
         }
 
         private void MessageReset()

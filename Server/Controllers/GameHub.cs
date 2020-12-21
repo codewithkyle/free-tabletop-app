@@ -74,7 +74,7 @@ namespace FreeTabletop.Server.Controllers
         public void ChangeCellStyles(int index, string style)
         {
             Player player = GetPlayer(Context.ConnectionId);
-            if (player != null && player.IsGameMaster)
+            if (player != null)
             {
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
@@ -395,6 +395,23 @@ namespace FreeTabletop.Server.Controllers
                 else
                 {
                     await Clients.Caller.SendAsync("Error:PlayerNotFound");
+                }
+            }
+        }
+
+        [HubMethodName("Player:Heartbeat")]
+        public void Heartbeat()
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    player.Heartbeat++;
+                    if (player.Heartbeat == int.MaxValue){
+                        player.Heartbeat = 0;
+                    }
                 }
             }
         }

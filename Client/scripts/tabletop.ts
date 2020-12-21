@@ -118,7 +118,9 @@ class Tabletop extends HTMLElement{
                         this.cells[i].style = "highlight";
                         break;
                     default:
-                        this.cells[i].style = "clear";
+                        if (this.isGM || this.cells[i].style === "highlight"){
+                            this.cells[i].style = "clear";
+                        }
                         break;
                 }
                 break;
