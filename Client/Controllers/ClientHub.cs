@@ -277,9 +277,9 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Player:Disconnect");
         }
 
-        public async Task RemoveEntity(string uid)
+        public void RemoveEntity(string uid)
         {
-            await Networker.hubConnection.SendAsync("Room:RemoveEntity", uid);
+            Networker.hubConnection.SendAsync("Room:RemoveEntity", uid);
         }
 
         public async Task AnnounceRoll(int diceCount, string die, string results)

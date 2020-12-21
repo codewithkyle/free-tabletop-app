@@ -26,7 +26,6 @@
                     style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
                     oncontextmenu="return false;"
                     data-uid="@Creature.UID" 
-                    onclick="event.stopImmediatePropagation()"
                 >
                     <i 
                         @ondragstart="@(e => HandleDragStart(Creature.UID))" 
@@ -37,85 +36,80 @@
                         }
                     </i>
                     @if(Tabletop.IsGameMaster){
-                        <div class="creature-hud">
+                        <pawn-hud class="creature-hud" data-view="1">
                             <header>
                                 <span>@Creature.Name</span>
                                 <div flex="row nowrap items-center">
-                                    <button class="dot" @onclick="@(e => Creature.SetView(1))" aria-label="switch to view 1"></button>
-                                    <button class="dot" @onclick="@(e => Creature.SetView(2))" aria-label="switch to view 2"></button>
-                                    <button class="dot" @onclick="@(e => Creature.SetView(3))" aria-label="switch to view 3"></button>
-                                    <button aria-lable="delete @Creature.Name" @onclick="@(e => RemoveEntity(Creature.UID))">
+                                    <button data-index="1" class="js-view-button dot" aria-label="switch to view 1"></button>
+                                    <button data-index="2" class="js-view-button dot" aria-label="switch to view 2"></button>
+                                    <button data-index="3" class="js-view-button dot" aria-label="switch to view 3"></button>
+                                    <button aria-label="delete @Creature.Name" @onclick="@(e => RemoveEntity(Creature.UID))">
                                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="trash" class="svg-inline--fa fa-trash fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"></path></svg>
                                     </button>
                                 </div>
                             </header>
                             <div class="block w-full p-0.5 bg-white" style="border-radius: 0 0 0.25rem 0.25rem;">
-                                @switch (Creature.View)
-                                {
-                                    case 1:
-                                        <div class="w-full" grid="columns 2 gap-0.5">
-                                            <div class="creature-input" title="AC">
-                                                <input type="number" value="@Creature.AC" @oninput="@(e => UpdateEntityAC(Creature, e))" />
-                                                <i>
-                                                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="shield" class="svg-inline--fa fa-shield fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M466.5 83.7l-192-80a48.15 48.15 0 0 0-36.9 0l-192 80C27.7 91.1 16 108.6 16 128c0 198.5 114.5 335.7 221.5 380.3 11.8 4.9 25.1 4.9 36.9 0C360.1 472.6 496 349.3 496 128c0-19.4-11.7-36.9-29.5-44.3zM262.2 478.8c-3.9 1.6-8.3 1.6-12.3 0C152 440 48 304 48 128c0-6.5 3.9-12.3 9.8-14.8l192-80c3.8-1.6 8.3-1.7 12.3 0l192 80c6 2.5 9.8 8.3 9.8 14.8.1 176-103.9 312-201.7 350.8z"></path></svg>
-                                                </i>
-                                            </div>
-                                            <div class="creature-input" title="HP">
-                                                <input type="number" value="@Creature.HP" @oninput="@(e => UpdateEntityHP(Creature, e))" min="0" />
-                                                <i>
-                                                    <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="heartbeat" class="svg-inline--fa fa-heartbeat fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M468.7 76.5C423.6 32.2 375 32 362.3 32c-12.7 0-61.5.2-106.3 44.4C211.3 32.3 162.5 32 149.7 32c-12.7 0-61.4.2-106.4 44.5C15.4 104 0 140.7 0 179.9 0 214.1 12.3 246 33.8 272h120.8l29.9-71.8 56.9 126.4c5.5 12.3 22.9 12.7 28.9.6l49.7-99.4 22.1 44.2h136c21.5-26 33.8-57.9 33.8-92.1.1-39.2-15.3-75.9-43.2-103.4zM462.5 240H361.9l-27.6-55.2c-5.9-11.8-22.7-11.8-28.6 0l-48.9 97.9-58.2-129.3c-5.8-12.8-24-12.5-29.4.4L133.3 240H49.5c-9.2-14.6-42.6-82.7 18.3-142.7C90.4 75.1 120 64 149.7 64c33.9 0 54.5 6.3 106.3 57.3C311 67.1 330.5 64 362.3 64c29.7 0 59.3 11.1 81.8 33.3 61 60.1 27.5 128.2 18.4 142.7zM268.7 443.4c-6.2 6.1-16.2 6.1-22.4 0L108.9 304H64l159.9 162.2c18.7 18.5 48.6 18.4 67.3 0L448 304h-44.5L268.7 443.4z"></path></svg>
-                                                </i>
-                                            </div>
+                                <div data-view="1">
+                                    <div class="w-full" grid="columns 2 gap-0.5">
+                                        <div class="creature-input" title="AC">
+                                            <input type="number" value="@Creature.AC" @oninput="@(e => UpdateEntityAC(Creature, e))" />
+                                            <i>
+                                                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="shield" class="svg-inline--fa fa-shield fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M466.5 83.7l-192-80a48.15 48.15 0 0 0-36.9 0l-192 80C27.7 91.1 16 108.6 16 128c0 198.5 114.5 335.7 221.5 380.3 11.8 4.9 25.1 4.9 36.9 0C360.1 472.6 496 349.3 496 128c0-19.4-11.7-36.9-29.5-44.3zM262.2 478.8c-3.9 1.6-8.3 1.6-12.3 0C152 440 48 304 48 128c0-6.5 3.9-12.3 9.8-14.8l192-80c3.8-1.6 8.3-1.7 12.3 0l192 80c6 2.5 9.8 8.3 9.8 14.8.1 176-103.9 312-201.7 350.8z"></path></svg>
+                                            </i>
                                         </div>
-                                        break;
-                                    case 2:
-                                        <div class="w-full stat-block" style="border-width:1px 0 0 1px;border-style:solid;border-color:var(--grey-300);">
-                                            <div></div>
-                                            <div class="font-grey-800 font-medium">Score</div>
-                                            <div class="font-grey-800 font-medium">Modifer</div>
-                                            
-                                            <div class="font-grey-800 font-medium text-uppercase text-left">Str</div>
-                                            <div>@Creature.Strength</div>
-                                            <div>@Creature.CalculateModifier(Creature.Strength)</div>
-
-                                            <div class="font-grey-800 font-medium text-uppercase text-left">Dex</div>
-                                            <div>@Creature.Dexterity</div>
-                                            <div>@Creature.CalculateModifier(Creature.Dexterity)</div>
-
-                                            <div class="font-grey-800 font-medium text-uppercase text-left">Con</div>
-                                            <div>@Creature.Constitution</div>
-                                            <div>@Creature.CalculateModifier(Creature.Constitution)</div>
-                                            
-                                            <div class="font-grey-800 font-medium text-uppercase text-left">Int</div>
-                                            <div>@Creature.Intelligence</div>
-                                            <div>@Creature.CalculateModifier(Creature.Intelligence)</div>
-
-                                            <div class="font-grey-800 font-medium text-uppercase text-left">Wis</div>
-                                            <div>@Creature.Wisdom</div>
-                                            <div>@Creature.CalculateModifier(Creature.Wisdom)</div>
-
-                                            <div class="font-grey-800 font-medium text-uppercase text-left">Chr</div>
-                                            <div>@Creature.Charisma</div>
-                                            <div>@Creature.CalculateModifier(Creature.Charisma)</div>
+                                        <div class="creature-input" title="HP">
+                                            <input type="number" value="@Creature.HP" @oninput="@(e => UpdateEntityHP(Creature, e))" min="0" />
+                                            <i>
+                                                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="heartbeat" class="svg-inline--fa fa-heartbeat fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M468.7 76.5C423.6 32.2 375 32 362.3 32c-12.7 0-61.5.2-106.3 44.4C211.3 32.3 162.5 32 149.7 32c-12.7 0-61.4.2-106.4 44.5C15.4 104 0 140.7 0 179.9 0 214.1 12.3 246 33.8 272h120.8l29.9-71.8 56.9 126.4c5.5 12.3 22.9 12.7 28.9.6l49.7-99.4 22.1 44.2h136c21.5-26 33.8-57.9 33.8-92.1.1-39.2-15.3-75.9-43.2-103.4zM462.5 240H361.9l-27.6-55.2c-5.9-11.8-22.7-11.8-28.6 0l-48.9 97.9-58.2-129.3c-5.8-12.8-24-12.5-29.4.4L133.3 240H49.5c-9.2-14.6-42.6-82.7 18.3-142.7C90.4 75.1 120 64 149.7 64c33.9 0 54.5 6.3 106.3 57.3C311 67.1 330.5 64 362.3 64c29.7 0 59.3 11.1 81.8 33.3 61 60.1 27.5 128.2 18.4 142.7zM268.7 443.4c-6.2 6.1-16.2 6.1-22.4 0L108.9 304H64l159.9 162.2c18.7 18.5 48.6 18.4 67.3 0L448 304h-44.5L268.7 443.4z"></path></svg>
+                                            </i>
                                         </div>
-                                        break;
-                                    case 3:
-                                        <dl class="w-full" style="max-height: 150px;overflow-y:auto;">
-                                            @for(int k = 0; k < Creature.Actions.Count; k++){
-                                                <dt class="block w-full line-loose font-sm font-grey-800 font-medium">@Creature.Actions[k].Name</dt>
-                                                <dd class="block w-full line-snug font-xs font-grey-700 mb-0.5">@Creature.Actions[k].Description</dd>
-                                            }
-                                            @for(int k = 0; k < Creature.Abilities.Count; k++){
-                                                <dt class="block w-full line-loose font-sm font-grey-800 font-medium">@Creature.Abilities[k].Name</dt>
-                                                <dd class="block w-full line-snug font-xs font-grey-700 mb-0.5">@Creature.Abilities[k].Description</dd>
-                                            }
-                                        </dl>
-                                        break;
-                                    default:
-                                        break;
-                                }
+                                    </div>
+                                </div>
+                                <div data-view="2">
+                                    <div class="w-full stat-block" style="border-width:1px 0 0 1px;border-style:solid;border-color:var(--grey-300);">
+                                        <div></div>
+                                        <div class="font-grey-800 font-medium">Score</div>
+                                        <div class="font-grey-800 font-medium">Modifer</div>
+                                        
+                                        <div class="font-grey-800 font-medium text-uppercase text-left">Str</div>
+                                        <div>@Creature.Strength</div>
+                                        <div>@Creature.CalculateModifier(Creature.Strength)</div>
+
+                                        <div class="font-grey-800 font-medium text-uppercase text-left">Dex</div>
+                                        <div>@Creature.Dexterity</div>
+                                        <div>@Creature.CalculateModifier(Creature.Dexterity)</div>
+
+                                        <div class="font-grey-800 font-medium text-uppercase text-left">Con</div>
+                                        <div>@Creature.Constitution</div>
+                                        <div>@Creature.CalculateModifier(Creature.Constitution)</div>
+                                        
+                                        <div class="font-grey-800 font-medium text-uppercase text-left">Int</div>
+                                        <div>@Creature.Intelligence</div>
+                                        <div>@Creature.CalculateModifier(Creature.Intelligence)</div>
+
+                                        <div class="font-grey-800 font-medium text-uppercase text-left">Wis</div>
+                                        <div>@Creature.Wisdom</div>
+                                        <div>@Creature.CalculateModifier(Creature.Wisdom)</div>
+
+                                        <div class="font-grey-800 font-medium text-uppercase text-left">Chr</div>
+                                        <div>@Creature.Charisma</div>
+                                        <div>@Creature.CalculateModifier(Creature.Charisma)</div>
+                                    </div>
+                                </div>
+                                <div data-view="3">
+                                    <dl class="w-full" style="max-height: 150px;overflow-y:auto;">
+                                        @for(int k = 0; k < Creature.Actions.Count; k++){
+                                            <dt class="block w-full line-loose font-sm font-grey-800 font-medium">@Creature.Actions[k].Name</dt>
+                                            <dd class="block w-full line-snug font-xs font-grey-700 mb-0.5">@Creature.Actions[k].Description</dd>
+                                        }
+                                        @for(int k = 0; k < Creature.Abilities.Count; k++){
+                                            <dt class="block w-full line-loose font-sm font-grey-800 font-medium">@Creature.Abilities[k].Name</dt>
+                                            <dd class="block w-full line-snug font-xs font-grey-700 mb-0.5">@Creature.Abilities[k].Description</dd>
+                                        }
+                                    </dl>
+                                </div>
                             </div>
-                        </div>
+                        </pawn-hud>
                     }else{
                         <span class="nametag">@Creature.Name</span>
                     }
@@ -130,7 +124,6 @@
                     style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
                     oncontextmenu="return false;"
                     data-uid="@NPC.UID" 
-                    onclick="event.stopImmediatePropagation()"
                 >
                     <i 
                         @ondragstart="@(e => HandleDragStart(NPC.UID))" 
@@ -141,7 +134,7 @@
                         }
                     </i>
                     @if(Tabletop.IsGameMaster){
-                        <div class="creature-hud">
+                        <pawn-hud class="js-hud creature-hud">
                             <header>
                                 <span>@NPC.Name</span>
                                 <div flex="row nowrap items-center">
@@ -166,7 +159,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </pawn-hud>
                     }else{
                         <span class="nametag">@NPC.Name</span>
                     }
@@ -186,7 +179,6 @@
                     style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
                     oncontextmenu="return false;"
                     data-uid="@Player.UID"
-                    onclick="event.stopImmediatePropagation()"
                 >
                     <i 
                         @ondragstart="@(e => HandleDragStart(Player.UID))" 

@@ -672,9 +672,9 @@ namespace FreeTabletop.Client.Pages
             JSRuntime.InvokeVoidAsync("Install");
         }
 
-        public async Task RemoveEntity(string uid)
+        public void RemoveEntity(string uid)
         {
-            await Hub.RemoveEntity(uid);
+            Hub.RemoveEntity(uid);
         }
 
         public void RenderRollNotification(int diceCount, string die, string results, string name)

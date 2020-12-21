@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - moved cell rendering to use the `<canvas>` element
 - modal CSS performance issues
 - fog of war performance issues
+- creature HUD overflow issues
 
 ## [0.3.4] - 2020-12-04
 
