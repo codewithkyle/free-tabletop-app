@@ -19,6 +19,10 @@ type MessengerState = {
     activePlayerUID: string;
     message: string;
     clientUID: string;
+    allChat: {
+        unreadAllChatMessages: boolean;
+        messages: Array<Message>;
+    }
 };
 class Messenger extends HTMLElement{
     private state: MessengerState;
@@ -29,29 +33,32 @@ class Messenger extends HTMLElement{
             players: [],
             activePlayerUID: null,
             message: "",
-            clientUID: null
+            clientUID: null,
+            allChat: {
+                unreadAllChatMessages: false,
+                messages: []
+            }
         };
     }
 
     public addMessage(message:Message){
         const updatedState ={...this.state};
-        for (let i = 0; i < updatedState.players.length; i++){
-            if (updatedState.players[i].messageUID === message.authorUID || updatedState.players[i].messageUID === message.recipientUID){
-                updatedState.players[i].messages.push(message);
-                if (this.state.activePlayerUID !== updatedState.players[i].messageUID){
-                    updatedState.players[i].unreadMessages = true;
-                    PlaySound("message.wav");
-                } else {
-                    const textarea:HTMLTextAreaElement = this.querySelector(".js-messenger-input");
-                    if (textarea){
-                        textarea.scrollTo({
-                            top: textarea.scrollHeight,
-                            left: 0,
-                            behavior: "auto",
-                        });
+        if (message.recipientUID === null){
+            updatedState.allChat.messages.push(message);
+            if (updatedState.activePlayerUID !== null){
+                updatedState.allChat.unreadAllChatMessages = true;
+                PlaySound("message.wav");
+            }
+        } else {
+            for (let i = 0; i < updatedState.players.length; i++){
+                if (updatedState.players[i].messageUID === message.authorUID || updatedState.players[i].messageUID === message.recipientUID){
+                    updatedState.players[i].messages.push(message);
+                    if (this.state.activePlayerUID !== updatedState.players[i].messageUID){
+                        updatedState.players[i].unreadMessages = true;
+                        PlaySound("message.wav");
                     }
+                    break;
                 }
-                break;
             }
         }
         this.setState(updatedState);
@@ -111,13 +118,18 @@ class Messenger extends HTMLElement{
 
     private setActivePlayerUID:EventListener = (e:Event) => {
         const updatedState = {...this.state};
-        for (let i = 0; i < updatedState.players.length; i++){
-            // @ts-ignore
-            if (updatedState.players[i].messageUID === e.target.dataset.uid){
-                updatedState.activePlayerUID = updatedState.players[i].messageUID;
-                updatedState.players[i].unreadMessages = false;
-                break;
+        const target = e.target as HTMLElement;
+        if (target.dataset?.uid){
+            for (let i = 0; i < updatedState.players.length; i++){
+                if (updatedState.players[i].messageUID === target.dataset.uid){
+                    updatedState.activePlayerUID = updatedState.players[i].messageUID;
+                    updatedState.players[i].unreadMessages = false;
+                    break;
+                }
             }
+        } else {
+            updatedState.activePlayerUID = null;
+            updatedState.allChat.unreadAllChatMessages = false;
         }
         this.setState(updatedState);
     }
@@ -138,25 +150,48 @@ class Messenger extends HTMLElement{
                 break;
             }
         }
-        return html`
-            <ul>
-                <li class="font-xs font-grey-700 text-center py-0.5">Beginning of message history with ${player.name}.</li>
-                ${player.messages.map(message => {
-                    return html`
-                        <li class="${message.authorUID === this.state.clientUID ? "outgoing" : "incoming"}">
-                            <span class="msg">${message.msg}</span>
-                            <span class="author">${message.author}</span>
-                        </li>
-                    `;
-                })}
-            </ul>
-            <textarea class="js-messenger-input" placeholder="Send ${player.name} a message..." @keyup=${this.handleKeyup}></textarea>
-        `;
+        let view;
+        if (player){
+            view = html`
+                <ul class="js-messenger-chat">
+                    <li class="font-xs font-grey-700 text-center py-0.5">Beginning of message history with ${player.name}.</li>
+                    ${player.messages.map(message => {
+                        return html`
+                            <li class="${message.authorUID === this.state.clientUID ? "outgoing" : "incoming"}">
+                                <span class="msg">${message.msg}</span>
+                                <span class="author">${message.author}</span>
+                            </li>
+                        `;
+                    })}
+                </ul>
+                <textarea class="js-messenger-input" placeholder="Send ${player.name} a message..." @keyup=${this.handleKeyup}></textarea>
+            `;
+        } else {
+            view = html`
+                <ul class="js-messenger-chat">
+                    <li class="font-xs font-grey-700 text-center py-0.5">Beginning of all chat message history.</li>
+                    ${this.state.allChat.messages.map(message => {
+                        return html`
+                            <li class="${message.authorUID === this.state.clientUID ? "outgoing" : "incoming"}">
+                                <span class="msg">${message.msg}</span>
+                                <span class="author">${message.author}</span>
+                            </li>
+                        `;
+                    })}
+                </ul>
+                <textarea class="js-messenger-input" placeholder="Send everyone a message..." @keyup=${this.handleKeyup}></textarea>
+            `;
+        }
+        return view;
     }
 
     private render(){
         const view = html`
             <div class="p-0.5">
+                <button title="all chat" class="chat-toggle-button ${this.state.activePlayerUID === null ? "is-active" : ""}" @click=${this.setActivePlayerUID}>
+                    All Chat
+                    ${this.state.allChat.unreadAllChatMessages ? html`<i class="badge"></i>` : null}
+                </button>
                 ${this.state.players.map(player => {
                     return html`
                         <button data-uid="${player.messageUID}" title="${player.name}" class="chat-toggle-button ${this.state.activePlayerUID === player.messageUID ? "is-active" : ""}" @click=${this.setActivePlayerUID}>
@@ -167,20 +202,15 @@ class Messenger extends HTMLElement{
                 })}
             </div>
             <div class="p-0.5">
-                ${!this.state.activePlayerUID ? 
-                    html`
-                        <p class="font-xs font-grey-700 w-full h-full" flex="items-center justify-center">
-                            <span class="inline-block">Select a player to begin sending messages.</span>
-                        </p>
-                    ` : this.renderPlayerChat()}
+                ${this.renderPlayerChat()}
             </div>
         `;
         // @ts-ignore
         render(view, this);
-        const textarea:HTMLTextAreaElement = this.querySelector(".js-messenger-input");
-        if (textarea){
-            textarea.scrollTo({
-                top: textarea.scrollHeight,
+        const chat:HTMLElement = this.querySelector(".js-messenger-chat");
+        if (chat){
+            chat.scrollTo({
+                top: chat.scrollHeight,
                 left: 0,
                 behavior: "auto",
             });

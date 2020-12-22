@@ -267,7 +267,14 @@ namespace FreeTabletop.Client.Controllers
 
         public async Task SendMessage(string activePlayerUID, string msg)
         {
-            await Networker.hubConnection.SendAsync("Player:Message", msg, activePlayerUID);
+            if (activePlayerUID != null)
+            {
+                await Networker.hubConnection.SendAsync("Player:Message", msg, activePlayerUID);
+            }
+            else
+            {
+                await Networker.hubConnection.SendAsync("Room:Message", msg);
+            }
         }
 
         public async Task Disconnect()

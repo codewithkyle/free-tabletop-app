@@ -411,6 +411,22 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:Message")]
+        public async Task AllChatMessage(string msg)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            Room room = GetRoom(player.RoomCode);
+            if (room != null)
+            {
+                Message message = new Message();
+                message.Author = player.Name;
+                message.Msg = msg;
+                message.RecipientUID = null;
+                message.AuthorUID = player.MessageUID;
+                await Clients.Group(room.RoomCode).SendAsync("Set:Message", message);
+            }
+        }
+
         [HubMethodName("Player:Message")]
         public async Task Message(string msg, string targetPlayerUID)
         {
