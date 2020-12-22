@@ -63,13 +63,14 @@ messenger-component{
                 width: 75%;
                 line-height: 1.618;
                 margin-bottom: 0.25rem;
-                padding: 0.5rem 1rem;
+                padding: 0.5rem 0.75rem;
+                font-size: var(--font-sm);
             }
 
             .author{
                 display: block;
                 width: 100%;
-                font-size: 0.75rem;
+                font-size: var(--font-xs);
                 color: var(--grey-700);
                 padding: 0 0.25rem;
             }
