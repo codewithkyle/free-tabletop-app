@@ -161,8 +161,9 @@ class Tabletop extends HTMLElement {
             let audio = null;
             if (!localStorage.getItem("loadingDisabled")) {
                 audio = new Audio(`${location.origin}/sfx/loading.wav`);
+                audio.autoplay = true;
                 audio.loop = true;
-                await audio.play();
+                this.appendChild(audio);
             }
             this.image = new Image();
             this.image.onload = () => {
@@ -175,7 +176,7 @@ class Tabletop extends HTMLElement {
                     behavior: "auto"
                 });
                 if (audio) {
-                    audio.pause();
+                    audio.remove();
                 }
                 this.render = true;
                 this.setAttribute("state", "loaded");
