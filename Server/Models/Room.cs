@@ -105,6 +105,7 @@ namespace FreeTabletop.Server.Models
                     player.Position = Players[i].Position;
                     player.Messages = Players[i].Messages;
                     player.Position = Players[i].Position;
+                    player.MessageUID = Players[i].MessageUID;
                     players.Add(player);
                 }
             }

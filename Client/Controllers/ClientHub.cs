@@ -52,9 +52,8 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<List<Entity>>("Sync:CombatOrder", Room.UpdateCombatOrder);
 
                 Networker.hubConnection.On<string>("Set:PlayerUID", UpdateUID);
-                Networker.hubConnection.On<bool, string>("Set:PlayerStatus", Room.UpdatePlayerStatus);
-                Networker.hubConnection.On<List<Message>>("Set:Messages", Room.UpdatesMessages);
-                Networker.hubConnection.On<List<PlayerEntity>>("Set:Players", Room.UpdatePlayers);
+                Networker.hubConnection.On<bool, string, string>("Set:PlayerStatus", Room.UpdatePlayerStatus);
+                Networker.hubConnection.On<Message>("Set:Message", Room.RenderMessage);
 
                 Networker.hubConnection.On("Player:Kick", HandleKick);
 
@@ -134,8 +133,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Notification:EntityOnDeck");
             Networker.hubConnection.Remove("Notification:Ping");
             Networker.hubConnection.Remove("Notification:Roll");
-            Networker.hubConnection.Remove("Set:Messages");
-            Networker.hubConnection.Remove("Set:Players");
+            Networker.hubConnection.Remove("Set:Message");
             Networker.hubConnection.Remove("Tabletop:SyncCells");
             Networker.hubConnection.Remove("Tabletop:UpdateEntityPosition");
             Networker.hubConnection.Remove("Tabletop:UpdateLock");
@@ -267,7 +265,7 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:Ping", x, y);
         }
 
-        public async Task SendMessage(string msg, string activePlayerUID)
+        public async Task SendMessage(string activePlayerUID, string msg)
         {
             await Networker.hubConnection.SendAsync("Player:Message", msg, activePlayerUID);
         }

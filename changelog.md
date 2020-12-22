@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- players can directly message each other
+
 ### Fixed
 
 - fixed pawn relocation upon reload bug

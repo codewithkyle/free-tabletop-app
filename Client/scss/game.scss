@@ -195,14 +195,18 @@
                         transition: all 150ms var(--ease-in-out);
                         font-weight: var(--font-medium);
                         font-size: var(--font-sm);
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
 
                         &:hover,
                         &:focus-within {
                             color: var(--grey-800);
                             background-color: var(--grey-100);
+                        }
+
+                        span{
+                            max-width: 175px;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
                         }
                     }
 

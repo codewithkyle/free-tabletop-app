@@ -10,6 +10,7 @@ namespace FreeTabletop.Shared.Models
         public List<Message> Messages {get;set;}
 
         public bool UnreadMessages = false;
+        public string MessageUID {get;set;}
 
         public void UpdateUID(string newUID)
         {

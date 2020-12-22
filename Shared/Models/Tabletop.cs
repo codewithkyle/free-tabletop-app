@@ -21,5 +21,6 @@ namespace FreeTabletop.Shared.Models
         public int CellSize { get; set; }
         public int[] Size { get; set; }
         public List<Cell> Cells = new List<Cell>();
+        public string MessageUID {get; set;}
     }
 }
