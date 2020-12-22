@@ -122,7 +122,9 @@ class Tabletop extends HTMLElement{
                         this.cells[i].style = "fog";
                         break;
                     case "Highlighter":
-                        this.cells[i].style = "highlight";
+                        if (this.cells[i].style !== "fog" || this.isGM){
+                            this.cells[i].style = "highlight";
+                        }
                         break;
                     default:
                         if (this.isGM || this.cells[i].style === "highlight"){
