@@ -2,7 +2,6 @@
 using System;
 using FreeTabletop.Server.Models;
 using System.Collections.Generic;
-using FreeTabletop.Server.Controllers;
 using FreeTabletop.Shared.Models;
 
 public static class GlobalData
@@ -137,6 +136,7 @@ public static class GlobalData
         int[] Position = {0,0};
         player.Position = Position;
         player.IsGameMaster = false;
+        player.MessageUID = UID;
         Players.Add(player);
         return player;
     }
@@ -148,6 +148,7 @@ public static class GlobalData
         player.UID = UID;
         player.RoomCode = roomCode;
         player.IsGameMaster = true;
+        player.MessageUID = UID;
         player.StaleUIDs.Add(UID);
         return player;
     }

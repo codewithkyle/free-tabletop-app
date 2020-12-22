@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.5.0] - 2020-12-22
+
+### Added
+
+- players can directly message each other
+- room based all chat
+
+### Fixed
+
+- fixed pawn relocation upon reload bug
+
 ## [0.4.0] - 2020-12-21
 
 ### Added
@@ -118,6 +129,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - initial beta build
 - CI/CD pipeline
 
+[0.5.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.3.4...v0.4.0
 [0.3.4]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.3.3...v0.3.4
 [0.3.3]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.3.2...v0.3.3

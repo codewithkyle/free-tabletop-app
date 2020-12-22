@@ -4,5 +4,7 @@ namespace FreeTabletop.Shared.Models
     {
         public string Author {get;set;}
         public string Msg {get;set;}
+        public string RecipientUID {get;set;}
+        public string AuthorUID {get;set;}
     }
 }

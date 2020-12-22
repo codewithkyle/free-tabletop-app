@@ -51,7 +51,6 @@ namespace FreeTabletop.Client.Pages
         public string ActiveDie = "d4";
         public int RollCount = 1;
         public bool CombatMenuOpen = false;
-        public string ActiveChatPlayerUID = null;
 
         public bool HasUnreadMessages = false;
 
@@ -121,10 +120,11 @@ namespace FreeTabletop.Client.Pages
             return base.OnAfterRenderAsync(firstRender);
         }
 
-        public async Task UpdatePlayerStatus(bool isGM, string uid)
+        public async Task UpdatePlayerStatus(bool isGM, string uid, string messageUID)
         {
             Tabletop.IsGameMaster = isGM;
             Tabletop.UID = uid;
+            Tabletop.MessageUID = messageUID;
             await JSRuntime.InvokeVoidAsync("SetPlayerUID", Tabletop.UID);
             if (isGM)
             {
@@ -139,6 +139,7 @@ namespace FreeTabletop.Client.Pages
             Tabletop.IsLocked = isLocked;
             Tabletop.Players = players;
             Tabletop.GameMasterUID = gmUID;
+            JSRuntime.InvokeVoidAsync("SetPlayers", players, gmUID, Tabletop.MessageUID);
             StateHasChanged();
         }
 
@@ -517,81 +518,21 @@ namespace FreeTabletop.Client.Pages
         {
             if (Key == "Enter")
             {
-                string Message = await JSRuntime.InvokeAsync<string>("GetChatMessage");
-                await Hub.SendMessage(Message, ActiveChatPlayerUID);
-                await JSRuntime.InvokeVoidAsync("ResetChatMessage");
-                StateHasChanged();
-            }
-            else
-            {
-                await JSRuntime.InvokeVoidAsync("AdjustChatMessageHeight");
-            }
-        }
-
-        public void UpdatesMessages(List<Message> messages)
-        {
-            if (messages.Count > Tabletop.Messages.Count){
-                Tabletop.Messages = messages;
-                if (!ChatMenuOpen)
-                {
-                    JSRuntime.InvokeVoidAsync("PlaySound", "message.wav");
-                    HasUnreadMessages = true;
-                }
+                string[] Data = await JSRuntime.InvokeAsync<string[]>("GetChatMessage");
+                await Hub.SendMessage(Data[0], Data[1]);
                 StateHasChanged();
             }
         }
 
-        public void UpdatePlayers(List<PlayerEntity> players)
+        public void RenderMessage(Message message)
         {
-            bool ContainsNewMessages = false;
-            string NewActivePlayerUID = null;
-            for (int i = 0; i < players.Count; i++)
-            {
-                for (int k = 0; k < Tabletop.Players.Count; k++)
-                {
-                    if (players[i].UID == Tabletop.Players[k].UID)
-                    {
-                        if (players[i].UID != ActiveChatPlayerUID || players[i].UID == ActiveChatPlayerUID && !ChatMenuOpen)
-                        {
-                            if (players[i].Messages.Count > Tabletop.Players[k].Messages.Count)
-                            {
-                                ContainsNewMessages = true;
-                                players[i].UnreadMessages = true;
-                            }
-                            else if (Tabletop.Players[k].UnreadMessages)
-                            {
-                                players[i].UnreadMessages = true;
-                            }
-                        }
-                        break;
-                    }
-                }
-            }
-            Tabletop.Players = players;
-            if (!ChatMenuOpen && ContainsNewMessages)
+            if (!ChatMenuOpen)
             {
                 JSRuntime.InvokeVoidAsync("PlaySound", "message.wav");
                 HasUnreadMessages = true;
+                StateHasChanged();
             }
-            else if (ChatMenuOpen && ContainsNewMessages && NewActivePlayerUID != ActiveChatPlayerUID)
-            {
-                JSRuntime.InvokeVoidAsync("PlaySound", "message.wav");
-            }
-            StateHasChanged();
-        }
-
-        public void SetActivePlayerUID(string uid)
-        {
-            ActiveChatPlayerUID = uid;
-            for (int k = 0; k < Tabletop.Players.Count; k++)
-            {
-                if (Tabletop.Players[k].UID == ActiveChatPlayerUID)
-                {
-                    Tabletop.Players[k].UnreadMessages = false;
-                    break;
-                }
-            }
-            StateHasChanged();
+            JSRuntime.InvokeVoidAsync("RenderMessage", message);
         }
 
         public void OpenSettingsMenu()

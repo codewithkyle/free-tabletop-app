@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FreeTabletop.Shared.Models;
+using System;
 
 namespace FreeTabletop.Server.Models
 {
