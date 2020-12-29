@@ -582,43 +582,59 @@ namespace FreeTabletop.Server.Models
             Cells[index].Style = style;
         }
 
-        public void SetBleeding(string uid, bool isBleeding)
+        private Entity GetEntity(string uid)
         {
-            bool FoundEntity = false;
+            Entity entity = null;
             for (int i = 0; i < NPCs.Count; i++)
             {
                 if (NPCs[i].UID == uid)
                 {
-                    FoundEntity = true;
-                    NPCs[i].IsBleeding = isBleeding;
+                    entity = NPCs[i];
                     break;
                 }
             }
             for (int i = 0; i < Creatures.Count; i++)
             {
-                if (FoundEntity)
+                if (entity != null)
                 {
                     break;
                 }
                 if (Creatures[i].UID == uid)
                 {
-                    FoundEntity = true;
-                    Creatures[i].IsBleeding = isBleeding;
+                    entity = Creatures[i];
                     break;
                 }
             }
             for (int i = 0; i < Players.Count; i++)
             {
-                if (FoundEntity)
+                if (entity != null)
                 {
                     break;
                 }
                 if (Players[i].UID == uid)
                 {
-                    FoundEntity = true;
-                    Players[i].IsBleeding = isBleeding;
+                    entity = Players[i];
                     break;
                 }
+            }
+            return entity;
+        }
+
+        public void SetBleeding(string uid, bool isBleeding)
+        {
+            Entity entity = GetEntity(uid);
+            if (entity != null)
+            {
+                entity.IsBleeding = isBleeding;
+            }
+        }
+
+        public void SetBurning(string uid, bool isBurning)
+        {
+            Entity entity = GetEntity(uid);
+            if (entity != null)
+            {
+                entity.IsBurning = isBurning;
             }
         }
     }

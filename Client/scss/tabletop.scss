@@ -159,6 +159,22 @@
             }
         }
 
+        .burning{
+            background-image: url("../images/fire.png");
+            background-position-x: 0px;
+            background-position-y: 0px;
+            background-repeat: no-repeat;
+            background-size: calc(96px * 12) 96px;
+            position: absolute;
+            width: 96px;
+            height: 96px;
+            user-select: none;
+            pointer-events: none;
+            animation: fire 900ms 0ms linear infinite;
+            transform: translateY(-26px);
+            filter: drop-shadow(0 0 16px rgba(#FF8800, 0.87)) drop-shadow(0 0 8px rgba(#feff00, 0.6)) opacity(0.87);
+        }
+
         .creature-hud {
             position: absolute;
             top: 0;
@@ -427,4 +443,45 @@
     opacity: 0;
     user-select: none;
     pointer-events: none;
+}
+@keyframes fire{
+    0%, 8.2% {
+        background-position-x: 0;
+    }
+    8.3%, 16.5% {
+        background-position-x: -96px;
+    }
+    16.6%, 24.8% {
+        background-position-x: -192px;
+    }
+    24.9%, 33.1% {
+        background-position-x: -288px;
+    }
+    33.2%, 41.4% {
+        background-position-x: -384px;
+    }
+    41.5%, 49.7% {
+        background-position-x: -480px;
+    }
+    49.8%, 58% {
+        background-position-x: -576px;
+    }
+    58.1%, 66.3% {
+        background-position-x: -672px;
+    }
+    66.4%, 74.6% {
+        background-position-x: -768px;
+    }
+    74.7%, 82.9% {
+        background-position-x: -864px;
+    }
+    83%, 91.2% {
+        background-position-x: -960px;
+    }
+    91.3%, 99.5% {
+        background-position-x: -1056px;
+    }
+    99.6%, 100% {
+        background-position-x: -1152px;
+    }
 }

@@ -189,6 +189,21 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:SetBurning")]
+        public async Task SetBurning(string uid, bool isBurning)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.SetBurning(uid, isBurning);
+                    await Clients.Group(room.RoomCode).SendAsync("Entity:SetBurning", uid, isBurning);
+                }
+            }
+        }
+
         [HubMethodName("Room:SpawnCreature")]
         public async Task SpawnCreature(Creature creature)
         {

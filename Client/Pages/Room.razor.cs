@@ -765,5 +765,28 @@ namespace FreeTabletop.Client.Pages
                 StateHasChanged();
             }
         }
+
+        public void ToggleBurning(Entity entity)
+        {
+            if (entity.IsBurning)
+            {
+                entity.IsBurning = false;
+            }
+            else
+            {
+                entity.IsBurning = true;
+            }
+            Hub.SetBurning(entity.UID, entity.IsBurning);
+        }
+
+        public void SetEntityBurning(string uid, bool isBurning)
+        {
+            Entity entity = Tabletop.GetEntityByUID(uid);
+            if (entity != null)
+            {
+                entity.IsBurning = isBurning;
+                StateHasChanged();
+            }
+        }
     }
 }
