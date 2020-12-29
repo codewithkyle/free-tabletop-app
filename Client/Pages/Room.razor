@@ -178,6 +178,9 @@
                     @if(NPC.IsBurning){
                         <div draggable="false" class="burning"></div>
                     }
+                    @if(NPC.IsPoisoned){
+                        <div draggable="false" class="poison"></div>
+                    }
                     @if(Tabletop.IsGameMaster){
                         <pawn-hud class="creature-hud" data-view="1">
                             <header>
@@ -217,7 +220,7 @@
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@NPC.UID-poisoned" type="checkbox" @bind="NPC.IsPoisoned" />
+                                            <input id="@NPC.UID-poisoned" type="checkbox"  @onchange="@(e => TogglePoison(NPC))" />
                                             <label for="@NPC.UID-poisoned">
                                                 <i></i>
                                                 <span>Poisoned</span>
@@ -271,6 +274,9 @@
                     @if(Player.IsBurning){
                         <div draggable="false" class="burning"></div>
                     }
+                    @if(Player.IsPoisoned){
+                        <div draggable="false" class="poison"></div>
+                    }
                     @if(Tabletop.IsGameMaster){
                         <pawn-hud class="creature-hud" data-view="1">
                             <header>
@@ -287,7 +293,7 @@
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Player.UID-poisoned" type="checkbox" @bind="Player.IsPoisoned" />
+                                            <input id="@Player.UID-poisoned" type="checkbox" @onchange="@(e => TogglePoison(Player))" />
                                             <label for="@Player.UID-poisoned">
                                                 <i></i>
                                                 <span>Poisoned</span>
