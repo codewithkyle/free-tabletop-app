@@ -106,6 +106,10 @@ namespace FreeTabletop.Server.Models
                     player.Messages = Players[i].Messages;
                     player.Position = Players[i].Position;
                     player.MessageUID = Players[i].MessageUID;
+                    player.IsBleeding = Players[i].IsBleeding;
+                    player.IsBurning = Players[i].IsBurning;
+                    player.IsPoisoned = Players[i].IsPoisoned;
+                    player.IsConcentrating = Players[i].IsConcentrating;
                     players.Add(player);
                 }
             }
@@ -576,6 +580,80 @@ namespace FreeTabletop.Server.Models
         public void UpdateCellStyle(int index, string style)
         {
             Cells[index].Style = style;
+        }
+
+        private Entity GetEntity(string uid)
+        {
+            Entity entity = null;
+            for (int i = 0; i < NPCs.Count; i++)
+            {
+                if (NPCs[i].UID == uid)
+                {
+                    entity = NPCs[i];
+                    break;
+                }
+            }
+            for (int i = 0; i < Creatures.Count; i++)
+            {
+                if (entity != null)
+                {
+                    break;
+                }
+                if (Creatures[i].UID == uid)
+                {
+                    entity = Creatures[i];
+                    break;
+                }
+            }
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (entity != null)
+                {
+                    break;
+                }
+                if (Players[i].UID == uid)
+                {
+                    entity = Players[i];
+                    break;
+                }
+            }
+            return entity;
+        }
+
+        public void SetBleeding(string uid, bool isBleeding)
+        {
+            Entity entity = GetEntity(uid);
+            if (entity != null)
+            {
+                entity.IsBleeding = isBleeding;
+            }
+        }
+
+        public void SetBurning(string uid, bool isBurning)
+        {
+            Entity entity = GetEntity(uid);
+            if (entity != null)
+            {
+                entity.IsBurning = isBurning;
+            }
+        }
+
+        public void SetPoison(string uid, bool isPoisoned)
+        {
+            Entity entity = GetEntity(uid);
+            if (entity != null)
+            {
+                entity.IsPoisoned = isPoisoned;
+            }
+        }
+
+        public void SetConcentration(string uid, bool isConcentrating)
+        {
+            Entity entity = GetEntity(uid);
+            if (entity != null)
+            {
+                entity.IsConcentrating = isConcentrating;
+            }
         }
     }
 }

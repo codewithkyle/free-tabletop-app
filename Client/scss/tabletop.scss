@@ -47,6 +47,23 @@
         z-index: 1;
     }
 
+    bleeding-effect{
+        position: absolute;
+        pointer-events: none;
+        user-select: none;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+
+        canvas{
+            display: inline-block;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+
     .pawn {
         position: absolute;
         display: inline-flex;
@@ -130,14 +147,77 @@
             box-shadow: 1px 1px 3px rgba(51, 51, 51, 0.6);
             border-width: 0 0 2px 0;
             border-style: solid;
+            z-index: 2;
 
             &[draggable="true"] {
                 cursor: grab;
 
-                &:active + .creature-hud {
-                    visibility: hidden;
-                    opacity: 0;
+                &:active ~ .creature-hud {
+                    visibility: hidden !important;
+                    opacity: 0 !important;
                 }
+            }
+        }
+
+        .burning{
+            background-image: url("../images/fire.png");
+            background-position-x: 0px;
+            background-position-y: 0px;
+            background-repeat: no-repeat;
+            background-size: calc(96px * 12) 96px;
+            position: absolute;
+            width: 96px;
+            height: 96px;
+            user-select: none;
+            pointer-events: none;
+            animation: fire 900ms 0ms linear infinite;
+            transform: translateY(-26px);
+            filter: drop-shadow(0 0 16px rgba(#FF8800, 0.87)) drop-shadow(0 0 8px rgba(#feff00, 0.6)) opacity(0.87);
+        }
+
+        .poison{
+            background-image: url("../images/poison.png");
+            background-position-x: 0px;
+            background-position-y: 0px;
+            background-repeat: no-repeat;
+            background-size: calc(96px * 8) 96px;
+            position: absolute;
+            width: 96px;
+            height: 96px;
+            user-select: none;
+            pointer-events: none;
+            animation: poison 1200ms 0ms linear infinite;
+            filter: drop-shadow(0 0 16px rgba(#b3e800, 0.87)) opacity(0.87) brightness(1.5);
+        }
+
+        .concentration{
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.87;
+
+            &::before,
+            &::after{
+                content: "";
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                position: absolute;
+            }
+
+            &::before{
+                border: 2px solid rgb(90, 20, 255);
+                box-shadow: 0 0 8px rgba(90, 20, 255,0.87);
+            }
+
+            &::after{
+                border-bottom: 2px solid rgb(231, 220, 255);
+                animation: spinRing 600ms 0ms linear infinite;
+                transform-origin: center center;
             }
         }
 
@@ -175,6 +255,11 @@
             }
             &[data-view="3"]{
                 [data-view="3"]{
+                    display: block;
+                }
+            }
+            &[data-view="4"]{
+                [data-view="4"]{
                     display: block;
                 }
             }
@@ -258,8 +343,6 @@
             [data-view]{
                 display: none;
             }
-
-            
 
             .creature-input {
                 position: relative;
@@ -406,4 +489,91 @@
     opacity: 0;
     user-select: none;
     pointer-events: none;
+}
+@keyframes fire{
+    0%, 8.2% {
+        background-position-x: 0;
+    }
+    8.3%, 16.5% {
+        background-position-x: -96px;
+    }
+    16.6%, 24.8% {
+        background-position-x: -192px;
+    }
+    24.9%, 33.1% {
+        background-position-x: -288px;
+    }
+    33.2%, 41.4% {
+        background-position-x: -384px;
+    }
+    41.5%, 49.7% {
+        background-position-x: -480px;
+    }
+    49.8%, 58% {
+        background-position-x: -576px;
+    }
+    58.1%, 66.3% {
+        background-position-x: -672px;
+    }
+    66.4%, 74.6% {
+        background-position-x: -768px;
+    }
+    74.7%, 82.9% {
+        background-position-x: -864px;
+    }
+    83%, 91.2% {
+        background-position-x: -960px;
+    }
+    91.3%, 99.5% {
+        background-position-x: -1056px;
+    }
+    99.6%, 100% {
+        background-position-x: -1152px;
+    }
+}
+@keyframes poison{
+    0%, 6.24% {
+        background-position-x: 0;
+        opacity: 1;
+    }
+    6.25%, 12.4% {
+        background-position-x: -96px;
+        opacity: 1;
+    }
+    12.5%, 18.74% {
+        background-position-x: -192px;
+        opacity: 1;
+    }
+    18.75%, 24.9% {
+        background-position-x: -288px;
+        opacity: 1;
+    }
+    25%, 31.24% {
+        background-position-x: -384px;
+        opacity: 1;
+    }
+    31.25%, 37.4% {
+        background-position-x: -480px;
+        opacity: 0.87;
+    }
+    37.5%, 43.74%{
+        background-position-x: -576px;
+        opacity: 0.6;
+    }
+    43.75%, 50%{
+        background-position-x: -672px;
+        opacity: 0.3;
+    }
+    50.1%, 100%{
+        background-position-x: -672px;
+        opacity: 0;
+    }
+}
+@keyframes spinRing{
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
 }

@@ -734,7 +734,6 @@ namespace FreeTabletop.Client.Pages
                         Tabletop.Cells[cells[i].index].Style = cells[i].style;
                         Hub.ChangeCellStyle(cells[i].index, cells[i].style);
                     }
-                    
                 }
             }
         }
@@ -742,6 +741,98 @@ namespace FreeTabletop.Client.Pages
         public void CenterOnPawn()
         {
             JSRuntime.InvokeVoidAsync("LocatePawn");
+        }
+
+        public void ToggleBleeding(Entity entity)
+        {
+            if (entity.IsBleeding)
+            {
+                entity.IsBleeding = false;
+            }
+            else
+            {
+                entity.IsBleeding = true;
+            }
+            Hub.SetBleeding(entity.UID, entity.IsBleeding);
+        }
+
+        public void SetEntityBleeding(string uid, bool isBleeding)
+        {
+            Entity entity = Tabletop.GetEntityByUID(uid);
+            if (entity != null)
+            {
+                entity.IsBleeding = isBleeding;
+                StateHasChanged();
+            }
+        }
+
+        public void ToggleBurning(Entity entity)
+        {
+            if (entity.IsBurning)
+            {
+                entity.IsBurning = false;
+            }
+            else
+            {
+                entity.IsBurning = true;
+            }
+            Hub.SetBurning(entity.UID, entity.IsBurning);
+        }
+
+        public void SetEntityBurning(string uid, bool isBurning)
+        {
+            Entity entity = Tabletop.GetEntityByUID(uid);
+            if (entity != null)
+            {
+                entity.IsBurning = isBurning;
+                StateHasChanged();
+            }
+        }
+
+        public void TogglePoison(Entity entity)
+        {
+            if (entity.IsPoisoned)
+            {
+                entity.IsPoisoned = false;
+            }
+            else
+            {
+                entity.IsPoisoned = true;
+            }
+            Hub.SetPoison(entity.UID, entity.IsPoisoned);
+        }
+
+        public void SetEntityPoison(string uid, bool isPoisoned)
+        {
+            Entity entity = Tabletop.GetEntityByUID(uid);
+            if (entity != null)
+            {
+                entity.IsPoisoned = isPoisoned;
+                StateHasChanged();
+            }
+        }
+
+        public void ToggleConcentration(Entity entity)
+        {
+            if (entity.IsConcentrating)
+            {
+                entity.IsConcentrating = false;
+            }
+            else
+            {
+                entity.IsConcentrating = true;
+            }
+            Hub.SetConcentration(entity.UID, entity.IsConcentrating);
+        }
+
+        public void SetEntityConcentration(string uid, bool isConcentrating)
+        {
+            Entity entity = Tabletop.GetEntityByUID(uid);
+            if (entity != null)
+            {
+                entity.IsConcentrating = isConcentrating;
+                StateHasChanged();
+            }
         }
     }
 }

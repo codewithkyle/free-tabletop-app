@@ -1,9 +1,11 @@
 class Pawn extends HTMLElement{
     private HUD:HTMLElement;
+    public timeToSplatter:number;
 
     constructor(){
         super();
         this.HUD = null;
+        this.timeToSplatter = 0;
     }
 
     public UpdatePosition(x:number, y:number, cellSize:number){
