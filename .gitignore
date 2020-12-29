@@ -6,6 +6,8 @@ node_modules
 /_js
 web_modules
 compiled
+/Client/wwwroot/js
+/Client/wwwroot/css
 
 # User-specific files
 *.rsuser
