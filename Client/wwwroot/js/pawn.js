@@ -3,6 +3,7 @@ class Pawn extends HTMLElement {
         super();
         this.checkHUD = this.updateHUD.bind(this);
         this.HUD = null;
+        this.timeToSplatter = 0;
     }
     UpdatePosition(x, y, cellSize) {
         const cellX = Math.floor(x / cellSize);

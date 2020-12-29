@@ -47,6 +47,23 @@
         z-index: 1;
     }
 
+    bleeding-effect{
+        position: absolute;
+        pointer-events: none;
+        user-select: none;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+
+        canvas{
+            display: inline-block;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+
     .pawn {
         position: absolute;
         display: inline-flex;
@@ -130,13 +147,14 @@
             box-shadow: 1px 1px 3px rgba(51, 51, 51, 0.6);
             border-width: 0 0 2px 0;
             border-style: solid;
+            z-index: 2;
 
             &[draggable="true"] {
                 cursor: grab;
 
-                &:active + .creature-hud {
-                    visibility: hidden;
-                    opacity: 0;
+                &:active ~ .creature-hud {
+                    visibility: hidden !important;
+                    opacity: 0 !important;
                 }
             }
         }
@@ -175,6 +193,11 @@
             }
             &[data-view="3"]{
                 [data-view="3"]{
+                    display: block;
+                }
+            }
+            &[data-view="4"]{
+                [data-view="4"]{
                     display: block;
                 }
             }
@@ -258,8 +281,6 @@
             [data-view]{
                 display: none;
             }
-
-            
 
             .creature-input {
                 position: relative;

@@ -106,6 +106,10 @@ namespace FreeTabletop.Server.Models
                     player.Messages = Players[i].Messages;
                     player.Position = Players[i].Position;
                     player.MessageUID = Players[i].MessageUID;
+                    player.IsBleeding = Players[i].IsBleeding;
+                    player.IsBurning = Players[i].IsBurning;
+                    player.IsPoisoned = Players[i].IsPoisoned;
+                    player.IsConcentrating = Players[i].IsConcentrating;
                     players.Add(player);
                 }
             }
@@ -576,6 +580,46 @@ namespace FreeTabletop.Server.Models
         public void UpdateCellStyle(int index, string style)
         {
             Cells[index].Style = style;
+        }
+
+        public void SetBleeding(string uid, bool isBleeding)
+        {
+            bool FoundEntity = false;
+            for (int i = 0; i < NPCs.Count; i++)
+            {
+                if (NPCs[i].UID == uid)
+                {
+                    FoundEntity = true;
+                    NPCs[i].IsBleeding = isBleeding;
+                    break;
+                }
+            }
+            for (int i = 0; i < Creatures.Count; i++)
+            {
+                if (FoundEntity)
+                {
+                    break;
+                }
+                if (Creatures[i].UID == uid)
+                {
+                    FoundEntity = true;
+                    Creatures[i].IsBleeding = isBleeding;
+                    break;
+                }
+            }
+            for (int i = 0; i < Players.Count; i++)
+            {
+                if (FoundEntity)
+                {
+                    break;
+                }
+                if (Players[i].UID == uid)
+                {
+                    FoundEntity = true;
+                    Players[i].IsBleeding = isBleeding;
+                    break;
+                }
+            }
         }
     }
 }

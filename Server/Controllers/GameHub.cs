@@ -174,6 +174,21 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:SetBleeding")]
+        public async Task SetBleeding(string uid, bool isBleeding)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.SetBleeding(uid, isBleeding);
+                    await Clients.Group(room.RoomCode).SendAsync("Entity:SetBleeding", uid, isBleeding);
+                }
+            }
+        }
+
         [HubMethodName("Room:SpawnCreature")]
         public async Task SpawnCreature(Creature creature)
         {

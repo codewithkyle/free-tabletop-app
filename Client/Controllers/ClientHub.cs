@@ -76,6 +76,8 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<string>("Notification:EntityOnDeck", EntityOnDeckNotification);
                 Networker.hubConnection.On<int, int>("Notification:Ping", Room.RenderPing);
                 Networker.hubConnection.On<int, string, string, string>("Notification:Roll", Room.RenderRollNotification);
+
+                Networker.hubConnection.On<string, bool>("Entity:SetBleeding", Room.SetEntityBleeding);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -138,6 +140,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Tabletop:UpdateEntityPosition");
             Networker.hubConnection.Remove("Tabletop:UpdateLock");
             Networker.hubConnection.Remove("Tabletop:LoadPopupImage");
+            Networker.hubConnection.Remove("Entity:SetBleeding");
         }
 
         private async Task UpdateUID(string uid)
@@ -309,8 +312,12 @@ namespace FreeTabletop.Client.Controllers
 
         public void RenderPopupImage(string url)
         {
-            Console.WriteLine("Here");
             JSRuntime.InvokeVoidAsync("RenderPopupImage", url);
+        }
+
+        public void SetBleeding(string uid, bool isBleeding)
+        {
+            Networker.hubConnection.SendAsync("Room:SetBleeding", uid, isBleeding);
         }
     }
 }

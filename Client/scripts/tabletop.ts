@@ -152,7 +152,7 @@ class Tabletop extends HTMLElement{
                             this.ctx.fillStyle = "rgba(255, 13, 65, 0.15)";
                             break;
                         case "fog":
-                            this.ctx.fillStyle = `rgba(25,25,25,${this.isGM ? "0.6" : "1"})`;
+                            this.ctx.fillStyle = `rgba(100,100,100,${this.isGM ? "0.6" : "1"})`;
                             break;
                         default:
                             this.ctx.fillStyle = "transparent";

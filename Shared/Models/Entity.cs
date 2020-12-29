@@ -13,6 +13,10 @@ namespace FreeTabletop.Shared.Models
         public int HP { get; set; }
         public int AC { get; set; }
         public bool IsAlive { get; set; }
+        public bool IsBleeding {get;set;} = false;
+        public bool IsBurning {get;set;} = false;
+        public bool IsPoisoned {get;set;} = false;
+        public bool IsConcentrating {get;set;} = false;
 
         public void UpdatePosition(int[] newPosition)
         {
