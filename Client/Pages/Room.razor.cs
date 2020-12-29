@@ -811,5 +811,28 @@ namespace FreeTabletop.Client.Pages
                 StateHasChanged();
             }
         }
+
+        public void ToggleConcentration(Entity entity)
+        {
+            if (entity.IsConcentrating)
+            {
+                entity.IsConcentrating = false;
+            }
+            else
+            {
+                entity.IsConcentrating = true;
+            }
+            Hub.SetConcentration(entity.UID, entity.IsConcentrating);
+        }
+
+        public void SetEntityConcentration(string uid, bool isConcentrating)
+        {
+            Entity entity = Tabletop.GetEntityByUID(uid);
+            if (entity != null)
+            {
+                entity.IsConcentrating = isConcentrating;
+                StateHasChanged();
+            }
+        }
     }
 }

@@ -43,6 +43,9 @@
                     @if(Creature.IsPoisoned){
                         <div draggable="false" class="poison"></div>
                     }
+                    @if(Creature.IsConcentrating){
+                        <div class="concentration"></div>
+                    }
                     @if(Tabletop.IsGameMaster){
                         <pawn-hud class="creature-hud" data-view="1">
                             <header>
@@ -141,7 +144,7 @@
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Creature.UID-concentrating" type="checkbox" @bind="Creature.IsConcentrating" />
+                                            <input id="@Creature.UID-concentrating" type="checkbox" @onchange="@(e => ToggleConcentration(Creature))" />
                                             <label for="@Creature.UID-concentrating">
                                                 <i></i>
                                                 <span>Concentrating</span>
@@ -180,6 +183,9 @@
                     }
                     @if(NPC.IsPoisoned){
                         <div draggable="false" class="poison"></div>
+                    }
+                    @if(NPC.IsConcentrating){
+                        <div class="concentration"></div>
                     }
                     @if(Tabletop.IsGameMaster){
                         <pawn-hud class="creature-hud" data-view="1">
@@ -234,7 +240,7 @@
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@NPC.UID-concentrating" type="checkbox" @bind="NPC.IsConcentrating" />
+                                            <input id="@NPC.UID-concentrating" type="checkbox" @onchange="@(e => ToggleConcentration(NPC))" />
                                             <label for="@NPC.UID-concentrating">
                                                 <i></i>
                                                 <span>Concentrating</span>
@@ -277,6 +283,9 @@
                     @if(Player.IsPoisoned){
                         <div draggable="false" class="poison"></div>
                     }
+                    @if(Player.IsConcentrating){
+                        <div class="concentration"></div>
+                    }
                     @if(Tabletop.IsGameMaster){
                         <pawn-hud class="creature-hud" data-view="1">
                             <header>
@@ -307,7 +316,7 @@
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Player.UID-concentrating" type="checkbox" @bind="Player.IsConcentrating" />
+                                            <input id="@Player.UID-concentrating" type="checkbox" @onchange="@(e => ToggleConcentration(Player))" />
                                             <label for="@Player.UID-concentrating">
                                                 <i></i>
                                                 <span>Concentrating</span>

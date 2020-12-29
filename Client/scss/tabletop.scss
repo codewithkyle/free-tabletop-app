@@ -190,6 +190,37 @@
             filter: drop-shadow(0 0 16px rgba(#b3e800, 0.87)) opacity(0.6) brightness(1.5);
         }
 
+        .concentration{
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.87;
+
+            &::before,
+            &::after{
+                content: "";
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                position: absolute;
+            }
+
+            &::before{
+                border: 2px solid rgb(90, 20, 255);
+                box-shadow: 0 0 8px rgba(90, 20, 255,0.87);
+            }
+
+            &::after{
+                border-bottom: 2px solid rgb(231, 220, 255);
+                animation: spinRing 600ms 0ms linear infinite;
+                transform-origin: center center;
+            }
+        }
+
         .creature-hud {
             position: absolute;
             top: 0;
@@ -536,5 +567,13 @@
     50.1%, 100%{
         background-position-x: -672px;
         opacity: 0;
+    }
+}
+@keyframes spinRing{
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
     }
 }

@@ -646,5 +646,14 @@ namespace FreeTabletop.Server.Models
                 entity.IsPoisoned = isPoisoned;
             }
         }
+
+        public void SetConcentration(string uid, bool isConcentrating)
+        {
+            Entity entity = GetEntity(uid);
+            if (entity != null)
+            {
+                entity.IsConcentrating = isConcentrating;
+            }
+        }
     }
 }

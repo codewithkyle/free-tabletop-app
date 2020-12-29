@@ -204,6 +204,21 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:SetConcentration")]
+        public async Task SetConcentration(string uid, bool isConcentrating)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.SetConcentration(uid, isConcentrating);
+                    await Clients.Group(room.RoomCode).SendAsync("Entity:SetConcentration", uid, isConcentrating);
+                }
+            }
+        }
+
         [HubMethodName("Room:SetPoison")]
         public async Task SetPoison(string uid, bool isPoisoned)
         {
