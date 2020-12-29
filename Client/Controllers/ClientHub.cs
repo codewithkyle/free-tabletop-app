@@ -79,6 +79,7 @@ namespace FreeTabletop.Client.Controllers
 
                 Networker.hubConnection.On<string, bool>("Entity:SetBleeding", Room.SetEntityBleeding);
                 Networker.hubConnection.On<string, bool>("Entity:SetBurning", Room.SetEntityBurning);
+                Networker.hubConnection.On<string, bool>("Entity:SetPoison", Room.SetEntityPoison);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -143,6 +144,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Tabletop:LoadPopupImage");
             Networker.hubConnection.Remove("Entity:SetBleeding");
             Networker.hubConnection.Remove("Entity:SetBurning");
+            Networker.hubConnection.Remove("Entity:SetPoison");
         }
 
         private async Task UpdateUID(string uid)
@@ -325,6 +327,11 @@ namespace FreeTabletop.Client.Controllers
         public void SetBurning(string uid, bool isBurning)
         {
             Networker.hubConnection.SendAsync("Room:SetBurning", uid, isBurning);
+        }
+
+        public void SetPoison(string uid, bool isPoisoned)
+        {
+            Networker.hubConnection.SendAsync("Room:SetPoison", uid, isPoisoned);
         }
     }
 }

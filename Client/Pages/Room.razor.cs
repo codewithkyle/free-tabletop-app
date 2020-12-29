@@ -788,5 +788,28 @@ namespace FreeTabletop.Client.Pages
                 StateHasChanged();
             }
         }
+
+        public void TogglePoison(Entity entity)
+        {
+            if (entity.IsPoisoned)
+            {
+                entity.IsPoisoned = false;
+            }
+            else
+            {
+                entity.IsPoisoned = true;
+            }
+            Hub.SetPoison(entity.UID, entity.IsPoisoned);
+        }
+
+        public void SetEntityPoison(string uid, bool isPoisoned)
+        {
+            Entity entity = Tabletop.GetEntityByUID(uid);
+            if (entity != null)
+            {
+                entity.IsPoisoned = isPoisoned;
+                StateHasChanged();
+            }
+        }
     }
 }

@@ -637,5 +637,14 @@ namespace FreeTabletop.Server.Models
                 entity.IsBurning = isBurning;
             }
         }
+
+        public void SetPoison(string uid, bool isPoisoned)
+        {
+            Entity entity = GetEntity(uid);
+            if (entity != null)
+            {
+                entity.IsPoisoned = isPoisoned;
+            }
+        }
     }
 }

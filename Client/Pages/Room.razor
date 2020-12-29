@@ -40,6 +40,9 @@
                     @if(Creature.IsBurning){
                         <div draggable="false" class="burning"></div>
                     }
+                    @if(Creature.IsPoisoned){
+                        <div draggable="false" class="poison"></div>
+                    }
                     @if(Tabletop.IsGameMaster){
                         <pawn-hud class="creature-hud" data-view="1">
                             <header>
@@ -124,7 +127,7 @@
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Creature.UID-poisoned" type="checkbox" @bind="Creature.IsPoisoned" />
+                                            <input id="@Creature.UID-poisoned" type="checkbox" @onchange="@(e => TogglePoison(Creature))" />
                                             <label for="@Creature.UID-poisoned">
                                                 <i></i>
                                                 <span>Poisoned</span>

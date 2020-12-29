@@ -204,6 +204,21 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:SetPoison")]
+        public async Task SetPoison(string uid, bool isPoisoned)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.SetPoison(uid, isPoisoned);
+                    await Clients.Group(room.RoomCode).SendAsync("Entity:SetPoison", uid, isPoisoned);
+                }
+            }
+        }
+
         [HubMethodName("Room:SpawnCreature")]
         public async Task SpawnCreature(Creature creature)
         {

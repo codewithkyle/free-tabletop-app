@@ -175,6 +175,21 @@
             filter: drop-shadow(0 0 16px rgba(#FF8800, 0.87)) drop-shadow(0 0 8px rgba(#feff00, 0.6)) opacity(0.87);
         }
 
+        .poison{
+            background-image: url("../images/poison.png");
+            background-position-x: 0px;
+            background-position-y: 0px;
+            background-repeat: no-repeat;
+            background-size: calc(96px * 8) 96px;
+            position: absolute;
+            width: 96px;
+            height: 96px;
+            user-select: none;
+            pointer-events: none;
+            animation: poison 1200ms 0ms linear infinite;
+            filter: drop-shadow(0 0 16px rgba(#b3e800, 0.87)) opacity(0.6) brightness(1.5);
+        }
+
         .creature-hud {
             position: absolute;
             top: 0;
@@ -483,5 +498,43 @@
     }
     99.6%, 100% {
         background-position-x: -1152px;
+    }
+}
+@keyframes poison{
+    0%, 6.24% {
+        background-position-x: 0;
+        opacity: 1;
+    }
+    6.25%, 12.4% {
+        background-position-x: -96px;
+        opacity: 1;
+    }
+    12.5%, 18.74% {
+        background-position-x: -192px;
+        opacity: 1;
+    }
+    18.75%, 24.9% {
+        background-position-x: -288px;
+        opacity: 1;
+    }
+    25%, 31.24% {
+        background-position-x: -384px;
+        opacity: 1;
+    }
+    31.25%, 37.4% {
+        background-position-x: -480px;
+        opacity: 0.87;
+    }
+    37.5%, 43.74%{
+        background-position-x: -576px;
+        opacity: 0.6;
+    }
+    43.75%, 50%{
+        background-position-x: -672px;
+        opacity: 0.3;
+    }
+    50.1%, 100%{
+        background-position-x: -672px;
+        opacity: 0;
     }
 }
