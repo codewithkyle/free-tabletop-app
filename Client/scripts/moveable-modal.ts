@@ -78,7 +78,7 @@ class Draggable extends HTMLElement{
         }
     }
 
-    public toggleVisability(visible:boolean){
+    public toggleVisibility(visible:boolean){
         if (visible){
             this.style.transform = "translate(0px,0px)";
             this.dataset.top = "0";
@@ -123,7 +123,7 @@ customElements.define("moveable-handle", DraggableHandle);
 function ToggleModal(className:string, visible:boolean){
     const el:Draggable = document.body.querySelector(`.${className}`);
     if (el){
-        el.toggleVisability(visible);
+        el.toggleVisibility(visible);
     }
 }
 customElements.define("moveable-modal", Draggable);

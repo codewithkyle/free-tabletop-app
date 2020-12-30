@@ -25,14 +25,14 @@
             }
             @for (int i = 0; i < Tabletop.Creatures.Count; i++){
                 Creature Creature = Tabletop.Creatures[i];
-                string visability = "-visible";
+                string visibility = "-visible";
                 if (!Creature.IsVisible && Tabletop.IsGameMaster){
-                    visability = "-ghost";
+                    visibility = "-ghost";
                 }else if (!Creature.IsVisible){
-                    visability = "-invisible";
+                    visibility = "-invisible";
                 }
                 <tabletop-pawn 
-                    class="pawn @(Creature.IsAlive ? "-foe" : "-dead") @(Creature.IsRemoved ? "-removed" : "") @visability" 
+                    class="pawn @(Creature.IsAlive ? "-foe" : "-dead") @(Creature.IsRemoved ? "-removed" : "") @visibility" 
                     style="top: 0px;left: 0px;width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
                     oncontextmenu="return false;"
                     data-uid="@Creature.UID" 
@@ -229,14 +229,14 @@
             }
             @for (int i = 0; i < Tabletop.NPCs.Count; i++){
                 NPC NPC = Tabletop.NPCs[i];
-                string visability = "-visible";
+                string visibility = "-visible";
                 if (!NPC.IsVisible && Tabletop.IsGameMaster){
-                    visability = "-ghost";
+                    visibility = "-ghost";
                 }else if (!NPC.IsVisible){
-                    visability = "-invisible";
+                    visibility = "-invisible";
                 }
                 <tabletop-pawn 
-                    class="pawn @(NPC.IsAlive ? "-npc" : "-dead") @(NPC.IsRemoved ? "-removed" : "") @visability" 
+                    class="pawn @(NPC.IsAlive ? "-npc" : "-dead") @(NPC.IsRemoved ? "-removed" : "") @visibility" 
                     style="top: 0px;left: 0px;width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
                     oncontextmenu="return false;"
                     data-uid="@NPC.UID" 
@@ -393,14 +393,14 @@
                 if (IsPlayer){
                     PawnType = "-player js-player-pawn";
                 }
-                string visability = "-visible";
+                string visibility = "-visible";
                 if (!Player.IsVisible && Tabletop.IsGameMaster || !Player.IsVisible && IsPlayer){
-                    visability = "-ghost";
+                    visibility = "-ghost";
                 }else if (!Player.IsVisible){
-                    visability = "-invisible";
+                    visibility = "-invisible";
                 }
                 <tabletop-pawn 
-                    class="pawn @PawnType @visability" 
+                    class="pawn @PawnType @visibility" 
                     style="top: 0px;left: 0px;width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
                     oncontextmenu="return false;"
                     data-uid="@Player.UID"

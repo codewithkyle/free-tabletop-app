@@ -39,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - last touched moveable modal is forced to the top of the z-index stack
 - Creature & NPC move on death bug
 - improved NPC & Creature death removal performance
-- fixed modal visability toggle performance
+- fixed modal visibility toggle performance
 
 ## [0.6.0] - 2020-12-29
 
