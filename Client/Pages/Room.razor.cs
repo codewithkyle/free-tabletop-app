@@ -237,18 +237,21 @@ namespace FreeTabletop.Client.Pages
         public void RenderPlayerEntities(List<PlayerEntity> players)
         {
             Tabletop.Players = players;
+            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", players, Tabletop.CellSize);
             StateHasChanged();
         }
 
         public void RenderCreatureEntities(List<Creature> creatures)
         {
             Tabletop.Creatures = creatures;
+            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", creatures, Tabletop.CellSize);
             StateHasChanged();
         }
 
         public void RenderNPCEntities(List<NPC> npcs)
         {
             Tabletop.NPCs = npcs;
+            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", npcs, Tabletop.CellSize);
             StateHasChanged();
         }
 

@@ -108,3 +108,13 @@ function RenderDeathCelebration(uid:string){
         pawn.celebrateDeath();
     }
 }
+function UpdateEntitiesPosition(entities:Array<{uid: string, position:Array<number>}>, cellSize:number){
+    if (entities.length){
+        for (let i = 0; i < entities.length; i++){
+            const pawn:Pawn = document.body.querySelector(`tabletop-pawn[data-uid="${entities[i].uid}"]`);
+            if (pawn){
+                pawn.UpdatePosition(entities[i].position[0], entities[i].position[1], cellSize);
+            }
+        }
+    }
+}
