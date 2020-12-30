@@ -344,8 +344,7 @@ async function CalculateNewPawnLocation(event:any){
 async function GetCellPosition(x:number, y:number){
     let output = [0,0];
     if (tabletop){
-        const relativePosition = tabletop.convertViewportToTabletopPosition(x, y);
-        output = tabletop.convertTabletopPositionToCell(relativePosition);
+        output = tabletop.convertViewportToTabletopPosition(x, y);
     }
     return output;
 }

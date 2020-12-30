@@ -139,6 +139,7 @@
             opacity: 0 !important;
             visibility: hidden !important;
             transition: all 0ms 0ms linear !important;
+            pointer-events: none !important;
         }
 
         &:hover,

@@ -237,28 +237,29 @@ namespace FreeTabletop.Client.Pages
         public void RenderPlayerEntities(List<PlayerEntity> players)
         {
             Tabletop.Players = players;
-            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", players, Tabletop.CellSize);
             StateHasChanged();
+            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", players, Tabletop.CellSize);
         }
 
         public void RenderCreatureEntities(List<Creature> creatures)
         {
             Tabletop.Creatures = creatures;
-            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", creatures, Tabletop.CellSize);
             StateHasChanged();
+            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", creatures, Tabletop.CellSize);
         }
 
         public void RenderNPCEntities(List<NPC> npcs)
         {
             Tabletop.NPCs = npcs;
-            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", npcs, Tabletop.CellSize);
             StateHasChanged();
+            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", npcs, Tabletop.CellSize);
         }
 
         public async Task HandleDrop(DragEventArgs e)
         {
             int[] newPosition = await JSRuntime.InvokeAsync<int[]>("CalculateNewPawnLocation", e);
             await JSRuntime.InvokeVoidAsync("UpdateEntityPosition", MovingEntityUID, newPosition, Tabletop.CellSize);
+            await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
             Hub.MoveEntity(MovingEntityUID, newPosition);
         }
 
