@@ -9,7 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- death celebration effect
+- death celebration effect (confetti and sound effect)
+- performance settings
+    - toggle special effects quality (high/low)
+    - toggle death celebration effect (on/off)
+- new conditions
+    - charmed
+    - stunned
+    - unconscious
+    - restrained
+- new low quality conditions
+    - bleeding
+    - burning
+    - poisoned
+    - charmed
+    - stunned
+    - unconscious
 
 ### Fixed
 
