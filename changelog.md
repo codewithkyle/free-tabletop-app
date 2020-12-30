@@ -26,6 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - stunned
     - unconscious
 - ability to toggle pawn visibility
+- updated footer
+    - added copyright
+    - added support email link
 
 ### Fixed
 
