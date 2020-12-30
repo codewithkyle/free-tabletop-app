@@ -36,12 +36,18 @@ function ForceHome() {
     location.href = location.origin;
 }
 
-async function FocusElement(selector: string) {
+function ClearInput(selector:string){
+    const el:HTMLInputElement = document.body.querySelector(selector);
+    if (el) {
+        el.value = "";
+    }
+}
+
+function FocusElement(selector: string) {
     const el: HTMLElement = document.body.querySelector(selector);
     if (el) {
         el.focus();
     }
-    return;
 }
 
 function Debug(thing: any) {
@@ -99,6 +105,13 @@ async function PlaySound(name:string){
                 audio.play();
             }
             break;
+        case "death-celebration.mp3":
+            if (!localStorage.getItem("deathCelebrationSoundDisabled") && !localStorage.getItem("deathCelebrationsDisabled")){
+                var audio = new Audio(`${location.origin}/sfx/${name}`);
+                audio.volume = 0.75;
+                audio.play();
+            }
+            break;
         default:
             var audio = new Audio(`${location.origin}/sfx/${name}`);
             audio.play();
@@ -107,25 +120,16 @@ async function PlaySound(name:string){
     return;
 }
 
-function ToggleSoundStatus(type:string, enabled:boolean){
+function ToggleSetting(type:string, enabled:boolean){
     if (enabled){
-        localStorage.removeItem(`${type}Disabled`);
+        localStorage.removeItem(`${type}`);
     }else{
-        localStorage.setItem(`${type}Disabled`, "true");
+        localStorage.setItem(`${type}`, "true");
     }
 }
 
-function GetPingSoundSetting(){
-    return localStorage.getItem("pingDisabled") ? false : true;
-}
-function GetNotificationSoundSetting(){
-    return localStorage.getItem("notificationDisabled") ? false : true;
-}
-function GetAlertSoundSetting(){
-    return localStorage.getItem("alertDisabled") ? false : true;
-}
-function GetLoadingSoundSetting(){
-    return localStorage.getItem("loadingDisabled") ? false : true;
+async function GetSetting(key:string){
+    return localStorage.getItem(key) ? false : true;
 }
 
 async function SetVersionDisplay(){
@@ -215,21 +219,6 @@ async function CheckForUpdate(){
     }
 }
 CheckForUpdate();
-
-function ClearFogCell(index:number){
-    const cell:HTMLElement = document.body.querySelector(`.js-fog[data-index="${index}"]`);
-    if (cell){
-        cell.style.background = "transparent";
-    }
-}
-
-function UpdateEntityPosition(uid:string, position:Array<number>, cellSize:number){
-    const pawn:HTMLElement = document.body.querySelector(`tabletop-pawn[data-uid="${uid}"]`);
-    if (pawn){
-        // @ts-expect-error
-        pawn.UpdatePosition(position[0], position[1], cellSize);
-    }
-}
 
 function RenderPopupImage(url:string){
     const el = document.createElement("moveable-modal");

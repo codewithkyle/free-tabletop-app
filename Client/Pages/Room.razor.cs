@@ -44,7 +44,6 @@ namespace FreeTabletop.Client.Pages
 
         public Creature CustomCreature = new Creature();
         public NPC NewNPC = new NPC();
-        public bool DidAutofocus = false;
         public double[] RightClickPosition = { -1, -1 };
         public int[] RightClickGridPosition = { 0, 0 };
         public bool DiceMenuOpen = false;
@@ -76,36 +75,24 @@ namespace FreeTabletop.Client.Pages
         };
         public PaintOption PaintType = PaintOption.None;
         public bool PopupImageModalOpen = false;
+        public bool PlayDeathSound = true;
+        public bool HighQualityEffects = true;
+        public bool DeathCelebrations = true;
 
         protected override async Task OnInitializedAsync()
         {
             await Hub.Connect(RoomCode, this, NavigationManager, JSRuntime, Tabletop);
-            PlayPingSound = await JSRuntime.InvokeAsync<bool>("GetPingSoundSetting");
-            PlayAlertSound = await JSRuntime.InvokeAsync<bool>("GetAlertSoundSetting");
-            PlayNotificationSound = await JSRuntime.InvokeAsync<bool>("GetNotificationSoundSetting");
-            PlayLoadingSound = await JSRuntime.InvokeAsync<bool>("GetLoadingSoundSetting");
+            PlayPingSound = await JSRuntime.InvokeAsync<bool>("GetSetting", "pingDisabled");
+            PlayAlertSound = await JSRuntime.InvokeAsync<bool>("GetSetting", "alertDisabled");
+            PlayNotificationSound = await JSRuntime.InvokeAsync<bool>("GetSetting", "notificationDisabled");
+            PlayLoadingSound = await JSRuntime.InvokeAsync<bool>("GetSetting", "loadingDisabled");
+            PlayDeathSound = await JSRuntime.InvokeAsync<bool>("GetSetting", "deathCelebrationSoundDisabled");
+            HighQualityEffects = await JSRuntime.InvokeAsync<bool>("GetSetting", "highQualityEffectsDisabled");
+            DeathCelebrations = await JSRuntime.InvokeAsync<bool>("GetSetting", "deathCelebrationsDisabled");
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
-            if (!DidAutofocus)
-            {
-                if (MonsterLookupMenuOpen)
-                {
-                    JSRuntime.InvokeVoidAsync("FocusElement", ".js-monster-lookup");
-                    DidAutofocus = true;
-                }
-                else if (ImageUploadOpen)
-                {
-                    JSRuntime.InvokeVoidAsync("FocusElement", ".js-image-input");
-                    DidAutofocus = true;
-                }
-                else if (NPCMenuOpen)
-                {
-                    JSRuntime.InvokeVoidAsync("FocusElement", ".js-npc-input");
-                    DidAutofocus = true;
-                }
-            }
             if (ChatMenuOpen){
                 JSRuntime.InvokeVoidAsync("ScrollChatMessages");
             }
@@ -169,11 +156,11 @@ namespace FreeTabletop.Client.Pages
             CustomCreature = new Creature();
             NPCMenuOpen = false;
             NewNPC = new NPC();
-            DidAutofocus = false;
             RightClickPosition[0] = -1;
             RightClickPosition[1] = -1;
             PopupImageModalOpen = false;
             SettingsMenu = null;
+            JSRuntime.InvokeVoidAsync("ClearInput", ".js-monster-lookup");
         }
 
         public async Task CopyRoomCodeToClipboard()
@@ -228,6 +215,7 @@ namespace FreeTabletop.Client.Pages
                 InputImageURL = null;
                 SelectedGridType = "1";
                 GridCellSize = 32;
+                StateHasChanged();
             }
         }
 
@@ -254,24 +242,28 @@ namespace FreeTabletop.Client.Pages
         {
             Tabletop.Players = players;
             StateHasChanged();
+            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", players, Tabletop.CellSize);
         }
 
         public void RenderCreatureEntities(List<Creature> creatures)
         {
             Tabletop.Creatures = creatures;
             StateHasChanged();
+            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", creatures, Tabletop.CellSize);
         }
 
         public void RenderNPCEntities(List<NPC> npcs)
         {
             Tabletop.NPCs = npcs;
             StateHasChanged();
+            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", npcs, Tabletop.CellSize);
         }
 
         public async Task HandleDrop(DragEventArgs e)
         {
             int[] newPosition = await JSRuntime.InvokeAsync<int[]>("CalculateNewPawnLocation", e);
             await JSRuntime.InvokeVoidAsync("UpdateEntityPosition", MovingEntityUID, newPosition, Tabletop.CellSize);
+            await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
             Hub.MoveEntity(MovingEntityUID, newPosition);
         }
 
@@ -551,7 +543,7 @@ namespace FreeTabletop.Client.Pages
             {
                 PlayPingSound = true;
             }
-            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "ping", PlayPingSound);
+            JSRuntime.InvokeVoidAsync("ToggleSetting", "pingDisabled", PlayPingSound);
             StateHasChanged();
         }
 
@@ -565,7 +557,7 @@ namespace FreeTabletop.Client.Pages
             {
                 PlayAlertSound = true;
             }
-            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "alert", PlayAlertSound);
+            JSRuntime.InvokeVoidAsync("ToggleSetting", "alertDisabled", PlayAlertSound);
             StateHasChanged();
         }
 
@@ -579,7 +571,7 @@ namespace FreeTabletop.Client.Pages
             {
                 PlayNotificationSound = true;
             }
-            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "notification", PlayNotificationSound);
+            JSRuntime.InvokeVoidAsync("ToggleSetting", "notificationDisabled", PlayNotificationSound);
             StateHasChanged();
         }
 
@@ -593,7 +585,21 @@ namespace FreeTabletop.Client.Pages
             {
                 PlayLoadingSound = true;
             }
-            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "loading", PlayLoadingSound);
+            JSRuntime.InvokeVoidAsync("ToggleSetting", "loadingDisabled", PlayLoadingSound);
+            StateHasChanged();
+        }
+
+        public void ToggleDeathSound()
+        {
+            if (PlayDeathSound)
+            {
+                PlayDeathSound = false;
+            }
+            else
+            {
+                PlayDeathSound = true;
+            }
+            JSRuntime.InvokeVoidAsync("ToggleSetting", "deathCelebrationSoundDisabled", PlayDeathSound);
             StateHasChanged();
         }
 
@@ -743,94 +749,72 @@ namespace FreeTabletop.Client.Pages
             JSRuntime.InvokeVoidAsync("LocatePawn");
         }
 
-        public void ToggleBleeding(Entity entity)
+        public void ToggleCondition(Entity entity, string condition)
         {
-            if (entity.IsBleeding)
-            {
-                entity.IsBleeding = false;
-            }
-            else
-            {
-                entity.IsBleeding = true;
-            }
-            Hub.SetBleeding(entity.UID, entity.IsBleeding);
+            Hub.ToggleCondition(entity.UID, condition);
         }
 
-        public void SetEntityBleeding(string uid, bool isBleeding)
+        public void UpdateEntityCondition(Entity entity, string condition)
         {
-            Entity entity = Tabletop.GetEntityByUID(uid);
-            if (entity != null)
+            Entity localEntity = Tabletop.GetEntityByUID(entity.UID);
+            if (localEntity != null)
             {
-                entity.IsBleeding = isBleeding;
+                switch(condition)
+                {
+                    case "Poison":
+                        localEntity.IsPoisoned = entity.IsPoisoned;
+                        break;
+                    case "Bleeding":
+                        localEntity.IsBleeding = entity.IsBleeding;
+                        break;
+                    case "Concentrating":
+                        localEntity.IsConcentrating = entity.IsConcentrating;
+                        break;
+                    case "Burning":
+                        localEntity.IsBurning = entity.IsBurning;
+                        break;
+                    case "Charmed":
+                        localEntity.IsCharmed = entity.IsCharmed;
+                        break;
+                    case "Unconscious":
+                        localEntity.IsUnconscious = entity.IsUnconscious;
+                        break;
+                    case "Restrained":
+                        localEntity.IsRestrained = entity.IsRestrained;
+                        break;
+                    case "Stunned":
+                        localEntity.IsStunned = entity.IsStunned;
+                        break;
+                }
                 StateHasChanged();
             }
         }
 
-        public void ToggleBurning(Entity entity)
+        public void TogglePerformanceSetting()
         {
-            if (entity.IsBurning)
-            {
-                entity.IsBurning = false;
-            }
-            else
-            {
-                entity.IsBurning = true;
-            }
-            Hub.SetBurning(entity.UID, entity.IsBurning);
+            HighQualityEffects ^= true;
+            JSRuntime.InvokeVoidAsync("ToggleSetting", "highQualityEffectsDisabled", HighQualityEffects);
+            StateHasChanged();
         }
 
-        public void SetEntityBurning(string uid, bool isBurning)
+        public void ToggleDeathCelebrations()
         {
-            Entity entity = Tabletop.GetEntityByUID(uid);
-            if (entity != null)
-            {
-                entity.IsBurning = isBurning;
-                StateHasChanged();
-            }
+            DeathCelebrations ^= true;
+            JSRuntime.InvokeVoidAsync("ToggleSetting", "deathCelebrationsDisabled", DeathCelebrations);
+            StateHasChanged();
         }
 
-        public void TogglePoison(Entity entity)
+        public void ToggleEntityVisibility(string uid)
         {
-            if (entity.IsPoisoned)
-            {
-                entity.IsPoisoned = false;
-            }
-            else
-            {
-                entity.IsPoisoned = true;
-            }
-            Hub.SetPoison(entity.UID, entity.IsPoisoned);
+            Hub.ToggleEntityVisibility(uid);
         }
 
-        public void SetEntityPoison(string uid, bool isPoisoned)
+        public void UpdateEntityVisibility(Entity entity)
         {
-            Entity entity = Tabletop.GetEntityByUID(uid);
-            if (entity != null)
+            Entity localEntity = Tabletop.GetEntityByUID(entity.UID);
+            if (localEntity != null)
             {
-                entity.IsPoisoned = isPoisoned;
-                StateHasChanged();
-            }
-        }
-
-        public void ToggleConcentration(Entity entity)
-        {
-            if (entity.IsConcentrating)
-            {
-                entity.IsConcentrating = false;
-            }
-            else
-            {
-                entity.IsConcentrating = true;
-            }
-            Hub.SetConcentration(entity.UID, entity.IsConcentrating);
-        }
-
-        public void SetEntityConcentration(string uid, bool isConcentrating)
-        {
-            Entity entity = Tabletop.GetEntityByUID(uid);
-            if (entity != null)
-            {
-                entity.IsConcentrating = isConcentrating;
+                localEntity.IsVisible = entity.IsVisible;
                 StateHasChanged();
             }
         }

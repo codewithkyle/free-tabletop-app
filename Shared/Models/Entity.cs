@@ -17,6 +17,11 @@ namespace FreeTabletop.Shared.Models
         public bool IsBurning {get;set;} = false;
         public bool IsPoisoned {get;set;} = false;
         public bool IsConcentrating {get;set;} = false;
+        public bool IsCharmed {get;set;} = false;
+        public bool IsStunned {get;set;} = false;
+        public bool IsRestrained {get;set;} = false;
+        public bool IsUnconscious {get;set;} = false;
+        public bool IsVisible {get;set;} = true;
 
         public void UpdatePosition(int[] newPosition)
         {

@@ -17,17 +17,29 @@
             <p class="text-center font-sm font-grey-700 mt-1">Loading tabletop...</p>
         </tabletop-loading-spinner>
         @if (Tabletop.Image != null && Tabletop.Image.Length != 0 && Tabletop.CellSize > 0){
-            <bleeding-effect data-width="@Tabletop.Size[0]" data-height="@Tabletop.Size[1]"></bleeding-effect>
+            @if(HighQualityEffects){
+                <sfx-canvas data-width="@Tabletop.Size[0]" data-height="@Tabletop.Size[1]"></sfx-canvas>
+            }
+            @if(DeathCelebrations){
+                <death-canvas data-width="@Tabletop.Size[0]" data-height="@Tabletop.Size[1]"></death-canvas>
+            }
             @for (int i = 0; i < Tabletop.Creatures.Count; i++){
                 Creature Creature = Tabletop.Creatures[i];
-                int x = Creature.Position[0];
-                int y = Creature.Position[1];
+                string visibility = "-visible";
+                if (!Creature.IsVisible && Tabletop.IsGameMaster){
+                    visibility = "-ghost";
+                }else if (!Creature.IsVisible){
+                    visibility = "-invisible";
+                }
                 <tabletop-pawn 
-                    class="pawn @(Creature.IsAlive ? "-foe" : "-dead")" 
-                    style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
+                    class="pawn @(Creature.IsAlive ? "-foe" : "-dead") @(Creature.IsRemoved ? "-removed" : "") @visibility" 
+                    style="top: 0px;left: 0px;width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
                     oncontextmenu="return false;"
                     data-uid="@Creature.UID" 
                     bleeding="@(Creature.IsBleeding ? "true" : "false")" 
+                    charmed="@(Creature.IsCharmed ? "true" : "false")" 
+                    unconscious="@(Creature.IsUnconscious ? "true" : "false")" 
+                    stunned="@(Creature.IsStunned ? "true" : "false")" 
                 >
                     <i 
                         @ondragstart="@(e => HandleDragStart(Creature.UID))" 
@@ -37,14 +49,35 @@
                             <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="skull" class="svg-inline--fa fa-skull fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M352 184c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm0 112c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40zM160 184c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm0 112c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40zM256 0C114.6 0 0 100.3 0 224c0 70.1 36.9 132.6 94.5 173.7 9.7 6.9 15.2 18.1 13.5 29.9l-7.1 21.3C90.6 480 113.8 512 146.5 512h219c32.7 0 55.9-32 45.6-63.1l-7.1-21.3c-1.7-11.7 3.8-23 13.5-29.9C475.1 356.6 512 294.1 512 224 512 100.3 397.4 0 256 0zm142.9 371.6c-19.7 14-29.9 37.2-26.6 60.4l.4 2.8.9 2.8 7.1 21.3c2.2 6.8-.4 11.9-2.2 14.4-1.8 2.5-5.8 6.6-13 6.6H320v-56c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56h-64v-56c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56h-45.5c-7.1 0-11.2-4.2-13-6.6-1.8-2.5-4.5-7.7-2.2-14.4l7.1-21.3.9-2.8.4-2.8c3.3-23.2-6.9-46.4-26.6-60.4C61.5 334.9 32 281.1 32 224 32 118.1 132.5 32 256 32s224 86.1 224 192c0 57.1-29.5 110.9-81.1 147.6z"></path></svg>
                         }
                     </i>
-                    @if(Creature.IsBurning){
+                    @if(Creature.IsBurning && HighQualityEffects){
                         <div draggable="false" class="burning"></div>
                     }
-                    @if(Creature.IsPoisoned){
+                    @if(Creature.IsPoisoned && HighQualityEffects){
                         <div draggable="false" class="poison"></div>
                     }
                     @if(Creature.IsConcentrating){
-                        <div class="concentration"></div>
+                        <div class="concentration-ring"></div>
+                    }
+                    @if(Creature.IsRestrained){
+                        <div class="restrained-ring"></div>
+                    }
+                    @if(Creature.IsStunned && !HighQualityEffects){
+                        <div class="stunned-ring"></div>
+                    }
+                    @if(Creature.IsUnconscious && !HighQualityEffects){
+                        <div class="unconscious-ring"></div>
+                    }
+                    @if(Creature.IsBleeding && !HighQualityEffects){
+                        <div class="bleeding-ring"></div>
+                    }
+                    @if(Creature.IsBurning && !HighQualityEffects){
+                        <div class="burning-ring"></div>
+                    }
+                    @if(Creature.IsPoisoned && !HighQualityEffects){
+                        <div class="poison-ring"></div>
+                    }
+                    @if(Creature.IsCharmed && !HighQualityEffects){
+                        <div class="charmed-ring"></div>
                     }
                     @if(Tabletop.IsGameMaster){
                         <pawn-hud class="creature-hud" data-view="1">
@@ -55,7 +88,14 @@
                                     <button data-index="2" class="js-view-button dot" aria-label="switch to view 2"></button>
                                     <button data-index="3" class="js-view-button dot" aria-label="switch to view 3"></button>
                                     <button data-index="4" class="js-view-button dot" aria-label="switch to view 4"></button>
-                                    <button aria-label="delete @Creature.Name" @onclick="@(e => RemoveEntity(Creature.UID))">
+                                    <button tooltip aria-label="@(Creature.IsVisible ? "Hide" : "Show") @Creature.Name" @onclick="@(e => ToggleEntityVisibility(Creature.UID))">
+                                        @if(Creature.IsVisible){
+                                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="eye" class="svg-inline--fa fa-eye fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"></path></svg>
+                                        }else{
+                                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="eye-slash" class="svg-inline--fa fa-eye-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M320 400c-75.85 0-137.25-58.71-142.9-133.11L72.2 185.82c-13.79 17.3-26.48 35.59-36.72 55.59a32.35 32.35 0 0 0 0 29.19C89.71 376.41 197.07 448 320 448c26.91 0 52.87-4 77.89-10.46L346 397.39a144.13 144.13 0 0 1-26 2.61zm313.82 58.1l-110.55-85.44a331.25 331.25 0 0 0 81.25-102.07 32.35 32.35 0 0 0 0-29.19C550.29 135.59 442.93 64 320 64a308.15 308.15 0 0 0-147.32 37.7L45.46 3.37A16 16 0 0 0 23 6.18L3.37 31.45A16 16 0 0 0 6.18 53.9l588.36 454.73a16 16 0 0 0 22.46-2.81l19.64-25.27a16 16 0 0 0-2.82-22.45zm-183.72-142l-39.3-30.38A94.75 94.75 0 0 0 416 256a94.76 94.76 0 0 0-121.31-92.21A47.65 47.65 0 0 1 304 192a46.64 46.64 0 0 1-1.54 10l-73.61-56.89A142.31 142.31 0 0 1 320 112a143.92 143.92 0 0 1 144 144c0 21.63-5.29 41.79-13.9 60.11z"></path></svg>
+                                        }
+                                    </button>
+                                    <button tooltip aria-label="Delete @Creature.Name" @onclick="@(e => RemoveEntity(Creature.UID))">
                                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="trash" class="svg-inline--fa fa-trash fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"></path></svg>
                                     </button>
                                 </div>
@@ -63,13 +103,13 @@
                             <div class="block w-full p-0.5 bg-white" style="border-radius: 0 0 0.25rem 0.25rem;">
                                 <div data-view="1">
                                     <div class="w-full" grid="columns 2 gap-0.5">
-                                        <div class="creature-input" title="AC">
+                                        <div class="creature-input" tooltip="AC">
                                             <input type="number" value="@Creature.AC" @oninput="@(e => UpdateEntityAC(Creature, e))" />
                                             <i>
                                                 <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="shield" class="svg-inline--fa fa-shield fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M466.5 83.7l-192-80a48.15 48.15 0 0 0-36.9 0l-192 80C27.7 91.1 16 108.6 16 128c0 198.5 114.5 335.7 221.5 380.3 11.8 4.9 25.1 4.9 36.9 0C360.1 472.6 496 349.3 496 128c0-19.4-11.7-36.9-29.5-44.3zM262.2 478.8c-3.9 1.6-8.3 1.6-12.3 0C152 440 48 304 48 128c0-6.5 3.9-12.3 9.8-14.8l192-80c3.8-1.6 8.3-1.7 12.3 0l192 80c6 2.5 9.8 8.3 9.8 14.8.1 176-103.9 312-201.7 350.8z"></path></svg>
                                             </i>
                                         </div>
-                                        <div class="creature-input" title="HP">
+                                        <div class="creature-input" tooltip="HP">
                                             <input type="number" value="@Creature.HP" @oninput="@(e => UpdateEntityHP(Creature, e))" min="0" />
                                             <i>
                                                 <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="heartbeat" class="svg-inline--fa fa-heartbeat fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M468.7 76.5C423.6 32.2 375 32 362.3 32c-12.7 0-61.5.2-106.3 44.4C211.3 32.3 162.5 32 149.7 32c-12.7 0-61.4.2-106.4 44.5C15.4 104 0 140.7 0 179.9 0 214.1 12.3 246 33.8 272h120.8l29.9-71.8 56.9 126.4c5.5 12.3 22.9 12.7 28.9.6l49.7-99.4 22.1 44.2h136c21.5-26 33.8-57.9 33.8-92.1.1-39.2-15.3-75.9-43.2-103.4zM462.5 240H361.9l-27.6-55.2c-5.9-11.8-22.7-11.8-28.6 0l-48.9 97.9-58.2-129.3c-5.8-12.8-24-12.5-29.4.4L133.3 240H49.5c-9.2-14.6-42.6-82.7 18.3-142.7C90.4 75.1 120 64 149.7 64c33.9 0 54.5 6.3 106.3 57.3C311 67.1 330.5 64 362.3 64c29.7 0 59.3 11.1 81.8 33.3 61 60.1 27.5 128.2 18.4 142.7zM268.7 443.4c-6.2 6.1-16.2 6.1-22.4 0L108.9 304H64l159.9 162.2c18.7 18.5 48.6 18.4 67.3 0L448 304h-44.5L268.7 443.4z"></path></svg>
@@ -121,33 +161,61 @@
                                     </dl>
                                 </div>
                                 <div data-view="4">
-                                    <div class="w-full px-0.5">
+                                    <div class="w-full px-0.5" style="max-height:150px;overflow-y:scroll;">
                                         <div class="lightswitch">
-                                            <input id="@Creature.UID-bleeding" type="checkbox" @onchange="@(e => ToggleBleeding(Creature))" />
+                                            <input id="@Creature.UID-bleeding" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Bleeding"))" />
                                             <label for="@Creature.UID-bleeding">
                                                 <i></i>
                                                 <span>Bleeding</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Creature.UID-poisoned" type="checkbox" @onchange="@(e => TogglePoison(Creature))" />
+                                            <input id="@Creature.UID-poisoned" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Poison"))" />
                                             <label for="@Creature.UID-poisoned">
                                                 <i></i>
                                                 <span>Poisoned</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Creature.UID-burning" type="checkbox" @onchange="@(e => ToggleBurning(Creature))" />
+                                            <input id="@Creature.UID-burning" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Burning"))" />
                                             <label for="@Creature.UID-burning">
                                                 <i></i>
                                                 <span>Burning</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Creature.UID-concentrating" type="checkbox" @onchange="@(e => ToggleConcentration(Creature))" />
+                                            <input id="@Creature.UID-concentrating" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Concentrating"))" />
                                             <label for="@Creature.UID-concentrating">
                                                 <i></i>
                                                 <span>Concentrating</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Creature.UID-stunned" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Stunned"))" />
+                                            <label for="@Creature.UID-stunned">
+                                                <i></i>
+                                                <span>Stunned</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Creature.UID-restrained" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Restrained"))" />
+                                            <label for="@Creature.UID-restrained">
+                                                <i></i>
+                                                <span>Restrained</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Creature.UID-unconscious" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Unconscious"))" />
+                                            <label for="@Creature.UID-unconscious">
+                                                <i></i>
+                                                <span>Unconscious</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Creature.UID-charmed" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Charmed"))" />
+                                            <label for="@Creature.UID-charmed">
+                                                <i></i>
+                                                <span>Charmed</span>
                                             </label>
                                         </div>
                                     </div>
@@ -161,14 +229,21 @@
             }
             @for (int i = 0; i < Tabletop.NPCs.Count; i++){
                 NPC NPC = Tabletop.NPCs[i];
-                int x = NPC.Position[0];
-                int y = NPC.Position[1];
+                string visibility = "-visible";
+                if (!NPC.IsVisible && Tabletop.IsGameMaster){
+                    visibility = "-ghost";
+                }else if (!NPC.IsVisible){
+                    visibility = "-invisible";
+                }
                 <tabletop-pawn 
-                    class="pawn @(NPC.IsAlive ? "-npc" : "-dead")" 
-                    style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
+                    class="pawn @(NPC.IsAlive ? "-npc" : "-dead") @(NPC.IsRemoved ? "-removed" : "") @visibility" 
+                    style="top: 0px;left: 0px;width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
                     oncontextmenu="return false;"
                     data-uid="@NPC.UID" 
                     bleeding="@(NPC.IsBleeding ? "true" : "false")" 
+                    charmed="@(NPC.IsCharmed ? "true" : "false")" 
+                    unconscious="@(NPC.IsUnconscious ? "true" : "false")" 
+                    stunned="@(NPC.IsStunned ? "true" : "false")" 
                 >
                     <i 
                         @ondragstart="@(e => HandleDragStart(NPC.UID))" 
@@ -178,14 +253,35 @@
                             <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="skull" class="svg-inline--fa fa-skull fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M352 184c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm0 112c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40zM160 184c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm0 112c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40zM256 0C114.6 0 0 100.3 0 224c0 70.1 36.9 132.6 94.5 173.7 9.7 6.9 15.2 18.1 13.5 29.9l-7.1 21.3C90.6 480 113.8 512 146.5 512h219c32.7 0 55.9-32 45.6-63.1l-7.1-21.3c-1.7-11.7 3.8-23 13.5-29.9C475.1 356.6 512 294.1 512 224 512 100.3 397.4 0 256 0zm142.9 371.6c-19.7 14-29.9 37.2-26.6 60.4l.4 2.8.9 2.8 7.1 21.3c2.2 6.8-.4 11.9-2.2 14.4-1.8 2.5-5.8 6.6-13 6.6H320v-56c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56h-64v-56c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56h-45.5c-7.1 0-11.2-4.2-13-6.6-1.8-2.5-4.5-7.7-2.2-14.4l7.1-21.3.9-2.8.4-2.8c3.3-23.2-6.9-46.4-26.6-60.4C61.5 334.9 32 281.1 32 224 32 118.1 132.5 32 256 32s224 86.1 224 192c0 57.1-29.5 110.9-81.1 147.6z"></path></svg>
                         }
                     </i>
-                    @if(NPC.IsBurning){
+                    @if(NPC.IsBurning && HighQualityEffects){
                         <div draggable="false" class="burning"></div>
                     }
-                    @if(NPC.IsPoisoned){
+                    @if(NPC.IsPoisoned && HighQualityEffects){
                         <div draggable="false" class="poison"></div>
                     }
                     @if(NPC.IsConcentrating){
-                        <div class="concentration"></div>
+                        <div class="concentration-ring"></div>
+                    }
+                    @if(NPC.IsRestrained){
+                        <div class="restrained-ring"></div>
+                    }
+                    @if(NPC.IsStunned && !HighQualityEffects){
+                        <div class="stunned-ring"></div>
+                    }
+                    @if(NPC.IsUnconscious && !HighQualityEffects){
+                        <div class="unconscious-ring"></div>
+                    }
+                    @if(NPC.IsBleeding && !HighQualityEffects){
+                        <div class="bleeding-ring"></div>
+                    }
+                    @if(NPC.IsBurning && !HighQualityEffects){
+                        <div class="burning-ring"></div>
+                    }
+                    @if(NPC.IsPoisoned && !HighQualityEffects){
+                        <div class="poison-ring"></div>
+                    }
+                    @if(NPC.IsCharmed && !HighQualityEffects){
+                        <div class="charmed-ring"></div>
                     }
                     @if(Tabletop.IsGameMaster){
                         <pawn-hud class="creature-hud" data-view="1">
@@ -194,7 +290,14 @@
                                 <div flex="row nowrap items-center">
                                     <button data-index="1" class="js-view-button dot" aria-label="switch to view 1"></button>
                                     <button data-index="2" class="js-view-button dot" aria-label="switch to view 2"></button>
-                                    <button aria-lable="delete @NPC.Name" @onclick="@(e => RemoveEntity(NPC.UID))">
+                                    <button tooltip aria-label="@(NPC.IsVisible ? "Hide" : "Show") @NPC.Name" @onclick="@(e => ToggleEntityVisibility(NPC.UID))">
+                                        @if(NPC.IsVisible){
+                                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="eye" class="svg-inline--fa fa-eye fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"></path></svg>
+                                        }else{
+                                            <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="eye-slash" class="svg-inline--fa fa-eye-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M320 400c-75.85 0-137.25-58.71-142.9-133.11L72.2 185.82c-13.79 17.3-26.48 35.59-36.72 55.59a32.35 32.35 0 0 0 0 29.19C89.71 376.41 197.07 448 320 448c26.91 0 52.87-4 77.89-10.46L346 397.39a144.13 144.13 0 0 1-26 2.61zm313.82 58.1l-110.55-85.44a331.25 331.25 0 0 0 81.25-102.07 32.35 32.35 0 0 0 0-29.19C550.29 135.59 442.93 64 320 64a308.15 308.15 0 0 0-147.32 37.7L45.46 3.37A16 16 0 0 0 23 6.18L3.37 31.45A16 16 0 0 0 6.18 53.9l588.36 454.73a16 16 0 0 0 22.46-2.81l19.64-25.27a16 16 0 0 0-2.82-22.45zm-183.72-142l-39.3-30.38A94.75 94.75 0 0 0 416 256a94.76 94.76 0 0 0-121.31-92.21A47.65 47.65 0 0 1 304 192a46.64 46.64 0 0 1-1.54 10l-73.61-56.89A142.31 142.31 0 0 1 320 112a143.92 143.92 0 0 1 144 144c0 21.63-5.29 41.79-13.9 60.11z"></path></svg>
+                                        }
+                                    </button>
+                                    <button tooltip aria-label="Delete @NPC.Name" @onclick="@(e => RemoveEntity(NPC.UID))">
                                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="trash" class="svg-inline--fa fa-trash fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"></path></svg>
                                     </button>
                                 </div>
@@ -202,13 +305,13 @@
                             <div class="block w-full p-0.5 bg-white" style="border-radius: 0 0 0.25rem 0.25rem;">
                                 <div data-view="1">
                                     <div class="w-full" grid="columns 2 gap-0.5">
-                                        <div class="creature-input" title="AC">
+                                        <div class="creature-input" tooltip="AC">
                                             <input type="number" value="@NPC.AC" @oninput="@(e => UpdateEntityAC(NPC, e))" />
                                             <i>
                                                 <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="shield" class="svg-inline--fa fa-shield fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M466.5 83.7l-192-80a48.15 48.15 0 0 0-36.9 0l-192 80C27.7 91.1 16 108.6 16 128c0 198.5 114.5 335.7 221.5 380.3 11.8 4.9 25.1 4.9 36.9 0C360.1 472.6 496 349.3 496 128c0-19.4-11.7-36.9-29.5-44.3zM262.2 478.8c-3.9 1.6-8.3 1.6-12.3 0C152 440 48 304 48 128c0-6.5 3.9-12.3 9.8-14.8l192-80c3.8-1.6 8.3-1.7 12.3 0l192 80c6 2.5 9.8 8.3 9.8 14.8.1 176-103.9 312-201.7 350.8z"></path></svg>
                                             </i>
                                         </div>
-                                        <div class="creature-input" title="HP">
+                                        <div class="creature-input" tooltip="HP">
                                             <input type="number" value="@NPC.HP" @oninput="@(e => UpdateEntityHP(NPC, e))" min="0" />
                                             <i>
                                                 <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="heartbeat" class="svg-inline--fa fa-heartbeat fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M468.7 76.5C423.6 32.2 375 32 362.3 32c-12.7 0-61.5.2-106.3 44.4C211.3 32.3 162.5 32 149.7 32c-12.7 0-61.4.2-106.4 44.5C15.4 104 0 140.7 0 179.9 0 214.1 12.3 246 33.8 272h120.8l29.9-71.8 56.9 126.4c5.5 12.3 22.9 12.7 28.9.6l49.7-99.4 22.1 44.2h136c21.5-26 33.8-57.9 33.8-92.1.1-39.2-15.3-75.9-43.2-103.4zM462.5 240H361.9l-27.6-55.2c-5.9-11.8-22.7-11.8-28.6 0l-48.9 97.9-58.2-129.3c-5.8-12.8-24-12.5-29.4.4L133.3 240H49.5c-9.2-14.6-42.6-82.7 18.3-142.7C90.4 75.1 120 64 149.7 64c33.9 0 54.5 6.3 106.3 57.3C311 67.1 330.5 64 362.3 64c29.7 0 59.3 11.1 81.8 33.3 61 60.1 27.5 128.2 18.4 142.7zM268.7 443.4c-6.2 6.1-16.2 6.1-22.4 0L108.9 304H64l159.9 162.2c18.7 18.5 48.6 18.4 67.3 0L448 304h-44.5L268.7 443.4z"></path></svg>
@@ -217,33 +320,61 @@
                                     </div>
                                 </div>
                                 <div data-view="2">
-                                    <div class="w-full px-0.5">
+                                    <div class="w-full px-0.5" style="max-height:150px;overflow-y:scroll;">
                                         <div class="lightswitch">
-                                            <input id="@NPC.UID-bleeding" type="checkbox" @onchange="@(e => ToggleBleeding(NPC))" />
+                                            <input id="@NPC.UID-bleeding" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Bleeding"))" />
                                             <label for="@NPC.UID-bleeding">
                                                 <i></i>
                                                 <span>Bleeding</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@NPC.UID-poisoned" type="checkbox"  @onchange="@(e => TogglePoison(NPC))" />
+                                            <input id="@NPC.UID-poisoned" type="checkbox"  @onchange="@(e => ToggleCondition(NPC, "Poison"))" />
                                             <label for="@NPC.UID-poisoned">
                                                 <i></i>
                                                 <span>Poisoned</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@NPC.UID-burning" type="checkbox" @onchange="@(e => ToggleBurning(NPC))" />
+                                            <input id="@NPC.UID-burning" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Burning"))" />
                                             <label for="@NPC.UID-burning">
                                                 <i></i>
                                                 <span>Burning</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@NPC.UID-concentrating" type="checkbox" @onchange="@(e => ToggleConcentration(NPC))" />
+                                            <input id="@NPC.UID-concentrating" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Concentrating"))" />
                                             <label for="@NPC.UID-concentrating">
                                                 <i></i>
                                                 <span>Concentrating</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@NPC.UID-stunned" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Stunned"))" />
+                                            <label for="@NPC.UID-stunned">
+                                                <i></i>
+                                                <span>Stunned</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@NPC.UID-restrained" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Restrained"))" />
+                                            <label for="@NPC.UID-restrained">
+                                                <i></i>
+                                                <span>Restrained</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@NPC.UID-unconscious" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Unconscious"))" />
+                                            <label for="@NPC.UID-unconscious">
+                                                <i></i>
+                                                <span>Unconscious</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@NPC.UID-charmed" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Charmed"))" />
+                                            <label for="@NPC.UID-charmed">
+                                                <i></i>
+                                                <span>Charmed</span>
                                             </label>
                                         </div>
                                     </div>
@@ -262,64 +393,125 @@
                 if (IsPlayer){
                     PawnType = "-player js-player-pawn";
                 }
-                int x = Tabletop.Players[p].Position[0];
-                int y = Tabletop.Players[p].Position[1];
-                int cellX = (int)Math.Floor((double)(x / Tabletop.CellSize));
-                int cellY = (int)Math.Floor((double)(y / Tabletop.CellSize));
+                string visibility = "-visible";
+                if (!Player.IsVisible && Tabletop.IsGameMaster || !Player.IsVisible && IsPlayer){
+                    visibility = "-ghost";
+                }else if (!Player.IsVisible){
+                    visibility = "-invisible";
+                }
                 <tabletop-pawn 
-                    class="pawn @PawnType" 
-                    style="top: 0px;left: 0px;transform: translate(@(cellX * Tabletop.CellSize)px, @(cellY * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
+                    class="pawn @PawnType @visibility" 
+                    style="top: 0px;left: 0px;width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
                     oncontextmenu="return false;"
                     data-uid="@Player.UID"
                     bleeding="@(Player.IsBleeding ? "true" : "false")" 
+                    charmed="@(Player.IsCharmed ? "true" : "false")" 
+                    unconscious="@(Player.IsUnconscious ? "true" : "false")" 
+                    stunned="@(Player.IsStunned ? "true" : "false")" 
                 >
                     <i 
                         @ondragstart="@(e => HandleDragStart(Player.UID))" 
                         draggable="@((IsPlayer || Tabletop.IsGameMaster) ? "true" : "false")">
                     </i>
-                    @if(Player.IsBurning){
+                    @if(Player.IsBurning && HighQualityEffects){
                         <div draggable="false" class="burning"></div>
                     }
-                    @if(Player.IsPoisoned){
+                    @if(Player.IsPoisoned && HighQualityEffects){
                         <div draggable="false" class="poison"></div>
                     }
                     @if(Player.IsConcentrating){
-                        <div class="concentration"></div>
+                        <div class="concentration-ring"></div>
+                    }
+                    @if(Player.IsRestrained){
+                        <div class="restrained-ring"></div>
+                    }
+                    @if(Player.IsStunned && !HighQualityEffects){
+                        <div class="stunned-ring"></div>
+                    }
+                    @if(Player.IsUnconscious && !HighQualityEffects){
+                        <div class="unconscious-ring"></div>
+                    }
+                    @if(Player.IsBleeding && !HighQualityEffects){
+                        <div class="bleeding-ring"></div>
+                    }
+                    @if(Player.IsBurning && !HighQualityEffects){
+                        <div class="burning-ring"></div>
+                    }
+                    @if(Player.IsPoisoned && !HighQualityEffects){
+                        <div class="poison-ring"></div>
+                    }
+                    @if(Player.IsCharmed && !HighQualityEffects){
+                        <div class="charmed-ring"></div>
                     }
                     @if(Tabletop.IsGameMaster){
                         <pawn-hud class="creature-hud" data-view="1">
                             <header>
                                 <span>@Player.Name</span>
+                                <button tooltip aria-label="@(Player.IsVisible ? "Hide" : "Show") @Player.Name" @onclick="@(e => ToggleEntityVisibility(Player.UID))">
+                                    @if(Player.IsVisible){
+                                        <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="eye" class="svg-inline--fa fa-eye fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"></path></svg>
+                                    }else{
+                                        <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="eye-slash" class="svg-inline--fa fa-eye-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M320 400c-75.85 0-137.25-58.71-142.9-133.11L72.2 185.82c-13.79 17.3-26.48 35.59-36.72 55.59a32.35 32.35 0 0 0 0 29.19C89.71 376.41 197.07 448 320 448c26.91 0 52.87-4 77.89-10.46L346 397.39a144.13 144.13 0 0 1-26 2.61zm313.82 58.1l-110.55-85.44a331.25 331.25 0 0 0 81.25-102.07 32.35 32.35 0 0 0 0-29.19C550.29 135.59 442.93 64 320 64a308.15 308.15 0 0 0-147.32 37.7L45.46 3.37A16 16 0 0 0 23 6.18L3.37 31.45A16 16 0 0 0 6.18 53.9l588.36 454.73a16 16 0 0 0 22.46-2.81l19.64-25.27a16 16 0 0 0-2.82-22.45zm-183.72-142l-39.3-30.38A94.75 94.75 0 0 0 416 256a94.76 94.76 0 0 0-121.31-92.21A47.65 47.65 0 0 1 304 192a46.64 46.64 0 0 1-1.54 10l-73.61-56.89A142.31 142.31 0 0 1 320 112a143.92 143.92 0 0 1 144 144c0 21.63-5.29 41.79-13.9 60.11z"></path></svg>
+                                    }
+                                </button>
                             </header>
                             <div class="block w-full p-0.5 bg-white" style="border-radius: 0 0 0.25rem 0.25rem;">
                                 <div data-view="1">
-                                    <div class="w-full px-0.5">
+                                    <div class="w-full px-0.5" style="max-height:150px;overflow-y:scroll;">
                                         <div class="lightswitch">
-                                            <input id="@Player.UID-bleeding" type="checkbox" @onchange="@(e => ToggleBleeding(Player))" checked=@Player.IsBleeding />
+                                            <input id="@Player.UID-bleeding" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Bleeding"))" />
                                             <label for="@Player.UID-bleeding">
                                                 <i></i>
                                                 <span>Bleeding</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Player.UID-poisoned" type="checkbox" @onchange="@(e => TogglePoison(Player))" />
+                                            <input id="@Player.UID-poisoned" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Poison"))" />
                                             <label for="@Player.UID-poisoned">
                                                 <i></i>
                                                 <span>Poisoned</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Player.UID-burning" type="checkbox" @onchange="@(e => ToggleBurning(Player))" />
+                                            <input id="@Player.UID-burning" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Burning"))" />
                                             <label for="@Player.UID-burning">
                                                 <i></i>
                                                 <span>Burning</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Player.UID-concentrating" type="checkbox" @onchange="@(e => ToggleConcentration(Player))" />
+                                            <input id="@Player.UID-concentrating" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Concentrating"))" />
                                             <label for="@Player.UID-concentrating">
                                                 <i></i>
                                                 <span>Concentrating</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Player.UID-stunned" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Stunned"))" />
+                                            <label for="@Player.UID-stunned">
+                                                <i></i>
+                                                <span>Stunned</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Player.UID-restrained" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Restrained"))" />
+                                            <label for="@Player.UID-restrained">
+                                                <i></i>
+                                                <span>Restrained</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Player.UID-unconscious" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Unconscious"))" />
+                                            <label for="@Player.UID-unconscious">
+                                                <i></i>
+                                                <span>Unconscious</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Player.UID-charmed" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Charmed"))" />
+                                            <label for="@Player.UID-charmed">
+                                                <i></i>
+                                                <span>Charmed</span>
                                             </label>
                                         </div>
                                     </div>
@@ -341,47 +533,47 @@
     </tabletop-component>
     <div class="tabletop-info">
         <div flex="items-center row nowrap">
-            <button @onclick="ToggleInfoMenu" class="icon-button-toggle" aria-label="open tabletop info menu" title="tabletop info">
+            <button @onclick="ToggleInfoMenu" class="icon-button-toggle" aria-label="open tabletop info menu" tooltip="Tabletop info">
                 <svg style="width: 24px;height: 24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="info" class="svg-inline--fa fa-info fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M208 368.667V208c0-15.495-7.38-29.299-18.811-38.081C210.442 152.296 224 125.701 224 96c0-52.935-43.065-96-96-96S32 43.065 32 96c0 24.564 9.274 47.004 24.504 64H56c-26.467 0-48 21.533-48 48v48c0 23.742 17.327 43.514 40 47.333v65.333C25.327 372.486 8 392.258 8 416v48c0 26.467 21.533 48 48 48h144c26.467 0 48-21.533 48-48v-48c0-23.742-17.327-43.514-40-47.333zM128 32c35.346 0 64 28.654 64 64s-28.654 64-64 64-64-28.654-64-64 28.654-64 64-64zm88 432c0 8.837-7.163 16-16 16H56c-8.837 0-16-7.163-16-16v-48c0-8.837 7.163-16 16-16h24V272H56c-8.837 0-16-7.163-16-16v-48c0-8.837 7.163-16 16-16h104c8.837 0 16 7.163 16 16v192h24c8.837 0 16 7.163 16 16v48z"></path></svg>
             </button>
-            <button @onclick="ToggleDiceMenu" class="icon-button-toggle" aria-label="open dice roller menu" title="dice roller">
+            <button @onclick="ToggleDiceMenu" class="icon-button-toggle" aria-label="open dice roller menu" tooltip="Dice roller">
                 <svg style="width: 26px;height: 26px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice" class="svg-inline--fa fa-dice fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M480 328c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zM224 200c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm96 0c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm-192 0c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm96 96c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm0-192c-13.25 0-24 10.74-24 24 0 13.25 10.75 24 24 24s24-10.75 24-24c0-13.26-10.75-24-24-24zm352 88H439.38c-2.89-5.17-6.26-10.15-10.65-14.54L270.54 19.28C257.69 6.42 240.84 0 224 0s-33.69 6.42-46.54 19.28L19.28 177.46c-25.7 25.7-25.7 67.38 0 93.08l158.18 158.18C190.31 441.57 207.16 448 224 448s33.69-6.43 46.54-19.28L320 379.26V448c0 35.35 28.65 64 64 64h192c35.35 0 64-28.65 64-64V256c0-35.35-28.65-64-64-64zM247.27 405.45c-6.21 6.21-14.48 9.64-23.27 9.64s-17.05-3.42-23.27-9.64L42.55 247.27c-6.21-6.22-9.64-14.48-9.64-23.27s3.42-17.05 9.64-23.27L200.73 42.55c6.21-6.21 14.48-9.64 23.27-9.64s17.05 3.42 23.27 9.64l158.18 158.18c6.22 6.21 9.64 14.48 9.64 23.27s-3.42 17.05-9.64 23.27L247.27 405.45zM608 448c0 17.64-14.36 32-32 32H384c-17.64 0-32-14.36-32-32V347.26l76.72-76.72C441.57 257.69 448 240.84 448 224h128c17.64 0 32 14.36 32 32v192z"></path></svg>
             </button>
-            <button @onclick="ToggleChatModal" class="icon-button-toggle" aria-label="open messenger window" title="open messenger">
+            <button @onclick="ToggleChatModal" class="icon-button-toggle" aria-label="open messenger window" tooltip="Messenger">
                 <svg style="width: 24px;height: 24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="comments-alt" class="svg-inline--fa fa-comments-alt fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M512 160h-96V64c0-35.3-28.7-64-64-64H64C28.7 0 0 28.7 0 64v160c0 35.3 28.7 64 64 64h32v52c0 7.1 5.8 12 12 12 2.4 0 4.9-.7 7.1-2.4l76.9-43.5V384c0 35.3 28.7 64 64 64h96l108.9 61.6c2.2 1.6 4.7 2.4 7.1 2.4 6.2 0 12-4.9 12-12v-52h32c35.3 0 64-28.7 64-64V224c0-35.3-28.7-64-64-64zM64 256c-17.6 0-32-14.4-32-32V64c0-17.6 14.4-32 32-32h288c17.6 0 32 14.4 32 32v160c0 17.6-14.4 32-32 32H215.6l-7.3 4.2-80.3 45.4V256zm480 128c0 17.6-14.4 32-32 32h-64v49.6l-80.2-45.4-7.3-4.2H256c-17.6 0-32-14.4-32-32v-96h128c35.3 0 64-28.7 64-64v-32h96c17.6 0 32 14.4 32 32z"></path></svg>
                 @if (HasUnreadMessages){
                     <i class="badge"></i>
                 }
             </button>
             @if (Tabletop.IsGameMaster){
-                <button @onclick="ToggleTabletopMenu" class="icon-button-toggle" aria-label="open tabletop settings menu" title="tabletop settings">
+                <button @onclick="ToggleTabletopMenu" class="icon-button-toggle" aria-label="open tabletop settings menu" tooltip="Tabletop settings">
                     <svg style="width: 24px;height: 24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="scroll-old" class="svg-inline--fa fa-scroll-old fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M616 352h-72v-73.38L521.38 256 544 233.38v-82.75L521.38 128l22.25-22.28-.97-7.77C535.59 42.11 488.03 0 432 0H80C35.88 0 0 35.89 0 80v88c0 13.23 10.78 24 24 24h104v41.38L150.62 256 128 278.62v132.81c0 51.28 37.84 95.23 86.16 100.08 1.5.15 3 .14 4.5.23v.26h312C590.94 512 640 462.95 640 402.67V376c0-13.23-10.78-24-24-24zM128 160H32V80c0-26.47 21.53-48 48-48s48 21.53 48 48v80zm32 251.44V291.88L195.88 256 160 220.12V80c0-18-5.97-34.62-16.03-48H432c37.41 0 69.56 26.39 77.59 62.5L476.12 128 512 163.88v56.25L476.12 256 512 291.88V352h-73.38L416 374.62 393.38 352H320c-17.66 0-32 14.36-32 32v32c0 18.05-7.69 35.34-21.06 47.47-13.59 12.3-31.12 18.09-49.59 16.2-32.16-3.22-57.35-33.19-57.35-68.23zm448-8.77c0 42.64-34.69 77.33-77.34 77.33H294.83c15.82-17.55 25.17-40.18 25.17-64v-32h60.12L416 419.88 451.88 384H608v18.67z"></path></svg>
                 </button>
                 @if (Tabletop.Image != null && Tabletop.Image.Length != 0 && Tabletop.GridType != "3"){
-                    <button @onclick="ToggleEntitySpawnMenu" class="icon-button-toggle" aria-label="open entity spawning menu" title="entity spawning">
+                    <button @onclick="ToggleEntitySpawnMenu" class="icon-button-toggle" aria-label="open entity spawning menu" tooltip="Spawn menu">
                         <svg style="width: 26px;height: 26px;transform: translateY(-3px);" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="chess-pawn-alt" class="svg-inline--fa fa-chess-pawn-alt fa-w-8" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512"><path fill="currentColor" d="M247.16 435.58L224 424v-16a24 24 0 0 0-24-24h1.41a519 519 0 0 1-9.31-96H216a8 8 0 0 0 8-8v-16a8 8 0 0 0-8-8h-16.91A95.86 95.86 0 1 0 32 192a95.3 95.3 0 0 0 24.91 64H40a8 8 0 0 0-8 8v16a8 8 0 0 0 8 8h23.9a519 519 0 0 1-9.31 96H56a24 24 0 0 0-24 24v16L8.85 435.58A16 16 0 0 0 0 449.89V496a16 16 0 0 0 16 16h224a16 16 0 0 0 16-16v-46.11a16 16 0 0 0-8.84-14.31zM160.09 288a552.7 552.7 0 0 0 8.75 96H87.16a552.7 552.7 0 0 0 8.75-96zM128 128a64 64 0 1 1-64 64 64.07 64.07 0 0 1 64-64zm96 352H32v-20.22l32-16V416h128v27.78l32 16z"></path></svg>
                     </button>
                 }
             }
             @if (Tabletop.Image != null && Tabletop.Image.Length != 0 && Tabletop.GridType != "3"){
-                <button @onclick="ToggleCombatMenu" class="icon-button-toggle" aria-label="open combat order menu" title="combat order menu">
+                <button @onclick="ToggleCombatMenu" class="icon-button-toggle" aria-label="open combat order menu" tooltip="Combat order">
                     <svg style="width: 20px;height: 20px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="swords" class="svg-inline--fa fa-swords fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M507.3 443.32l-55.88-55.88L486 329.91a16.007 16.007 0 0 0-2-20.19l-34.8-34.8c-6.21-6.21-16.35-6.28-22.63 0l-27.83 27.84L112 16.01 18.27.18C7.06-1.45-1.25 8.38.17 18.28L16 112.01l286.75 286.75-27.84 27.83c-6.25 6.25-6.25 16.38 0 22.63l34.8 34.79c5.4 5.4 13.86 6.22 20.19 2l57.52-34.58 55.88 55.88c6.25 6.25 16.38 6.25 22.63 0l41.37-41.37c6.25-6.24 6.25-16.38 0-22.62zM45.85 96.61L35.54 35.54 96.6 45.87 376.13 325.4l-50.74 50.74L45.85 96.61zm408.77 376.76l-63.11-63.12-68.44 41.86-14.21-14.21L437.9 308.87l14.21 14.21-41.85 68.44 63.11 63.11-18.75 18.74zM415.39 45.85l61.07-10.31-10.33 61.06-114.14 114.14 22.63 22.63L495.99 112l15.83-93.73c1.63-11.21-8.2-19.52-18.1-18.1L399.99 16 278.62 137.37 301.24 160 415.39 45.85zM237.07 426.58l-27.84-27.83 24.12-24.12L210.73 352l-24.12 24.12-50.74-50.74L160 301.25l-22.63-22.63-24.13 24.13-27.83-27.84c-6.25-6.25-16.38-6.25-22.63 0l-34.79 34.8c-5.4 5.4-6.22 13.86-2 20.19l34.58 57.52-55.89 55.89c-6.25 6.25-6.25 16.38 0 22.63l41.37 41.37c6.25 6.25 16.38 6.25 22.63 0l55.88-55.88 57.53 34.58a16.007 16.007 0 0 0 20.19-2l34.8-34.8c.87-.87 1.34-1.96 1.97-2.97-.48-2.73-.81-5.5-.81-8.33s.34-5.61.81-8.35c-.63-1.01-1.1-2.1-1.98-2.98zm-48.15 25.52l-68.44-41.85-63.11 63.11-18.75-18.75 63.12-63.11-41.86-68.44 14.21-14.21L203.13 437.9l-14.21 14.2z"></path></svg>
                 </button>
-                <button @onclick="TogglePaintMenu" class="icon-button-toggle" aria-label="open paint menu" title="paint menu">
+                <button @onclick="TogglePaintMenu" class="icon-button-toggle" aria-label="open paint menu" tooltip="Paint menu">
                     <svg style="width: 20px;height:20px;" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M489.17 144.05C547.44 80.02 483.28 0 418.52 0c-23.39 0-46.87 10.44-64.68 35.85L187.9 284.01c-45.13 2.9-86.1 20.09-109.34 81.34-2.65 6.99-9 11.22-16.41 11.22-12.49 0-51.14-31.13-62.15-38.65C0 430.58 42.67 512 144 512c141.21 0 145.89-117.04 142.91-145.49l.02-.02 202.24-222.44zM230.96 449.18C212.54 469.63 183.28 480 144 480c-62.08 0-90.15-37.47-102.57-76.29 7.55 3.32 14.15 4.86 20.72 4.86 20.81 0 39-12.52 46.33-31.87 6.86-18.09 17.63-56.66 89.31-61.26L254.68 366c2.96 28.21-4.08 61.37-23.72 83.18zm39.4-112.03l-49.86-44.32L380.05 54.22C390.38 39.47 403.33 32 418.52 32c22.9 0 47.56 16.71 57.36 38.88 7.94 17.96 4.45 35.34-10.39 51.64L270.36 337.15z"></path></svg>
                 </button>
             }
         </div>
         <div flex="items-center row nowrap">
-            <button @onclick="OpenSettingsMenu" class="icon-button-toggle" aria-label="open settings menu" title="settings">
+            <button @onclick="OpenSettingsMenu" class="icon-button-toggle" aria-label="open settings menu" tooltip="Settings">
                 <svg style="width:24px;height:24px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="cog" class="svg-inline--fa fa-cog fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M482.696 299.276l-32.61-18.827a195.168 195.168 0 0 0 0-48.899l32.61-18.827c9.576-5.528 14.195-16.902 11.046-27.501-11.214-37.749-31.175-71.728-57.535-99.595-7.634-8.07-19.817-9.836-29.437-4.282l-32.562 18.798a194.125 194.125 0 0 0-42.339-24.48V38.049c0-11.13-7.652-20.804-18.484-23.367-37.644-8.909-77.118-8.91-114.77 0-10.831 2.563-18.484 12.236-18.484 23.367v37.614a194.101 194.101 0 0 0-42.339 24.48L105.23 81.345c-9.621-5.554-21.804-3.788-29.437 4.282-26.36 27.867-46.321 61.847-57.535 99.595-3.149 10.599 1.47 21.972 11.046 27.501l32.61 18.827a195.168 195.168 0 0 0 0 48.899l-32.61 18.827c-9.576 5.528-14.195 16.902-11.046 27.501 11.214 37.748 31.175 71.728 57.535 99.595 7.634 8.07 19.817 9.836 29.437 4.283l32.562-18.798a194.08 194.08 0 0 0 42.339 24.479v37.614c0 11.13 7.652 20.804 18.484 23.367 37.645 8.909 77.118 8.91 114.77 0 10.831-2.563 18.484-12.236 18.484-23.367v-37.614a194.138 194.138 0 0 0 42.339-24.479l32.562 18.798c9.62 5.554 21.803 3.788 29.437-4.283 26.36-27.867 46.321-61.847 57.535-99.595 3.149-10.599-1.47-21.972-11.046-27.501zm-65.479 100.461l-46.309-26.74c-26.988 23.071-36.559 28.876-71.039 41.059v53.479a217.145 217.145 0 0 1-87.738 0v-53.479c-33.621-11.879-43.355-17.395-71.039-41.059l-46.309 26.74c-19.71-22.09-34.689-47.989-43.929-75.958l46.329-26.74c-6.535-35.417-6.538-46.644 0-82.079l-46.329-26.74c9.24-27.969 24.22-53.869 43.929-75.969l46.309 26.76c27.377-23.434 37.063-29.065 71.039-41.069V44.464a216.79 216.79 0 0 1 87.738 0v53.479c33.978 12.005 43.665 17.637 71.039 41.069l46.309-26.76c19.709 22.099 34.689 47.999 43.929 75.969l-46.329 26.74c6.536 35.426 6.538 46.644 0 82.079l46.329 26.74c-9.24 27.968-24.219 53.868-43.929 75.957zM256 160c-52.935 0-96 43.065-96 96s43.065 96 96 96 96-43.065 96-96-43.065-96-96-96zm0 160c-35.29 0-64-28.71-64-64s28.71-64 64-64 64 28.71 64 64-28.71 64-64 64z"></path></svg>
             </button>
         </div>
     </div>
-    <dl class="info-modal" style="visibility:@(InfoMenuOpen ? "visible" : "hidden")">
+    <dl class="info-modal" style="@(InfoMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <dt>Room:</dt>
         <dd>
-            <button class="bttn" title="Click to copy room code" @onclick="CopyRoomCodeToClipboard">
+            <button class="bttn" tooltip="Room code" @onclick="CopyRoomCodeToClipboard">
                 <span>@Tabletop.RoomCode</span>
                 <i>
                     <svg aria-hidden="true" focusable="false" data-prefix="far" data-icon="clone" class="svg-inline--fa fa-clone fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M464 0H144c-26.51 0-48 21.49-48 48v48H48c-26.51 0-48 21.49-48 48v320c0 26.51 21.49 48 48 48h320c26.51 0 48-21.49 48-48v-48h48c26.51 0 48-21.49 48-48V48c0-26.51-21.49-48-48-48zM362 464H54a6 6 0 0 1-6-6V150a6 6 0 0 1 6-6h42v224c0 26.51 21.49 48 48 48h224v42a6 6 0 0 1-6 6zm96-96H150a6 6 0 0 1-6-6V54a6 6 0 0 1 6-6h308a6 6 0 0 1 6 6v308a6 6 0 0 1-6 6z"></path></svg>
@@ -401,17 +593,17 @@
                             <span>@Tabletop.Players[i].Name</span>
                             <div class="ml-0.5" flex="items-center row nowrap">
                                 @if(@Tabletop.Players[i].IsConnected){
-                                    <i class="font-grey-500" title="Status: Connected" aria-hidden="true">
+                                    <i class="font-grey-500" tooltip="Status: Connected" aria-hidden="true">
                                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="wifi" class="svg-inline--fa fa-wifi fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M634.91 154.88C457.74-8.99 182.19-8.93 5.09 154.88c-6.66 6.16-6.79 16.59-.35 22.98l34.24 33.97c6.14 6.1 16.02 6.23 22.4.38 145.92-133.68 371.3-133.71 517.25 0 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.97c6.43-6.39 6.3-16.82-.36-22.98zM320 352c-35.35 0-64 28.65-64 64s28.65 64 64 64 64-28.65 64-64-28.65-64-64-64zm202.67-83.59c-115.26-101.93-290.21-101.82-405.34 0-6.9 6.1-7.12 16.69-.57 23.15l34.44 33.99c6 5.92 15.66 6.32 22.05.8 83.95-72.57 209.74-72.41 293.49 0 6.39 5.52 16.05 5.13 22.05-.8l34.44-33.99c6.56-6.46 6.33-17.06-.56-23.15z"></path></svg>
                                     </i>
                                 }else{
-                                    <i class="font-danger-600" title="Status: Disconnected" aria-hidden="true">
+                                    <i class="font-danger-600" tooltip="Status: Disconnected" aria-hidden="true">
                                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="wifi-slash" class="svg-inline--fa fa-wifi-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M5.09 154.87c-6.66 6.16-6.79 16.59-.35 22.97l34.24 33.96c6.14 6.09 16.02 6.23 22.4.38 6.99-6.4 14.31-12.22 21.65-18.01l-64.96-50.21c-4.3 3.71-8.79 7.04-12.98 10.91zm471.75 181.9l45.42-45.21c6.52-6.46 6.29-17.06-.57-23.17-64.94-57.74-148.91-82.66-230.34-74.98l-83.16-64.27c125.94-38.36 267.75-11.01 370.43 83.05 6.38 5.85 16.26 5.71 22.4-.38l34.24-33.96c6.44-6.39 6.3-16.82-.35-22.97C496.46 26.82 298.08-.76 133.42 71.35L45.47 3.37C38.49-2.05 28.43-.8 23.01 6.18L3.37 31.45C-2.05 38.42-.8 48.47 6.18 53.9l588.36 454.73c6.98 5.43 17.03 4.17 22.46-2.81l19.64-25.27c5.42-6.97 4.17-17.03-2.81-22.45L476.84 336.77zm-358.53-68.38c-6.86 6.1-7.08 16.7-.57 23.17l34.28 34.01c5.97 5.93 15.59 6.32 21.94.8 13.35-11.6 28.01-20.66 43.15-28.55l-68.36-52.83c-10.48 7.15-20.74 14.78-30.44 23.4zM256 416c0 35.35 28.65 64 64 64 31.91 0 58.15-23.42 62.99-53.98l-88.7-68.56C271.77 367.37 256 389.82 256 416z"></path></svg>
                                     </i>
                                 }
                                 @if(@Tabletop.IsGameMaster){
                                     PlayerEntity player = Tabletop.Players[i];
-                                    <button @onclick="@(e => Hub.KickPlayer(player))" title="Kick player" aria-label="kick @Tabletop.Players[i].Name">
+                                    <button @onclick="@(e => Hub.KickPlayer(player))" tooltip="Kick @Tabletop.Players[i].Name" aria-label="kick @Tabletop.Players[i].Name">
                                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user-slash" class="svg-inline--fa fa-user-slash fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M633.8 458.1L362.3 248.3C412.1 230.7 448 183.8 448 128 448 57.3 390.7 0 320 0c-67.1 0-121.5 51.8-126.9 117.4L45.5 3.4C38.5-2 28.5-.8 23 6.2L3.4 31.4c-5.4 7-4.2 17 2.8 22.4l588.4 454.7c7 5.4 17 4.2 22.5-2.8l19.6-25.3c5.4-6.8 4.1-16.9-2.9-22.3zM96 422.4V464c0 26.5 21.5 48 48 48h350.2L207.4 290.3C144.2 301.3 96 356 96 422.4z"></path></svg>
                                     </button>
                                 }
@@ -424,7 +616,7 @@
         <dt>Status:</dt>
         <dd>
             @if(@Tabletop.IsGameMaster){
-                <button class="bttn" @onclick="Hub.ToggleRoomLock" title="Lock or unlock the room">
+                <button class="bttn" @onclick="Hub.ToggleRoomLock" tooltip="@(Tabletop.IsLocked ? "Unlock" : "Lock") the room">
                     @if(@Tabletop.IsLocked){
                         <span>Locked</span>
                         <i>
@@ -452,7 +644,7 @@
             }
         </dd>
     </dl>
-    <div class="entity-spawn-modal" style="top:0;left:0;transform: translate(@(RightClickPosition[0] != -1 ? RightClickPosition[0].ToString() : "168")px, @(RightClickPosition[1] != -1 ? RightClickPosition[1].ToString() + "px" : "calc(36px + 1rem)"));visibility:@(EntitySpawnMenuOpen ? "visible" : "hidden")">
+    <div class="entity-spawn-modal" style="top:0;left:0;transform: translate(@(RightClickPosition[0] != -1 ? RightClickPosition[0].ToString() : "168")px, @(RightClickPosition[1] != -1 ? RightClickPosition[1].ToString() + "px" : "calc(36px + 1rem)"));@(EntitySpawnMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <button @onclick="OpenMonsterLookupMenu">
             <i>
                 <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dragon" class="svg-inline--fa fa-dragon fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M481.01 119.95c14.92.86 27.35-9.89 30.88-24.58L453.47 80c-6.49 27.12 15.51 39.26 27.54 39.95zm54.5 131.8c-29.84-16.98-55.61-31.64-55.61-51.38V192h16.96l28.62 22.03c8.34 6.42 18.74 9.97 29.27 9.97h29.18c21.15 0 40.09-14.17 46.02-34.45l7.4-25.16c5.84-19.8 1.88-41.44-10.62-57.91L569.8 31.59C554.78 11.81 530.98 0 506.14 0H297.16c-19.47 0-33.09 24.04-15.4 41.25l37.49 30.25-32.55 13.42c-16.19 7.94-19.14 32.81 1.13 42.64l48.11 19.25v50.89l-190.3-47.88c-19.18-4.86-39.68 2.83-50.99 19.08L3.76 299.12c-5.03 7.91-5 17.72.03 25.59 1.69 2.62 9.54 13.11 24.99 10.91l115.02-21.8-12.07 17.3c-5.03 7.91-5 17.72.03 25.59 6.7 10.45 17.87 11.86 24.15 11.05l202.87-27.39c8.33 16.71 18.17 32.35 31.17 45.73-130.55 8.75-252.39 36.8-364.13 61.33C10.86 450.7.01 464.1.01 479.31c0 18 14.75 32.64 32.87 32.64l474.01.05c42.65 0 83.14-19.77 108.29-52.89 23.4-30.8 30.49-68.73 19.9-106.8-14.5-52.15-61.68-79-99.57-100.56zM41.72 300.62l79.17-113.41c3.75-5.39 10.59-7.86 17-6.36l84.07 21.02L170 276.3 41.72 300.62zm127.18 33.1l86.23-123.48 80.79 20.5c0 47.9 8.68 72.63 10.6 79L168.9 333.72zM506.89 480H32c230.53-56.77 352.62-62.36 400.47-64.02 15.54-.53 21.22-20.83 8.22-29.34-48.96-32.23-72.76-80.92-72.76-148.83V135.98c0-6.55-3.97-12.42-10.06-14.86l-38.15-15.23 36.71-15.09c5.22-2.16 8.94-6.91 9.75-12.5s-1.41-11.2-5.81-14.75L321.15 32h184.99c14.9 0 29.18 7.08 38.18 18.95l56.92 74.91c6.38 8.38 8.4 19.39 5.44 29.48l-7.4 25.19c-2 6.75-8.31 11.47-15.34 11.47h-29.18c-3.56 0-6.9-1.14-9.75-3.33l-32.96-25.36a16.01 16.01 0 0 0-9.75-3.31h-38.4c-8.84 0-16 7.16-16 16v24.38c0 38.34 34.87 58.19 71.8 79.19 36.18 20.59 73.58 41.89 84.57 81.33 19.36 69.86-41.14 119.1-97.38 119.1z"></path></svg>
@@ -472,7 +664,7 @@
             <span>Create Custom Creature</span>
         </button>
     </div>
-    <div class="tabletop-modal" style="visibility:@(TabletopMenuOpen ? "visible" : "hidden")">
+    <div class="tabletop-modal" style="@(TabletopMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <button @onclick="UploadTabletopImage">
             <i>
                 <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="file-upload" class="svg-inline--fa fa-file-upload fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M369.9 97.98L286.02 14.1c-9-9-21.2-14.1-33.89-14.1H47.99C21.5.1 0 21.6 0 48.09v415.92C0 490.5 21.5 512 47.99 512h288.02c26.49 0 47.99-21.5 47.99-47.99V131.97c0-12.69-5.1-24.99-14.1-33.99zM256.03 32.59c2.8.7 5.3 2.1 7.4 4.2l83.88 83.88c2.1 2.1 3.5 4.6 4.2 7.4h-95.48V32.59zm95.98 431.42c0 8.8-7.2 16-16 16H47.99c-8.8 0-16-7.2-16-16V48.09c0-8.8 7.2-16.09 16-16.09h176.04v104.07c0 13.3 10.7 23.93 24 23.93h103.98v304.01zm-180.1-247.32l-68.12 71.75c-7.81 8.2-9.94 20.31-5.44 30.83 4.41 10.31 14 16.72 25 16.72H176V424c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-88.02h52.66c11 0 20.59-6.41 25-16.72 4.5-10.52 2.38-22.62-5.44-30.81l-68.12-71.78c-10.69-11.19-29.51-11.2-40.19.02zm-38.75 87.29l58.84-62 58.84 62H133.16z"></path></svg>
@@ -492,7 +684,7 @@
             <span>Clear Tabletop</span>
         </button>
     </div>
-    <form @onsubmit="LoadTabletop" class="image-upload-modal" style="visibility:@(ImageUploadOpen ? "visible" : "hidden")">
+    <form @onsubmit="LoadTabletop" class="image-upload-modal" style="@(ImageUploadOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <div class="file-upload-input input mb-1">
             <label for="imageURL">Image URL</label>
             <input class="js-image-input" required type="url" id="imageURL" @bind="InputImageURL" placeholder="Image URL" autocomplete="no" autocapitalize="off" oninput="this.reportValidity();" />
@@ -541,7 +733,7 @@
         </div>
         <button class="button -solid -primary w-full" type="submit">Load Tabletop</button>
     </form>
-    <div class="monster-lookup-modal" style="visibility:@(MonsterLookupMenuOpen ? "visible" : "hidden")">
+    <div class="monster-lookup-modal" style="@(MonsterLookupMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <div class="input">
             <input class="js-monster-lookup" required type="text" @oninput="LookupMonster" placeholder="Search for a monster" autocomplete="no" autocapitalize="off" />
             @if (Creatures.Count != 0){
@@ -555,7 +747,7 @@
         </div>
         <p class="block w-full mt-0.75 px-0.25 font-grey-700 font-xs line-snug">Monsters provided by the 5E SRD. If a monster is not listed create a custom creature instead.</p>
     </div>
-    <form class="custom-creature-modal" @onsubmit="SpawnCustomCreature" style="visibility:@(CustomCreatureMenuOpen ? "visible" : "hidden")">
+    <form class="custom-creature-modal" @onsubmit="SpawnCustomCreature" style="@(CustomCreatureMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <div class="input mb-1">
             <label for="custom-creature-name">Creature's Name</label>
             <input required id="custom-creature-name" type="text" @bind="CustomCreature.BaseName" autocomplete="no" autocapitalize="off" />
@@ -572,7 +764,7 @@
         </div>
         <button class="button -solid -primary w-full" type="submit">Spawn creature</button>
     </form>
-    <form class="custom-creature-modal" @onsubmit="SpawnNPC" style="visibility:@(NPCMenuOpen ? "visible" : "hidden")">
+    <form class="custom-creature-modal" @onsubmit="SpawnNPC" style="@(NPCMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <div class="input mb-1">
             <label for="custom-creature-name">Creature's Name</label>
             <input class="js-npc-input" required id="npc-name" type="text" @bind="NewNPC.BaseName" autocomplete="no" autocapitalize="off" />
@@ -589,8 +781,39 @@
         </div>
         <button class="button -solid -primary w-full" type="submit">Spawn NPC</button>
     </form>
-    <div class="settings-modal" style="visibility:@(SettingsMenu != null ? "visible" : "hidden")">
+    <div class="settings-modal" style="@(SettingsMenu != null ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         @switch(SettingsMenu){
+            case "performance":
+                <button @onclick="@(e => SettingsMenu = "settings")">
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="angle-left" class="svg-inline--fa fa-angle-left fa-w-6" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512"><path fill="currentColor" d="M25.1 247.5l117.8-116c4.7-4.7 12.3-4.7 17 0l7.1 7.1c4.7 4.7 4.7 12.3 0 17L64.7 256l102.2 100.4c4.7 4.7 4.7 12.3 0 17l-7.1 7.1c-4.7 4.7-12.3 4.7-17 0L25 264.5c-4.6-4.7-4.6-12.3.1-17z"></path></svg>
+                    </i>
+                    <span>Back</span>
+                </button>
+                <button @onclick="TogglePerformanceSetting">
+                    @if (HighQualityEffects){
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="tachometer-alt-fastest" class="svg-inline--fa fa-tachometer-alt-fastest fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M120 320c0 13.26-10.74 24-24 24s-24-10.74-24-24 10.74-24 24-24 24 10.74 24 24zm168-168c13.26 0 24-10.74 24-24s-10.74-24-24-24-24 10.74-24 24 10.74 24 24 24zm136 56c13.26 0 24-10.74 24-24s-10.74-24-24-24-24 10.74-24 24 10.74 24 24 24zm71.78 109.38c1.47 8.72-4.44 16.95-13.16 18.41l-131.2 21.87C348.53 390.3 321.41 416 288 416c-35.35 0-64-28.65-64-64s28.65-64 64-64c26.09 0 48.44 15.66 58.41 38.05l130.97-21.83c8.53-1.49 16.93 4.44 18.4 13.16zM320 352c0-17.67-14.33-32-32-32s-32 14.33-32 32 14.33 32 32 32 32-14.33 32-32zM152 160c-13.26 0-24 10.74-24 24s10.74 24 24 24 24-10.74 24-24-10.74-24-24-24zm424 160c0 52.8-14.25 102.26-39.06 144.8-5.61 9.62-16.3 15.2-27.44 15.2h-443c-11.14 0-21.83-5.58-27.44-15.2C14.25 422.26 0 372.8 0 320 0 160.94 128.94 32 288 32s288 128.94 288 288zm-32 0c0-141.16-114.84-256-256-256S32 178.84 32 320c0 45.26 12 89.75 34.7 128.68l442.8-.68C532 409.75 544 365.26 544 320z"></path></svg>
+                        </i>
+                        <span>High Quality Effects</span>
+                    }else{
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="tachometer-slowest" class="svg-inline--fa fa-tachometer-slowest fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M288 32C128.94 32 0 160.94 0 320c0 52.8 14.25 102.26 39.06 144.8 5.61 9.62 16.3 15.2 27.44 15.2h443c11.14 0 21.83-5.58 27.44-15.2C561.75 422.26 576 372.8 576 320c0-159.06-128.94-288-288-288zm221.5 416l-442.8.68C44 409.75 32 365.26 32 320 32 178.84 146.84 64 288 64s256 114.84 256 256c0 45.26-12 89.75-34.5 128zM288 288c-26.09 0-48.44 15.66-58.41 38.05L98.62 304.22c-8.53-1.48-16.94 4.44-18.41 13.16s4.44 16.95 13.16 18.41l131.2 21.87C227.47 390.3 254.59 416 288 416c35.35 0 64-28.65 64-64s-28.65-64-64-64zm0 96c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32z"></path></svg>
+                        </i>
+                        <span>Low Quality Effects</span>
+                    }
+                </button>
+                <button @onclick="ToggleDeathCelebrations">
+                    <i>
+                        @if (DeathCelebrations){
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="tachometer-alt-fastest" class="svg-inline--fa fa-tachometer-alt-fastest fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M120 320c0 13.26-10.74 24-24 24s-24-10.74-24-24 10.74-24 24-24 24 10.74 24 24zm168-168c13.26 0 24-10.74 24-24s-10.74-24-24-24-24 10.74-24 24 10.74 24 24 24zm136 56c13.26 0 24-10.74 24-24s-10.74-24-24-24-24 10.74-24 24 10.74 24 24 24zm71.78 109.38c1.47 8.72-4.44 16.95-13.16 18.41l-131.2 21.87C348.53 390.3 321.41 416 288 416c-35.35 0-64-28.65-64-64s28.65-64 64-64c26.09 0 48.44 15.66 58.41 38.05l130.97-21.83c8.53-1.49 16.93 4.44 18.4 13.16zM320 352c0-17.67-14.33-32-32-32s-32 14.33-32 32 14.33 32 32 32 32-14.33 32-32zM152 160c-13.26 0-24 10.74-24 24s10.74 24 24 24 24-10.74 24-24-10.74-24-24-24zm424 160c0 52.8-14.25 102.26-39.06 144.8-5.61 9.62-16.3 15.2-27.44 15.2h-443c-11.14 0-21.83-5.58-27.44-15.2C14.25 422.26 0 372.8 0 320 0 160.94 128.94 32 288 32s288 128.94 288 288zm-32 0c0-141.16-114.84-256-256-256S32 178.84 32 320c0 45.26 12 89.75 34.7 128.68l442.8-.68C532 409.75 544 365.26 544 320z"></path></svg>
+                        }else{
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="tachometer-slowest" class="svg-inline--fa fa-tachometer-slowest fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M288 32C128.94 32 0 160.94 0 320c0 52.8 14.25 102.26 39.06 144.8 5.61 9.62 16.3 15.2 27.44 15.2h443c11.14 0 21.83-5.58 27.44-15.2C561.75 422.26 576 372.8 576 320c0-159.06-128.94-288-288-288zm221.5 416l-442.8.68C44 409.75 32 365.26 32 320 32 178.84 146.84 64 288 64s256 114.84 256 256c0 45.26-12 89.75-34.5 128zM288 288c-26.09 0-48.44 15.66-58.41 38.05L98.62 304.22c-8.53-1.48-16.94 4.44-18.41 13.16s4.44 16.95 13.16 18.41l131.2 21.87C227.47 390.3 254.59 416 288 416c35.35 0 64-28.65 64-64s-28.65-64-64-64zm0 96c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32z"></path></svg>
+                        }
+                    </i>
+                    <span>Death Celebrations</span>
+                </button>
+                break;
             case "sound":
                 <button @onclick="@(e => SettingsMenu = "settings")">
                     <i>
@@ -638,6 +861,16 @@
                     </i>
                     <span>Loading</span>
                 </button>
+                <button @onclick="ToggleDeathSound">
+                    <i>
+                        @if (PlayDeathSound){
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-up" class="svg-inline--fa fa-volume-up fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M342.91 193.57c-7.81-3.8-17.5-.48-21.34 7.5-3.81 7.97-.44 17.53 7.53 21.34C343.22 229.2 352 242.06 352 256s-8.78 26.8-22.9 33.58c-7.97 3.81-11.34 13.38-7.53 21.34 3.86 8.05 13.54 11.29 21.34 7.5C368.25 306.28 384 282.36 384 256s-15.75-50.29-41.09-62.43zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67L139.31 320H32V192h107.31L224 107.33v297.34zM421.51 1.83c-7.89-4.08-17.53-1.12-21.66 6.7-4.13 7.81-1.13 17.5 6.7 21.61 84.76 44.55 137.4 131.1 137.4 225.85s-52.64 181.3-137.4 225.85c-7.82 4.11-10.83 13.8-6.7 21.61 4.1 7.75 13.68 10.84 21.66 6.7C516.78 460.06 576 362.67 576 255.99c0-106.67-59.22-204.06-154.49-254.16zM480 255.99c0-66.12-34.02-126.62-88.81-157.87-7.69-4.38-17.59-1.78-22.04 5.89-4.45 7.66-1.77 17.44 5.96 21.86 44.77 25.55 72.61 75.4 72.61 130.12s-27.84 104.58-72.61 130.12c-7.72 4.42-10.4 14.2-5.96 21.86 4.3 7.38 14.06 10.44 22.04 5.89C445.98 382.62 480 322.12 480 255.99z"></path></svg>
+                        }else{
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-mute" class="svg-inline--fa fa-volume-mute fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M454.63 256l55.03-55.03c3.12-3.12 3.12-8.19 0-11.31l-11.31-11.31c-3.12-3.12-8.19-3.12-11.31 0L432 233.37l-55.03-55.03c-3.12-3.12-8.19-3.12-11.31 0l-11.31 11.31c-3.12 3.12-3.12 8.19 0 11.31L409.37 256l-55.03 55.03c-3.12 3.12-3.12 8.19 0 11.31l11.31 11.31c3.12 3.12 8.19 3.12 11.31 0L432 278.63l55.03 55.03c3.12 3.12 8.19 3.12 11.31 0l11.31-11.31c3.12-3.12 3.12-8.19 0-11.31L454.63 256zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67l-75.32-75.3-9.37-9.37H32V192h107.31l9.37-9.37 75.32-75.3v297.34z"></path></svg>
+                        }
+                    </i>
+                    <span>Death Celebration</span>
+                </button>
                 break;
             default:
                 <button @onclick="@(e => SettingsMenu = "sound")">
@@ -645,6 +878,12 @@
                         <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-up" class="svg-inline--fa fa-volume-up fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M342.91 193.57c-7.81-3.8-17.5-.48-21.34 7.5-3.81 7.97-.44 17.53 7.53 21.34C343.22 229.2 352 242.06 352 256s-8.78 26.8-22.9 33.58c-7.97 3.81-11.34 13.38-7.53 21.34 3.86 8.05 13.54 11.29 21.34 7.5C368.25 306.28 384 282.36 384 256s-15.75-50.29-41.09-62.43zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67L139.31 320H32V192h107.31L224 107.33v297.34zM421.51 1.83c-7.89-4.08-17.53-1.12-21.66 6.7-4.13 7.81-1.13 17.5 6.7 21.61 84.76 44.55 137.4 131.1 137.4 225.85s-52.64 181.3-137.4 225.85c-7.82 4.11-10.83 13.8-6.7 21.61 4.1 7.75 13.68 10.84 21.66 6.7C516.78 460.06 576 362.67 576 255.99c0-106.67-59.22-204.06-154.49-254.16zM480 255.99c0-66.12-34.02-126.62-88.81-157.87-7.69-4.38-17.59-1.78-22.04 5.89-4.45 7.66-1.77 17.44 5.96 21.86 44.77 25.55 72.61 75.4 72.61 130.12s-27.84 104.58-72.61 130.12c-7.72 4.42-10.4 14.2-5.96 21.86 4.3 7.38 14.06 10.44 22.04 5.89C445.98 382.62 480 322.12 480 255.99z"></path></svg>
                     </i>
                     <span>Sound Settings</span>
+                </button>
+                <button @onclick="@(e => SettingsMenu = "performance")">
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="tachometer-alt-fastest" class="svg-inline--fa fa-tachometer-alt-fastest fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M120 320c0 13.26-10.74 24-24 24s-24-10.74-24-24 10.74-24 24-24 24 10.74 24 24zm168-168c13.26 0 24-10.74 24-24s-10.74-24-24-24-24 10.74-24 24 10.74 24 24 24zm136 56c13.26 0 24-10.74 24-24s-10.74-24-24-24-24 10.74-24 24 10.74 24 24 24zm71.78 109.38c1.47 8.72-4.44 16.95-13.16 18.41l-131.2 21.87C348.53 390.3 321.41 416 288 416c-35.35 0-64-28.65-64-64s28.65-64 64-64c26.09 0 48.44 15.66 58.41 38.05l130.97-21.83c8.53-1.49 16.93 4.44 18.4 13.16zM320 352c0-17.67-14.33-32-32-32s-32 14.33-32 32 14.33 32 32 32 32-14.33 32-32zM152 160c-13.26 0-24 10.74-24 24s10.74 24 24 24 24-10.74 24-24-10.74-24-24-24zm424 160c0 52.8-14.25 102.26-39.06 144.8-5.61 9.62-16.3 15.2-27.44 15.2h-443c-11.14 0-21.83-5.58-27.44-15.2C14.25 422.26 0 372.8 0 320 0 160.94 128.94 32 288 32s288 128.94 288 288zm-32 0c0-141.16-114.84-256-256-256S32 178.84 32 320c0 45.26 12 89.75 34.7 128.68l442.8-.68C532 409.75 544 365.26 544 320z"></path></svg>
+                    </i>
+                    <span>Performance Settings</span>
                 </button>
                 if (!Tabletop.IsGameMaster){
                     <button @onclick="CenterOnPawn">
@@ -686,11 +925,11 @@
             <span class="inline-block font-xs font-grey-100 font-medium">Combat Order</span>
             <div flex="items-center row nowrap">
                 @if (Tabletop.IsGameMaster){
-                    <button @onclick="SyncCombatOrder" class="sync" title="sync list" aria-label="sync combat order list">
+                    <button @onclick="SyncCombatOrder" class="sync" tooltip="Sync" aria-label="sync combat order list">
                         <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="sync-alt" class="svg-inline--fa fa-sync-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M457.373 9.387l-50.095 50.102C365.411 27.211 312.953 8 256 8 123.228 8 14.824 112.338 8.31 243.493 7.971 250.311 13.475 256 20.301 256h10.015c6.352 0 11.647-4.949 11.977-11.293C48.159 131.913 141.389 42 256 42c47.554 0 91.487 15.512 127.02 41.75l-53.615 53.622c-20.1 20.1-5.855 54.628 22.627 54.628H480c17.673 0 32-14.327 32-32V32.015c0-28.475-34.564-42.691-54.627-22.628zM480 160H352L480 32v128zm11.699 96h-10.014c-6.353 0-11.647 4.949-11.977 11.293C463.84 380.203 370.504 470 256 470c-47.525 0-91.468-15.509-127.016-41.757l53.612-53.616c20.099-20.1 5.855-54.627-22.627-54.627H32c-17.673 0-32 14.327-32 32v127.978c0 28.614 34.615 42.641 54.627 22.627l50.092-50.096C146.587 484.788 199.046 504 256 504c132.773 0 241.176-104.338 247.69-235.493.339-6.818-5.165-12.507-11.991-12.507zM32 480V352h128L32 480z"></path></svg>
                     </button>
                 }
-                <button class="modal-close" @onclick="ToggleCombatMenu" title="close" aria-label="close combat order list">
+                <button class="modal-close" @onclick="ToggleCombatMenu" tooltip="Close" aria-label="close combat order list">
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
                 </button>
             </div>
@@ -706,7 +945,7 @@
                         ondragover="event.preventDefault();" 
                         @ondrop="@(e => UpdateEntityCombatOrderPosition(OrderPosition))" 
                         @ondragstart="@(e => MovingEntityUID = Entity.UID)" 
-                        title="@Entity.Name"
+                        tooltip="@Entity.Name"
                     >
                         <div flex="items-center">
                             @if (Tabletop.IsGameMaster){
@@ -725,10 +964,10 @@
                         </div>
                         @if (Tabletop.IsGameMaster){
                             <div flex="row nowrap items-center">
-                                <button title="Ping @Entity.Name" class="ping-player" @onclick="@(e => Hub.PingEntity(Entity.UID))">
+                                <button tooltip="Ping @Entity.Name" class="ping-player" @onclick="@(e => Hub.PingEntity(Entity.UID))">
                                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="share" class="svg-inline--fa fa-share fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M564.907 196.35L388.91 12.366C364.216-13.45 320 3.746 320 40.016v88.154C154.548 130.155 0 160.103 0 331.19c0 94.98 55.84 150.231 89.13 174.571 24.233 17.722 58.021-4.992 49.68-34.51C100.937 336.887 165.575 321.972 320 320.16V408c0 36.239 44.19 53.494 68.91 27.65l175.998-184c14.79-15.47 14.79-39.83-.001-55.3zm-23.127 33.18l-176 184c-4.933 5.16-13.78 1.73-13.78-5.53V288c-171.396 0-295.313 9.707-243.98 191.7C72 453.36 32 405.59 32 331.19 32 171.18 194.886 160 352 160V40c0-7.262 8.851-10.69 13.78-5.53l176 184a7.978 7.978 0 0 1 0 11.06z"></path></svg>
                                 </button>
-                                <button title="Remove @Entity.Name" class="remove" @onclick="@(e => Hub.RemoveEntityFromCombatOrder(Entity.UID))">
+                                <button tooltip="Remove @Entity.Name" class="remove" @onclick="@(e => Hub.RemoveEntityFromCombatOrder(Entity.UID))">
                                     <svg style="width:14px;height:14px;" aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
                                 </button>
                             </div>
@@ -747,7 +986,7 @@
     <moveable-modal class="chat-modal js-chat-modal">
         <moveable-handle>
             <span class="inline-block font-xs font-grey-100 font-medium">Messenger</span>
-            <button class="modal-close" @onclick="ToggleChatModal" title="close" aria-label="close messenger">
+            <button class="modal-close" @onclick="ToggleChatModal" tooltip="Close" aria-label="close messenger">
                 <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
             </button>
         </moveable-handle>
@@ -757,43 +996,43 @@
         <moveable-handle>
             <span class="inline-block font-xs font-grey-100 font-medium">Dice</span>
             <div flex="items-center row nowrap">
-                <button class="modal-close" @onclick="ToggleDiceMenu" title="close" aria-label="close dice menu">
+                <button class="modal-close" @onclick="ToggleDiceMenu" tooltip="Close" aria-label="close dice menu">
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
                 </button>
             </div>
         </moveable-handle>
         <div class="dice-box">
-            <button title="d4" @onclick="@(e => SetActiveDie("d4"))" class="@(ActiveDie == "d4" ? "is-active" : "")">
+            <button tooltip="d4" @onclick="@(e => SetActiveDie("d4"))" class="@(ActiveDie == "d4" ? "is-active" : "")">
                 <i>
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d4" class="svg-inline--fa fa-dice-d4 fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M504.9 289.03L280.84 11.86C274.45 3.96 265.23 0 256 0s-18.45 3.96-24.85 11.86L7.1 289.03c-11.31 14-8.84 34.57 5.47 45.49l224.05 170.94c5.72 4.37 12.55 6.55 19.38 6.55s13.66-2.18 19.38-6.55l224.05-170.94c14.31-10.92 16.78-31.5 5.47-45.49zM31.99 309.14L240 51.75v416.04L31.99 309.14zM256.02 480h.03l-.01.01-.02-.01zM272 467.82v-416l208.02 257.26L272 467.82z"></path></svg>
                 </i>
             </button>
-            <button title="d6" @onclick="@(e => SetActiveDie("d6"))" class="@(ActiveDie == "d6" ? "is-active" : "")">
+            <button tooltip="d6" @onclick="@(e => SetActiveDie("d6"))" class="@(ActiveDie == "d6" ? "is-active" : "")">
                 <i>
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d6" class="svg-inline--fa fa-dice-d6 fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M431.88 116.13L239.88 4.3a31.478 31.478 0 0 0-31.76 0l-192 111.84C6.15 121.94 0 132.75 0 144.46v223.09c0 11.71 6.15 22.51 16.12 28.32l192 111.83a31.478 31.478 0 0 0 31.76 0l192-111.83c9.97-5.81 16.12-16.62 16.12-28.32V144.46c0-11.71-6.15-22.52-16.12-28.33zM224 32.08l175.75 102.86L224 237.48 47.83 134.7 224 32.08zM32.21 162.65L208 265.18v205.37L32 367.54l.21-204.89zM240 470.84V265.18l175.98-102.64-.21 205.67L240 470.84z"></path></svg>
                 </i>
             </button>
-            <button title="d8" @onclick="@(e => SetActiveDie("d8"))" class="@(ActiveDie == "d8" ? "is-active" : "")">
+            <button tooltip="d8" @onclick="@(e => SetActiveDie("d8"))" class="@(ActiveDie == "d8" ? "is-active" : "")">
                 <i>
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d8" class="svg-inline--fa fa-dice-d8 fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M502.1 232.1L279.9 9.9C273.3 3.3 264.6 0 256 0s-17.3 3.3-23.9 9.9L9.9 232.1c-13.2 13.2-13.2 34.5 0 47.7L232.1 502c6.6 6.6 15.2 9.9 23.9 9.9s17.3-3.3 23.9-9.9l222.2-222.2c13.2-13.1 13.2-34.5 0-47.7zM240 464.7L61.2 285.9 240 362.5zm0-137L43.7 243.6 240 47.3zm32 137V362.5l178.8-76.6zm0-137V47.3l196.3 196.3z"></path></svg>
                 </i>
             </button>
-            <button title="d10" @onclick="@(e => SetActiveDie("d10"))" class="@(ActiveDie == "d10" ? "is-active" : "")">
+            <button tooltip="d10" @onclick="@(e => SetActiveDie("d10"))" class="@(ActiveDie == "d10" ? "is-active" : "")">
                 <i>
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d10" class="svg-inline--fa fa-dice-d10 fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M503.88 261.29L279.8 10.64C273.45 3.55 264.72 0 256 0s-17.45 3.55-23.8 10.64L8.12 261.29c-11.81 13.21-10.6 33.5 2.69 45.22l224.08 197.52c6.03 5.32 13.57 7.97 21.11 7.97 7.54 0 15.08-2.66 21.11-7.97L501.19 306.5c13.29-11.71 14.49-32.01 2.69-45.21zM256 297.95l-75.86-50.57 75.86-177 75.86 177L256 297.95zm-107.28-58.24L47.69 264.97 220.97 71.12l-72.25 168.59zm214.56 0L291.03 71.12 464.5 265.01l-101.22-25.3zM31.91 282.62l.01.04-.03-.02.02-.02zm17.03 15.03l108.34-27.09 82.76 55.19v140.22L48.94 297.65zM271.96 465.9V325.75l82.76-55.19 108.2 27.06L271.96 465.9z"></path></svg>
                 </i>
             </button>
-            <button title="d12" @onclick="@(e => SetActiveDie("d12"))" class="@(ActiveDie == "d12" ? "is-active" : "")">
+            <button tooltip="d12" @onclick="@(e => SetActiveDie("d12"))" class="@(ActiveDie == "d12" ? "is-active" : "")">
                 <i>
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d12" class="svg-inline--fa fa-dice-d12 fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M505.24 178.49l-47.7-95.41a63.972 63.972 0 0 0-28.62-28.62l-95.41-47.7A63.905 63.905 0 0 0 304.89 0h-97.78c-9.94 0-19.73 2.31-28.62 6.76l-95.41 47.7a63.972 63.972 0 0 0-28.62 28.62l-47.7 95.41A63.874 63.874 0 0 0 0 207.11v97.78c0 9.94 2.31 19.73 6.76 28.62l47.7 95.41a63.972 63.972 0 0 0 28.62 28.62l95.41 47.7a64.07 64.07 0 0 0 28.62 6.76h97.78c9.94 0 19.73-2.31 28.62-6.76l95.41-47.7a63.972 63.972 0 0 0 28.62-28.62l47.7-95.41a64.07 64.07 0 0 0 6.76-28.62v-97.78c0-9.94-2.31-19.74-6.76-28.62zm-29.55 12.44l-95.58 109.23L272 246.11V140.22l156.94-42.8 46.75 93.51zM308.8 480H203.2l-55.29-152.06L256 273.89l108.09 54.05L308.8 480zM199.55 32h112.89l82.85 41.42L256 111.41 116.71 73.42 199.55 32zM83.06 97.42L240 140.22V246.1l-108.11 54.05-95.58-109.22 46.75-93.51zM32 312.45v-77.88l81.99 93.7 48.42 133.16-74.56-37.28L32 312.45zm392.15 111.7l-74.56 37.28 48.42-133.16 81.99-93.7v77.88l-55.85 111.7z"></path></svg>
                 </i>
             </button>
-            <button title="d20" @onclick="@(e => SetActiveDie("d20"))" class="@(ActiveDie == "d20" ? "is-active" : "")">
+            <button tooltip="d20" @onclick="@(e => SetActiveDie("d20"))" class="@(ActiveDie == "d20" ? "is-active" : "")">
                 <i>
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dice-d20" class="svg-inline--fa fa-dice-d20 fa-w-14" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M431.88 116.13L239.88 4.3a31.478 31.478 0 0 0-31.76 0l-192 111.84C6.15 121.94 0 132.75 0 144.46v223.09c0 11.71 6.15 22.51 16.12 28.32l192 111.83a31.478 31.478 0 0 0 31.76 0l192-111.83c9.97-5.81 16.12-16.62 16.12-28.32V144.46c0-11.71-6.15-22.52-16.12-28.33zM224 57.62L318.7 176H129.3L224 57.62zM124.62 208h198.75L224 369.47 124.62 208zm68.28 171.99L55.92 362.87l44.43-133.28 92.55 150.4zm154.75-150.41l44.43 133.28-136.98 17.13 92.55-150.41zm7.17-59.69L262.67 54.72l138.01 80.78-45.86 34.39zm-261.64 0l-46.24-34.68 138.54-80.7-92.3 115.38zm-16.01 27.98l-45.13 135.4.17-169.12 44.96 33.72zM208 414.12v56.43L85.4 398.8 208 414.12zm155.6-15.45L240 470.84v-56.72l123.6-15.45zm7.23-200.8l45.15-33.86-.17 168.79-44.98-134.93zM224.14 480h.17l-.09.05-.08-.05z"></path></svg>
                 </i>
             </button>
-            <button title="d100" @onclick="@(e => SetActiveDie("d100"))" class="@(ActiveDie == "d100" ? "is-active" : "")">
+            <button tooltip="d100" @onclick="@(e => SetActiveDie("d100"))" class="@(ActiveDie == "d100" ? "is-active" : "")">
                 <i>
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="badge-percent" class="svg-inline--fa fa-badge-percent fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M349.66 173.65l-11.31-11.31c-3.12-3.12-8.19-3.12-11.31 0l-164.7 164.69c-3.12 3.12-3.12 8.19 0 11.31l11.31 11.31c3.12 3.12 8.19 3.12 11.31 0l164.69-164.69c3.13-3.12 3.13-8.18.01-11.31zM240 192c0-26.47-21.53-48-48-48s-48 21.53-48 48 21.53 48 48 48 48-21.53 48-48zm-64 0c0-8.83 7.19-16 16-16s16 7.17 16 16-7.19 16-16 16-16-7.17-16-16zm144 80c-26.47 0-48 21.53-48 48s21.53 48 48 48 48-21.53 48-48-21.53-48-48-48zm0 64c-8.81 0-16-7.17-16-16s7.19-16 16-16 16 7.17 16 16-7.19 16-16 16zm192-80c0-35.5-19.4-68.2-49.6-85.5 9.1-33.6-.3-70.4-25.4-95.5s-61.9-34.5-95.5-25.4C324.2 19.4 291.5 0 256 0s-68.2 19.4-85.5 49.6c-33.6-9.1-70.4.3-95.5 25.4s-34.5 61.9-25.4 95.5C19.4 187.8 0 220.5 0 256s19.4 68.2 49.6 85.5c-9.1 33.6.3 70.4 25.4 95.5 26.5 26.5 63.4 34.1 95.5 25.4 17.4 30.2 50 49.6 85.5 49.6s68.1-19.4 85.5-49.6c32.7 8.9 69.4.7 95.5-25.4 25.1-25.1 34.5-61.9 25.4-95.5 30.2-17.3 49.6-50 49.6-85.5zm-91.1 68.3c5.3 11.8 29.5 54.1-6.5 90.1-28.9 28.9-57.5 21.3-90.1 6.5C319.7 433 307 480 256 480c-52.1 0-64.7-49.5-68.3-59.1-32.6 14.8-61.3 22.2-90.1-6.5-36.8-36.7-10.9-80.5-6.5-90.1C79 319.7 32 307 32 256c0-52.1 49.5-64.7 59.1-68.3-5.3-11.8-29.5-54.1 6.5-90.1 36.8-36.9 80.8-10.7 90.1-6.5C192.3 79 205 32 256 32c52.1 0 64.7 49.5 68.3 59.1 11.8-5.3 54.1-29.5 90.1 6.5 36.8 36.7 10.9 80.5 6.5 90.1C433 192.3 480 205 480 256c0 52.1-49.5 64.7-59.1 68.3z"></path></svg>
                 </i>
@@ -802,7 +1041,7 @@
                 <div class="input mr-0.5" style="flex:1;">
                     <input required type="number" @bind="RollCount" min="1" />
                 </div>
-                <button @onclick="RollDice" class="button -primary -solid -round" title="roll dice" aria-label="roll dice">
+                <button @onclick="RollDice" class="button -primary -solid -round" tooltip="Roll dice" aria-label="roll dice">
                     <i>
                         <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="sync-alt" class="svg-inline--fa fa-sync-alt fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M370.72 133.28C339.458 104.008 298.888 87.962 255.848 88c-77.458.068-144.328 53.178-162.791 126.85-1.344 5.363-6.122 9.15-11.651 9.15H24.103c-7.498 0-13.194-6.807-11.807-14.176C33.933 94.924 134.813 8 256 8c66.448 0 126.791 26.136 171.315 68.685L463.03 40.97C478.149 25.851 504 36.559 504 57.941V192c0 13.255-10.745 24-24 24H345.941c-21.382 0-32.09-25.851-16.971-40.971l41.75-41.749zM32 296h134.059c21.382 0 32.09 25.851 16.971 40.971l-41.75 41.75c31.262 29.273 71.835 45.319 114.876 45.28 77.418-.07 144.315-53.144 162.787-126.849 1.344-5.363 6.122-9.15 11.651-9.15h57.304c7.498 0 13.194 6.807 11.807 14.176C478.067 417.076 377.187 504 256 504c-66.448 0-126.791-26.136-171.315-68.685L48.97 471.03C33.851 486.149 8 475.441 8 454.059V320c0-13.255 10.745-24 24-24z"></path></svg>
                     </i>
@@ -810,11 +1049,11 @@
             </div>
         </div>
     </moveable-modal>
-    <moveable-modal class="paint-modal js-paint-modal" style="visibility: @(PaintMenuOpen ? "visible" : "hidden");">
+    <moveable-modal class="paint-modal js-paint-modal">
         <moveable-handle>
             <span class="inline-block font-xs font-grey-100 font-medium">Painter</span>
             <div flex="items-center row nowrap">
-                <button class="modal-close" @onclick="@(e => SetPaintType(PaintOption.None))" title="close" aria-label="close paint menu">
+                <button class="modal-close" @onclick="@(e => SetPaintType(PaintOption.None))" tooltip="Close" aria-label="close paint menu">
                     <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
                 </button>
             </div>
@@ -842,7 +1081,7 @@
             </button>
         </div>
     </moveable-modal>
-    <form @onsubmit="LoadPopupImage" class="popup-image-upload-modal" style="visibility: @(PopupImageModalOpen ? "visible" : "hidden");">
+    <form @onsubmit="LoadPopupImage" class="popup-image-upload-modal" style="@(PopupImageModalOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;");">
         <div class="file-upload-input input mb-1">
             <label for="popupImageURL">Image URL</label>
             <input class="js-image-input" required type="url" id="popupImageURL" @bind="InputImageURL" placeholder="Image URL" autocomplete="no" autocapitalize="off" oninput="this.reportValidity();" />

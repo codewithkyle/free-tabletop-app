@@ -26,6 +26,10 @@ class Draggable extends HTMLElement{
             this.pos3 = e.touches[0].clientX;
             this.pos4 = e.touches[0].clientY;
         }
+        document.body.querySelectorAll("moveable-modal").forEach((el:HTMLElement) => {
+            el.style.zIndex = "1000";
+        });
+        this.style.zIndex = "1001";
     }
 
     private handleMouseUp:EventListener = () => {
@@ -74,12 +78,13 @@ class Draggable extends HTMLElement{
         }
     }
 
-    public toggleVisability(visible:boolean){
+    public toggleVisibility(visible:boolean){
         if (visible){
             this.style.transform = "translate(0px,0px)";
             this.dataset.top = "0";
             this.dataset.left = "0";
         }
+        this.style.opacity = `${visible ? "1" : "0"}`;
         this.style.visibility = `${visible ? "visible" : "hidden"}`;
     }
 
@@ -118,7 +123,7 @@ customElements.define("moveable-handle", DraggableHandle);
 function ToggleModal(className:string, visible:boolean){
     const el:Draggable = document.body.querySelector(`.${className}`);
     if (el){
-        el.toggleVisability(visible);
+        el.toggleVisibility(visible);
     }
 }
 customElements.define("moveable-modal", Draggable);

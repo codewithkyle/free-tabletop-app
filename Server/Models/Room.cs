@@ -110,6 +110,11 @@ namespace FreeTabletop.Server.Models
                     player.IsBurning = Players[i].IsBurning;
                     player.IsPoisoned = Players[i].IsPoisoned;
                     player.IsConcentrating = Players[i].IsConcentrating;
+                    player.IsCharmed = Players[i].IsCharmed;
+                    player.IsRestrained = Players[i].IsRestrained;
+                    player.IsStunned = Players[i].IsStunned;
+                    player.IsUnconscious = Players[i].IsUnconscious;
+                    player.IsVisible = Players[i].IsVisible;
                     players.Add(player);
                 }
             }
@@ -177,62 +182,13 @@ namespace FreeTabletop.Server.Models
             }
         }
 
-        public bool UpdateEntityPosition(string uid, int[] newPosition)
+        public void UpdateEntityPosition(string uid, int[] newPosition)
         {
-            bool Updated = false;
-            bool IsValidPosition = true;
-            Entity EntityToMove = null;
-            for (int i = 0; i < Players.Count; i++)
-            {
-                if (!Players[i].IsGameMaster)
-                {
-                    if (Players[i].Position[0] == newPosition[0] && Players[i].Position[1] == newPosition[1])
-                    {
-                        IsValidPosition = false;
-                        break;
-                    }
-                    else if (Players[i].UID == uid)
-                    {
-                        EntityToMove = Players[i];
-                    }
-                }
-            }
-            if (IsValidPosition)
-            {
-                for (int i = 0; i < Creatures.Count; i++)
-                {
-                    if (Creatures[i].Position[0] == newPosition[0] && Creatures[i].Position[1] == newPosition[1])
-                    {
-                        IsValidPosition = false;
-                        break;
-                    }
-                    else if (Creatures[i].UID == uid)
-                    {
-                        EntityToMove = Creatures[i];
-                    }
-                }
-            }
-            if (IsValidPosition)
-            {
-                for (int i = 0; i < NPCs.Count; i++)
-                {
-                    if (NPCs[i].Position[0] == newPosition[0] && NPCs[i].Position[1] == newPosition[1])
-                    {
-                        IsValidPosition = false;
-                        break;
-                    }
-                    else if (NPCs[i].UID == uid)
-                    {
-                        EntityToMove = NPCs[i];
-                    }
-                }
-            }
-            if (IsValidPosition && EntityToMove != null)
+            Entity EntityToMove = GetEntity(uid);
+            if (EntityToMove != null)
             {
                 EntityToMove.UpdatePosition(newPosition);
-                Updated = true;
             }
-            return Updated;
         }
 
         public void SpawnCreature(Creature creature)
@@ -558,7 +514,7 @@ namespace FreeTabletop.Server.Models
                 if (NPCs[i].UID == uid)
                 {
                     FoundEntity = true;
-                    NPCs.RemoveAt(i);
+                    NPCs[i].IsRemoved = true;
                     break;
                 }
             }
@@ -571,7 +527,7 @@ namespace FreeTabletop.Server.Models
                 if (Creatures[i].UID == uid)
                 {
                     FoundEntity = true;
-                    Creatures.RemoveAt(i);
+                    Creatures[i].IsRemoved = true;
                     break;
                 }
             }
@@ -620,40 +576,50 @@ namespace FreeTabletop.Server.Models
             return entity;
         }
 
-        public void SetBleeding(string uid, bool isBleeding)
+        public Entity ToggleCondition(string uid, string condition)
         {
             Entity entity = GetEntity(uid);
             if (entity != null)
             {
-                entity.IsBleeding = isBleeding;
+                switch(condition)
+                {
+                    case "Poison":
+                        entity.IsPoisoned ^= true;
+                        break;
+                    case "Bleeding":
+                        entity.IsBleeding ^= true;
+                        break;
+                    case "Concentrating":
+                        entity.IsConcentrating ^= true;
+                        break;
+                    case "Burning":
+                        entity.IsBurning ^= true;
+                        break;
+                    case "Charmed":
+                        entity.IsCharmed ^= true;
+                        break;
+                    case "Unconscious":
+                        entity.IsUnconscious ^= true;
+                        break;
+                    case "Restrained":
+                        entity.IsRestrained ^= true;
+                        break;
+                    case "Stunned":
+                        entity.IsStunned ^= true;
+                        break;
+                }
             }
+            return entity;
         }
 
-        public void SetBurning(string uid, bool isBurning)
+        public Entity ToggleVisibility(string uid)
         {
             Entity entity = GetEntity(uid);
             if (entity != null)
             {
-                entity.IsBurning = isBurning;
+                entity.IsVisible ^= true;
             }
-        }
-
-        public void SetPoison(string uid, bool isPoisoned)
-        {
-            Entity entity = GetEntity(uid);
-            if (entity != null)
-            {
-                entity.IsPoisoned = isPoisoned;
-            }
-        }
-
-        public void SetConcentration(string uid, bool isConcentrating)
-        {
-            Entity entity = GetEntity(uid);
-            if (entity != null)
-            {
-                entity.IsConcentrating = isConcentrating;
-            }
+            return entity;
         }
     }
 }

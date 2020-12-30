@@ -7,6 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.7.0] - 2020-12-30
+
+### Added
+
+- death celebration effect (confetti and sound effect)
+- performance settings
+    - toggle special effects quality (high/low)
+    - toggle death celebration effect (on/off)
+- new conditions
+    - charmed
+    - stunned
+    - unconscious
+    - restrained
+- new low quality conditions
+    - bleeding
+    - burning
+    - poisoned
+    - charmed
+    - stunned
+    - unconscious
+- ability to toggle pawn visibility
+- updated footer
+    - added copyright
+    - added support email link
+- tooltips
+
+### Fixed
+
+- clearing monster lookup input after selection
+- last touched moveable modal is forced to the top of the z-index stack
+- Creature & NPC move on death bug
+- improved NPC & Creature death removal performance
+- fixed modal visibility toggle performance
+
 ## [0.6.0] - 2020-12-29
 
 ### Added
@@ -149,6 +183,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - initial beta build
 - CI/CD pipeline
 
+[0.7.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.4.0...v0.5.0

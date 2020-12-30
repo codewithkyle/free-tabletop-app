@@ -39,6 +39,8 @@
         <link href="/css/lightswitch.css" rel="stylesheet">
         <link href="/css/moveable-modal.css" rel="stylesheet">
         <link href="/css/messenger.css" rel="stylesheet">
+        <link href="/css/tooltip.css" rel="stylesheet">
+
     </head>
 
     <body class="bg-grey-200">
@@ -61,17 +63,10 @@
         </app>
 
         <footer>
-            <span>
-                Created with
-                <svg aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-                    <path
-                        fill="currentColor"
-                        d="M462.3 62.6C407.5 15.9 326 24.3 275.7 76.2L256 96.5l-19.7-20.3C186.1 24.3 104.5 15.9 49.7 62.6c-62.8 53.6-66.1 149.8-9.9 207.9l193.5 199.8c12.5 12.9 32.8 12.9 45.3 0l193.5-199.8c56.3-58.1 53-154.3-9.8-207.9z"
-                    ></path>
-                </svg>
-                by
-                <a href="https://kyleandrews.dev/">Kyle Andrews</a>
-            </span>
+            <span>&copy; 2020</span>
+            <a target="_blank" rel="noopener" class="mx-0.25" href="https://kyleandrews.dev/">Kyle Andrews</a>
+            <span class="font-xl">&#183;</span>
+            <a target="_blank" rel="noopener" class="mx-0.25" href="mailto:codingwithkyle@gmail.com?subject=Free%20Tabletop%20Support&body=Explain%20the%20bug%20and%20provide%20screenshots:">Support</a>
         </footer>
 
         <div class="size-warning w-full h-full" flex="items-center justify-center">
@@ -83,7 +78,9 @@
         <!-- Libraries -->
         <script src="/js/notify.js"></script>
         <script src="/js/lit-html.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/rpg-dice-roller@4.5.1/lib/umd/bundle.min.js"></script>
+        <script src="/js/rpg-dice-roller.js"></script>
+        <script src="/js/canvas-confetti.js"></script>
+        <script src="/js/tooltipper.js"></script>
 
         <!-- Scripts -->
         <script src="/js/globals.js"></script>
@@ -95,7 +92,8 @@
         <script src="/js/chat.js"></script>
         <script src="/js/moveable-modal.js"></script>
         <script src="/js/dice.js"></script>
-        <script src="/js/bleeding-effect.js"></script>
+        <script src="/js/sfx-renderer.js"></script>
+        <script src="/js/death-canvas.js"></script>
 
         <script src="_framework/blazor.webassembly.js"></script>
     </body>

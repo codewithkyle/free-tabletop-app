@@ -164,18 +164,15 @@ namespace FreeTabletop.Server.Controllers
                     Room room = GetRoom(player.RoomCode);
                     if (room != null)
                     {
-                        bool HasUpdate = room.UpdateEntityPosition(entityUid, newPosition);
-                        if (HasUpdate)
-                        {
-                            UpdateEntityPosition(room, entityUid, newPosition);
-                        }
+                        room.UpdateEntityPosition(entityUid, newPosition);
+                        UpdateEntityPosition(room, entityUid, newPosition);
                     }
                 }
             }
         }
 
-        [HubMethodName("Room:SetBleeding")]
-        public async Task SetBleeding(string uid, bool isBleeding)
+        [HubMethodName("Entity:ToggleCondition")]
+        public async Task ToggleCondition(string uid, string condition)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -183,14 +180,17 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    room.SetBleeding(uid, isBleeding);
-                    await Clients.Group(room.RoomCode).SendAsync("Entity:SetBleeding", uid, isBleeding);
+                    Entity entity = room.ToggleCondition(uid, condition);
+                    if (entity != null)
+                    {
+                        await Clients.Group(room.RoomCode).SendAsync("Entity:UpdateCondition", entity, condition);
+                    }
                 }
             }
         }
 
-        [HubMethodName("Room:SetBurning")]
-        public async Task SetBurning(string uid, bool isBurning)
+        [HubMethodName("Entity:ToggleVisibility")]
+        public async Task ToggleVisibility(string uid)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -198,38 +198,11 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    room.SetBurning(uid, isBurning);
-                    await Clients.Group(room.RoomCode).SendAsync("Entity:SetBurning", uid, isBurning);
-                }
-            }
-        }
-
-        [HubMethodName("Room:SetConcentration")]
-        public async Task SetConcentration(string uid, bool isConcentrating)
-        {
-            Player player = GetPlayer(Context.ConnectionId);
-            if (player != null && player.IsGameMaster)
-            {
-                Room room = GetRoom(player.RoomCode);
-                if (room != null)
-                {
-                    room.SetConcentration(uid, isConcentrating);
-                    await Clients.Group(room.RoomCode).SendAsync("Entity:SetConcentration", uid, isConcentrating);
-                }
-            }
-        }
-
-        [HubMethodName("Room:SetPoison")]
-        public async Task SetPoison(string uid, bool isPoisoned)
-        {
-            Player player = GetPlayer(Context.ConnectionId);
-            if (player != null && player.IsGameMaster)
-            {
-                Room room = GetRoom(player.RoomCode);
-                if (room != null)
-                {
-                    room.SetPoison(uid, isPoisoned);
-                    await Clients.Group(room.RoomCode).SendAsync("Entity:SetPoison", uid, isPoisoned);
+                    Entity entity = room.ToggleVisibility(uid);
+                    if (entity != null)
+                    {
+                        await Clients.Group(room.RoomCode).SendAsync("Entity:ToggleVisibility", entity);
+                    }
                 }
             }
         }
@@ -337,6 +310,10 @@ namespace FreeTabletop.Server.Controllers
                     {
                         await RenderCreatureEntities(room);
                         await RenderNPCEntities(room);
+                        if (hp == 0)
+                        {
+                            await Clients.Group(room.RoomCode).SendAsync("Entity:RenderDeathCelebration", uid);
+                        }
                     }
                 }
             }
@@ -668,7 +645,6 @@ namespace FreeTabletop.Server.Controllers
 
         private async Task RenderCreatureEntities(Room room)
         {
-            
             await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderCreatureEntities", room.Creatures);
         }
 

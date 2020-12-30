@@ -19,6 +19,7 @@ namespace FreeTabletop.Shared.Models
         public List<Ability> Abilities { get; set; } = new List<Ability>();
         public string ActionsString { get; set; }
         public string AbilitiesString { get; set; }
+        public bool IsRemoved { get; set; } = false;
 
         public void Main(int[] pos)
         {

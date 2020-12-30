@@ -31,6 +31,9 @@
         canvas{
             display: block;
         }
+        death-canvas{
+            display: inline-block;
+        }
     }
 
     &[painter="active"]{
@@ -47,14 +50,30 @@
         z-index: 1;
     }
 
-    bleeding-effect{
+    sfx-canvas{
         position: absolute;
         pointer-events: none;
         user-select: none;
-        z-index: 1;
         width: 100%;
         height: 100%;
         z-index: 2;
+
+        canvas{
+            display: inline-block;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    }
+
+    death-canvas{
+        position: absolute;
+        pointer-events: none;
+        user-select: none;
+        width: 100%;
+        height: 100%;
+        z-index: 2;
+        display: none;
 
         canvas{
             display: inline-block;
@@ -114,6 +133,25 @@
                     pointer-events: none;
                 }
             }
+        }
+
+        &.-invisible{
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        &.-ghost{
+            & > i {
+                opacity: 0.6;
+            }
+        }
+
+        &.-removed{
+            opacity: 0 !important;
+            visibility: hidden !important;
+            transition: all 0ms 0ms linear !important;
+            pointer-events: none !important;
         }
 
         &:hover,
@@ -190,7 +228,7 @@
             filter: drop-shadow(0 0 16px rgba(#b3e800, 0.87)) opacity(0.87) brightness(1.5);
         }
 
-        .concentration{
+        .concentration-ring{
             position: absolute;
             width: 36px;
             height: 36px;
@@ -216,6 +254,202 @@
 
             &::after{
                 border-bottom: 2px solid rgb(231, 220, 255);
+                animation: spinRing 600ms 0ms linear infinite;
+                transform-origin: center center;
+            }
+        }
+
+        .stunned-ring{
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.87;
+
+            &::before,
+            &::after{
+                content: "";
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                position: absolute;
+            }
+
+            &::before{
+                border: 2px solid rgb(255, 233, 35);
+                box-shadow: 0 0 8px rgba(255, 233, 35,0.87);
+            }
+
+            &::after{
+                border-bottom: 2px solid rgb(255, 255, 255);
+                animation: spinRing 600ms 0ms linear infinite;
+                transform-origin: center center;
+            }
+        }
+
+        .restrained-ring{
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.87;
+
+            &::before{
+                content: "";
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                position: absolute;
+            }
+
+            &::before{
+                border: 2px solid rgb(128, 83, 16);
+                box-shadow: 0 0 8px rgba(128, 83, 16,0.87);
+                transform: scale(1);
+                animation: restrainedRing 2s 0ms var(--ease-in-out) infinite;
+            }
+        }
+
+        .unconscious-ring{
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.87;
+
+            &::before,
+            &::after{
+                content: "";
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                position: absolute;
+            }
+
+            &::before{
+                border: 2px solid rgb(32, 32, 32);
+                box-shadow: 0 0 8px rgba(32, 32, 32,0.87);
+            }
+
+            &::after{
+                border-bottom: 2px solid rgb(255, 255, 255);
+                animation: spinRing 600ms 0ms linear infinite;
+                transform-origin: center center;
+            }
+        }
+
+        .poison-ring{
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.87;
+
+            &::before{
+                content: "";
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                position: absolute;
+            }
+
+            &::before{
+                border: 2px solid rgb(116, 255, 24);
+                box-shadow: 0 0 8px rgba(116, 255, 24,0.87);
+                opacity: 0;
+                transform: scale(0);
+                animation: poisonRing 3s 0ms var(--ease-out) infinite;
+            }
+        }
+
+        .burning-ring{
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.87;
+
+            &::before{
+                content: "";
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                position: absolute;
+            }
+
+            &::before{
+                border: 2px solid rgb(255, 136, 24);
+                box-shadow: 0 0 8px rgba(255, 232, 24, 0.87);
+                animation: burningRing 2s 0ms linear infinite;
+            }
+        }
+
+        .bleeding-ring{
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.87;
+
+            &::before{
+                content: "";
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                position: absolute;
+            }
+
+            &::before{
+                border: 2px solid rgb(255, 28, 85);
+                box-shadow: 0 0 8px rgba(255, 28, 85, 0.87);
+                animation: bleedingRing 2s 0ms linear infinite;
+            }
+        }
+
+        .charmed-ring{
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.87;
+
+            &::before,
+            &::after{
+                content: "";
+                display: inline-block;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                position: absolute;
+            }
+
+            &::before{
+                border: 2px solid rgb(252, 49, 208);
+                box-shadow: 0 0 8px rgba(252, 49, 208, 0.87);
+            }
+
+            &::after{
+                border-bottom: 2px solid rgb(255, 255, 255);
                 animation: spinRing 600ms 0ms linear infinite;
                 transform-origin: center center;
             }
@@ -575,5 +809,58 @@
     }
     to{
         transform: rotate(360deg);
+    }
+}
+@keyframes burningRing{
+    0%, 25%{
+        border-color: rgb(255, 136, 24);
+    }
+    50%{
+        border-color: rgb(255, 240, 24);
+    }
+    75%{
+        border-color: rgb(255, 39, 24);
+    }
+    100%{
+        border-color: rgb(255, 136, 24);
+    }
+}
+@keyframes bleedingRing{
+    0%{
+        border-color: rgb(255, 28, 85);
+    }
+    5%{
+        border-color: rgb(255, 139, 168);
+    }
+    10%, 100%{
+        border-color: rgb(255, 28, 85);
+    }
+}
+@keyframes poisonRing{
+    0%{
+        opacity: 0;
+        transform: scale(0);
+    }
+    15%{
+        opacity: 1;
+        transform: scale(1);
+    }
+    25%, 100%{
+        opacity: 0;
+        transform: scale(1.5);
+    }
+}
+@keyframes restrainedRing{
+    0%{
+        transform: scale(1);
+        border-color: rgb(128, 83, 16);
+    }
+    50%{
+        transform: scale(0.95);
+        border-color: rgb(105, 70, 16);
+    }
+    100%{
+        transform: scale(1);
+        border-color: rgb(128, 83, 16);
     }
 }
