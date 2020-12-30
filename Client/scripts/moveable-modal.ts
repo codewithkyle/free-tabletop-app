@@ -84,6 +84,7 @@ class Draggable extends HTMLElement{
             this.dataset.top = "0";
             this.dataset.left = "0";
         }
+        this.style.opacity = `${visible ? "1" : "0"}`;
         this.style.visibility = `${visible ? "visible" : "hidden"}`;
     }
 

@@ -371,7 +371,7 @@
             </button>
         </div>
     </div>
-    <dl class="info-modal" style="visibility:@(InfoMenuOpen ? "visible" : "hidden")">
+    <dl class="info-modal" style="@(InfoMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <dt>Room:</dt>
         <dd>
             <button class="bttn" title="Click to copy room code" @onclick="CopyRoomCodeToClipboard">
@@ -445,7 +445,7 @@
             }
         </dd>
     </dl>
-    <div class="entity-spawn-modal" style="top:0;left:0;transform: translate(@(RightClickPosition[0] != -1 ? RightClickPosition[0].ToString() : "168")px, @(RightClickPosition[1] != -1 ? RightClickPosition[1].ToString() + "px" : "calc(36px + 1rem)"));visibility:@(EntitySpawnMenuOpen ? "visible" : "hidden")">
+    <div class="entity-spawn-modal" style="top:0;left:0;transform: translate(@(RightClickPosition[0] != -1 ? RightClickPosition[0].ToString() : "168")px, @(RightClickPosition[1] != -1 ? RightClickPosition[1].ToString() + "px" : "calc(36px + 1rem)"));@(EntitySpawnMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <button @onclick="OpenMonsterLookupMenu">
             <i>
                 <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="dragon" class="svg-inline--fa fa-dragon fa-w-20" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><path fill="currentColor" d="M481.01 119.95c14.92.86 27.35-9.89 30.88-24.58L453.47 80c-6.49 27.12 15.51 39.26 27.54 39.95zm54.5 131.8c-29.84-16.98-55.61-31.64-55.61-51.38V192h16.96l28.62 22.03c8.34 6.42 18.74 9.97 29.27 9.97h29.18c21.15 0 40.09-14.17 46.02-34.45l7.4-25.16c5.84-19.8 1.88-41.44-10.62-57.91L569.8 31.59C554.78 11.81 530.98 0 506.14 0H297.16c-19.47 0-33.09 24.04-15.4 41.25l37.49 30.25-32.55 13.42c-16.19 7.94-19.14 32.81 1.13 42.64l48.11 19.25v50.89l-190.3-47.88c-19.18-4.86-39.68 2.83-50.99 19.08L3.76 299.12c-5.03 7.91-5 17.72.03 25.59 1.69 2.62 9.54 13.11 24.99 10.91l115.02-21.8-12.07 17.3c-5.03 7.91-5 17.72.03 25.59 6.7 10.45 17.87 11.86 24.15 11.05l202.87-27.39c8.33 16.71 18.17 32.35 31.17 45.73-130.55 8.75-252.39 36.8-364.13 61.33C10.86 450.7.01 464.1.01 479.31c0 18 14.75 32.64 32.87 32.64l474.01.05c42.65 0 83.14-19.77 108.29-52.89 23.4-30.8 30.49-68.73 19.9-106.8-14.5-52.15-61.68-79-99.57-100.56zM41.72 300.62l79.17-113.41c3.75-5.39 10.59-7.86 17-6.36l84.07 21.02L170 276.3 41.72 300.62zm127.18 33.1l86.23-123.48 80.79 20.5c0 47.9 8.68 72.63 10.6 79L168.9 333.72zM506.89 480H32c230.53-56.77 352.62-62.36 400.47-64.02 15.54-.53 21.22-20.83 8.22-29.34-48.96-32.23-72.76-80.92-72.76-148.83V135.98c0-6.55-3.97-12.42-10.06-14.86l-38.15-15.23 36.71-15.09c5.22-2.16 8.94-6.91 9.75-12.5s-1.41-11.2-5.81-14.75L321.15 32h184.99c14.9 0 29.18 7.08 38.18 18.95l56.92 74.91c6.38 8.38 8.4 19.39 5.44 29.48l-7.4 25.19c-2 6.75-8.31 11.47-15.34 11.47h-29.18c-3.56 0-6.9-1.14-9.75-3.33l-32.96-25.36a16.01 16.01 0 0 0-9.75-3.31h-38.4c-8.84 0-16 7.16-16 16v24.38c0 38.34 34.87 58.19 71.8 79.19 36.18 20.59 73.58 41.89 84.57 81.33 19.36 69.86-41.14 119.1-97.38 119.1z"></path></svg>
@@ -465,7 +465,7 @@
             <span>Create Custom Creature</span>
         </button>
     </div>
-    <div class="tabletop-modal" style="visibility:@(TabletopMenuOpen ? "visible" : "hidden")">
+    <div class="tabletop-modal" style="@(TabletopMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <button @onclick="UploadTabletopImage">
             <i>
                 <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="file-upload" class="svg-inline--fa fa-file-upload fa-w-12" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path fill="currentColor" d="M369.9 97.98L286.02 14.1c-9-9-21.2-14.1-33.89-14.1H47.99C21.5.1 0 21.6 0 48.09v415.92C0 490.5 21.5 512 47.99 512h288.02c26.49 0 47.99-21.5 47.99-47.99V131.97c0-12.69-5.1-24.99-14.1-33.99zM256.03 32.59c2.8.7 5.3 2.1 7.4 4.2l83.88 83.88c2.1 2.1 3.5 4.6 4.2 7.4h-95.48V32.59zm95.98 431.42c0 8.8-7.2 16-16 16H47.99c-8.8 0-16-7.2-16-16V48.09c0-8.8 7.2-16.09 16-16.09h176.04v104.07c0 13.3 10.7 23.93 24 23.93h103.98v304.01zm-180.1-247.32l-68.12 71.75c-7.81 8.2-9.94 20.31-5.44 30.83 4.41 10.31 14 16.72 25 16.72H176V424c0 4.42 3.58 8 8 8h16c4.42 0 8-3.58 8-8v-88.02h52.66c11 0 20.59-6.41 25-16.72 4.5-10.52 2.38-22.62-5.44-30.81l-68.12-71.78c-10.69-11.19-29.51-11.2-40.19.02zm-38.75 87.29l58.84-62 58.84 62H133.16z"></path></svg>
@@ -485,7 +485,7 @@
             <span>Clear Tabletop</span>
         </button>
     </div>
-    <form @onsubmit="LoadTabletop" class="image-upload-modal" style="visibility:@(ImageUploadOpen ? "visible" : "hidden")">
+    <form @onsubmit="LoadTabletop" class="image-upload-modal" style="@(ImageUploadOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <div class="file-upload-input input mb-1">
             <label for="imageURL">Image URL</label>
             <input class="js-image-input" required type="url" id="imageURL" @bind="InputImageURL" placeholder="Image URL" autocomplete="no" autocapitalize="off" oninput="this.reportValidity();" />
@@ -534,7 +534,7 @@
         </div>
         <button class="button -solid -primary w-full" type="submit">Load Tabletop</button>
     </form>
-    <div class="monster-lookup-modal" style="visibility:@(MonsterLookupMenuOpen ? "visible" : "hidden")">
+    <div class="monster-lookup-modal" style="@(MonsterLookupMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <div class="input">
             <input class="js-monster-lookup" required type="text" @oninput="LookupMonster" placeholder="Search for a monster" autocomplete="no" autocapitalize="off" />
             @if (Creatures.Count != 0){
@@ -548,7 +548,7 @@
         </div>
         <p class="block w-full mt-0.75 px-0.25 font-grey-700 font-xs line-snug">Monsters provided by the 5E SRD. If a monster is not listed create a custom creature instead.</p>
     </div>
-    <form class="custom-creature-modal" @onsubmit="SpawnCustomCreature" style="visibility:@(CustomCreatureMenuOpen ? "visible" : "hidden")">
+    <form class="custom-creature-modal" @onsubmit="SpawnCustomCreature" style="@(CustomCreatureMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <div class="input mb-1">
             <label for="custom-creature-name">Creature's Name</label>
             <input required id="custom-creature-name" type="text" @bind="CustomCreature.BaseName" autocomplete="no" autocapitalize="off" />
@@ -565,7 +565,7 @@
         </div>
         <button class="button -solid -primary w-full" type="submit">Spawn creature</button>
     </form>
-    <form class="custom-creature-modal" @onsubmit="SpawnNPC" style="visibility:@(NPCMenuOpen ? "visible" : "hidden")">
+    <form class="custom-creature-modal" @onsubmit="SpawnNPC" style="@(NPCMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <div class="input mb-1">
             <label for="custom-creature-name">Creature's Name</label>
             <input class="js-npc-input" required id="npc-name" type="text" @bind="NewNPC.BaseName" autocomplete="no" autocapitalize="off" />
@@ -582,7 +582,7 @@
         </div>
         <button class="button -solid -primary w-full" type="submit">Spawn NPC</button>
     </form>
-    <div class="settings-modal" style="visibility:@(SettingsMenu != null ? "visible" : "hidden")">
+    <div class="settings-modal" style="@(SettingsMenu != null ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         @switch(SettingsMenu){
             case "sound":
                 <button @onclick="@(e => SettingsMenu = "settings")">
@@ -813,7 +813,7 @@
             </div>
         </div>
     </moveable-modal>
-    <moveable-modal class="paint-modal js-paint-modal" style="visibility: @(PaintMenuOpen ? "visible" : "hidden");">
+    <moveable-modal class="paint-modal js-paint-modal">
         <moveable-handle>
             <span class="inline-block font-xs font-grey-100 font-medium">Painter</span>
             <div flex="items-center row nowrap">
@@ -845,7 +845,7 @@
             </button>
         </div>
     </moveable-modal>
-    <form @onsubmit="LoadPopupImage" class="popup-image-upload-modal" style="visibility: @(PopupImageModalOpen ? "visible" : "hidden");">
+    <form @onsubmit="LoadPopupImage" class="popup-image-upload-modal" style="@(PopupImageModalOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;");">
         <div class="file-upload-input input mb-1">
             <label for="popupImageURL">Image URL</label>
             <input class="js-image-input" required type="url" id="popupImageURL" @bind="InputImageURL" placeholder="Image URL" autocomplete="no" autocapitalize="off" oninput="this.reportValidity();" />
