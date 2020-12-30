@@ -77,11 +77,8 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<int, int>("Notification:Ping", Room.RenderPing);
                 Networker.hubConnection.On<int, string, string, string>("Notification:Roll", Room.RenderRollNotification);
 
-                Networker.hubConnection.On<string, bool>("Entity:SetBleeding", Room.SetEntityBleeding);
-                Networker.hubConnection.On<string, bool>("Entity:SetBurning", Room.SetEntityBurning);
-                Networker.hubConnection.On<string, bool>("Entity:SetPoison", Room.SetEntityPoison);
-                Networker.hubConnection.On<string, bool>("Entity:SetConcentration", Room.SetEntityConcentration);
                 Networker.hubConnection.On<string>("Entity:RenderDeathCelebration", RenderDeathCelebration);
+                Networker.hubConnection.On<Entity, string>("Entity:UpdateCondition", Room.UpdateEntityCondition);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -144,10 +141,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Tabletop:UpdateEntityPosition");
             Networker.hubConnection.Remove("Tabletop:UpdateLock");
             Networker.hubConnection.Remove("Tabletop:LoadPopupImage");
-            Networker.hubConnection.Remove("Entity:SetBleeding");
-            Networker.hubConnection.Remove("Entity:SetBurning");
-            Networker.hubConnection.Remove("Entity:SetPoison");
-            Networker.hubConnection.Remove("Entity:SetConcentration");
+            Networker.hubConnection.Remove("Entity:UpdateCondition");
             Networker.hubConnection.Remove("Entity:RenderDeathCelebration");
         }
 
@@ -346,6 +340,11 @@ namespace FreeTabletop.Client.Controllers
         public void RenderDeathCelebration(string uid)
         {
             JSRuntime.InvokeVoidAsync("RenderDeathCelebration", uid);
+        }
+
+        public void ToggleCondition(string uid, string condition)
+        {
+            Networker.hubConnection.SendAsync("Entity:ToggleCondition", uid, condition);
         }
     }
 }

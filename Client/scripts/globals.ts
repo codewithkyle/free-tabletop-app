@@ -106,7 +106,7 @@ async function PlaySound(name:string){
             }
             break;
         case "death-celebration.mp3":
-            if (!localStorage.getItem("deathCelebrationDisabled")){
+            if (!localStorage.getItem("deathCelebrationSoundDisabled") && !localStorage.getItem("deathCelebrationsDisabled")){
                 var audio = new Audio(`${location.origin}/sfx/${name}`);
                 audio.volume = 0.75;
                 audio.play();
@@ -120,7 +120,7 @@ async function PlaySound(name:string){
     return;
 }
 
-function ToggleSoundStatus(type:string, enabled:boolean){
+function ToggleSetting(type:string, enabled:boolean){
     if (enabled){
         localStorage.removeItem(`${type}`);
     }else{

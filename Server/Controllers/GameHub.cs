@@ -171,8 +171,8 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
-        [HubMethodName("Room:SetBleeding")]
-        public async Task SetBleeding(string uid, bool isBleeding)
+        [HubMethodName("Entity:ToggleCondition")]
+        public async Task ToggleCondition(string uid, string condition)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -180,53 +180,11 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    room.SetBleeding(uid, isBleeding);
-                    await Clients.Group(room.RoomCode).SendAsync("Entity:SetBleeding", uid, isBleeding);
-                }
-            }
-        }
-
-        [HubMethodName("Room:SetBurning")]
-        public async Task SetBurning(string uid, bool isBurning)
-        {
-            Player player = GetPlayer(Context.ConnectionId);
-            if (player != null && player.IsGameMaster)
-            {
-                Room room = GetRoom(player.RoomCode);
-                if (room != null)
-                {
-                    room.SetBurning(uid, isBurning);
-                    await Clients.Group(room.RoomCode).SendAsync("Entity:SetBurning", uid, isBurning);
-                }
-            }
-        }
-
-        [HubMethodName("Room:SetConcentration")]
-        public async Task SetConcentration(string uid, bool isConcentrating)
-        {
-            Player player = GetPlayer(Context.ConnectionId);
-            if (player != null && player.IsGameMaster)
-            {
-                Room room = GetRoom(player.RoomCode);
-                if (room != null)
-                {
-                    room.SetConcentration(uid, isConcentrating);
-                    await Clients.Group(room.RoomCode).SendAsync("Entity:SetConcentration", uid, isConcentrating);
-                }
-            }
-        }
-
-        [HubMethodName("Room:SetPoison")]
-        public async Task SetPoison(string uid, bool isPoisoned)
-        {
-            Player player = GetPlayer(Context.ConnectionId);
-            if (player != null && player.IsGameMaster)
-            {
-                Room room = GetRoom(player.RoomCode);
-                if (room != null)
-                {
-                    room.SetPoison(uid, isPoisoned);
-                    await Clients.Group(room.RoomCode).SendAsync("Entity:SetPoison", uid, isPoisoned);
+                    Entity entity = room.ToggleCondition(uid, condition);
+                    if (entity != null)
+                    {
+                        await Clients.Group(room.RoomCode).SendAsync("Entity:UpdateCondition", entity, condition);
+                    }
                 }
             }
         }

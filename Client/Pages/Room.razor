@@ -16,9 +16,13 @@
             <svg class="spinner" aria-hidden="true" focusable="false" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g class="fa-group"><path class="fa-secondary" fill="currentColor" d="M478.71 364.58zm-22 6.11l-27.83-15.9a15.92 15.92 0 0 1-6.94-19.2A184 184 0 1 1 256 72c5.89 0 11.71.29 17.46.83-.74-.07-1.48-.15-2.23-.21-8.49-.69-15.23-7.31-15.23-15.83v-32a16 16 0 0 1 15.34-16C266.24 8.46 261.18 8 256 8 119 8 8 119 8 256s111 248 248 248c98 0 182.42-56.95 222.71-139.42-4.13 7.86-14.23 10.55-22 6.11z" opacity="0.4"></path><path class="fa-primary" fill="currentColor" d="M271.23 72.62c-8.49-.69-15.23-7.31-15.23-15.83V24.73c0-9.11 7.67-16.78 16.77-16.17C401.92 17.18 504 124.67 504 256a246 246 0 0 1-25 108.24c-4 8.17-14.37 11-22.26 6.45l-27.84-15.9c-7.41-4.23-9.83-13.35-6.2-21.07A182.53 182.53 0 0 0 440 256c0-96.49-74.27-175.63-168.77-183.38z"></path></g></svg>
             <p class="text-center font-sm font-grey-700 mt-1">Loading tabletop...</p>
         </tabletop-loading-spinner>
-        <death-canvas></death-canvas>
         @if (Tabletop.Image != null && Tabletop.Image.Length != 0 && Tabletop.CellSize > 0){
-            <bleeding-effect data-width="@Tabletop.Size[0]" data-height="@Tabletop.Size[1]"></bleeding-effect>
+            @if(HighQualityEffects){
+                <sfx-canvas data-width="@Tabletop.Size[0]" data-height="@Tabletop.Size[1]"></sfx-canvas>
+            }
+            @if(DeathCelebrations){
+                <death-canvas data-width="@Tabletop.Size[0]" data-height="@Tabletop.Size[1]"></death-canvas>
+            }
             @for (int i = 0; i < Tabletop.Creatures.Count; i++){
                 Creature Creature = Tabletop.Creatures[i];
                 <tabletop-pawn 
@@ -27,6 +31,9 @@
                     oncontextmenu="return false;"
                     data-uid="@Creature.UID" 
                     bleeding="@(Creature.IsBleeding ? "true" : "false")" 
+                    charmed="@(Creature.IsCharmed ? "true" : "false")" 
+                    unconscious="@(Creature.IsUnconscious ? "true" : "false")" 
+                    stunned="@(Creature.IsStunned ? "true" : "false")" 
                 >
                     <i 
                         @ondragstart="@(e => HandleDragStart(Creature.UID))" 
@@ -36,14 +43,35 @@
                             <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="skull" class="svg-inline--fa fa-skull fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M352 184c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm0 112c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40zM160 184c-39.8 0-72 32.2-72 72s32.2 72 72 72 72-32.2 72-72-32.2-72-72-72zm0 112c-22.1 0-40-17.9-40-40s17.9-40 40-40 40 17.9 40 40-17.9 40-40 40zM256 0C114.6 0 0 100.3 0 224c0 70.1 36.9 132.6 94.5 173.7 9.7 6.9 15.2 18.1 13.5 29.9l-7.1 21.3C90.6 480 113.8 512 146.5 512h219c32.7 0 55.9-32 45.6-63.1l-7.1-21.3c-1.7-11.7 3.8-23 13.5-29.9C475.1 356.6 512 294.1 512 224 512 100.3 397.4 0 256 0zm142.9 371.6c-19.7 14-29.9 37.2-26.6 60.4l.4 2.8.9 2.8 7.1 21.3c2.2 6.8-.4 11.9-2.2 14.4-1.8 2.5-5.8 6.6-13 6.6H320v-56c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56h-64v-56c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56h-45.5c-7.1 0-11.2-4.2-13-6.6-1.8-2.5-4.5-7.7-2.2-14.4l7.1-21.3.9-2.8.4-2.8c3.3-23.2-6.9-46.4-26.6-60.4C61.5 334.9 32 281.1 32 224 32 118.1 132.5 32 256 32s224 86.1 224 192c0 57.1-29.5 110.9-81.1 147.6z"></path></svg>
                         }
                     </i>
-                    @if(Creature.IsBurning){
+                    @if(Creature.IsBurning && HighQualityEffects){
                         <div draggable="false" class="burning"></div>
                     }
-                    @if(Creature.IsPoisoned){
+                    @if(Creature.IsPoisoned && HighQualityEffects){
                         <div draggable="false" class="poison"></div>
                     }
                     @if(Creature.IsConcentrating){
-                        <div class="concentration"></div>
+                        <div class="concentration-ring"></div>
+                    }
+                    @if(Creature.IsRestrained){
+                        <div class="restrained-ring"></div>
+                    }
+                    @if(Creature.IsStunned && !HighQualityEffects){
+                        <div class="stunned-ring"></div>
+                    }
+                    @if(Creature.IsUnconscious && !HighQualityEffects){
+                        <div class="unconscious-ring"></div>
+                    }
+                    @if(Creature.IsBleeding && !HighQualityEffects){
+                        <div class="bleeding-ring"></div>
+                    }
+                    @if(Creature.IsBurning && !HighQualityEffects){
+                        <div class="burning-ring"></div>
+                    }
+                    @if(Creature.IsPoisoned && !HighQualityEffects){
+                        <div class="poison-ring"></div>
+                    }
+                    @if(Creature.IsCharmed && !HighQualityEffects){
+                        <div class="charmed-ring"></div>
                     }
                     @if(Tabletop.IsGameMaster){
                         <pawn-hud class="creature-hud" data-view="1">
@@ -120,33 +148,61 @@
                                     </dl>
                                 </div>
                                 <div data-view="4">
-                                    <div class="w-full px-0.5">
+                                    <div class="w-full px-0.5" style="max-height:150px;overflow-y:scroll;">
                                         <div class="lightswitch">
-                                            <input id="@Creature.UID-bleeding" type="checkbox" @onchange="@(e => ToggleBleeding(Creature))" />
+                                            <input id="@Creature.UID-bleeding" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Bleeding"))" />
                                             <label for="@Creature.UID-bleeding">
                                                 <i></i>
                                                 <span>Bleeding</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Creature.UID-poisoned" type="checkbox" @onchange="@(e => TogglePoison(Creature))" />
+                                            <input id="@Creature.UID-poisoned" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Poison"))" />
                                             <label for="@Creature.UID-poisoned">
                                                 <i></i>
                                                 <span>Poisoned</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Creature.UID-burning" type="checkbox" @onchange="@(e => ToggleBurning(Creature))" />
+                                            <input id="@Creature.UID-burning" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Burning"))" />
                                             <label for="@Creature.UID-burning">
                                                 <i></i>
                                                 <span>Burning</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Creature.UID-concentrating" type="checkbox" @onchange="@(e => ToggleConcentration(Creature))" />
+                                            <input id="@Creature.UID-concentrating" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Concentrating"))" />
                                             <label for="@Creature.UID-concentrating">
                                                 <i></i>
                                                 <span>Concentrating</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Creature.UID-stunned" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Stunned"))" />
+                                            <label for="@Creature.UID-stunned">
+                                                <i></i>
+                                                <span>Stunned</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Creature.UID-restrained" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Restrained"))" />
+                                            <label for="@Creature.UID-restrained">
+                                                <i></i>
+                                                <span>Restrained</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Creature.UID-unconscious" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Unconscious"))" />
+                                            <label for="@Creature.UID-unconscious">
+                                                <i></i>
+                                                <span>Unconscious</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Creature.UID-charmed" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Charmed"))" />
+                                            <label for="@Creature.UID-charmed">
+                                                <i></i>
+                                                <span>Charmed</span>
                                             </label>
                                         </div>
                                     </div>
@@ -166,6 +222,9 @@
                     oncontextmenu="return false;"
                     data-uid="@NPC.UID" 
                     bleeding="@(NPC.IsBleeding ? "true" : "false")" 
+                    charmed="@(NPC.IsCharmed ? "true" : "false")" 
+                    unconscious="@(NPC.IsUnconscious ? "true" : "false")" 
+                    stunned="@(NPC.IsStunned ? "true" : "false")" 
                 >
                     <i 
                         @ondragstart="@(e => HandleDragStart(NPC.UID))" 
@@ -183,6 +242,15 @@
                     }
                     @if(NPC.IsConcentrating){
                         <div class="concentration"></div>
+                    }
+                    @if(NPC.IsStunned && !HighQualityEffects){
+                        <div class="stunned"></div>
+                    }
+                    @if(NPC.IsRestrained){
+                        <div class="restrained"></div>
+                    }
+                    @if(NPC.IsUnconscious && !HighQualityEffects){
+                        <div class="unconscious"></div>
                     }
                     @if(Tabletop.IsGameMaster){
                         <pawn-hud class="creature-hud" data-view="1">
@@ -214,33 +282,61 @@
                                     </div>
                                 </div>
                                 <div data-view="2">
-                                    <div class="w-full px-0.5">
+                                    <div class="w-full px-0.5" style="max-height:150px;overflow-y:scroll;">
                                         <div class="lightswitch">
-                                            <input id="@NPC.UID-bleeding" type="checkbox" @onchange="@(e => ToggleBleeding(NPC))" />
+                                            <input id="@NPC.UID-bleeding" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Bleeding"))" />
                                             <label for="@NPC.UID-bleeding">
                                                 <i></i>
                                                 <span>Bleeding</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@NPC.UID-poisoned" type="checkbox"  @onchange="@(e => TogglePoison(NPC))" />
+                                            <input id="@NPC.UID-poisoned" type="checkbox"  @onchange="@(e => ToggleCondition(NPC, "Poison"))" />
                                             <label for="@NPC.UID-poisoned">
                                                 <i></i>
                                                 <span>Poisoned</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@NPC.UID-burning" type="checkbox" @onchange="@(e => ToggleBurning(NPC))" />
+                                            <input id="@NPC.UID-burning" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Burning"))" />
                                             <label for="@NPC.UID-burning">
                                                 <i></i>
                                                 <span>Burning</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@NPC.UID-concentrating" type="checkbox" @onchange="@(e => ToggleConcentration(NPC))" />
+                                            <input id="@NPC.UID-concentrating" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Concentrating"))" />
                                             <label for="@NPC.UID-concentrating">
                                                 <i></i>
                                                 <span>Concentrating</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@NPC.UID-stunned" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Stunned"))" />
+                                            <label for="@NPC.UID-stunned">
+                                                <i></i>
+                                                <span>Stunned</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@NPC.UID-restrained" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Restrained"))" />
+                                            <label for="@NPC.UID-restrained">
+                                                <i></i>
+                                                <span>Restrained</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@NPC.UID-unconscious" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Unconscious"))" />
+                                            <label for="@NPC.UID-unconscious">
+                                                <i></i>
+                                                <span>Unconscious</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@NPC.UID-charmed" type="checkbox" @onchange="@(e => ToggleCondition(NPC, "Charmed"))" />
+                                            <label for="@NPC.UID-charmed">
+                                                <i></i>
+                                                <span>Charmed</span>
                                             </label>
                                         </div>
                                     </div>
@@ -265,6 +361,9 @@
                     oncontextmenu="return false;"
                     data-uid="@Player.UID"
                     bleeding="@(Player.IsBleeding ? "true" : "false")" 
+                    charmed="@(Player.IsCharmed ? "true" : "false")" 
+                    unconscious="@(Player.IsUnconscious ? "true" : "false")" 
+                    stunned="@(Player.IsStunned ? "true" : "false")" 
                 >
                     <i 
                         @ondragstart="@(e => HandleDragStart(Player.UID))" 
@@ -279,6 +378,15 @@
                     @if(Player.IsConcentrating){
                         <div class="concentration"></div>
                     }
+                    @if(Player.IsStunned && !HighQualityEffects){
+                        <div class="stunned"></div>
+                    }
+                    @if(Player.IsRestrained){
+                        <div class="restrained"></div>
+                    }
+                    @if(Player.IsUnconscious && !HighQualityEffects){
+                        <div class="unconscious"></div>
+                    }
                     @if(Tabletop.IsGameMaster){
                         <pawn-hud class="creature-hud" data-view="1">
                             <header>
@@ -286,33 +394,61 @@
                             </header>
                             <div class="block w-full p-0.5 bg-white" style="border-radius: 0 0 0.25rem 0.25rem;">
                                 <div data-view="1">
-                                    <div class="w-full px-0.5">
+                                    <div class="w-full px-0.5" style="max-height:150px;overflow-y:scroll;">
                                         <div class="lightswitch">
-                                            <input id="@Player.UID-bleeding" type="checkbox" @onchange="@(e => ToggleBleeding(Player))" checked=@Player.IsBleeding />
+                                            <input id="@Player.UID-bleeding" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Bleeding"))" />
                                             <label for="@Player.UID-bleeding">
                                                 <i></i>
                                                 <span>Bleeding</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Player.UID-poisoned" type="checkbox" @onchange="@(e => TogglePoison(Player))" />
+                                            <input id="@Player.UID-poisoned" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Poison"))" />
                                             <label for="@Player.UID-poisoned">
                                                 <i></i>
                                                 <span>Poisoned</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Player.UID-burning" type="checkbox" @onchange="@(e => ToggleBurning(Player))" />
+                                            <input id="@Player.UID-burning" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Burning"))" />
                                             <label for="@Player.UID-burning">
                                                 <i></i>
                                                 <span>Burning</span>
                                             </label>
                                         </div>
                                         <div class="lightswitch">
-                                            <input id="@Player.UID-concentrating" type="checkbox" @onchange="@(e => ToggleConcentration(Player))" />
+                                            <input id="@Player.UID-concentrating" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Concentrating"))" />
                                             <label for="@Player.UID-concentrating">
                                                 <i></i>
                                                 <span>Concentrating</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Player.UID-stunned" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Stunned"))" />
+                                            <label for="@Player.UID-stunned">
+                                                <i></i>
+                                                <span>Stunned</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Player.UID-restrained" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Restrained"))" />
+                                            <label for="@Player.UID-restrained">
+                                                <i></i>
+                                                <span>Restrained</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Player.UID-unconscious" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Unconscious"))" />
+                                            <label for="@Player.UID-unconscious">
+                                                <i></i>
+                                                <span>Unconscious</span>
+                                            </label>
+                                        </div>
+                                        <div class="lightswitch">
+                                            <input id="@Player.UID-charmed" type="checkbox" @onchange="@(e => ToggleCondition(Player, "Charmed"))" />
+                                            <label for="@Player.UID-charmed">
+                                                <i></i>
+                                                <span>Charmed</span>
                                             </label>
                                         </div>
                                     </div>
@@ -584,6 +720,37 @@
     </form>
     <div class="settings-modal" style="@(SettingsMenu != null ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         @switch(SettingsMenu){
+            case "performance":
+                <button @onclick="@(e => SettingsMenu = "settings")">
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="angle-left" class="svg-inline--fa fa-angle-left fa-w-6" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 512"><path fill="currentColor" d="M25.1 247.5l117.8-116c4.7-4.7 12.3-4.7 17 0l7.1 7.1c4.7 4.7 4.7 12.3 0 17L64.7 256l102.2 100.4c4.7 4.7 4.7 12.3 0 17l-7.1 7.1c-4.7 4.7-12.3 4.7-17 0L25 264.5c-4.6-4.7-4.6-12.3.1-17z"></path></svg>
+                    </i>
+                    <span>Back</span>
+                </button>
+                <button @onclick="TogglePerformanceSetting">
+                    @if (HighQualityEffects){
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="tachometer-alt-fastest" class="svg-inline--fa fa-tachometer-alt-fastest fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M120 320c0 13.26-10.74 24-24 24s-24-10.74-24-24 10.74-24 24-24 24 10.74 24 24zm168-168c13.26 0 24-10.74 24-24s-10.74-24-24-24-24 10.74-24 24 10.74 24 24 24zm136 56c13.26 0 24-10.74 24-24s-10.74-24-24-24-24 10.74-24 24 10.74 24 24 24zm71.78 109.38c1.47 8.72-4.44 16.95-13.16 18.41l-131.2 21.87C348.53 390.3 321.41 416 288 416c-35.35 0-64-28.65-64-64s28.65-64 64-64c26.09 0 48.44 15.66 58.41 38.05l130.97-21.83c8.53-1.49 16.93 4.44 18.4 13.16zM320 352c0-17.67-14.33-32-32-32s-32 14.33-32 32 14.33 32 32 32 32-14.33 32-32zM152 160c-13.26 0-24 10.74-24 24s10.74 24 24 24 24-10.74 24-24-10.74-24-24-24zm424 160c0 52.8-14.25 102.26-39.06 144.8-5.61 9.62-16.3 15.2-27.44 15.2h-443c-11.14 0-21.83-5.58-27.44-15.2C14.25 422.26 0 372.8 0 320 0 160.94 128.94 32 288 32s288 128.94 288 288zm-32 0c0-141.16-114.84-256-256-256S32 178.84 32 320c0 45.26 12 89.75 34.7 128.68l442.8-.68C532 409.75 544 365.26 544 320z"></path></svg>
+                        </i>
+                        <span>High Quality Effects</span>
+                    }else{
+                        <i>
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="tachometer-slowest" class="svg-inline--fa fa-tachometer-slowest fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M288 32C128.94 32 0 160.94 0 320c0 52.8 14.25 102.26 39.06 144.8 5.61 9.62 16.3 15.2 27.44 15.2h443c11.14 0 21.83-5.58 27.44-15.2C561.75 422.26 576 372.8 576 320c0-159.06-128.94-288-288-288zm221.5 416l-442.8.68C44 409.75 32 365.26 32 320 32 178.84 146.84 64 288 64s256 114.84 256 256c0 45.26-12 89.75-34.5 128zM288 288c-26.09 0-48.44 15.66-58.41 38.05L98.62 304.22c-8.53-1.48-16.94 4.44-18.41 13.16s4.44 16.95 13.16 18.41l131.2 21.87C227.47 390.3 254.59 416 288 416c35.35 0 64-28.65 64-64s-28.65-64-64-64zm0 96c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32z"></path></svg>
+                        </i>
+                        <span>Low Quality Effects</span>
+                    }
+                </button>
+                <button @onclick="ToggleDeathCelebrations">
+                    <i>
+                        @if (DeathCelebrations){
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="tachometer-alt-fastest" class="svg-inline--fa fa-tachometer-alt-fastest fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M120 320c0 13.26-10.74 24-24 24s-24-10.74-24-24 10.74-24 24-24 24 10.74 24 24zm168-168c13.26 0 24-10.74 24-24s-10.74-24-24-24-24 10.74-24 24 10.74 24 24 24zm136 56c13.26 0 24-10.74 24-24s-10.74-24-24-24-24 10.74-24 24 10.74 24 24 24zm71.78 109.38c1.47 8.72-4.44 16.95-13.16 18.41l-131.2 21.87C348.53 390.3 321.41 416 288 416c-35.35 0-64-28.65-64-64s28.65-64 64-64c26.09 0 48.44 15.66 58.41 38.05l130.97-21.83c8.53-1.49 16.93 4.44 18.4 13.16zM320 352c0-17.67-14.33-32-32-32s-32 14.33-32 32 14.33 32 32 32 32-14.33 32-32zM152 160c-13.26 0-24 10.74-24 24s10.74 24 24 24 24-10.74 24-24-10.74-24-24-24zm424 160c0 52.8-14.25 102.26-39.06 144.8-5.61 9.62-16.3 15.2-27.44 15.2h-443c-11.14 0-21.83-5.58-27.44-15.2C14.25 422.26 0 372.8 0 320 0 160.94 128.94 32 288 32s288 128.94 288 288zm-32 0c0-141.16-114.84-256-256-256S32 178.84 32 320c0 45.26 12 89.75 34.7 128.68l442.8-.68C532 409.75 544 365.26 544 320z"></path></svg>
+                        }else{
+                            <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="tachometer-slowest" class="svg-inline--fa fa-tachometer-slowest fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M288 32C128.94 32 0 160.94 0 320c0 52.8 14.25 102.26 39.06 144.8 5.61 9.62 16.3 15.2 27.44 15.2h443c11.14 0 21.83-5.58 27.44-15.2C561.75 422.26 576 372.8 576 320c0-159.06-128.94-288-288-288zm221.5 416l-442.8.68C44 409.75 32 365.26 32 320 32 178.84 146.84 64 288 64s256 114.84 256 256c0 45.26-12 89.75-34.5 128zM288 288c-26.09 0-48.44 15.66-58.41 38.05L98.62 304.22c-8.53-1.48-16.94 4.44-18.41 13.16s4.44 16.95 13.16 18.41l131.2 21.87C227.47 390.3 254.59 416 288 416c35.35 0 64-28.65 64-64s-28.65-64-64-64zm0 96c-17.67 0-32-14.33-32-32s14.33-32 32-32 32 14.33 32 32-14.33 32-32 32z"></path></svg>
+                        }
+                    </i>
+                    <span>Death Celebrations</span>
+                </button>
+                break;
             case "sound":
                 <button @onclick="@(e => SettingsMenu = "settings")">
                     <i>
@@ -648,6 +815,12 @@
                         <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="volume-up" class="svg-inline--fa fa-volume-up fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M342.91 193.57c-7.81-3.8-17.5-.48-21.34 7.5-3.81 7.97-.44 17.53 7.53 21.34C343.22 229.2 352 242.06 352 256s-8.78 26.8-22.9 33.58c-7.97 3.81-11.34 13.38-7.53 21.34 3.86 8.05 13.54 11.29 21.34 7.5C368.25 306.28 384 282.36 384 256s-15.75-50.29-41.09-62.43zM231.81 64c-5.91 0-11.92 2.18-16.78 7.05L126.06 160H24c-13.26 0-24 10.74-24 24v144c0 13.25 10.74 24 24 24h102.06l88.97 88.95c4.87 4.87 10.88 7.05 16.78 7.05 12.33 0 24.19-9.52 24.19-24.02V88.02C256 73.51 244.13 64 231.81 64zM224 404.67L139.31 320H32V192h107.31L224 107.33v297.34zM421.51 1.83c-7.89-4.08-17.53-1.12-21.66 6.7-4.13 7.81-1.13 17.5 6.7 21.61 84.76 44.55 137.4 131.1 137.4 225.85s-52.64 181.3-137.4 225.85c-7.82 4.11-10.83 13.8-6.7 21.61 4.1 7.75 13.68 10.84 21.66 6.7C516.78 460.06 576 362.67 576 255.99c0-106.67-59.22-204.06-154.49-254.16zM480 255.99c0-66.12-34.02-126.62-88.81-157.87-7.69-4.38-17.59-1.78-22.04 5.89-4.45 7.66-1.77 17.44 5.96 21.86 44.77 25.55 72.61 75.4 72.61 130.12s-27.84 104.58-72.61 130.12c-7.72 4.42-10.4 14.2-5.96 21.86 4.3 7.38 14.06 10.44 22.04 5.89C445.98 382.62 480 322.12 480 255.99z"></path></svg>
                     </i>
                     <span>Sound Settings</span>
+                </button>
+                <button @onclick="@(e => SettingsMenu = "performance")">
+                    <i>
+                        <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="tachometer-alt-fastest" class="svg-inline--fa fa-tachometer-alt-fastest fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M120 320c0 13.26-10.74 24-24 24s-24-10.74-24-24 10.74-24 24-24 24 10.74 24 24zm168-168c13.26 0 24-10.74 24-24s-10.74-24-24-24-24 10.74-24 24 10.74 24 24 24zm136 56c13.26 0 24-10.74 24-24s-10.74-24-24-24-24 10.74-24 24 10.74 24 24 24zm71.78 109.38c1.47 8.72-4.44 16.95-13.16 18.41l-131.2 21.87C348.53 390.3 321.41 416 288 416c-35.35 0-64-28.65-64-64s28.65-64 64-64c26.09 0 48.44 15.66 58.41 38.05l130.97-21.83c8.53-1.49 16.93 4.44 18.4 13.16zM320 352c0-17.67-14.33-32-32-32s-32 14.33-32 32 14.33 32 32 32 32-14.33 32-32zM152 160c-13.26 0-24 10.74-24 24s10.74 24 24 24 24-10.74 24-24-10.74-24-24-24zm424 160c0 52.8-14.25 102.26-39.06 144.8-5.61 9.62-16.3 15.2-27.44 15.2h-443c-11.14 0-21.83-5.58-27.44-15.2C14.25 422.26 0 372.8 0 320 0 160.94 128.94 32 288 32s288 128.94 288 288zm-32 0c0-141.16-114.84-256-256-256S32 178.84 32 320c0 45.26 12 89.75 34.7 128.68l442.8-.68C532 409.75 544 365.26 544 320z"></path></svg>
+                    </i>
+                    <span>Performance Settings</span>
                 </button>
                 if (!Tabletop.IsGameMaster){
                     <button @onclick="CenterOnPawn">

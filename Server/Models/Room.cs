@@ -571,40 +571,40 @@ namespace FreeTabletop.Server.Models
             return entity;
         }
 
-        public void SetBleeding(string uid, bool isBleeding)
+        public Entity ToggleCondition(string uid, string condition)
         {
             Entity entity = GetEntity(uid);
             if (entity != null)
             {
-                entity.IsBleeding = isBleeding;
+                switch(condition)
+                {
+                    case "Poison":
+                        entity.IsPoisoned ^= true;
+                        break;
+                    case "Bleeding":
+                        entity.IsBleeding ^= true;
+                        break;
+                    case "Concentrating":
+                        entity.IsConcentrating ^= true;
+                        break;
+                    case "Burning":
+                        entity.IsBurning ^= true;
+                        break;
+                    case "Charmed":
+                        entity.IsCharmed ^= true;
+                        break;
+                    case "Unconscious":
+                        entity.IsUnconscious ^= true;
+                        break;
+                    case "Restrained":
+                        entity.IsRestrained ^= true;
+                        break;
+                    case "Stunned":
+                        entity.IsStunned ^= true;
+                        break;
+                }
             }
-        }
-
-        public void SetBurning(string uid, bool isBurning)
-        {
-            Entity entity = GetEntity(uid);
-            if (entity != null)
-            {
-                entity.IsBurning = isBurning;
-            }
-        }
-
-        public void SetPoison(string uid, bool isPoisoned)
-        {
-            Entity entity = GetEntity(uid);
-            if (entity != null)
-            {
-                entity.IsPoisoned = isPoisoned;
-            }
-        }
-
-        public void SetConcentration(string uid, bool isConcentrating)
-        {
-            Entity entity = GetEntity(uid);
-            if (entity != null)
-            {
-                entity.IsConcentrating = isConcentrating;
-            }
+            return entity;
         }
     }
 }
