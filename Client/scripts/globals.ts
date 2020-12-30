@@ -36,12 +36,18 @@ function ForceHome() {
     location.href = location.origin;
 }
 
-async function FocusElement(selector: string) {
+function ClearInput(selector:string){
+    const el:HTMLInputElement = document.body.querySelector(selector);
+    if (el) {
+        el.value = "";
+    }
+}
+
+function FocusElement(selector: string) {
     const el: HTMLElement = document.body.querySelector(selector);
     if (el) {
         el.focus();
     }
-    return;
 }
 
 function Debug(thing: any) {

@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - death celebration effect
 
+### Fixed
+
+- clearing monster lookup input after selection
+
 ## [0.6.0] - 2020-12-29
 
 ### Added

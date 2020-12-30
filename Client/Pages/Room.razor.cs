@@ -44,7 +44,6 @@ namespace FreeTabletop.Client.Pages
 
         public Creature CustomCreature = new Creature();
         public NPC NewNPC = new NPC();
-        public bool DidAutofocus = false;
         public double[] RightClickPosition = { -1, -1 };
         public int[] RightClickGridPosition = { 0, 0 };
         public bool DiceMenuOpen = false;
@@ -90,24 +89,6 @@ namespace FreeTabletop.Client.Pages
 
         protected override Task OnAfterRenderAsync(bool firstRender)
         {
-            if (!DidAutofocus)
-            {
-                if (MonsterLookupMenuOpen)
-                {
-                    JSRuntime.InvokeVoidAsync("FocusElement", ".js-monster-lookup");
-                    DidAutofocus = true;
-                }
-                else if (ImageUploadOpen)
-                {
-                    JSRuntime.InvokeVoidAsync("FocusElement", ".js-image-input");
-                    DidAutofocus = true;
-                }
-                else if (NPCMenuOpen)
-                {
-                    JSRuntime.InvokeVoidAsync("FocusElement", ".js-npc-input");
-                    DidAutofocus = true;
-                }
-            }
             if (ChatMenuOpen){
                 JSRuntime.InvokeVoidAsync("ScrollChatMessages");
             }
@@ -171,11 +152,11 @@ namespace FreeTabletop.Client.Pages
             CustomCreature = new Creature();
             NPCMenuOpen = false;
             NewNPC = new NPC();
-            DidAutofocus = false;
             RightClickPosition[0] = -1;
             RightClickPosition[1] = -1;
             PopupImageModalOpen = false;
             SettingsMenu = null;
+            JSRuntime.InvokeVoidAsync("ClearInput", ".js-monster-lookup");
         }
 
         public async Task CopyRoomCodeToClipboard()
@@ -230,6 +211,7 @@ namespace FreeTabletop.Client.Pages
                 InputImageURL = null;
                 SelectedGridType = "1";
                 GridCellSize = 32;
+                StateHasChanged();
             }
         }
 
