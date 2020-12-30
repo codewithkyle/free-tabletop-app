@@ -21,11 +21,9 @@
             <bleeding-effect data-width="@Tabletop.Size[0]" data-height="@Tabletop.Size[1]"></bleeding-effect>
             @for (int i = 0; i < Tabletop.Creatures.Count; i++){
                 Creature Creature = Tabletop.Creatures[i];
-                int x = Creature.Position[0];
-                int y = Creature.Position[1];
                 <tabletop-pawn 
-                    class="pawn @(Creature.IsAlive ? "-foe" : "-dead")" 
-                    style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
+                    class="pawn @(Creature.IsAlive ? "-foe" : "-dead") @(Creature.IsRemoved ? "-removed" : "")" 
+                    style="top: 0px;left: 0px;width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
                     oncontextmenu="return false;"
                     data-uid="@Creature.UID" 
                     bleeding="@(Creature.IsBleeding ? "true" : "false")" 
@@ -162,11 +160,9 @@
             }
             @for (int i = 0; i < Tabletop.NPCs.Count; i++){
                 NPC NPC = Tabletop.NPCs[i];
-                int x = NPC.Position[0];
-                int y = NPC.Position[1];
                 <tabletop-pawn 
-                    class="pawn @(NPC.IsAlive ? "-npc" : "-dead")" 
-                    style="top: 0px;left: 0px;transform: translate(@(x * Tabletop.CellSize)px, @(y * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
+                    class="pawn @(NPC.IsAlive ? "-npc" : "-dead") @(NPC.IsRemoved ? "-removed" : "")" 
+                    style="top: 0px;left: 0px;width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
                     oncontextmenu="return false;"
                     data-uid="@NPC.UID" 
                     bleeding="@(NPC.IsBleeding ? "true" : "false")" 
@@ -263,13 +259,9 @@
                 if (IsPlayer){
                     PawnType = "-player js-player-pawn";
                 }
-                int x = Tabletop.Players[p].Position[0];
-                int y = Tabletop.Players[p].Position[1];
-                int cellX = (int)Math.Floor((double)(x / Tabletop.CellSize));
-                int cellY = (int)Math.Floor((double)(y / Tabletop.CellSize));
                 <tabletop-pawn 
                     class="pawn @PawnType" 
-                    style="top: 0px;left: 0px;transform: translate(@(cellX * Tabletop.CellSize)px, @(cellY * Tabletop.CellSize)px);width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
+                    style="top: 0px;left: 0px;width: @(Tabletop.CellSize)px;height: @(Tabletop.CellSize)px;" 
                     oncontextmenu="return false;"
                     data-uid="@Player.UID"
                     bleeding="@(Player.IsBleeding ? "true" : "false")" 

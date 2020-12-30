@@ -164,11 +164,8 @@ namespace FreeTabletop.Server.Controllers
                     Room room = GetRoom(player.RoomCode);
                     if (room != null)
                     {
-                        bool HasUpdate = room.UpdateEntityPosition(entityUid, newPosition);
-                        if (HasUpdate)
-                        {
-                            UpdateEntityPosition(room, entityUid, newPosition);
-                        }
+                        room.UpdateEntityPosition(entityUid, newPosition);
+                        UpdateEntityPosition(room, entityUid, newPosition);
                     }
                 }
             }
@@ -672,7 +669,6 @@ namespace FreeTabletop.Server.Controllers
 
         private async Task RenderCreatureEntities(Room room)
         {
-            
             await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderCreatureEntities", room.Creatures);
         }
 

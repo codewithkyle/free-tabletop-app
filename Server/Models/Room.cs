@@ -177,62 +177,13 @@ namespace FreeTabletop.Server.Models
             }
         }
 
-        public bool UpdateEntityPosition(string uid, int[] newPosition)
+        public void UpdateEntityPosition(string uid, int[] newPosition)
         {
-            bool Updated = false;
-            bool IsValidPosition = true;
-            Entity EntityToMove = null;
-            for (int i = 0; i < Players.Count; i++)
-            {
-                if (!Players[i].IsGameMaster)
-                {
-                    if (Players[i].Position[0] == newPosition[0] && Players[i].Position[1] == newPosition[1])
-                    {
-                        IsValidPosition = false;
-                        break;
-                    }
-                    else if (Players[i].UID == uid)
-                    {
-                        EntityToMove = Players[i];
-                    }
-                }
-            }
-            if (IsValidPosition)
-            {
-                for (int i = 0; i < Creatures.Count; i++)
-                {
-                    if (Creatures[i].Position[0] == newPosition[0] && Creatures[i].Position[1] == newPosition[1])
-                    {
-                        IsValidPosition = false;
-                        break;
-                    }
-                    else if (Creatures[i].UID == uid)
-                    {
-                        EntityToMove = Creatures[i];
-                    }
-                }
-            }
-            if (IsValidPosition)
-            {
-                for (int i = 0; i < NPCs.Count; i++)
-                {
-                    if (NPCs[i].Position[0] == newPosition[0] && NPCs[i].Position[1] == newPosition[1])
-                    {
-                        IsValidPosition = false;
-                        break;
-                    }
-                    else if (NPCs[i].UID == uid)
-                    {
-                        EntityToMove = NPCs[i];
-                    }
-                }
-            }
-            if (IsValidPosition && EntityToMove != null)
+            Entity EntityToMove = GetEntity(uid);
+            if (EntityToMove != null)
             {
                 EntityToMove.UpdatePosition(newPosition);
-                Updated = true;
             }
-            return Updated;
         }
 
         public void SpawnCreature(Creature creature)
@@ -558,7 +509,7 @@ namespace FreeTabletop.Server.Models
                 if (NPCs[i].UID == uid)
                 {
                     FoundEntity = true;
-                    NPCs.RemoveAt(i);
+                    NPCs[i].IsRemoved = true;
                     break;
                 }
             }
@@ -571,7 +522,7 @@ namespace FreeTabletop.Server.Models
                 if (Creatures[i].UID == uid)
                 {
                     FoundEntity = true;
-                    Creatures.RemoveAt(i);
+                    Creatures[i].IsRemoved = true;
                     break;
                 }
             }
