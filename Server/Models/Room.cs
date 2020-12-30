@@ -110,6 +110,11 @@ namespace FreeTabletop.Server.Models
                     player.IsBurning = Players[i].IsBurning;
                     player.IsPoisoned = Players[i].IsPoisoned;
                     player.IsConcentrating = Players[i].IsConcentrating;
+                    player.IsCharmed = Players[i].IsCharmed;
+                    player.IsRestrained = Players[i].IsRestrained;
+                    player.IsStunned = Players[i].IsStunned;
+                    player.IsUnconscious = Players[i].IsUnconscious;
+                    player.IsVisible = Players[i].IsVisible;
                     players.Add(player);
                 }
             }
@@ -603,6 +608,16 @@ namespace FreeTabletop.Server.Models
                         entity.IsStunned ^= true;
                         break;
                 }
+            }
+            return entity;
+        }
+
+        public Entity ToggleVisibility(string uid)
+        {
+            Entity entity = GetEntity(uid);
+            if (entity != null)
+            {
+                entity.IsVisible ^= true;
             }
             return entity;
         }

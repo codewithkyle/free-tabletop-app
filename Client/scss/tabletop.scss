@@ -135,6 +135,18 @@
             }
         }
 
+        &.-invisible{
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        &.-ghost{
+            & > i {
+                opacity: 0.6;
+            }
+        }
+
         &.-removed{
             opacity: 0 !important;
             visibility: hidden !important;

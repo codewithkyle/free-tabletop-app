@@ -52,7 +52,7 @@ class SFXRenderer extends HTMLElement{
         const deltaTime = (newTime - this.time) / 1000;
         this.time = newTime; 
 
-        const bleedingPawns:Array<Pawn> = Array.from(document.body.querySelectorAll(`[bleeding="true"]`));
+        const bleedingPawns:Array<Pawn> = Array.from(document.body.querySelectorAll(`[bleeding="true"]:not(.-invisible):not(.-removed):not(.-ghost)`));
         if (this.images.length){
             for (let i = 0; i < bleedingPawns.length; i++){
                 bleedingPawns[i].timeToSplatter -= deltaTime;
@@ -67,7 +67,7 @@ class SFXRenderer extends HTMLElement{
             }
         }
 
-        const charmedPawns:Array<Pawn> = Array.from(document.body.querySelectorAll(`[charmed="true"]`));
+        const charmedPawns:Array<Pawn> = Array.from(document.body.querySelectorAll(`[charmed="true"]:not(.-invisible):not(.-removed):not(.-ghost)`));
         if (this.heartImage.complete){
             for (let i = 0; i < charmedPawns.length; i++){
                 if (Math.random() <= 0.1){
@@ -79,7 +79,7 @@ class SFXRenderer extends HTMLElement{
             }
         }
 
-        const stunnedPawns:Array<Pawn> = Array.from(document.body.querySelectorAll(`[stunned="true"]`));
+        const stunnedPawns:Array<Pawn> = Array.from(document.body.querySelectorAll(`[stunned="true"]:not(.-invisible):not(.-removed):not(.-ghost)`));
         if (this.starImage.complete){
             for (let i = 0; i < stunnedPawns.length; i++){
                 if (Math.random() <= 0.075){
@@ -91,7 +91,7 @@ class SFXRenderer extends HTMLElement{
             }
         }
 
-        const unconsciousPawns:Array<Pawn> = Array.from(document.body.querySelectorAll(`[unconscious="true"]`));
+        const unconsciousPawns:Array<Pawn> = Array.from(document.body.querySelectorAll(`[unconscious="true"]:not(.-invisible):not(.-removed):not(.-ghost)`));
         if (this.spiralImage.complete){
             for (let i = 0; i < unconsciousPawns.length; i++){
                 if (Math.random() <= 0.05){

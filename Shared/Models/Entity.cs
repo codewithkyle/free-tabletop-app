@@ -21,6 +21,7 @@ namespace FreeTabletop.Shared.Models
         public bool IsStunned {get;set;} = false;
         public bool IsRestrained {get;set;} = false;
         public bool IsUnconscious {get;set;} = false;
+        public bool IsVisible {get;set;} = true;
 
         public void UpdatePosition(int[] newPosition)
         {

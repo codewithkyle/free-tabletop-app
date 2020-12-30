@@ -79,6 +79,7 @@ namespace FreeTabletop.Client.Controllers
 
                 Networker.hubConnection.On<string>("Entity:RenderDeathCelebration", RenderDeathCelebration);
                 Networker.hubConnection.On<Entity, string>("Entity:UpdateCondition", Room.UpdateEntityCondition);
+                Networker.hubConnection.On<Entity>("Entity:ToggleVisibility", Room.UpdateEntityVisibility);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -143,6 +144,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Tabletop:LoadPopupImage");
             Networker.hubConnection.Remove("Entity:UpdateCondition");
             Networker.hubConnection.Remove("Entity:RenderDeathCelebration");
+            Networker.hubConnection.Remove("Entity:UpdateVisibility");
         }
 
         private async Task UpdateUID(string uid)
@@ -345,6 +347,11 @@ namespace FreeTabletop.Client.Controllers
         public void ToggleCondition(string uid, string condition)
         {
             Networker.hubConnection.SendAsync("Entity:ToggleCondition", uid, condition);
+        }
+
+        public void ToggleEntityVisibility(string uid)
+        {
+            Networker.hubConnection.SendAsync("Entity:ToggleVisibility", uid);
         }
     }
 }

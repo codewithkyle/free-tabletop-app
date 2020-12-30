@@ -189,6 +189,24 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Entity:ToggleVisibility")]
+        public async Task ToggleVisibility(string uid)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    Entity entity = room.ToggleVisibility(uid);
+                    if (entity != null)
+                    {
+                        await Clients.Group(room.RoomCode).SendAsync("Entity:ToggleVisibility", entity);
+                    }
+                }
+            }
+        }
+
         [HubMethodName("Room:SpawnCreature")]
         public async Task SpawnCreature(Creature creature)
         {

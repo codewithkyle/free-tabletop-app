@@ -803,5 +803,20 @@ namespace FreeTabletop.Client.Pages
             JSRuntime.InvokeVoidAsync("ToggleSetting", "deathCelebrationsDisabled", DeathCelebrations);
             StateHasChanged();
         }
+
+        public void ToggleEntityVisibility(string uid)
+        {
+            Hub.ToggleEntityVisibility(uid);
+        }
+
+        public void UpdateEntityVisibility(Entity entity)
+        {
+            Entity localEntity = Tabletop.GetEntityByUID(entity.UID);
+            if (localEntity != null)
+            {
+                localEntity.IsVisible = entity.IsVisible;
+                StateHasChanged();
+            }
+        }
     }
 }
