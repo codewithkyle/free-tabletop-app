@@ -54,10 +54,21 @@ class Pawn extends HTMLElement{
         this.HUD = el;
     }
 
+    public celebrateDeath(){
+        const { top, height, left, width, } = this.getBoundingClientRect();
+        const x = (left + width / 2);
+        const y = (top + height / 2);
+        const tabletopPos = tabletop.convertViewportToTabletopPosition(x, y);
+        const origin = { x: tabletopPos[0], y: tabletopPos[1] };
+        deathCanvas.spawnConfetti(origin);
+    }
+
     connectedCallback(){
         this.addEventListener("mouseenter", this.checkHUD);
     }    
 }
+customElements.define("tabletop-pawn", Pawn);
+
 class PawnHud extends HTMLElement{
     private switchView:EventListener = (e:Event) => {
         const target = e.currentTarget as HTMLElement;
@@ -84,4 +95,16 @@ class PawnHud extends HTMLElement{
     }
 }
 customElements.define("pawn-hud", PawnHud);
-customElements.define("tabletop-pawn", Pawn);
+
+function UpdateEntityPosition(uid:string, position:Array<number>, cellSize:number){
+    const pawn:Pawn = document.body.querySelector(`tabletop-pawn[data-uid="${uid}"]`);
+    if (pawn){
+        pawn.UpdatePosition(position[0], position[1], cellSize);
+    }
+}
+function RenderDeathCelebration(uid:string){
+    const pawn:Pawn = document.body.querySelector(`tabletop-pawn[data-uid="${uid}"]`);
+    if (pawn){
+        pawn.celebrateDeath();
+    }
+}

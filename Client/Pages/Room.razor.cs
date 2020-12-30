@@ -76,14 +76,16 @@ namespace FreeTabletop.Client.Pages
         };
         public PaintOption PaintType = PaintOption.None;
         public bool PopupImageModalOpen = false;
+        public bool PlayDeathSound = true;
 
         protected override async Task OnInitializedAsync()
         {
             await Hub.Connect(RoomCode, this, NavigationManager, JSRuntime, Tabletop);
-            PlayPingSound = await JSRuntime.InvokeAsync<bool>("GetPingSoundSetting");
-            PlayAlertSound = await JSRuntime.InvokeAsync<bool>("GetAlertSoundSetting");
-            PlayNotificationSound = await JSRuntime.InvokeAsync<bool>("GetNotificationSoundSetting");
-            PlayLoadingSound = await JSRuntime.InvokeAsync<bool>("GetLoadingSoundSetting");
+            PlayPingSound = await JSRuntime.InvokeAsync<bool>("GetSetting", "pingDisabled");
+            PlayAlertSound = await JSRuntime.InvokeAsync<bool>("GetSetting", "alertDisabled");
+            PlayNotificationSound = await JSRuntime.InvokeAsync<bool>("GetSetting", "notificationDisabled");
+            PlayLoadingSound = await JSRuntime.InvokeAsync<bool>("GetSetting", "loadingDisabled");
+            PlayDeathSound = await JSRuntime.InvokeAsync<bool>("GetSetting", "deathCelebrationDisabled");
         }
 
         protected override Task OnAfterRenderAsync(bool firstRender)
@@ -551,7 +553,7 @@ namespace FreeTabletop.Client.Pages
             {
                 PlayPingSound = true;
             }
-            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "ping", PlayPingSound);
+            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "pingDisabled", PlayPingSound);
             StateHasChanged();
         }
 
@@ -565,7 +567,7 @@ namespace FreeTabletop.Client.Pages
             {
                 PlayAlertSound = true;
             }
-            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "alert", PlayAlertSound);
+            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "alertDisabled", PlayAlertSound);
             StateHasChanged();
         }
 
@@ -579,7 +581,7 @@ namespace FreeTabletop.Client.Pages
             {
                 PlayNotificationSound = true;
             }
-            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "notification", PlayNotificationSound);
+            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "notificationDisabled", PlayNotificationSound);
             StateHasChanged();
         }
 
@@ -593,7 +595,21 @@ namespace FreeTabletop.Client.Pages
             {
                 PlayLoadingSound = true;
             }
-            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "loading", PlayLoadingSound);
+            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "loadingDisabled", PlayLoadingSound);
+            StateHasChanged();
+        }
+
+        public void ToggleDeathSound()
+        {
+            if (PlayDeathSound)
+            {
+                PlayDeathSound = false;
+            }
+            else
+            {
+                PlayDeathSound = true;
+            }
+            JSRuntime.InvokeVoidAsync("ToggleSoundStatus", "deathCelebrationDisabled", PlayDeathSound);
             StateHasChanged();
         }
 

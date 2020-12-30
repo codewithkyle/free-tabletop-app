@@ -81,6 +81,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<string, bool>("Entity:SetBurning", Room.SetEntityBurning);
                 Networker.hubConnection.On<string, bool>("Entity:SetPoison", Room.SetEntityPoison);
                 Networker.hubConnection.On<string, bool>("Entity:SetConcentration", Room.SetEntityConcentration);
+                Networker.hubConnection.On<string>("Entity:RenderDeathCelebration", RenderDeathCelebration);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -147,6 +148,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Entity:SetBurning");
             Networker.hubConnection.Remove("Entity:SetPoison");
             Networker.hubConnection.Remove("Entity:SetConcentration");
+            Networker.hubConnection.Remove("Entity:RenderDeathCelebration");
         }
 
         private async Task UpdateUID(string uid)
@@ -339,6 +341,11 @@ namespace FreeTabletop.Client.Controllers
         public void SetConcentration(string uid, bool isConcentrating)
         {
             Networker.hubConnection.SendAsync("Room:SetConcentration", uid, isConcentrating);
+        }
+
+        public void RenderDeathCelebration(string uid)
+        {
+            JSRuntime.InvokeVoidAsync("RenderDeathCelebration", uid);
         }
     }
 }

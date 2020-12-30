@@ -383,3 +383,9 @@ function LocatePawn(){
         });
     }
 }
+function ClearFogCell(index:number){
+    const cell:HTMLElement = document.body.querySelector(`.js-fog[data-index="${index}"]`);
+    if (cell){
+        cell.style.background = "transparent";
+    }
+}

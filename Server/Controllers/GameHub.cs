@@ -337,6 +337,10 @@ namespace FreeTabletop.Server.Controllers
                     {
                         await RenderCreatureEntities(room);
                         await RenderNPCEntities(room);
+                        if (hp == 0)
+                        {
+                            await Clients.Group(room.RoomCode).SendAsync("Entity:RenderDeathCelebration", uid);
+                        }
                     }
                 }
             }
