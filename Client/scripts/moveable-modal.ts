@@ -26,6 +26,10 @@ class Draggable extends HTMLElement{
             this.pos3 = e.touches[0].clientX;
             this.pos4 = e.touches[0].clientY;
         }
+        document.body.querySelectorAll("moveable-modal").forEach((el:HTMLElement) => {
+            el.style.zIndex = "1000";
+        });
+        this.style.zIndex = "1001";
     }
 
     private handleMouseUp:EventListener = () => {

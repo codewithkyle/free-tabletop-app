@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - clearing monster lookup input after selection
+- last touched moveable modal is forced to the top of the z-index stack
 
 ## [0.6.0] - 2020-12-29
 
