@@ -70,6 +70,21 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:ToggleVisibility")]
+        public void ToggleSceneVisibility()
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.ToggleSceneVisibility();
+                    Clients.Group(room.RoomCode).SendAsync("Tabletop:ToggleVisibility", room.IsHidden);
+                }
+            }
+        }
+
         [HubMethodName("Room:ChangeCellStyle")]
         public void ChangeCellStyles(int index, string style)
         {
@@ -391,7 +406,7 @@ namespace FreeTabletop.Server.Controllers
                 {
                     List<PlayerEntity> players = room.BuildPlayerEntities();
                     Player gameMaster = room.GetGameMaster();
-                    await Clients.Caller.SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.MessageUID);
+                    await Clients.Caller.SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.MessageUID, room.IsHidden);
                     
                     if (room.ImageURL != null && room.ImageURL.Length != 0)
                     {

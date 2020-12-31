@@ -22,6 +22,7 @@ namespace FreeTabletop.Shared.Models
         public int[] Size { get; set; }
         public List<Cell> Cells = new List<Cell>();
         public string MessageUID {get; set;}
+        public bool IsHidden {get;set;} = false;
 
         public Entity GetEntityByUID(string uid)
         {

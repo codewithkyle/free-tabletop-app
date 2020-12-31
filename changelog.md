@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- Game Masters can toggle tabletop scene visibility
+
 ## [0.7.0] - 2020-12-30
 
 ### Added

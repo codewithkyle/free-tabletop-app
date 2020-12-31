@@ -120,12 +120,13 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void SyncTabletop(bool isLocked, List<PlayerEntity> players, string gmUID)
+        public void SyncTabletop(bool isLocked, List<PlayerEntity> players, string gmUID, bool isHidden)
         {
             Tabletop.RoomCode = RoomCode.ToUpper();
             Tabletop.IsLocked = isLocked;
             Tabletop.Players = players;
             Tabletop.GameMasterUID = gmUID;
+            Tabletop.IsHidden = isHidden;
             JSRuntime.InvokeVoidAsync("SetPlayers", players, gmUID, Tabletop.MessageUID);
             StateHasChanged();
         }
@@ -817,6 +818,17 @@ namespace FreeTabletop.Client.Pages
                 localEntity.IsVisible = entity.IsVisible;
                 StateHasChanged();
             }
+        }
+
+        public void ToggleTabletopVisibility()
+        {
+            Hub.ToggleTabletopVisibility();
+        }
+
+        public void SetTabletopVisibility(bool isHidden)
+        {
+            Tabletop.IsHidden = isHidden;
+            StateHasChanged();
         }
     }
 }

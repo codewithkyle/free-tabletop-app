@@ -27,6 +27,7 @@ namespace FreeTabletop.Server.Models
         public bool FogOfWar = true;
 
         public List<Cell> Cells = new List<Cell>();
+        public bool IsHidden = false;
 
         public void AddPlayer(Player player)
         {
@@ -620,6 +621,11 @@ namespace FreeTabletop.Server.Models
                 entity.IsVisible ^= true;
             }
             return entity;
+        }
+
+        public void ToggleSceneVisibility()
+        {
+            IsHidden ^= true;
         }
     }
 }
