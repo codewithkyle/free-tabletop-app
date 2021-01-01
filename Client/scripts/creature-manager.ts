@@ -1,22 +1,22 @@
-let dbWorker: Worker = null;
-let lastDBWorkerUid = null;
+let creatureWorker: Worker = null;
+let lastCreatureWorkerMessageUID = null;
 
 async function SyncMonsterData() {
-    if (!dbWorker) {
-        dbWorker = new Worker(`/js/db-worker.js`);
+    if (!creatureWorker) {
+        creatureWorker = new Worker(`/js/creature-worker.js`);
     }
     return;
 }
 
 function LookupCreature(query: string) {
     return new Promise((resolve) => {
-        if (!dbWorker) {
+        if (!creatureWorker) {
             resolve([]);
         }
-        lastDBWorkerUid = uid();
-        dbWorker.onmessage = (e: MessageEvent) => {
+        lastCreatureWorkerMessageUID = uid();
+        creatureWorker.onmessage = (e: MessageEvent) => {
             const data = e.data;
-            if (data.messageUid === lastDBWorkerUid) {
+            if (data.messageUid === lastCreatureWorkerMessageUID) {
                 const creature = { ...data.creature };
                 creature.BaseName = toUpper(creature.BaseName);
                 resolve(JSON.stringify(creature));
@@ -24,19 +24,19 @@ function LookupCreature(query: string) {
                 resolve(JSON.stringify([]));
             }
         };
-        dbWorker.postMessage({
+        creatureWorker.postMessage({
             type: "lookup",
             query: query,
-            messageUid: lastDBWorkerUid,
+            messageUid: lastCreatureWorkerMessageUID,
         });
     });
 }
 
 async function AddCustomCreature(creature: string) {
-    if (!dbWorker) {
+    if (!creatureWorker) {
         return;
     }
-    dbWorker.postMessage({
+    creatureWorker.postMessage({
         type: "add",
         creature: creature,
     });
@@ -45,28 +45,21 @@ async function AddCustomCreature(creature: string) {
 
 function GetCreatures() {
     return new Promise((resolve) => {
-        if (!dbWorker) {
+        if (!creatureWorker) {
             resolve([]);
         }
-        lastDBWorkerUid = uid();
-        dbWorker.onmessage = (e: MessageEvent) => {
+        lastCreatureWorkerMessageUID = uid();
+        creatureWorker.onmessage = (e: MessageEvent) => {
             const data = e.data;
-            if (data.messageUid === lastDBWorkerUid) {
+            if (data.messageUid === lastCreatureWorkerMessageUID) {
                 resolve(JSON.stringify(data.creatures));
             } else {
                 resolve(JSON.stringify([]));
             }
         };
-        dbWorker.postMessage({
+        creatureWorker.postMessage({
             type: "get",
-            messageUid: lastDBWorkerUid,
+            messageUid: lastCreatureWorkerMessageUID,
         });
     });
-}
-
-function uid(): string {
-    return new Array(4)
-        .fill(0)
-        .map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16))
-        .join("-");
 }

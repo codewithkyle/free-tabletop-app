@@ -128,6 +128,7 @@ namespace FreeTabletop.Client.Pages
             Tabletop.GameMasterUID = gmUID;
             Tabletop.IsHidden = isHidden;
             JSRuntime.InvokeVoidAsync("SetPlayers", players, gmUID, Tabletop.MessageUID);
+            JSRuntime.InvokeVoidAsync("SetActiveRoomCode", Tabletop.RoomCode);
             StateHasChanged();
         }
 

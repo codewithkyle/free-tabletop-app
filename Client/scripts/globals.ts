@@ -243,3 +243,12 @@ function RenderPopupImage(url:string){
 function Reload(){
     location.reload();
 }
+
+function uid(): string {
+    return new Array(4)
+        .fill(0)
+        .map(() => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString(16))
+        .join("-");
+}
+
+const noop:any = ()=>{};

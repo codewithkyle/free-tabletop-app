@@ -627,7 +627,7 @@ namespace FreeTabletop.Server.Controllers
         {
             List<PlayerEntity> players = room.BuildPlayerEntities();
             Player gameMaster = room.GetGameMaster();
-            await Clients.Group(room.RoomCode).SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.MessageUID);
+            await Clients.Group(room.RoomCode).SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.MessageUID, room.IsHidden);
             
             if (room.ImageURL != null && room.ImageURL.Length != 0)
             {

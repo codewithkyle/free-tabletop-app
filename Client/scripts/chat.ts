@@ -15,6 +15,7 @@ type Player = {
 };
 
 type MessengerState = {
+    live: boolean;
     players: Array<Player>;
     activePlayerUID: string;
     message: string;
@@ -30,6 +31,7 @@ class Messenger extends HTMLElement{
     constructor(){
         super();
         this.state = {
+            live: false,
             players: [],
             activePlayerUID: null,
             message: "",
@@ -41,11 +43,24 @@ class Messenger extends HTMLElement{
         };
     }
 
+    private attemptToGetMessages(){
+        GetMessages()
+        .then((messages:Array<Message>) => {
+            for (let i = 0; i < messages.length; i++){
+                this.addMessage(messages[i]);
+            }
+            this.setState({live: true});
+        })
+        .catch(() => {
+            setTimeout(this.attemptToGetMessages.bind(this), 1000);
+        });
+    }
+
     public addMessage(message:Message){
         const updatedState ={...this.state};
         if (message.recipientUID === null){
             updatedState.allChat.messages.push(message);
-            if (updatedState.activePlayerUID !== null){
+            if (updatedState.activePlayerUID !== null && this.state.live){
                 updatedState.allChat.unreadAllChatMessages = true;
                 PlaySound("message.wav");
             }
@@ -53,7 +68,7 @@ class Messenger extends HTMLElement{
             for (let i = 0; i < updatedState.players.length; i++){
                 if (updatedState.players[i].messageUID === message.authorUID || updatedState.players[i].messageUID === message.recipientUID){
                     updatedState.players[i].messages.push(message);
-                    if (this.state.activePlayerUID !== updatedState.players[i].messageUID){
+                    if (this.state.activePlayerUID !== updatedState.players[i].messageUID && this.state.live){
                         updatedState.players[i].unreadMessages = true;
                         PlaySound("message.wav");
                     }
@@ -266,7 +281,12 @@ class Messenger extends HTMLElement{
 
     connectedCallback(){
         messenger = this;
+        this.attemptToGetMessages();
         this.render();
+    }
+
+    disconnectedCallback(){
+        this.attemptToGetMessages = noop;
     }
 }
 customElements.define("messenger-component", Messenger);
@@ -297,4 +317,5 @@ function RenderMessage(message:Message){
     if (messenger){
         messenger.addMessage(message);
     }
+    StoreMessage(message);
 }
