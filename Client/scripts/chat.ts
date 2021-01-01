@@ -142,6 +142,49 @@ class Messenger extends HTMLElement{
         }
     }
 
+    private parseMessage(message:string){
+        let parsedMessage = message;
+        const links = parsedMessage.match(/(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()!@:%_\+.~#?&\/\/=]*))/gm) ?? [];
+        const imageTest = new RegExp(/\.gif$|\.png$|\.jpeg$|\.jpg$|\.webp$|\.svg$|\.avif$|\.apng$/);
+        const youtubeTest = new RegExp(/https?:\/\/(www\.)?(youtube|youtu)\.(com|be)\//);
+        const images:Array<string> = [];
+        const youtubeVideos:Array<string> = [];
+        for (let i = 0; i < links.length; i++){
+            const href = `<a href="${links[i].trim()}" target="_blank" ref="noopener">${links[i]}</a>`;
+            parsedMessage = parsedMessage.replace(links[i], href);
+            if (imageTest.test(links[i].trim())){
+                images.push(links[i]);
+            }else if (youtubeTest.test(links[i])){
+                const videoID = links[i].replace(/https?:\/\/(www\.)?(youtube|youtu)\.(com|be)\/|(watch)|(\?v\=)|(&.*)/g, "");
+                youtubeVideos.push(videoID);
+            }
+        }
+        let onlyLinks = false;
+        if (links.length){
+            let tempMessage = message;
+            for (let i = 0; i < links.length; i++){
+                tempMessage = tempMessage.replace(links[i], "");
+            }
+            tempMessage = tempMessage.trim();
+            if (!tempMessage.length){
+                onlyLinks = true;
+            }
+        }
+        return html`
+            ${!onlyLinks ? html`<span class="msg" .innerHTML=${parsedMessage}></span>` : null}
+            ${images.map(image => {
+                return html`
+                    <a class="img" href="${image}" target="_blank" ref="noopener">
+                        <img src="${image}">
+                    </a>
+                `;
+            })}
+            ${youtubeVideos.map(video => {
+                return html`<iframe width="386" height="183" src="https://www.youtube-nocookie.com/embed/${video}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            })}
+        `;
+    }
+
     private renderPlayerChat(){
         let player:Player;
         for (let i = 0; i < this.state.players.length; i++){
@@ -158,7 +201,9 @@ class Messenger extends HTMLElement{
                     ${player.messages.map(message => {
                         return html`
                             <li class="${message.authorUID === this.state.clientUID ? "outgoing" : "incoming"}">
-                                <span class="msg">${message.msg}</span>
+                                <div class="msg-container">
+                                    ${this.parseMessage(message.msg)}
+                                </div>
                                 <span class="author">${message.author}</span>
                             </li>
                         `;
@@ -173,7 +218,9 @@ class Messenger extends HTMLElement{
                     ${this.state.allChat.messages.map(message => {
                         return html`
                             <li class="${message.authorUID === this.state.clientUID ? "outgoing" : "incoming"}">
-                                <span class="msg">${message.msg}</span>
+                                <div class="msg-container">
+                                    ${this.parseMessage(message.msg)}
+                                </div>
                                 <span class="author">${message.author}</span>
                             </li>
                         `;

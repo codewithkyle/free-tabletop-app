@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Game Masters can toggle tabletop scene visibility
+- messenger features
+    - clickable links
+    - image previews (created from links)
+    - embeded YouTube videos
 
 ## [0.7.0] - 2020-12-30
 
