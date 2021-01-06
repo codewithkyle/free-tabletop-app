@@ -31,6 +31,7 @@ namespace FreeTabletop.Client.Pages
         public bool TabletopMenuOpen = false;
         public bool ImageUploadOpen = false;
         public string InputImageURL = null;
+        public string InputImageLabel = null;
         public string MovingEntityUID { get; set; }
         public string SelectedGridType = "1";
         public bool EntitySpawnMenuOpen = false;
@@ -737,8 +738,9 @@ namespace FreeTabletop.Client.Pages
         {
             if (InputImageURL.Length != 0){
                 CloseAllModals();
-                Hub.LoadPopupImage(InputImageURL);
+                Hub.LoadPopupImage(InputImageURL, InputImageLabel);
                 InputImageURL = null;
+                InputImageLabel = null;
             }
         }
 
@@ -869,6 +871,11 @@ namespace FreeTabletop.Client.Pages
             BrushSize = (int)temp;
             JSRuntime.InvokeVoidAsync("SetBrushSize", BrushSize);
             StateHasChanged();
+        }
+
+        public void TogglePopupImageHistoryModal()
+        {
+            JSRuntime.InvokeVoidAsync("RenderImageHistoryModal");
         }
     }
 }

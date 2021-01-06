@@ -19,6 +19,10 @@ class RoomWorker{
             messageStore.createIndex("recipientUID", "recipientUID", { unique: false });
             messageStore.createIndex("authorUID", "authorUID", { unique: false });
 
+            const imageStore = this.idb.createObjectStore("images", { autoIncrement: true });
+            imageStore.createIndex("url", "url", { unique: false });
+            imageStore.createIndex("label", "label", { unique: false });
+
             this.send("live");
         };
         idbRequest.onsuccess = (event) => {
@@ -68,6 +72,30 @@ class RoomWorker{
         });
     }
 
+    private addImage(data){
+        return new Promise((resolve) => {
+            const imageStore = this.idb.transaction("images", "readwrite").objectStore("images");
+            const request = imageStore.put(data);
+            request.onsuccess = resolve;
+            request.onerror = resolve;
+        });
+    }
+
+    private getImages(){
+        return new Promise((resolve) => {
+            let messages = [];
+            const messageStore = this.idb.transaction("images", "readonly").objectStore("images");
+            const request = messageStore.getAll();
+            request.onsuccess = () => {
+                messages = request.result;
+                resolve(messages);
+            };
+            request.onerror = () => {
+                resolve(messages);
+            };
+        });
+    }
+
     private inbox(e: MessageEvent) {
         const {type, data, messageUid} = e.data;
         switch (type) {
@@ -77,13 +105,21 @@ class RoomWorker{
             case "cleanup":
                 this.cleanup(data);
                 break;
-            case "get":
+            case "get-messages":
                 this.getMessages().then(messages => {
-                    this.send("get", messages);
+                    this.send("get", messages, messageUid);
                 });
                 break;
-            case "add":
+            case "add-message":
                 this.addMessage(data);
+                break;
+            case "add-image":
+                this.addImage(data);
+                break;
+            case "get-images":
+                this.getImages().then(images => {
+                    this.send("get", images, messageUid);
+                });
                 break;
             default:
                 console.warn(`Uncaught DB Worker message type: ${type}`);

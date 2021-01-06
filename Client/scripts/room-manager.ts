@@ -3,8 +3,12 @@ let lastRoomWorkerMessageUID = null;
 let roomCode = null;
 let isRoomWorkerReady = false;
 let isRoomWorkerLive = false;
-let promiseCallback:Function = noop;
+let promiseCallbacks = {};
 const messageQueue:Array<Message> = [];
+const imageQueue:Array<{
+    url: string;
+    label: string;
+}> = [];
 
 roomWorker.onmessage = (e:MessageEvent) => {
     const {type, data, messageUid} = e.data;
@@ -15,11 +19,11 @@ roomWorker.onmessage = (e:MessageEvent) => {
             break;
         case "live":
             isRoomWorkerLive = true;
-            FlushMessageQueue();
+            FlushQueues();
             SendRoomWorkerMessage("cleanup", JSON.parse(localStorage.getItem("rooms")));
             break;
         case "get":
-            promiseCallback(data);
+            handleDataFromRoomWorker(messageUid, data);
             break;
         default:
             console.warn(`Unhandled room worker message type: ${type}`);
@@ -27,16 +31,41 @@ roomWorker.onmessage = (e:MessageEvent) => {
     }
 }
 
-function FlushMessageQueue(){
-    for (let i = messageQueue.length - 1; i >= 0; i--){
-        SendRoomWorkerMessage("add", messageQueue[i]);
-        messageQueue.splice(i, 1);
+function handleDataFromRoomWorker(messageId, data){
+    const callback = promiseCallbacks?.[messageId] ?? null;
+    if (callback){
+        if (data.type === "error"){
+            promiseCallbacks[messageId].reject(data);
+        } else {
+            promiseCallbacks[messageId].resolve(data);
+        }
+        delete promiseCallbacks[messageId];
     }
 }
 
-function SendRoomWorkerMessage(type: string, data:any = null){
+function stashRoomWorkerMessageCallback(messageId, resolve, reject){
+    promiseCallbacks[`${messageId}`] = {
+        resolve: resolve,
+        reject: reject,
+    };
+}
+
+function FlushQueues(){
+    for (let i = messageQueue.length - 1; i >= 0; i--){
+        SendRoomWorkerMessage("add-message", messageQueue[i]);
+        messageQueue.splice(i, 1);
+    }
+    for (let i = imageQueue.length - 1; i >= 0; i--){
+        SendRoomWorkerMessage("add-image", imageQueue[i]);
+        imageQueue.splice(i, 1);
+    }
+}
+
+function SendRoomWorkerMessage(type: string, data:any = null, resolve = null, reject = () => {}){
     const messageUid = uid();
-    lastRoomWorkerMessageUID = messageUid;
+    if (resolve !== null){
+        stashRoomWorkerMessageCallback(messageUid, resolve, reject);
+    }
     roomWorker.postMessage({
         type: type,
         messageUid: messageUid,
@@ -69,8 +98,7 @@ function SetActiveRoomCode(currentRoomCode:string){
 function GetMessages(){
     return new Promise((resolve, reject) => {
         if (isRoomWorkerLive){
-            promiseCallback = resolve;
-            SendRoomWorkerMessage("get");
+            SendRoomWorkerMessage("get-messages", null, resolve, reject);
         }else{
             reject();
         }
@@ -79,8 +107,32 @@ function GetMessages(){
 
 function StoreMessage(message:Message){
     if (isRoomWorkerLive){
-        SendRoomWorkerMessage("add", message);
+        SendRoomWorkerMessage("add-message", message);
     }else{
         messageQueue.push(message);
     }
+}
+
+function StoreImage(url:string, label:string){
+    if (isRoomWorkerLive){
+        SendRoomWorkerMessage("add-image", {
+            url: url,
+            label: label ?? url
+        });
+    }else{
+        imageQueue.push({
+            url: url,
+            label: label ?? url
+        });
+    }
+}
+
+function GetImages(){
+    return new Promise((resolve, reject) => {
+        if (isRoomWorkerLive){
+            SendRoomWorkerMessage("get-images", null, resolve, reject);
+        }else{
+            reject();
+        }
+    });
 }

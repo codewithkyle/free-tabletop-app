@@ -101,7 +101,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:LoadPopupImage")]
-        public void LoadPopupImage(string url)
+        public void LoadPopupImage(string url, string label)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -109,7 +109,7 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadPopupImage", url);
+                    Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadPopupImage", url, label);
                 }
             }
         }

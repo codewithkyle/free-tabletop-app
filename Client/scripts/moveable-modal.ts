@@ -6,6 +6,7 @@ class Draggable extends HTMLElement{
     private pos4:number;
     private handle:HTMLElement;
     private closeButton:HTMLButtonElement;
+    private expandButton:HTMLButtonElement;
 
     constructor(){
         super();
@@ -15,6 +16,7 @@ class Draggable extends HTMLElement{
         this.pos3 = 0;
         this.pos4 = 0;
         this.closeButton = null;
+        this.expandButton = null;
     }
 
     private handleMouseDown:EventListener = (e:MouseEvent|TouchEvent) => {
@@ -94,6 +96,18 @@ class Draggable extends HTMLElement{
         this.handle.addEventListener("touchstart", this.handleMouseDown);
     }
 
+    private expand:EventListener = (e:Event) => {
+        if (this.classList.contains("-expanded")){
+            this.classList.remove("-expanded");
+            this.expandButton.setAttribute("tooltip", "Expand");
+            this.expandButton.setAttribute("aria-label", "Expand popup image");
+        }else{
+            this.classList.add("-expanded");
+            this.expandButton.setAttribute("tooltip", "Shrink");
+            this.expandButton.setAttribute("aria-label", "Shrink popup image");
+        }
+    }
+
     connectedCallback(){        
         window.addEventListener("mouseup", this.handleMouseUp);
         window.addEventListener("mousemove", this.handleMouseMove);
@@ -110,6 +124,11 @@ class Draggable extends HTMLElement{
         this.closeButton = this.querySelector(".js-close-button");
         if (this.closeButton){
             this.closeButton.addEventListener("click", () => { this.remove(); });
+        }
+
+        this.expandButton = this.querySelector(".js-expand-button");
+        if (this.expandButton){
+            this.expandButton.addEventListener("click", this.expand);
         }
     }
 }

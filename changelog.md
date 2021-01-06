@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - embeded YouTube videos
     - persistent message history (per room)
 - paint brush size slider
+- persistent popup image history
+- popup image labels
+- ability to expand/shrink modals
 
 ### Fixed
 
