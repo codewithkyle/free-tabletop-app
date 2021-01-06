@@ -8,7 +8,12 @@ type Cell = {
 let tabletop:Tabletop = null;
 
 class Tabletop extends HTMLElement{
-    private pos:any;
+    private pos: {
+        top: number;
+        left: number;
+        x: number;
+        y: number;
+    };
     private movingTabletop:boolean;
     private canvas:HTMLCanvasElement;
     private ctx:CanvasRenderingContext2D;
@@ -20,10 +25,8 @@ class Tabletop extends HTMLElement{
     public paintMode: PaintMode;
     private mouseDown:boolean;
     private render:boolean;
-    private mutatedCells:Array<{
-        index: number;
-        style: CellStyle;
-    }>;
+    private mutatedCells:Array<number>;
+    private brushSize:number;
 
     constructor(){
         super();
@@ -51,19 +54,22 @@ class Tabletop extends HTMLElement{
             x = e.touches[0].clientX;
             y = e.touches[0].clientY;
         }
-        if (this.paintMode === "None"){
-            if (e.target instanceof Tabletop || e.target instanceof HTMLCanvasElement){
-                this.pos = {
-                    left: this.scrollLeft,
-                    top: this.scrollTop,
-                    x: x,
-                    y: y,
-                };
-                this.movingTabletop = true;
+        let doCapture = false;
+        if (e.target instanceof Tabletop || e.target instanceof HTMLCanvasElement){
+            if (e instanceof MouseEvent){
+                if (e.buttons === 1){
+                    doCapture = true;
+                }
+            }else{
+                doCapture = true;
             }
         }
-        if (this.paintMode !== "None"){
-            this.paintCell(this.convertViewportToTabletopPosition(x, y));
+        if (doCapture){
+            if (this.paintMode === "None"){
+                this.movingTabletop = true;
+            }else{
+                this.paintCell(this.convertViewportToTabletopPosition(x, y));
+            }
         }
     }
     private move:EventListener = (e:MouseEvent|TouchEvent) => {
@@ -78,6 +84,13 @@ class Tabletop extends HTMLElement{
             y = e.touches[0].clientY;
         }
 
+        this.pos = {
+            left: this.scrollLeft,
+            top: this.scrollTop,
+            x: x,
+            y: y,
+        };
+
         if (this.movingTabletop){
             this.scrollTo({
                 top: this.pos.top - (y - this.pos.y),
@@ -85,7 +98,15 @@ class Tabletop extends HTMLElement{
                 behavior: "auto",
             });
         } else if (this.paintMode !== "None" && this.mouseDown){
-            this.paintCell(this.convertViewportToTabletopPosition(x, y));
+            if (e.target instanceof Tabletop || e.target instanceof HTMLCanvasElement){
+                if (e instanceof MouseEvent){
+                    if (e.buttons === 1){
+                        this.paintCell(this.convertViewportToTabletopPosition(x, y));
+                    }
+                }else{
+                    this.paintCell(this.convertViewportToTabletopPosition(x, y));
+                }
+            }
         }
     };
     private end:EventListener = () => {
@@ -113,30 +134,58 @@ class Tabletop extends HTMLElement{
         this.ctx = this.canvas.getContext('2d');
     }
 
+    private logCellMutation(cellIndex:number){
+        let newMutation = true;
+        for (let i = 0; i < this.mutatedCells.length; i++){
+            if (this.mutatedCells[i] === cellIndex){
+                newMutation = false;
+                break;
+            }
+        }
+        if (newMutation){
+            this.mutatedCells.push(cellIndex);
+        }
+    }
+
     private paintCell(position:Array<number>){
         const cellPosition = this.convertTabletopPositionToCell(position);
+        const minXCell = cellPosition[0] - Math.floor(this.brushSize / 2);
+        const maxXCell = cellPosition[0] + Math.floor(this.brushSize / 2);
+        const minYCell = cellPosition[1] - Math.floor(this.brushSize / 2);
+        const maxYCell = cellPosition[1] + Math.floor(this.brushSize / 2);
         for (let i = 0; i < this.cells.length; i++){
-            if (this.cells[i].position[0] === cellPosition[0] && this.cells[i].position[1] === cellPosition[1]){
+            if (
+                this.cells[i].position[0] === cellPosition[0] && this.cells[i].position[1] === cellPosition[1] ||
+                this.cells[i].position[0] >= minXCell && this.cells[i].position[0] <= maxXCell && this.cells[i].position[1] >= minYCell && this.cells[i].position[1] <= maxYCell
+            ){
+                let wasMutated = false;
                 switch(this.paintMode){
                     case "Fog":
-                        this.cells[i].style = "fog";
+                        if (this.cells[i].style !== "fog"){
+                            this.cells[i].style = "fog";
+                            wasMutated = true;
+                        }
                         break;
                     case "Highlighter":
                         if (this.cells[i].style !== "fog" || this.isGM){
-                            this.cells[i].style = "highlight";
+                            if (this.cells[i].style !== "highlight"){
+                                this.cells[i].style = "highlight";
+                                wasMutated = true;
+                            }
                         }
                         break;
                     default:
                         if (this.isGM || this.cells[i].style === "highlight"){
-                            this.cells[i].style = "clear";
+                            if (this.cells[i].style !== "clear"){
+                                this.cells[i].style = "clear";
+                                wasMutated = true;
+                            }
                         }
                         break;
                 }
-                this.mutatedCells.push({
-                    index: i,
-                    style: this.cells[i].style,
-                });
-                break;
+                if (wasMutated){
+                    this.logCellMutation(i);
+                }
             }
         }
     }
@@ -173,9 +222,23 @@ class Tabletop extends HTMLElement{
                         this.ctx.stroke();
                     }
                 }
+                if (this.brushSize > 1 && this.paintMode !== "None"){
+                    const pos = this.convertViewportToTabletopPosition(this.pos.x, this.pos.y);
+                    const buffer = Math.floor(this.brushSize * this.cellSize / 2);
+                    this.ctx.strokeStyle = "rgb(0,0,0,0.87)";
+                    this.ctx.fillStyle = "rgba(255,255,255,0.6)";
+                    this.ctx.beginPath();
+                    this.ctx.rect(pos[0] - buffer + 1, pos[1] - buffer + 3, this.brushSize * this.cellSize, this.brushSize * this.cellSize);
+                    this.ctx.fill();
+                    this.ctx.stroke();
+                }
             }
         }
         window.requestAnimationFrame(this.renderer.bind(this));
+    }
+
+    public setBrushSize(size:number){
+        this.brushSize = size;
     }
 
     public setCellSize(size:number){
@@ -386,5 +449,10 @@ function ClearFogCell(index:number){
     const cell:HTMLElement = document.body.querySelector(`.js-fog[data-index="${index}"]`);
     if (cell){
         cell.style.background = "transparent";
+    }
+}
+function SetBrushSize(size:number){
+    if (tabletop){
+        tabletop.setBrushSize(size);
     }
 }

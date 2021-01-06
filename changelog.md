@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - image previews (created from links)
     - embeded YouTube videos
     - persistent message history (per room)
+- paint brush size slider
+
+### Fixed
+
+- painting based buffer overflow bug
 
 ## [0.7.0] - 2020-12-30
 

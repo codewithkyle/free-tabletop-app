@@ -78,6 +78,7 @@ namespace FreeTabletop.Client.Pages
         public bool PlayDeathSound = true;
         public bool HighQualityEffects = true;
         public bool DeathCelebrations = true;
+        public int BrushSize = 1;
 
         protected override async Task OnInitializedAsync()
         {
@@ -700,13 +701,24 @@ namespace FreeTabletop.Client.Pages
             {
                 PaintMenuOpen = false;
                 await JSRuntime.InvokeVoidAsync("ToggleModal", "js-paint-modal", PaintMenuOpen);
-                List<MutatedCell> cells = await JSRuntime.InvokeAsync<List<MutatedCell>>("GetCells");
-                for (int i = 0; i < cells.Count; i++)
+                int[] cells = await JSRuntime.InvokeAsync<int[]>("GetCells");
+                string paintType = "clear";
+                switch(PaintType){
+                    case PaintOption.Fog:
+                        paintType = "fog";
+                        break;
+                    case PaintOption.Highlighter:
+                        paintType = "highlight";
+                        break;
+                    default:
+                        break;
+                }
+                for (int i = 0; i < cells.Length; i++)
                 {
-                    if (Tabletop.Cells[cells[i].index].Style != cells[i].style)
+                    if (Tabletop.Cells[cells[i]].Style != paintType)
                     {
-                        Tabletop.Cells[cells[i].index].Style = cells[i].style;
-                        Hub.ChangeCellStyle(cells[i].index, cells[i].style);
+                        Tabletop.Cells[cells[i]].Style = paintType;
+                        Hub.ChangeCellStyle(cells[i], paintType);
                     }
                     
                 }
@@ -734,13 +746,24 @@ namespace FreeTabletop.Client.Pages
         {
             if (PaintMenuOpen)
             {
-                List<MutatedCell> cells = await JSRuntime.InvokeAsync<List<MutatedCell>>("GetCells");
-                for (int i = 0; i < cells.Count; i++)
+                int[] cells = await JSRuntime.InvokeAsync<int[]>("GetCells");
+                string paintType = "clear";
+                switch(PaintType){
+                    case PaintOption.Fog:
+                        paintType = "fog";
+                        break;
+                    case PaintOption.Highlighter:
+                        paintType = "highlight";
+                        break;
+                    default:
+                        break;
+                }
+                for (int i = 0; i < cells.Length; i++)
                 {
-                    if (Tabletop.Cells[cells[i].index].Style != cells[i].style)
+                    if (Tabletop.Cells[cells[i]].Style != paintType)
                     {
-                        Tabletop.Cells[cells[i].index].Style = cells[i].style;
-                        Hub.ChangeCellStyle(cells[i].index, cells[i].style);
+                        Tabletop.Cells[cells[i]].Style = paintType;
+                        Hub.ChangeCellStyle(cells[i], paintType);
                     }
                 }
             }
@@ -829,6 +852,22 @@ namespace FreeTabletop.Client.Pages
         public void SetTabletopVisibility(bool isHidden)
         {
             Tabletop.IsHidden = isHidden;
+            StateHasChanged();
+        }
+
+        public void ChangeBrushSize(string value)
+        {
+            long temp = Int64.Parse(value);
+            if (temp > 10)
+            {
+                temp = 10;
+            }
+            else if (temp < 1)
+            {
+                temp = 1;
+            }
+            BrushSize = (int)temp;
+            JSRuntime.InvokeVoidAsync("SetBrushSize", BrushSize);
             StateHasChanged();
         }
     }
