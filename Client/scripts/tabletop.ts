@@ -84,13 +84,6 @@ class Tabletop extends HTMLElement{
             y = e.touches[0].clientY;
         }
 
-        this.pos = {
-            left: this.scrollLeft,
-            top: this.scrollTop,
-            x: x,
-            y: y,
-        };
-
         if (this.movingTabletop){
             this.scrollTo({
                 top: this.pos.top - (y - this.pos.y),
@@ -108,6 +101,12 @@ class Tabletop extends HTMLElement{
                 }
             }
         }
+        this.pos = {
+            left: this.scrollLeft,
+            top: this.scrollTop,
+            x: x,
+            y: y,
+        };
     };
     private end:EventListener = () => {
         this.movingTabletop = false;
