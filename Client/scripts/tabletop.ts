@@ -367,7 +367,7 @@ class Tabletop extends HTMLElement{
                 }
 
                 // Manage FoV based pawn visibility
-                if (this.dynamicFog && this.pvp && !this.isGM && player?.fov > 0){
+                if (this.dynamicFog && this.pvp && !this.isGM && player){
                     const visibleCells = [];
                     for (let i = 0; i < this.cells.length; i++){
                         let isVisible = true;

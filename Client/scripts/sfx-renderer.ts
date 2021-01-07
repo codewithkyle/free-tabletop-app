@@ -55,14 +55,16 @@ class SFXRenderer extends HTMLElement{
         const bleedingPawns:Array<Pawn> = Array.from(document.body.querySelectorAll(`[bleeding="true"]:not(.-invisible):not(.-removed):not(.-ghost)`));
         if (this.images.length){
             for (let i = 0; i < bleedingPawns.length; i++){
-                bleedingPawns[i].timeToSplatter -= deltaTime;
-                if (bleedingPawns[i].timeToSplatter <= 0){
-                    bleedingPawns[i].timeToSplatter = this.randomInt(0, 2);
-                    const pawnBounds = bleedingPawns[i].getBoundingClientRect();
-                    const imageIndex = this.randomInt(0, this.images.length - 1);
-                    const pos = tabletop.convertViewportToTabletopPosition(this.randomInt((pawnBounds.left - (pawnBounds.width / 2)), (pawnBounds.right - (pawnBounds.width / 2))), this.randomInt((pawnBounds.top - (pawnBounds.height / 2)), (pawnBounds.bottom - (pawnBounds.height / 2))));
-                    const splatter = new BloodSpatter(this.images[imageIndex], pos, pawnBounds.width);
-                    this.effects.push(splatter);
+                if (bleedingPawns[i].isVisible){
+                    bleedingPawns[i].timeToSplatter -= deltaTime;
+                    if (bleedingPawns[i].timeToSplatter <= 0){
+                        bleedingPawns[i].timeToSplatter = this.randomInt(0, 2);
+                        const pawnBounds = bleedingPawns[i].getBoundingClientRect();
+                        const imageIndex = this.randomInt(0, this.images.length - 1);
+                        const pos = tabletop.convertViewportToTabletopPosition(this.randomInt((pawnBounds.left - (pawnBounds.width / 2)), (pawnBounds.right - (pawnBounds.width / 2))), this.randomInt((pawnBounds.top - (pawnBounds.height / 2)), (pawnBounds.bottom - (pawnBounds.height / 2))));
+                        const splatter = new BloodSpatter(this.images[imageIndex], pos, pawnBounds.width);
+                        this.effects.push(splatter);
+                    }
                 }
             }
         }
@@ -70,11 +72,13 @@ class SFXRenderer extends HTMLElement{
         const charmedPawns:Array<Pawn> = Array.from(document.body.querySelectorAll(`[charmed="true"]:not(.-invisible):not(.-removed):not(.-ghost)`));
         if (this.heartImage.complete){
             for (let i = 0; i < charmedPawns.length; i++){
-                if (Math.random() <= 0.1){
-                    const pawnBounds = charmedPawns[i].getBoundingClientRect();
-                    const pos = tabletop.convertViewportToTabletopPosition((pawnBounds.left + (pawnBounds.width / 2)), (pawnBounds.top + (pawnBounds.height / 2)));
-                    const effect = new FloatingParticleEffect(this.heartImage, pos, this.randomInt(-20, 20), this.randomInt(-20, 20), this.randomInt(1, 3));
-                    this.effects.push(effect);
+                if (charmedPawns[i].isVisible){
+                    if (Math.random() <= 0.1){
+                        const pawnBounds = charmedPawns[i].getBoundingClientRect();
+                        const pos = tabletop.convertViewportToTabletopPosition((pawnBounds.left + (pawnBounds.width / 2)), (pawnBounds.top + (pawnBounds.height / 2)));
+                        const effect = new FloatingParticleEffect(this.heartImage, pos, this.randomInt(-20, 20), this.randomInt(-20, 20), this.randomInt(1, 3));
+                        this.effects.push(effect);
+                    }   
                 }
             }
         }
@@ -82,11 +86,13 @@ class SFXRenderer extends HTMLElement{
         const stunnedPawns:Array<Pawn> = Array.from(document.body.querySelectorAll(`[stunned="true"]:not(.-invisible):not(.-removed):not(.-ghost)`));
         if (this.starImage.complete){
             for (let i = 0; i < stunnedPawns.length; i++){
-                if (Math.random() <= 0.075){
-                    const pawnBounds = stunnedPawns[i].getBoundingClientRect();
-                    const pos = tabletop.convertViewportToTabletopPosition((pawnBounds.left + (pawnBounds.width / 2)), (pawnBounds.top + (pawnBounds.height / 2)));
-                    const effect = new FloatingParticleEffect(this.starImage, pos, this.randomInt(-40, 40), this.randomInt(-40, 40), 1.25);
-                    this.effects.push(effect);
+                if (stunnedPawns[i].isVisible){
+                    if (Math.random() <= 0.075){
+                        const pawnBounds = stunnedPawns[i].getBoundingClientRect();
+                        const pos = tabletop.convertViewportToTabletopPosition((pawnBounds.left + (pawnBounds.width / 2)), (pawnBounds.top + (pawnBounds.height / 2)));
+                        const effect = new FloatingParticleEffect(this.starImage, pos, this.randomInt(-40, 40), this.randomInt(-40, 40), 1.25);
+                        this.effects.push(effect);
+                    }
                 }
             }
         }
@@ -94,11 +100,13 @@ class SFXRenderer extends HTMLElement{
         const unconsciousPawns:Array<Pawn> = Array.from(document.body.querySelectorAll(`[unconscious="true"]:not(.-invisible):not(.-removed):not(.-ghost)`));
         if (this.spiralImage.complete){
             for (let i = 0; i < unconsciousPawns.length; i++){
-                if (Math.random() <= 0.05){
-                    const pawnBounds = unconsciousPawns[i].getBoundingClientRect();
-                    const pos = tabletop.convertViewportToTabletopPosition((pawnBounds.left + (pawnBounds.width / 2)), (pawnBounds.top + (pawnBounds.height / 2)));
-                    const effect = new FloatingParticleEffect(this.spiralImage, pos, this.randomInt(-40, 40), this.randomInt(-40, 40), 1.25, this.randomInt(200, 400) * -1);
-                    this.effects.push(effect);
+                if (unconsciousPawns[i].isVisible){
+                    if (Math.random() <= 0.05){
+                        const pawnBounds = unconsciousPawns[i].getBoundingClientRect();
+                        const pos = tabletop.convertViewportToTabletopPosition((pawnBounds.left + (pawnBounds.width / 2)), (pawnBounds.top + (pawnBounds.height / 2)));
+                        const effect = new FloatingParticleEffect(this.spiralImage, pos, this.randomInt(-40, 40), this.randomInt(-40, 40), 1.25, this.randomInt(200, 400) * -1);
+                        this.effects.push(effect);
+                    }
                 }
             }
         }

@@ -6,12 +6,14 @@ class Pawn extends HTMLElement{
         x: number;
         y: number;
     }
+    public isVisible:boolean;
 
     constructor(){
         super();
         this.HUD = null;
         this.timeToSplatter = 0;
         this.fov = 0;
+        this.isVisible = true;
         this.cell = {
             x: 0,
             y: 0,
@@ -27,6 +29,7 @@ class Pawn extends HTMLElement{
     }
 
     public UpdateVisibility(visible:boolean){
+        this.isVisible = visible;
         if (visible){
             this.style.opacity = "1";
             this.style.visibility = "visible";
@@ -117,7 +120,7 @@ function UpdateEntityPosition(uid:string, position:Array<number>, cellSize:numbe
 }
 function RenderDeathCelebration(uid:string){
     const pawn:Pawn = document.body.querySelector(`tabletop-pawn[data-uid="${uid}"]`);
-    if (pawn){
+    if (pawn && pawn.isVisible){
         pawn.celebrateDeath();
     }
 }
