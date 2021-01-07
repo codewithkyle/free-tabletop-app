@@ -575,6 +575,8 @@ class Tabletop extends HTMLElement{
     
         document.removeEventListener('mouseup', this.end);
         document.removeEventListener("touchend", this.end);
+
+        this.renderer = noop;
     }
 }
 customElements.define('tabletop-component', Tabletop);

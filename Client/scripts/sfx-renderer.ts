@@ -127,6 +127,10 @@ class SFXRenderer extends HTMLElement{
         }
     }
 
+    disconnectedCallback(){
+        this.render = noop;
+    }
+
     connectedCallback(){
         this.checkIfReady();
     }

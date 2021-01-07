@@ -35,6 +35,14 @@ class DeathCanvas extends HTMLElement{
         });
     }
 
+    private loop(){
+        if (this.canvas.width !== parseInt(this.dataset.width) || this.canvas.height !== parseInt(this.dataset.height)){
+            this.canvas.width = parseInt(this.dataset.width);
+            this.canvas.height = parseInt(this.dataset.height);
+        }
+        window.requestAnimationFrame(this.loop.bind(this));
+    }
+
     private checkIfReady(){
         if (this.dataset.width && this.dataset.height){
             this.canvas = document.createElement("canvas");
@@ -42,11 +50,16 @@ class DeathCanvas extends HTMLElement{
             this.canvas.width = parseInt(this.dataset.width);
             this.canvas.height = parseInt(this.dataset.height);
             deathCanvas = this;
+            this.loop();
         }else{
             setTimeout(()=>{
                 this.checkIfReady();
             }, 150);
         }
+    }
+
+    disconnectedCallback(){
+        this.loop = noop;
     }
 
     connectedCallback(){
