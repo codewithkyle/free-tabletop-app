@@ -402,6 +402,20 @@ namespace FreeTabletop.Client.Pages
             }
         }
 
+        public void SpawnLight()
+        {
+            Hub.SpawnLight((int)RightClickGridPosition[0], (int)RightClickGridPosition[1]);
+            JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
+            CloseAllModals();
+        }
+
+        public void RenderLightEntities(List<Light> lights)
+        {
+            Tabletop.Lights = lights;
+            StateHasChanged();
+            JSRuntime.InvokeVoidAsync("UpdateEntities", lights, Tabletop.CellSize);
+        }
+
         public async Task HandleRightClick(double x, double y, bool ctrlKeyPressed)
         {
             int[] cellPosition = await JSRuntime.InvokeAsync<int[]>("GetCellPosition", x, y);
@@ -511,8 +525,8 @@ namespace FreeTabletop.Client.Pages
                 if (entity != null)
                 {
                     entity.FoV = fov;
-                    JSRuntime.InvokeVoidAsync("SetEntityFoV", entity.UID, entity.FoV);
                 }
+                JSRuntime.InvokeVoidAsync("SetEntityFoV", uid, fov);
             }
         }
 

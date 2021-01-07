@@ -214,7 +214,8 @@ class Tabletop extends HTMLElement{
 
     private renderer(){
         if (this.render){
-            const pawns:Array<Pawn> = Array.from(document.body.querySelectorAll("tabletop-pawn"));
+            const pawns:Array<Pawn> = Array.from(document.body.querySelectorAll("tabletop-pawn:not(.-removed):not(.-light)"));
+            const lights:Array<Pawn> = Array.from(document.body.querySelectorAll("tabletop-pawn.-light:not(.-removed)"));
             const player:Pawn = document.body.querySelector(".js-player-pawn");
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.drawImage(this.image, 0, 0);
@@ -250,7 +251,7 @@ class Tabletop extends HTMLElement{
                             const y = pawns[i].cell.y;
                             const r = pawns[i].fov;
                             if (r > 0){
-                                const cellsToClear = [];
+                                let cellsToClear = [];
                                 for (let s = 0; s <= r; s++){
                                     let angleDeg = 0;
                                     while(angleDeg < 360){
@@ -262,6 +263,42 @@ class Tabletop extends HTMLElement{
                                             y: newY
                                         });
                                         angleDeg += 1;
+                                    }
+                                }
+                                for (let l = 0; l < lights.length; l++){
+                                    const x = lights[l].cell.x;
+                                    const y = lights[l].cell.y;
+                                    const r = lights[l].fov;
+                                    if (r > 0){
+                                        const lightsCells = [];
+                                        for (let s = 0; s <= r; s++){
+                                            let angleDeg = 0;
+                                            while(angleDeg < 360){
+                                                const radians = angleDeg * (Math.PI/180);
+                                                const newY = Math.round(y - (Math.cos(radians) * s));
+                                                const newX = Math.round(x + (Math.sin(radians) * s));
+                                                lightsCells.push({
+                                                    x: newX,
+                                                    y: newY
+                                                });
+                                                angleDeg += 1;
+                                            }
+                                        }
+                                        let isVisible = false;
+                                        for (let c = 0; c < lightsCells.length; c++){
+                                            for (let j = 0; j < cellsToClear.length; j++){
+                                                if (lightsCells[c].x === cellsToClear[j].x && lightsCells[c].y === cellsToClear[j].y){
+                                                    isVisible = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (isVisible){
+                                                break;
+                                            }
+                                        }
+                                        if (isVisible){
+                                            cellsToClear = [...cellsToClear, ...lightsCells];
+                                        }
                                     }
                                 }
                                 for (let c = 0; c < cellsToClear.length; c++){
@@ -311,46 +348,49 @@ class Tabletop extends HTMLElement{
                     this.ctx.strokeStyle = "rgb(0,0,0,0.87)";
                     this.ctx.fillStyle = "rgba(255,255,255,0.6)";
                     this.ctx.beginPath();
-                    // this.ctx.rect(pos[0] - buffer + 1, pos[1] - buffer + 3, this.brushSize * this.cellSize, this.brushSize * this.cellSize);
                     this.ctx.arc(pos[0], pos[1], (this.brushSize - 1) * this.cellSize, 0, 2 * Math.PI);
                     this.ctx.fill();
                     this.ctx.stroke();
                 }
 
+                for (let i = 0; i < lights.length; i++){
+                    this.ctx.strokeStyle = "rgb(255,238,0,0.6)";
+                    this.ctx.beginPath();
+                    this.ctx.arc((lights[i].cell.x * this.cellSize) + (this.cellSize / 2), (lights[i].cell.y * this.cellSize) + (this.cellSize / 2), lights[i].fov * this.cellSize, 0, 2 * Math.PI);
+                    this.ctx.stroke();
+                }
+
                 // Manage FoV based pawn visibility
                 if (this.dynamicFog && this.pvp && !this.isGM && player?.fov > 0){
-                    const x = player.cell.x;
-                    const y = player.cell.y;
-                    const r = player.fov;
-                    if (r > 0){
-                        const visibleCells = [];
-                        for (let s = 0; s <= r; s++){
-                            let angleDeg = 0;
-                            while(angleDeg < 360){
-                                const radians = angleDeg * (Math.PI/180);
-                                const newY = Math.round(y - (Math.cos(radians) * s));
-                                const newX = Math.round(x + (Math.sin(radians) * s));
-                                visibleCells.push({
-                                    x: newX,
-                                    y: newY
-                                });
-                                angleDeg += 1;
+                    const visibleCells = [];
+                    for (let i = 0; i < this.cells.length; i++){
+                        let isVisible = true;
+                        for (let f = 0; f < foggedCells.length; f++){
+                            if (foggedCells[f].x === this.cells[i].position[0] && foggedCells[f].y === this.cells[i].position[1]){
+                                isVisible = false;
+                                break;
                             }
                         }
-                        for (let i = 0; i < pawns.length; i++){
-                            if (!pawns[i].classList.contains("js-player-pawn")){
-                                let isVisible = false;
-                                for (let c = 0; c < visibleCells.length; c++){
-                                    if (pawns[i].cell.x === visibleCells[c].x && pawns[i].cell.y === visibleCells[c].y){
-                                        isVisible = true;
-                                        break;
-                                    }
+                        if (isVisible){
+                            visibleCells.push({
+                                x: this.cells[i].position[0],
+                                y: this.cells[i].position[1]
+                            });
+                        }
+                    }
+                    for (let i = 0; i < pawns.length; i++){
+                        if (!pawns[i].classList.contains("js-player-pawn")){
+                            let isVisible = false;
+                            for (let c = 0; c < visibleCells.length; c++){
+                                if (pawns[i].cell.x === visibleCells[c].x && pawns[i].cell.y === visibleCells[c].y){
+                                    isVisible = true;
+                                    break;
                                 }
-                                if (isVisible){
-                                    pawns[i].UpdateVisibility(true);
-                                }else{
-                                    pawns[i].UpdateVisibility(false);
-                                }
+                            }
+                            if (isVisible){
+                                pawns[i].UpdateVisibility(true);
+                            }else{
+                                pawns[i].UpdateVisibility(false);
                             }
                         }
                     }
@@ -361,34 +401,27 @@ class Tabletop extends HTMLElement{
                         }
                     }
                     const visibleCells = [];
-                    for (let k = 0; k < pawns.length; k++){
-                        if (!pawns[k].classList.contains("creature")){
-                            const x = pawns[k].cell.x;
-                            const y = pawns[k].cell.y;
-                            const r = pawns[k].fov;
-                            if (r > 0){
-                                for (let s = 0; s <= r; s++){
-                                    let angleDeg = 0;
-                                    while(angleDeg < 360){
-                                        const radians = angleDeg * (Math.PI/180);
-                                        const newY = Math.round(y - (Math.cos(radians) * s));
-                                        const newX = Math.round(x + (Math.sin(radians) * s));
-                                        visibleCells.push({
-                                            x: newX,
-                                            y: newY
-                                        });
-                                        angleDeg += 1;
-                                    }
-                                }
+                    for (let i = 0; i < this.cells.length; i++){
+                        let isVisible = true;
+                        for (let f = 0; f < foggedCells.length; f++){
+                            if (foggedCells[f].x === this.cells[i].position[0] && foggedCells[f].y === this.cells[i].position[1]){
+                                isVisible = false;
+                                break;
                             }
                         }
-                        for (let i = 0; i < pawns.length; i++){
-                            if (pawns[i].classList.contains("creature")){
-                                for (let c = 0; c < visibleCells.length; c++){
-                                    if (pawns[i].cell.x === visibleCells[c].x && pawns[i].cell.y === visibleCells[c].y){
-                                        pawns[i].UpdateVisibility(true);
-                                        break;
-                                    }
+                        if (isVisible){
+                            visibleCells.push({
+                                x: this.cells[i].position[0],
+                                y: this.cells[i].position[1]
+                            });
+                        }
+                    }
+                    for (let i = 0; i < pawns.length; i++){
+                        if (pawns[i].classList.contains("creature")){
+                            for (let c = 0; c < visibleCells.length; c++){
+                                if (pawns[i].cell.x === visibleCells[c].x && pawns[i].cell.y === visibleCells[c].y){
+                                    pawns[i].UpdateVisibility(true);
+                                    break;
                                 }
                             }
                         }

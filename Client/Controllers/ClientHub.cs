@@ -67,6 +67,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<bool>("Tabletop:UpdateLock", Room.UpdateLock);
                 Networker.hubConnection.On<string, string>("Tabletop:LoadPopupImage", RenderPopupImage);
                 Networker.hubConnection.On<bool>("Tabletop:ToggleVisibility", Room.SetTabletopVisibility);
+                Networker.hubConnection.On<List<Light>>("Tabletop:RenderLightEntities", Room.RenderLightEntities);
 
                 Networker.hubConnection.On<string>("Notification:PlayerConnected", ConnectedNotification);
                 Networker.hubConnection.On<string, string>("Notification:PlayerDisconnected", DisconnectedNotification);
@@ -137,6 +138,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Tabletop:UpdateLock");
             Networker.hubConnection.Remove("Tabletop:LoadPopupImage");
             Networker.hubConnection.Remove("Tabletop:ToggleVisibility");
+            Networker.hubConnection.Remove("Tabletop:RenderLightEntities");
 
             Networker.hubConnection.Remove("Notification:PlayerConnected");
             Networker.hubConnection.Remove("Notification:PlayerDisconnected");
@@ -369,6 +371,11 @@ namespace FreeTabletop.Client.Controllers
         public void ToggleTabletopVisibility()
         {
             Networker.hubConnection.SendAsync("Room:ToggleVisibility");
+        }
+
+        public void SpawnLight(int x, int y)
+        {
+            Networker.hubConnection.SendAsync("Room:SpawnLight", x, y);
         }
     }
 }

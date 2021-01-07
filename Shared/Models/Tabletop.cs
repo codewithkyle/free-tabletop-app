@@ -26,6 +26,8 @@ namespace FreeTabletop.Shared.Models
         public bool FoVFoW = false;
         public bool PvP = false;
 
+        public List<Light> Lights = new List<Light>();
+
         public Entity GetEntityByUID(string uid)
         {
             Entity entity = null;
@@ -62,6 +64,19 @@ namespace FreeTabletop.Shared.Models
                 {
                     FoundEntity = true;
                     entity = Players[i];
+                    break;
+                }
+            }
+            for (int i = 0; i < Lights.Count; i++)
+            {
+                if (FoundEntity)
+                {
+                    break;
+                }
+                if (Lights[i].UID == uid)
+                {
+                    FoundEntity = true;
+                    entity = Lights[i];
                     break;
                 }
             }

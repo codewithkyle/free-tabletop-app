@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - team based visibility (players see all players and NPCs fields of view)
     - player vs player visibility (players only see their field of view)
 - dynamically hiding/showing pawns using fog of war
+- dynamic light sources
 
 ### Fixed
 

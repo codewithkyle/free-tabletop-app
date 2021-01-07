@@ -30,6 +30,7 @@ namespace FreeTabletop.Server.Models
         public bool IsHidden = false;
         public bool FoVFoW = false;
         public bool PvP = false;
+        public List<Light> Lights = new List<Light>();
 
         public void AddPlayer(Player player)
         {
@@ -164,6 +165,7 @@ namespace FreeTabletop.Server.Models
             Creatures = new List<Creature>();
             NPCs = new List<NPC>();
             Cells = new List<Cell>();
+            Lights = new List<Light>();
         }
 
         public void ResetPlayerPawnPositions()
@@ -546,6 +548,19 @@ namespace FreeTabletop.Server.Models
                     break;
                 }
             }
+            for (int i = 0; i < Lights.Count; i++)
+            {
+                if (FoundEntity)
+                {
+                    break;
+                }
+                if (Lights[i].UID == uid)
+                {
+                    FoundEntity = true;
+                    Lights[i].IsRemoved = true;
+                    break;
+                }
+            }
         }
 
         public void UpdateCellStyle(int index, string style)
@@ -585,6 +600,18 @@ namespace FreeTabletop.Server.Models
                 if (Players[i].UID == uid)
                 {
                     entity = Players[i];
+                    break;
+                }
+            }
+            for (int i = 0; i < Lights.Count; i++)
+            {
+                if (entity != null)
+                {
+                    break;
+                }
+                if (Lights[i].UID == uid)
+                {
+                    entity = Lights[i];
                     break;
                 }
             }
@@ -640,6 +667,16 @@ namespace FreeTabletop.Server.Models
         public void ToggleSceneVisibility()
         {
             IsHidden ^= true;
+        }
+
+        public void SpawnLight(int x, int y)
+        {
+            Guid guid = Guid.NewGuid();
+            Light light = new Light();
+            int[] pos = {x, y};
+            light.UpdatePosition(pos);
+            light.UID = guid.ToString();
+            Lights.Add(light);
         }
     }
 }

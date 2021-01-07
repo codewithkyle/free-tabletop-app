@@ -128,6 +128,7 @@ namespace FreeTabletop.Server.Controllers
                     await RenderCreatureEntities(room);
                     await RenderNPCEntities(room);
                     await LoadTabletopImage(room);
+                    await RenderLightEntities(room);
                     if (gridType != "3")
                     {
                         room.ResetPlayerPawnPositions();
@@ -164,6 +165,7 @@ namespace FreeTabletop.Server.Controllers
                     room.RemoveEntity(uid);
                     await RenderCreatureEntities(room);
                     await RenderNPCEntities(room);
+                    await RenderLightEntities(room);
                 }
             }
         }
@@ -233,6 +235,21 @@ namespace FreeTabletop.Server.Controllers
                 {
                     room.SpawnCreature(creature);
                     await RenderCreatureEntities(room);
+                }
+            }
+        }
+
+        [HubMethodName("Room:SpawnLight")]
+        public async Task SpawnLight(int x, int y)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.SpawnLight(x, y);
+                    await RenderLightEntities(room);
                 }
             }
         }
@@ -327,6 +344,10 @@ namespace FreeTabletop.Server.Controllers
                         if (targetPlayerEntity != null)
                         {
                             Clients.Client(targetPlayerEntity.UID).SendAsync("Entity:UpdateFoV", uid, fov);
+                        }
+                        else
+                        {
+                            Clients.Group(room.RoomCode).SendAsync("Entity:UpdateFoV", uid, fov);
                         }
                     }
                     else
@@ -663,6 +684,7 @@ namespace FreeTabletop.Server.Controllers
                     await RenderPlayerEntities(room);
                     await RenderCreatureEntities(room);
                     await RenderNPCEntities(room);
+                    await RenderLightEntities(room);
                     await SendCombatOrder(room, room.CombatOrder);
                 }
             }
@@ -687,6 +709,11 @@ namespace FreeTabletop.Server.Controllers
         private async Task RenderCreatureEntities(Room room)
         {
             await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderCreatureEntities", room.Creatures);
+        }
+
+        private async Task RenderLightEntities(Room room)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderLightEntities", room.Lights);
         }
 
         private async Task RenderNPCEntities(Room room)
