@@ -27,6 +27,8 @@ class Tabletop extends HTMLElement{
     private render:boolean;
     private mutatedCells:Array<number>;
     private brushSize:number;
+    public dynamicFog:boolean;
+    public pvp:boolean;
 
     constructor(){
         super();
@@ -38,6 +40,8 @@ class Tabletop extends HTMLElement{
         this.paintMode = "None";
         this.render = false;
         this.mutatedCells = [];
+        this.dynamicFog = false;
+        this.pvp = false;
         this.renderer();
     }
 
@@ -191,36 +195,125 @@ class Tabletop extends HTMLElement{
 
     private renderer(){
         if (this.render){
+            const pawns:Array<Pawn> = Array.from(document.body.querySelectorAll("tabletop-pawn"));
+            const player:Pawn = document.body.querySelector(".js-player-pawn");
             this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.drawImage(this.image, 0, 0);
             if (this.gridType !== 3){
+                const highlightedCells = [];
+                const foggedCells = [];
+                const cells = [];
                 for (let i = 0; i < this.cells.length; i++){
-                    switch (this.cells[i].style){
-                        case "highlight":
-                            this.ctx.fillStyle = "rgba(255, 13, 65, 0.15)";
-                            break;
-                        case "fog":
-                            this.ctx.fillStyle = `rgba(100,100,100,${this.isGM ? "0.6" : "1"})`;
-                            break;
-                        default:
-                            this.ctx.fillStyle = "transparent";
-                            break;
-                    }
                     const x = this.cells[i].position[0] * this.cellSize;
                     const y = this.cells[i].position[1] * this.cellSize;
-                    this.ctx.fillRect(x, y, this.cellSize, this.cellSize);
-                    if (this.gridType === 1){
+                    cells.push({
+                        x: x,
+                        y: y,
+                    });
+                    if (this.dynamicFog){
+                        // Assume cell is fogged by default
+                        foggedCells.push({
+                            x: x,
+                            y: y,
+                        });
+                        if (this.pvp && !this.isGM){
+                            if (player?.fov > 0){
+                                const minX = player.cell.x - player.fov;
+                                const maxX = player.cell.x + player.fov;
+                                const minY = player.cell.y - player.fov;
+                                const maxY = player.cell.y + player.fov;
+                                if (this.cells[i].position[0] >= minX && this.cells[i].position[0] <= maxX && this.cells[i].position[1] >= minY && this.cells[i].position[1] <= maxY){
+                                    if (this.cells[i].style === "highlight"){
+                                        highlightedCells.push({
+                                            x: x,
+                                            y: y,
+                                        });
+                                    }
+                                    foggedCells.pop();
+                                }
+                            }else{
+                                if (this.cells[i].style === "highlight"){
+                                    highlightedCells.push({
+                                        x: x,
+                                        y: y,
+                                    });
+                                } else if (this.cells[i].style === "clear"){
+                                    foggedCells.pop();
+                                }
+                            }
+                        }else{
+                            for (let p = 0; p < pawns.length; p++){
+                                const pawn:Pawn = pawns[p];
+                                if (pawn?.fov > 0){
+                                    const minX = pawn.cell.x - pawn.fov;
+                                    const maxX = pawn.cell.x + pawn.fov;
+                                    const minY = pawn.cell.y - pawn.fov;
+                                    const maxY = pawn.cell.y + pawn.fov;
+                                    if (this.cells[i].position[0] >= minX && this.cells[i].position[0] <= maxX && this.cells[i].position[1] >= minY && this.cells[i].position[1] <= maxY){
+                                        if (this.cells[i].style === "highlight"){
+                                            highlightedCells.push({
+                                                x: x,
+                                                y: y,
+                                            });
+                                        }
+                                        foggedCells.pop();
+                                        break;
+                                    }
+                                }else{
+                                    if (this.cells[i].style === "highlight"){
+                                        highlightedCells.push({
+                                            x: x,
+                                            y: y,
+                                        });
+                                    } else if (this.cells[i].style === "clear"){
+                                        foggedCells.pop();
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        if (this.cells[i].style === "highlight"){
+                            highlightedCells.push({
+                                x: x,
+                                y: y,
+                            });
+                        } else if (this.cells[i].style === "fog"){
+                            foggedCells.push({
+                                x: x,
+                                y: y,
+                            });
+                        }
+                    }
+                }
+
+                // Paint highlights
+                this.ctx.fillStyle = "rgba(255, 13, 65, 0.15)";
+                for (let i = 0; i < highlightedCells.length; i++){
+                    this.ctx.fillRect(highlightedCells[i].x, highlightedCells[i].y, this.cellSize, this.cellSize);
+                }
+                
+                // Paint fog
+                this.ctx.fillStyle = `rgba(100,100,100,${this.isGM ? "0.6" : "1"})`;
+                for (let i = 0; i < foggedCells.length; i++){
+                    this.ctx.fillRect(foggedCells[i].x, foggedCells[i].y, this.cellSize, this.cellSize);
+                }
+
+                if (this.gridType === 1){
+                    for (let i = 0; i < cells.length; i++){
                         this.ctx.strokeStyle = "rgba(0,0,0,0.6)";
                         this.ctx.beginPath();
-                        this.ctx.moveTo(x, y);
-                        this.ctx.lineTo(x, y + this.cellSize);
+                        this.ctx.moveTo(cells[i].x, cells[i].y);
+                        this.ctx.lineTo(cells[i].x, cells[i].y + this.cellSize);
                         this.ctx.stroke();
                         this.ctx.beginPath();
-                        this.ctx.moveTo(x, y);
-                        this.ctx.lineTo(x + this.cellSize, y);
+                        this.ctx.moveTo(cells[i].x, cells[i].y);
+                        this.ctx.lineTo(cells[i].x + this.cellSize, cells[i].y);
                         this.ctx.stroke();
                     }
                 }
+
+                // Paint brush radius
                 if (this.brushSize > 1 && this.paintMode !== "None"){
                     const pos = this.convertViewportToTabletopPosition(this.pos.x, this.pos.y);
                     const buffer = Math.floor(this.brushSize * this.cellSize / 2);
@@ -230,6 +323,63 @@ class Tabletop extends HTMLElement{
                     this.ctx.rect(pos[0] - buffer + 1, pos[1] - buffer + 3, this.brushSize * this.cellSize, this.brushSize * this.cellSize);
                     this.ctx.fill();
                     this.ctx.stroke();
+                }
+
+                // Manage FoV based pawn visibility
+                if (this.dynamicFog && this.pvp && !this.isGM && player?.fov > 0){
+                    const minX = player.cell.x - player.fov;
+                    const maxX = player.cell.x + player.fov;
+                    const minY = player.cell.y - player.fov;
+                    const maxY = player.cell.y + player.fov;
+                    for (let i = 0; i < pawns.length; i++){
+                        if (!pawns[i].classList.contains("js-player-pawn")){
+                            if (pawns[i].cell.x >= minX && pawns[i].cell.x <= maxX && pawns[i].cell.y >= minY && pawns[i].cell.y <= maxY){
+                                pawns[i].UpdateVisibility(true);
+                            }else{
+                                pawns[i].UpdateVisibility(false);
+                            }
+                        }
+                    }
+                } else if (!this.isGM && this.dynamicFog && !this.pvp){
+                    for (let i = 0; i < pawns.length; i++){
+                        if (pawns[i].classList.contains("creature")){
+                            pawns[i].UpdateVisibility(false);
+                        }
+                    }
+                    for (let k = 0; k < pawns.length; k++){
+                        if (!pawns[k].classList.contains("creature")){
+                            const minX = pawns[k].cell.x - pawns[k].fov;
+                            const maxX = pawns[k].cell.x + pawns[k].fov;
+                            const minY = pawns[k].cell.y - pawns[k].fov;
+                            const maxY = pawns[k].cell.y + pawns[k].fov;
+                            for (let i = 0; i < pawns.length; i++){
+                                if (pawns[i].classList.contains("creature")){
+                                    const creature = pawns[i];
+                                    if (creature.cell.x >= minX && creature.cell.x <= maxX && creature.cell.y >= minY && creature.cell.y <= maxY){
+                                        creature.UpdateVisibility(true);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if (!this.isGM && !this.dynamicFog && !this.pvp){
+                    for (let i = 0; i < pawns.length; i++){
+                        if (pawns[i].classList.contains("creature")){
+                            const creature = pawns[i];
+                            let isVisible = true;
+                            for (let f = 0; f < foggedCells.length; f++){
+                                if (creature.cell.x * this.cellSize === foggedCells[f].x && creature.cell.y * this.cellSize === foggedCells[f].y){
+                                    isVisible = false;
+                                    break;
+                                }
+                            }
+                            if (isVisible){
+                                creature.UpdateVisibility(true);
+                            }else{
+                                creature.UpdateVisibility(false);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -371,13 +521,15 @@ class PingComponent extends HTMLElement{
 }
 customElements.define("ping-icon", PingComponent);
 
-function LoadImage(url:string, cellSize:number, tabletopSize:Array<number>, cells:Array<Cell>, isGM:boolean, gridType:string):void{
+function LoadImage(url:string, cellSize:number, tabletopSize:Array<number>, cells:Array<Cell>, isGM:boolean, gridType:string, dynamicFog:boolean, pvp:boolean):void{
     if (tabletop){
         tabletop.isGM = isGM;
         tabletop.gridType = parseInt(gridType);
         tabletop.setCellSize(cellSize);
         tabletop.loadImage(url, tabletopSize);
         tabletop.setCells(cells);
+        tabletop.dynamicFog = dynamicFog;
+        tabletop.pvp = pvp;
     }
 }
 function SyncCells(cells:Array<Cell>){

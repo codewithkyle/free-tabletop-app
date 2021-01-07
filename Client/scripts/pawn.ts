@@ -1,27 +1,40 @@
 class Pawn extends HTMLElement{
     private HUD:HTMLElement;
     public timeToSplatter:number;
+    public fov:number;
+    public cell:{
+        x: number;
+        y: number;
+    }
 
     constructor(){
         super();
         this.HUD = null;
         this.timeToSplatter = 0;
+        this.fov = 0;
+        this.cell = {
+            x: 0,
+            y: 0,
+        };
     }
 
     public UpdatePosition(x:number, y:number, cellSize:number){
-        const cellX = Math.floor(x / cellSize);
-        const cellY = Math.floor(y / cellSize);
-        this.style.transform = `translate(${cellX * cellSize}px, ${cellY * cellSize}px)`;
+        this.cell = {
+            x: Math.floor(x / cellSize),
+            y: Math.floor(y / cellSize)
+        };
+        this.style.transform = `translate(${this.cell.x * cellSize}px, ${this.cell.y * cellSize}px)`;
     }
 
-    public UpdateVisibility(x:number, y:number){
-        const cell:HTMLElement = document.body.querySelector(`.js-fog[data-x="${x}"][data-y="${y}"]`);
-        if (cell){
-            if (cell.style.background === "transparent"){
-                this.style.display = "inline-flex";
-            }else{
-                this.style.display = "none";
-            }
+    public UpdateVisibility(visible:boolean){
+        if (visible){
+            this.style.opacity = "1";
+            this.style.visibility = "visible";
+            this.style.pointerEvents = "all";
+        }else{
+            this.style.opacity = "0";
+            this.style.visibility = "hidden";
+            this.style.pointerEvents = "none";
         }
     }
 
@@ -108,13 +121,20 @@ function RenderDeathCelebration(uid:string){
         pawn.celebrateDeath();
     }
 }
-function UpdateEntitiesPosition(entities:Array<{uid: string, position:Array<number>}>, cellSize:number){
+function UpdateEntities(entities:Array<{uid: string, position:Array<number>, foV:number}>, cellSize:number){
     if (entities.length){
         for (let i = 0; i < entities.length; i++){
             const pawn:Pawn = document.body.querySelector(`tabletop-pawn[data-uid="${entities[i].uid}"]`);
             if (pawn){
                 pawn.UpdatePosition(entities[i].position[0], entities[i].position[1], cellSize);
+                pawn.fov = entities[i].foV;
             }
         }
+    }
+}
+function SetEntityFoV(uid:string, fov:number){
+    const pawn:Pawn = document.body.querySelector(`tabletop-pawn[data-uid="${uid}"]`);
+    if (pawn){
+        pawn.fov = fov;
     }
 }

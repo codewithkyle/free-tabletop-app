@@ -115,7 +115,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:LoadImage")]
-        public async Task LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize, bool fogOfWar)
+        public async Task LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize, bool fogOfWar, bool advanced, bool pvp)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -124,7 +124,7 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     room.ClearTabletop();
-                    room.LoadImage(imageURL, gridType, gridSize, cellSize, tabletopSize, fogOfWar);
+                    room.LoadImage(imageURL, gridType, gridSize, cellSize, tabletopSize, fogOfWar, advanced, pvp);
                     await RenderCreatureEntities(room);
                     await RenderNPCEntities(room);
                     await LoadTabletopImage(room);
@@ -311,6 +311,32 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:UpdateEntityFoV")]
+        public void UpdateEntityFoV(string uid, int fov)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.UpdateEntityFoV(uid, fov);
+                    if (room.PvP)
+                    {
+                        Player targetPlayerEntity = GlobalData.GetPlayerByStaleUID(uid);
+                        if (targetPlayerEntity != null)
+                        {
+                            Clients.Client(targetPlayerEntity.UID).SendAsync("Entity:UpdateFoV", uid, fov);
+                        }
+                    }
+                    else
+                    {
+                        Clients.Group(room.RoomCode).SendAsync("Entity:UpdateFoV", uid, fov);
+                    }
+                }
+            }
+        }
+
         [HubMethodName("Room:UpdateEntityHP")]
         public async Task UpdateEntityHP(string uid, int hp)
         {
@@ -410,7 +436,7 @@ namespace FreeTabletop.Server.Controllers
                     
                     if (room.ImageURL != null && room.ImageURL.Length != 0)
                     {
-                        await Clients.Caller.SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize, room.TabletopSize, room.Cells);
+                        await Clients.Caller.SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize, room.TabletopSize, room.Cells, room.FoVFoW, room.PvP);
                         if (room.GridType != "3")
                         {
                             await Clients.Caller.SendAsync("Tabletop:RenderPlayerEntities", players);
@@ -649,7 +675,7 @@ namespace FreeTabletop.Server.Controllers
 
         private async Task LoadTabletopImage(Room room)
         {
-            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize, room.TabletopSize, room.Cells);
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize, room.TabletopSize, room.Cells, room.FoVFoW, room.PvP);
         }
 
         private async Task RenderPlayerEntities(Room room)

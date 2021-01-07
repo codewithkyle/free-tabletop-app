@@ -28,6 +28,8 @@ namespace FreeTabletop.Server.Models
 
         public List<Cell> Cells = new List<Cell>();
         public bool IsHidden = false;
+        public bool FoVFoW = false;
+        public bool PvP = false;
 
         public void AddPlayer(Player player)
         {
@@ -116,13 +118,14 @@ namespace FreeTabletop.Server.Models
                     player.IsStunned = Players[i].IsStunned;
                     player.IsUnconscious = Players[i].IsUnconscious;
                     player.IsVisible = Players[i].IsVisible;
+                    player.FoV = Players[i].FoV;
                     players.Add(player);
                 }
             }
             return players;
         }
 
-        public void LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize, bool fogOfWar)
+        public void LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize, bool fogOfWar, bool advanced, bool pvp)
         {
             ImageURL = imageURL;
             GridType = gridType;
@@ -130,6 +133,8 @@ namespace FreeTabletop.Server.Models
             CellSize = cellSize;
             TabletopSize = tabletopSize;
             FogOfWar = fogOfWar;
+            FoVFoW = advanced;
+            PvP = pvp;
 
             Cells = new List<Cell>();
             for (int y = 0; y < Grid[1]; y++)
@@ -459,6 +464,15 @@ namespace FreeTabletop.Server.Models
                 }
             }
             return NeedsRerender;
+        }
+
+        public void UpdateEntityFoV(string uid, int fov)
+        {
+            Entity entity = GetEntity(uid);
+            if (entity != null)
+            {
+                entity.FoV = fov;
+            }
         }
 
         public Player GetGameMaster()

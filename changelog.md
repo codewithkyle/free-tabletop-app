@@ -19,10 +19,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - persistent popup image history
 - popup image labels
 - ability to expand/shrink modals
+- localized field of view based fog of war
+    - team based visibility (players see all players and NPCs fields of view)
+    - player vs player visibility (players only see their field of view)
+- dynamically hiding/showing pawns using fog of war
 
 ### Fixed
 
-- painting based buffer overflow bug
+- buffer overflow bug that could appear while painting cells on massive maps
 
 ## [0.7.0] - 2020-12-30
 

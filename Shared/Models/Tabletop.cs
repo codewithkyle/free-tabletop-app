@@ -23,6 +23,8 @@ namespace FreeTabletop.Shared.Models
         public List<Cell> Cells = new List<Cell>();
         public string MessageUID {get; set;}
         public bool IsHidden {get;set;} = false;
+        public bool FoVFoW = false;
+        public bool PvP = false;
 
         public Entity GetEntityByUID(string uid)
         {
