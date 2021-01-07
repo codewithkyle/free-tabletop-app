@@ -216,12 +216,7 @@ class Tabletop extends HTMLElement{
                             y: y,
                         });
                     }
-                    if (!this.dynamicFog && this.cells[i].style === "fog"){
-                        foggedCells.push({
-                            x: x,
-                            y: y,
-                        });
-                    } else {
+                    if (this.cells[i].style === "fog" || this.dynamicFog){
                         foggedCells.push({
                             x: x,
                             y: y,
@@ -305,16 +300,38 @@ class Tabletop extends HTMLElement{
 
                 // Manage FoV based pawn visibility
                 if (this.dynamicFog && this.pvp && !this.isGM && player?.fov > 0){
-                    const minX = player.cell.x - player.fov;
-                    const maxX = player.cell.x + player.fov;
-                    const minY = player.cell.y - player.fov;
-                    const maxY = player.cell.y + player.fov;
-                    for (let i = 0; i < pawns.length; i++){
-                        if (!pawns[i].classList.contains("js-player-pawn")){
-                            if (pawns[i].cell.x >= minX && pawns[i].cell.x <= maxX && pawns[i].cell.y >= minY && pawns[i].cell.y <= maxY){
-                                pawns[i].UpdateVisibility(true);
-                            }else{
-                                pawns[i].UpdateVisibility(false);
+                    const x = player.cell.x;
+                    const y = player.cell.y;
+                    const r = player.fov;
+                    if (r > 0){
+                        const visibleCells = [];
+                        for (let s = 0; s <= r; s++){
+                            let angleDeg = 0;
+                            while(angleDeg < 360){
+                                const radians = angleDeg * (Math.PI/180);
+                                const newY = Math.round(y - (Math.cos(radians) * s));
+                                const newX = Math.round(x + (Math.sin(radians) * s));
+                                visibleCells.push({
+                                    x: newX,
+                                    y: newY
+                                });
+                                angleDeg += 1;
+                            }
+                        }
+                        for (let i = 0; i < pawns.length; i++){
+                            if (!pawns[i].classList.contains("js-player-pawn")){
+                                let isVisible = false;
+                                for (let c = 0; c < visibleCells.length; c++){
+                                    if (pawns[i].cell.x === visibleCells[c].x && pawns[i].cell.y === visibleCells[c].y){
+                                        isVisible = true;
+                                        break;
+                                    }
+                                }
+                                if (isVisible){
+                                    pawns[i].UpdateVisibility(true);
+                                }else{
+                                    pawns[i].UpdateVisibility(false);
+                                }
                             }
                         }
                     }
@@ -324,17 +341,34 @@ class Tabletop extends HTMLElement{
                             pawns[i].UpdateVisibility(false);
                         }
                     }
+                    const visibleCells = [];
                     for (let k = 0; k < pawns.length; k++){
                         if (!pawns[k].classList.contains("creature")){
-                            const minX = pawns[k].cell.x - pawns[k].fov;
-                            const maxX = pawns[k].cell.x + pawns[k].fov;
-                            const minY = pawns[k].cell.y - pawns[k].fov;
-                            const maxY = pawns[k].cell.y + pawns[k].fov;
-                            for (let i = 0; i < pawns.length; i++){
-                                if (pawns[i].classList.contains("creature")){
-                                    const creature = pawns[i];
-                                    if (creature.cell.x >= minX && creature.cell.x <= maxX && creature.cell.y >= minY && creature.cell.y <= maxY){
-                                        creature.UpdateVisibility(true);
+                            const x = pawns[k].cell.x;
+                            const y = pawns[k].cell.y;
+                            const r = pawns[k].fov;
+                            if (r > 0){
+                                for (let s = 0; s <= r; s++){
+                                    let angleDeg = 0;
+                                    while(angleDeg < 360){
+                                        const radians = angleDeg * (Math.PI/180);
+                                        const newY = Math.round(y - (Math.cos(radians) * s));
+                                        const newX = Math.round(x + (Math.sin(radians) * s));
+                                        visibleCells.push({
+                                            x: newX,
+                                            y: newY
+                                        });
+                                        angleDeg += 1;
+                                    }
+                                }
+                            }
+                        }
+                        for (let i = 0; i < pawns.length; i++){
+                            if (pawns[i].classList.contains("creature")){
+                                for (let c = 0; c < visibleCells.length; c++){
+                                    if (pawns[i].cell.x === visibleCells[c].x && pawns[i].cell.y === visibleCells[c].y){
+                                        pawns[i].UpdateVisibility(true);
+                                        break;
                                     }
                                 }
                             }
