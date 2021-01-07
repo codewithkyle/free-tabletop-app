@@ -82,6 +82,7 @@ namespace FreeTabletop.Client.Pages
         public int BrushSize = 1;
         public bool FOVFOW = false;
         public bool PvP = false;
+        public bool ImageHistoryOpen = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -124,13 +125,14 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void SyncTabletop(bool isLocked, List<PlayerEntity> players, string gmUID, bool isHidden)
+        public void SyncTabletop(bool isLocked, List<PlayerEntity> players, string gmUID, bool isHidden, List<Image> images)
         {
             Tabletop.RoomCode = RoomCode.ToUpper();
             Tabletop.IsLocked = isLocked;
             Tabletop.Players = players;
             Tabletop.GameMasterUID = gmUID;
             Tabletop.IsHidden = isHidden;
+            Tabletop.Images = images;
             JSRuntime.InvokeVoidAsync("SetPlayers", players, gmUID, Tabletop.MessageUID);
             JSRuntime.InvokeVoidAsync("SetActiveRoomCode", Tabletop.RoomCode);
             StateHasChanged();
@@ -783,6 +785,16 @@ namespace FreeTabletop.Client.Pages
             }
         }
 
+        public void RenderPopupImage(Image image, bool isNew = false)
+        {
+            if (isNew)
+            {
+                Tabletop.Images.Insert(0, image);
+                StateHasChanged();
+            }
+            JSRuntime.InvokeVoidAsync("RenderPopupImage", image.URL, image.Label);
+        }
+
         public async Task HandleMouseUp()
         {
             if (PaintMenuOpen)
@@ -914,7 +926,9 @@ namespace FreeTabletop.Client.Pages
 
         public void TogglePopupImageHistoryModal()
         {
-            JSRuntime.InvokeVoidAsync("RenderImageHistoryModal");
+            CloseAllModals();
+            ImageHistoryOpen ^= true;
+            JSRuntime.InvokeVoidAsync("ToggleModal", "js-history-modal", ImageHistoryOpen);
         }
 
         public void ToggleFogOfWarType()

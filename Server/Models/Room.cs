@@ -31,6 +31,7 @@ namespace FreeTabletop.Server.Models
         public bool FoVFoW = false;
         public bool PvP = false;
         public List<Light> Lights = new List<Light>();
+        public List<Image> Images = new List<Image>();
 
         public void AddPlayer(Player player)
         {
@@ -677,6 +678,24 @@ namespace FreeTabletop.Server.Models
             light.UpdatePosition(pos);
             light.UID = guid.ToString();
             Lights.Add(light);
+        }
+
+        public bool AddPopupImage(Image image)
+        {
+            bool isNew = true;
+            for (int i = 0; i < Images.Count; i++)
+            {
+                if (Images[i].URL == image.URL)
+                {
+                    isNew = false;
+                    break;
+                }
+            }
+            if (isNew)
+            {
+                Images.Insert(0, image);
+            }
+            return isNew;
         }
     }
 }

@@ -109,7 +109,21 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadPopupImage", url, label);
+                    Image Image = new Image();
+                    Image.URL = url;
+                    if (!String.IsNullOrEmpty(label))
+                    {
+                        Image.Label = label;
+                    }
+                    else
+                    {
+                        Image.Label = url;
+                    }
+                    bool isNew = room.AddPopupImage(Image);
+                    if (isNew)
+                    {
+                        Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadPopupImage", Image);
+                    }
                 }
             }
         }
@@ -453,7 +467,7 @@ namespace FreeTabletop.Server.Controllers
                 {
                     List<PlayerEntity> players = room.BuildPlayerEntities();
                     Player gameMaster = room.GetGameMaster();
-                    await Clients.Caller.SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.MessageUID, room.IsHidden);
+                    await Clients.Caller.SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.MessageUID, room.IsHidden, room.Images);
                     
                     if (room.ImageURL != null && room.ImageURL.Length != 0)
                     {
@@ -674,7 +688,7 @@ namespace FreeTabletop.Server.Controllers
         {
             List<PlayerEntity> players = room.BuildPlayerEntities();
             Player gameMaster = room.GetGameMaster();
-            await Clients.Group(room.RoomCode).SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.MessageUID, room.IsHidden);
+            await Clients.Group(room.RoomCode).SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.MessageUID, room.IsHidden, room.Images);
             
             if (room.ImageURL != null && room.ImageURL.Length != 0)
             {

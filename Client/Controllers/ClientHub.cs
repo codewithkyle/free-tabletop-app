@@ -48,7 +48,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On("Error:RoomNotFound", Redirect);
                 Networker.hubConnection.On("Error:PlayerNotFound", Redirect);
 
-                Networker.hubConnection.On<bool, List<PlayerEntity>, string, bool>("Sync:TabletopInfo", Room.SyncTabletop);
+                Networker.hubConnection.On<bool, List<PlayerEntity>, string, bool, List<Image>>("Sync:TabletopInfo", Room.SyncTabletop);
                 Networker.hubConnection.On<List<Entity>>("Sync:CombatOrder", Room.UpdateCombatOrder);
 
                 Networker.hubConnection.On<string>("Set:PlayerUID", UpdateUID);
@@ -65,7 +65,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<int, string>("Tabletop:SyncCells", Room.SyncCells);
                 Networker.hubConnection.On<string, int[]>("Tabletop:UpdateEntityPosition", UpdateEntityPosition);
                 Networker.hubConnection.On<bool>("Tabletop:UpdateLock", Room.UpdateLock);
-                Networker.hubConnection.On<string, string>("Tabletop:LoadPopupImage", RenderPopupImage);
+                Networker.hubConnection.On<Image>("Tabletop:LoadPopupImage", RenderPopupImage);
                 Networker.hubConnection.On<bool>("Tabletop:ToggleVisibility", Room.SetTabletopVisibility);
                 Networker.hubConnection.On<List<Light>>("Tabletop:RenderLightEntities", Room.RenderLightEntities);
 
@@ -328,9 +328,9 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.SendAsync("Room:LoadPopupImage", url, label);
         }
 
-        public void RenderPopupImage(string url, string label)
+        public void RenderPopupImage(Image image)
         {
-            JSRuntime.InvokeVoidAsync("RenderPopupImage", url, label);
+            Room.RenderPopupImage(image, true);
         }
 
         public void SetBleeding(string uid, bool isBleeding)

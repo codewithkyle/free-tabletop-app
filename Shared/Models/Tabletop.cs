@@ -27,6 +27,7 @@ namespace FreeTabletop.Shared.Models
         public bool PvP = false;
 
         public List<Light> Lights = new List<Light>();
+        public List<Image> Images = new List<Image>();
 
         public Entity GetEntityByUID(string uid)
         {

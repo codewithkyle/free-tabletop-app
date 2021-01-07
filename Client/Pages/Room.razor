@@ -1196,6 +1196,30 @@
             </button>
         </div>
     </moveable-modal>
+    <moveable-modal class="image-history-modal js-history-modal">
+        <moveable-handle>
+            <span class="inline-block font-xs font-grey-100 font-medium">Image History</span>
+            <button class="modal-close" tooltip="Close" aria-label="close image history modal" @onclick="TogglePopupImageHistoryModal">
+                <svg aria-hidden="true" focusable="false" data-prefix="fal" data-icon="times" class="svg-inline--fa fa-times fa-w-10" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="currentColor" d="M193.94 256L296.5 153.44l21.15-21.15c3.12-3.12 3.12-8.19 0-11.31l-22.63-22.63c-3.12-3.12-8.19-3.12-11.31 0L160 222.06 36.29 98.34c-3.12-3.12-8.19-3.12-11.31 0L2.34 120.97c-3.12 3.12-3.12 8.19 0 11.31L126.06 256 2.34 379.71c-3.12 3.12-3.12 8.19 0 11.31l22.63 22.63c3.12 3.12 8.19 3.12 11.31 0L160 289.94 262.56 392.5l21.15 21.15c3.12 3.12 8.19 3.12 11.31 0l22.63-22.63c3.12-3.12 3.12-8.19 0-11.31L193.94 256z"></path></svg>
+            </button>
+        </moveable-handle>
+        <image-history>
+            @if(Tabletop.Images.Count != 0)
+            {
+                <div grid="columns 1 gap-0.5">
+                    @for(int i = 0; i < Tabletop.Images.Count; i++)
+                    {
+                        Image Image = Tabletop.Images[i];
+                        <button @onclick="@(e => RenderPopupImage(Image))" title="@Image.Label">@Image.Label</button>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="block w-full text-center font-sm font-grey-700">Waiting for the Game Master to add images.</p>
+            }
+        </image-history>
+    </moveable-modal>
     <form @onsubmit="LoadPopupImage" class="popup-image-upload-modal" style="@(PopupImageModalOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;");">
         <div class="file-upload-input input mb-1">
             <label for="popupImageURL">Image URL</label>
