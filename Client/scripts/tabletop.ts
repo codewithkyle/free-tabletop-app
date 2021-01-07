@@ -204,85 +204,61 @@ class Tabletop extends HTMLElement{
                 const foggedCells = [];
                 const cells = [];
                 for (let i = 0; i < this.cells.length; i++){
-                    const x = this.cells[i].position[0] * this.cellSize;
-                    const y = this.cells[i].position[1] * this.cellSize;
+                    const x = this.cells[i].position[0];
+                    const y = this.cells[i].position[1];
                     cells.push({
                         x: x,
                         y: y,
                     });
-                    if (this.dynamicFog){
-                        // Assume cell is fogged by default
+                    if (this.cells[i].style === "highlight"){
+                        highlightedCells.push({
+                            x: x,
+                            y: y,
+                        });
+                    }
+                    if (!this.dynamicFog && this.cells[i].style === "fog"){
                         foggedCells.push({
                             x: x,
                             y: y,
                         });
-                        if (this.pvp && !this.isGM){
-                            if (player?.fov > 0){
-                                const minX = player.cell.x - player.fov;
-                                const maxX = player.cell.x + player.fov;
-                                const minY = player.cell.y - player.fov;
-                                const maxY = player.cell.y + player.fov;
-                                if (this.cells[i].position[0] >= minX && this.cells[i].position[0] <= maxX && this.cells[i].position[1] >= minY && this.cells[i].position[1] <= maxY){
-                                    if (this.cells[i].style === "highlight"){
-                                        highlightedCells.push({
-                                            x: x,
-                                            y: y,
-                                        });
-                                    }
-                                    foggedCells.pop();
-                                }
-                            }else{
-                                if (this.cells[i].style === "highlight"){
-                                    highlightedCells.push({
-                                        x: x,
-                                        y: y,
-                                    });
-                                } else if (this.cells[i].style === "clear"){
-                                    foggedCells.pop();
-                                }
-                            }
-                        }else{
-                            for (let p = 0; p < pawns.length; p++){
-                                const pawn:Pawn = pawns[p];
-                                if (pawn?.fov > 0){
-                                    const minX = pawn.cell.x - pawn.fov;
-                                    const maxX = pawn.cell.x + pawn.fov;
-                                    const minY = pawn.cell.y - pawn.fov;
-                                    const maxY = pawn.cell.y + pawn.fov;
-                                    if (this.cells[i].position[0] >= minX && this.cells[i].position[0] <= maxX && this.cells[i].position[1] >= minY && this.cells[i].position[1] <= maxY){
-                                        if (this.cells[i].style === "highlight"){
-                                            highlightedCells.push({
-                                                x: x,
-                                                y: y,
-                                            });
-                                        }
-                                        foggedCells.pop();
-                                        break;
-                                    }
-                                }else{
-                                    if (this.cells[i].style === "highlight"){
-                                        highlightedCells.push({
-                                            x: x,
-                                            y: y,
-                                        });
-                                    } else if (this.cells[i].style === "clear"){
-                                        foggedCells.pop();
-                                        break;
-                                    }
-                                }
-                            }
-                        }
                     } else {
-                        if (this.cells[i].style === "highlight"){
-                            highlightedCells.push({
-                                x: x,
-                                y: y,
-                            });
-                        } else if (this.cells[i].style === "fog"){
-                            foggedCells.push({
-                                x: x,
-                                y: y,
-                            });
+                        foggedCells.push({
+                            x: x,
+                            y: y,
+                        });
+                    }
+                }
+
+                if (this.dynamicFog){
+                    for (let i = 0; i < pawns.length; i++){
+                        if (pawns[i].classList.contains("-player") && this.pvp || !pawns[i].classList.contains("creature") && !this.pvp || !pawns[i].classList.contains("creature") && this.isGM){
+                            const x = pawns[i].cell.x;
+                            const y = pawns[i].cell.y;
+                            const r = pawns[i].fov;
+                            if (r > 0){
+                                const cellsToClear = [];
+                                for (let s = 0; s <= r; s++){
+                                    let angleDeg = 0;
+                                    while(angleDeg < 360){
+                                        const radians = angleDeg * (Math.PI/180);
+                                        const newY = Math.round(y - (Math.cos(radians) * s));
+                                        const newX = Math.round(x + (Math.sin(radians) * s));
+                                        cellsToClear.push({
+                                            x: newX,
+                                            y: newY
+                                        });
+                                        angleDeg += 1;
+                                    }
+                                }
+                                for (let c = 0; c < cellsToClear.length; c++){
+                                    for (let f = 0; f < foggedCells.length; f++){
+                                        if (foggedCells[f].x === cellsToClear[c].x && foggedCells[f].y === cellsToClear[c].y){
+                                            foggedCells.splice(f, 1);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -290,25 +266,27 @@ class Tabletop extends HTMLElement{
                 // Paint highlights
                 this.ctx.fillStyle = "rgba(255, 13, 65, 0.15)";
                 for (let i = 0; i < highlightedCells.length; i++){
-                    this.ctx.fillRect(highlightedCells[i].x, highlightedCells[i].y, this.cellSize, this.cellSize);
+                    this.ctx.fillRect(highlightedCells[i].x * this.cellSize, highlightedCells[i].y * this.cellSize, this.cellSize, this.cellSize);
                 }
                 
                 // Paint fog
                 this.ctx.fillStyle = `rgba(100,100,100,${this.isGM ? "0.6" : "1"})`;
                 for (let i = 0; i < foggedCells.length; i++){
-                    this.ctx.fillRect(foggedCells[i].x, foggedCells[i].y, this.cellSize, this.cellSize);
+                    this.ctx.fillRect(foggedCells[i].x * this.cellSize, foggedCells[i].y * this.cellSize, this.cellSize, this.cellSize);
                 }
 
                 if (this.gridType === 1){
                     for (let i = 0; i < cells.length; i++){
+                        const x = cells[i].x * this.cellSize;
+                        const y = cells[i].y * this.cellSize;
                         this.ctx.strokeStyle = "rgba(0,0,0,0.6)";
                         this.ctx.beginPath();
-                        this.ctx.moveTo(cells[i].x, cells[i].y);
-                        this.ctx.lineTo(cells[i].x, cells[i].y + this.cellSize);
+                        this.ctx.moveTo(x, y);
+                        this.ctx.lineTo(x, y + this.cellSize);
                         this.ctx.stroke();
                         this.ctx.beginPath();
-                        this.ctx.moveTo(cells[i].x, cells[i].y);
-                        this.ctx.lineTo(cells[i].x + this.cellSize, cells[i].y);
+                        this.ctx.moveTo(x, y);
+                        this.ctx.lineTo(x + this.cellSize, y);
                         this.ctx.stroke();
                     }
                 }
@@ -368,7 +346,7 @@ class Tabletop extends HTMLElement{
                             const creature = pawns[i];
                             let isVisible = true;
                             for (let f = 0; f < foggedCells.length; f++){
-                                if (creature.cell.x * this.cellSize === foggedCells[f].x && creature.cell.y * this.cellSize === foggedCells[f].y){
+                                if (creature.cell.x === foggedCells[f].x && creature.cell.y === foggedCells[f].y){
                                     isVisible = false;
                                     break;
                                 }
