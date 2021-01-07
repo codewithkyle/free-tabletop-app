@@ -152,42 +152,61 @@ class Tabletop extends HTMLElement{
 
     private paintCell(position:Array<number>){
         const cellPosition = this.convertTabletopPositionToCell(position);
-        const minXCell = cellPosition[0] - Math.floor(this.brushSize / 2);
-        const maxXCell = cellPosition[0] + Math.floor(this.brushSize / 2);
-        const minYCell = cellPosition[1] - Math.floor(this.brushSize / 2);
-        const maxYCell = cellPosition[1] + Math.floor(this.brushSize / 2);
-        for (let i = 0; i < this.cells.length; i++){
-            if (
-                this.cells[i].position[0] === cellPosition[0] && this.cells[i].position[1] === cellPosition[1] ||
-                this.cells[i].position[0] >= minXCell && this.cells[i].position[0] <= maxXCell && this.cells[i].position[1] >= minYCell && this.cells[i].position[1] <= maxYCell
-            ){
-                let wasMutated = false;
-                switch(this.paintMode){
-                    case "Fog":
-                        if (this.cells[i].style !== "fog"){
-                            this.cells[i].style = "fog";
-                            wasMutated = true;
-                        }
-                        break;
-                    case "Highlighter":
-                        if (this.cells[i].style !== "fog" || this.isGM){
-                            if (this.cells[i].style !== "highlight"){
-                                this.cells[i].style = "highlight";
-                                wasMutated = true;
-                            }
-                        }
-                        break;
-                    default:
-                        if (this.isGM || this.cells[i].style === "highlight"){
-                            if (this.cells[i].style !== "clear"){
-                                this.cells[i].style = "clear";
-                                wasMutated = true;
-                            }
-                        }
-                        break;
+        const x = cellPosition[0];
+        const y = cellPosition[1];
+        const r = this.brushSize - 1;
+        const paintedCells = [];
+        if (r >= 1){
+            for (let s = 0; s <= r; s++){
+                let angleDeg = 0;
+                while(angleDeg < 360){
+                    const radians = angleDeg * (Math.PI/180);
+                    const newY = Math.round(y - (Math.cos(radians) * s));
+                    const newX = Math.round(x + (Math.sin(radians) * s));
+                    paintedCells.push({
+                        x: newX,
+                        y: newY
+                    });
+                    angleDeg += 1;
                 }
-                if (wasMutated){
-                    this.logCellMutation(i);
+            }
+        } else {
+            paintedCells.push({
+                x: x,
+                y: y
+            });
+        }
+        for (let c = 0; c < paintedCells.length; c++){
+            for (let i = 0; i < this.cells.length; i++){
+                if (this.cells[i].position[0] === paintedCells[c].x && this.cells[i].position[1] === paintedCells[c].y){
+                    let wasMutated = false;
+                    switch(this.paintMode){
+                        case "Fog":
+                            if (this.cells[i].style !== "fog"){
+                                this.cells[i].style = "fog";
+                                wasMutated = true;
+                            }
+                            break;
+                        case "Highlighter":
+                            if (this.cells[i].style !== "fog" || this.isGM){
+                                if (this.cells[i].style !== "highlight"){
+                                    this.cells[i].style = "highlight";
+                                    wasMutated = true;
+                                }
+                            }
+                            break;
+                        default:
+                            if (this.isGM || this.cells[i].style === "highlight"){
+                                if (this.cells[i].style !== "clear"){
+                                    this.cells[i].style = "clear";
+                                    wasMutated = true;
+                                }
+                            }
+                            break;
+                    }
+                    if (wasMutated){
+                        this.logCellMutation(i);
+                    }
                 }
             }
         }
@@ -289,11 +308,11 @@ class Tabletop extends HTMLElement{
                 // Paint brush radius
                 if (this.brushSize > 1 && this.paintMode !== "None"){
                     const pos = this.convertViewportToTabletopPosition(this.pos.x, this.pos.y);
-                    const buffer = Math.floor(this.brushSize * this.cellSize / 2);
                     this.ctx.strokeStyle = "rgb(0,0,0,0.87)";
                     this.ctx.fillStyle = "rgba(255,255,255,0.6)";
                     this.ctx.beginPath();
-                    this.ctx.rect(pos[0] - buffer + 1, pos[1] - buffer + 3, this.brushSize * this.cellSize, this.brushSize * this.cellSize);
+                    // this.ctx.rect(pos[0] - buffer + 1, pos[1] - buffer + 3, this.brushSize * this.cellSize, this.brushSize * this.cellSize);
+                    this.ctx.arc(pos[0], pos[1], (this.brushSize - 1) * this.cellSize, 0, 2 * Math.PI);
                     this.ctx.fill();
                     this.ctx.stroke();
                 }
