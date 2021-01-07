@@ -285,15 +285,19 @@ class Tabletop extends HTMLElement{
                                             }
                                         }
                                         let isVisible = false;
-                                        for (let c = 0; c < lightsCells.length; c++){
-                                            for (let j = 0; j < cellsToClear.length; j++){
-                                                if (lightsCells[c].x === cellsToClear[j].x && lightsCells[c].y === cellsToClear[j].y){
+                                        if (this.pvp && !this.isGM && player){
+                                            for (let c = 0; c < lightsCells.length; c++){
+                                                if (lightsCells[c].x === player.cell.x && lightsCells[c].y === player.cell.y){
                                                     isVisible = true;
                                                     break;
                                                 }
                                             }
-                                            if (isVisible){
-                                                break;
+                                        }else if (!this.pvp){
+                                            for (let c = 0; c < lightsCells.length; c++){
+                                                if (lightsCells[c].x === pawns[i].cell.x && lightsCells[c].y === pawns[i].cell.y){
+                                                    isVisible = true;
+                                                    break;
+                                                }
                                             }
                                         }
                                         if (isVisible){
@@ -353,11 +357,13 @@ class Tabletop extends HTMLElement{
                     this.ctx.stroke();
                 }
 
-                for (let i = 0; i < lights.length; i++){
-                    this.ctx.strokeStyle = "rgb(255,238,0,0.6)";
-                    this.ctx.beginPath();
-                    this.ctx.arc((lights[i].cell.x * this.cellSize) + (this.cellSize / 2), (lights[i].cell.y * this.cellSize) + (this.cellSize / 2), lights[i].fov * this.cellSize, 0, 2 * Math.PI);
-                    this.ctx.stroke();
+                if (this.isGM){
+                    for (let i = 0; i < lights.length; i++){
+                        this.ctx.strokeStyle = "rgb(255,238,0,0.3)";
+                        this.ctx.beginPath();
+                        this.ctx.arc((lights[i].cell.x * this.cellSize) + (this.cellSize / 2), (lights[i].cell.y * this.cellSize) + (this.cellSize / 2), lights[i].fov * this.cellSize, 0, 2 * Math.PI);
+                        this.ctx.stroke();
+                    }
                 }
 
                 // Manage FoV based pawn visibility
