@@ -31,6 +31,7 @@ namespace FreeTabletop.Client.Pages
         public bool TabletopMenuOpen = false;
         public bool ImageUploadOpen = false;
         public string InputImageURL = null;
+        public string InputImageLabel = null;
         public string MovingEntityUID { get; set; }
         public string SelectedGridType = "1";
         public bool EntitySpawnMenuOpen = false;
@@ -78,6 +79,10 @@ namespace FreeTabletop.Client.Pages
         public bool PlayDeathSound = true;
         public bool HighQualityEffects = true;
         public bool DeathCelebrations = true;
+        public int BrushSize = 1;
+        public bool FOVFOW = false;
+        public bool PvP = false;
+        public bool ImageHistoryOpen = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -120,13 +125,16 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public void SyncTabletop(bool isLocked, List<PlayerEntity> players, string gmUID)
+        public void SyncTabletop(bool isLocked, List<PlayerEntity> players, string gmUID, bool isHidden, List<Image> images)
         {
             Tabletop.RoomCode = RoomCode.ToUpper();
             Tabletop.IsLocked = isLocked;
             Tabletop.Players = players;
             Tabletop.GameMasterUID = gmUID;
+            Tabletop.IsHidden = isHidden;
+            Tabletop.Images = images;
             JSRuntime.InvokeVoidAsync("SetPlayers", players, gmUID, Tabletop.MessageUID);
+            JSRuntime.InvokeVoidAsync("SetActiveRoomCode", Tabletop.RoomCode);
             StateHasChanged();
         }
 
@@ -160,6 +168,13 @@ namespace FreeTabletop.Client.Pages
             RightClickPosition[1] = -1;
             PopupImageModalOpen = false;
             SettingsMenu = null;
+            FOVFOW = false;
+            PvP = false;
+            FogOfWar = true;
+            InputImageURL = null;
+            SelectedGridType = "1";
+            GridCellSize = 32;
+            InputImageLabel = null;
             JSRuntime.InvokeVoidAsync("ClearInput", ".js-monster-lookup");
         }
 
@@ -204,30 +219,27 @@ namespace FreeTabletop.Client.Pages
                 {
                     await Hub.ClearTabletop();
                 }
-                
-                CloseAllModals();
                 Tabletop.Image = InputImageURL;
                 TabletopImageLoaded = false;
                 Tabletop.GridType = null;
                 int[] GridData = await JSRuntime.InvokeAsync<int[]>("GetGridSize", InputImageURL, GridCellSize);
-                await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridData, GridCellSize, FogOfWar);
-                FogOfWar = true;
-                InputImageURL = null;
-                SelectedGridType = "1";
-                GridCellSize = 32;
+                await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridData, GridCellSize, FogOfWar, FOVFOW, PvP);
+                CloseAllModals();
                 StateHasChanged();
             }
         }
 
-        public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid, int cellSize, int[] tabletopSize, List<Cell> cells)
+        public void RenderTabletopFromImage(String imageURL, string gridType, int[] grid, int cellSize, int[] tabletopSize, List<Cell> cells, bool isAdvanced, bool isPVP)
         {
-            JSRuntime.InvokeVoidAsync("LoadImage", imageURL, cellSize, tabletopSize, cells, Tabletop.IsGameMaster, gridType);
+            JSRuntime.InvokeVoidAsync("LoadImage", imageURL, cellSize, tabletopSize, cells, Tabletop.IsGameMaster, gridType, isAdvanced, isPVP);
             if (Tabletop.Image != imageURL){
                 Tabletop.Image = imageURL;
             }
             Tabletop.CellSize = cellSize;
             Tabletop.Size = tabletopSize;
             Tabletop.Cells = cells;
+            Tabletop.FoVFoW = isAdvanced;
+            Tabletop.PvP = isPVP;
             StateHasChanged();
         }
 
@@ -242,21 +254,21 @@ namespace FreeTabletop.Client.Pages
         {
             Tabletop.Players = players;
             StateHasChanged();
-            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", players, Tabletop.CellSize);
+            JSRuntime.InvokeVoidAsync("UpdateEntities", players, Tabletop.CellSize);
         }
 
         public void RenderCreatureEntities(List<Creature> creatures)
         {
             Tabletop.Creatures = creatures;
             StateHasChanged();
-            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", creatures, Tabletop.CellSize);
+            JSRuntime.InvokeVoidAsync("UpdateEntities", creatures, Tabletop.CellSize);
         }
 
         public void RenderNPCEntities(List<NPC> npcs)
         {
             Tabletop.NPCs = npcs;
             StateHasChanged();
-            JSRuntime.InvokeVoidAsync("UpdateEntitiesPosition", npcs, Tabletop.CellSize);
+            JSRuntime.InvokeVoidAsync("UpdateEntities", npcs, Tabletop.CellSize);
         }
 
         public async Task HandleDrop(DragEventArgs e)
@@ -392,6 +404,20 @@ namespace FreeTabletop.Client.Pages
             }
         }
 
+        public void SpawnLight()
+        {
+            Hub.SpawnLight((int)RightClickGridPosition[0], (int)RightClickGridPosition[1]);
+            JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
+            CloseAllModals();
+        }
+
+        public void RenderLightEntities(List<Light> lights)
+        {
+            Tabletop.Lights = lights;
+            StateHasChanged();
+            JSRuntime.InvokeVoidAsync("UpdateEntities", lights, Tabletop.CellSize);
+        }
+
         public async Task HandleRightClick(double x, double y, bool ctrlKeyPressed)
         {
             int[] cellPosition = await JSRuntime.InvokeAsync<int[]>("GetCellPosition", x, y);
@@ -474,15 +500,36 @@ namespace FreeTabletop.Client.Pages
 
         public async Task UpdateEntityHP(Entity entity, ChangeEventArgs e)
         {
-            int HP = Int16.Parse(e.Value.ToString());
+            int HP = Int32.Parse(e.Value.ToString());
             entity.HP = HP;
             await Hub.UpdateEntityHP(entity, HP);
         }
         public async Task UpdateEntityAC(Entity entity, ChangeEventArgs e)
         {
-            int AC = Int16.Parse(e.Value.ToString());
+            int AC = Int32.Parse(e.Value.ToString());
             entity.AC = AC;
             await Hub.UpdateEntityAC(entity, AC);
+        }
+
+        public void UpdateEntityFoV(Entity entity, ChangeEventArgs e)
+        {
+            int FoV = Int32.Parse(e.Value.ToString());
+            entity.FoV = FoV;
+            Hub.UpdateEntityFoV(entity, FoV);
+            JSRuntime.InvokeVoidAsync("SetEntityFoV", entity.UID, FoV);
+        }
+
+        public void UpdateEntityFoV(string uid, int fov)
+        {
+            if (!Tabletop.IsGameMaster)
+            {
+                Entity entity = Tabletop.GetEntityByUID(uid);
+                if (entity != null)
+                {
+                    entity.FoV = fov;
+                }
+                JSRuntime.InvokeVoidAsync("SetEntityFoV", uid, fov);
+            }
         }
 
         public void RenderPing(int x, int y)
@@ -698,13 +745,24 @@ namespace FreeTabletop.Client.Pages
             {
                 PaintMenuOpen = false;
                 await JSRuntime.InvokeVoidAsync("ToggleModal", "js-paint-modal", PaintMenuOpen);
-                List<MutatedCell> cells = await JSRuntime.InvokeAsync<List<MutatedCell>>("GetCells");
-                for (int i = 0; i < cells.Count; i++)
+                int[] cells = await JSRuntime.InvokeAsync<int[]>("GetCells");
+                string paintType = "clear";
+                switch(PaintType){
+                    case PaintOption.Fog:
+                        paintType = "fog";
+                        break;
+                    case PaintOption.Highlighter:
+                        paintType = "highlight";
+                        break;
+                    default:
+                        break;
+                }
+                for (int i = 0; i < cells.Length; i++)
                 {
-                    if (Tabletop.Cells[cells[i].index].Style != cells[i].style)
+                    if (Tabletop.Cells[cells[i]].Style != paintType)
                     {
-                        Tabletop.Cells[cells[i].index].Style = cells[i].style;
-                        Hub.ChangeCellStyle(cells[i].index, cells[i].style);
+                        Tabletop.Cells[cells[i]].Style = paintType;
+                        Hub.ChangeCellStyle(cells[i], paintType);
                     }
                     
                 }
@@ -722,23 +780,43 @@ namespace FreeTabletop.Client.Pages
         public void LoadPopupImage()
         {
             if (InputImageURL.Length != 0){
+                Hub.LoadPopupImage(InputImageURL, InputImageLabel);
                 CloseAllModals();
-                Hub.LoadPopupImage(InputImageURL);
-                InputImageURL = null;
             }
+        }
+
+        public void RenderPopupImage(Image image, bool isNew = false)
+        {
+            if (isNew)
+            {
+                Tabletop.Images.Insert(0, image);
+                StateHasChanged();
+            }
+            JSRuntime.InvokeVoidAsync("RenderPopupImage", image.URL, image.Label);
         }
 
         public async Task HandleMouseUp()
         {
             if (PaintMenuOpen)
             {
-                List<MutatedCell> cells = await JSRuntime.InvokeAsync<List<MutatedCell>>("GetCells");
-                for (int i = 0; i < cells.Count; i++)
+                int[] cells = await JSRuntime.InvokeAsync<int[]>("GetCells");
+                string paintType = "clear";
+                switch(PaintType){
+                    case PaintOption.Fog:
+                        paintType = "fog";
+                        break;
+                    case PaintOption.Highlighter:
+                        paintType = "highlight";
+                        break;
+                    default:
+                        break;
+                }
+                for (int i = 0; i < cells.Length; i++)
                 {
-                    if (Tabletop.Cells[cells[i].index].Style != cells[i].style)
+                    if (Tabletop.Cells[cells[i]].Style != paintType)
                     {
-                        Tabletop.Cells[cells[i].index].Style = cells[i].style;
-                        Hub.ChangeCellStyle(cells[i].index, cells[i].style);
+                        Tabletop.Cells[cells[i]].Style = paintType;
+                        Hub.ChangeCellStyle(cells[i], paintType);
                     }
                 }
             }
@@ -817,6 +895,50 @@ namespace FreeTabletop.Client.Pages
                 localEntity.IsVisible = entity.IsVisible;
                 StateHasChanged();
             }
+        }
+
+        public void ToggleTabletopVisibility()
+        {
+            Hub.ToggleTabletopVisibility();
+        }
+
+        public void SetTabletopVisibility(bool isHidden)
+        {
+            Tabletop.IsHidden = isHidden;
+            StateHasChanged();
+        }
+
+        public void ChangeBrushSize(string value)
+        {
+            long temp = Int64.Parse(value);
+            if (temp > 10)
+            {
+                temp = 10;
+            }
+            else if (temp < 1)
+            {
+                temp = 1;
+            }
+            BrushSize = (int)temp;
+            JSRuntime.InvokeVoidAsync("SetBrushSize", BrushSize);
+            StateHasChanged();
+        }
+
+        public void TogglePopupImageHistoryModal()
+        {
+            CloseAllModals();
+            ImageHistoryOpen ^= true;
+            JSRuntime.InvokeVoidAsync("ToggleModal", "js-history-modal", ImageHistoryOpen);
+        }
+
+        public void ToggleFogOfWarType()
+        {
+            FOVFOW ^= true;
+        }
+
+        public void TogglePvP()
+        {
+            PvP ^= true;
         }
     }
 }

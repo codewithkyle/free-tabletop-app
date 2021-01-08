@@ -48,7 +48,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On("Error:RoomNotFound", Redirect);
                 Networker.hubConnection.On("Error:PlayerNotFound", Redirect);
 
-                Networker.hubConnection.On<bool, List<PlayerEntity>, string>("Sync:TabletopInfo", Room.SyncTabletop);
+                Networker.hubConnection.On<bool, List<PlayerEntity>, string, bool, List<Image>>("Sync:TabletopInfo", Room.SyncTabletop);
                 Networker.hubConnection.On<List<Entity>>("Sync:CombatOrder", Room.UpdateCombatOrder);
 
                 Networker.hubConnection.On<string>("Set:PlayerUID", UpdateUID);
@@ -57,7 +57,7 @@ namespace FreeTabletop.Client.Controllers
 
                 Networker.hubConnection.On("Player:Kick", HandleKick);
 
-                Networker.hubConnection.On<String, string, int[], int, int[], List<Cell>>("Tabletop:LoadImage", Room.RenderTabletopFromImage);
+                Networker.hubConnection.On<String, string, int[], int, int[], List<Cell>, bool, bool>("Tabletop:LoadImage", Room.RenderTabletopFromImage);
                 Networker.hubConnection.On("Tabletop:Clear", Room.ClearTabletop);
                 Networker.hubConnection.On<List<PlayerEntity>>("Tabletop:RenderPlayerEntities", Room.RenderPlayerEntities);
                 Networker.hubConnection.On<List<Creature>>("Tabletop:RenderCreatureEntities", Room.RenderCreatureEntities);
@@ -65,7 +65,9 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<int, string>("Tabletop:SyncCells", Room.SyncCells);
                 Networker.hubConnection.On<string, int[]>("Tabletop:UpdateEntityPosition", UpdateEntityPosition);
                 Networker.hubConnection.On<bool>("Tabletop:UpdateLock", Room.UpdateLock);
-                Networker.hubConnection.On<string>("Tabletop:LoadPopupImage", RenderPopupImage);
+                Networker.hubConnection.On<Image>("Tabletop:LoadPopupImage", RenderPopupImage);
+                Networker.hubConnection.On<bool>("Tabletop:ToggleVisibility", Room.SetTabletopVisibility);
+                Networker.hubConnection.On<List<Light>>("Tabletop:RenderLightEntities", Room.RenderLightEntities);
 
                 Networker.hubConnection.On<string>("Notification:PlayerConnected", ConnectedNotification);
                 Networker.hubConnection.On<string, string>("Notification:PlayerDisconnected", DisconnectedNotification);
@@ -80,6 +82,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<string>("Entity:RenderDeathCelebration", RenderDeathCelebration);
                 Networker.hubConnection.On<Entity, string>("Entity:UpdateCondition", Room.UpdateEntityCondition);
                 Networker.hubConnection.On<Entity>("Entity:ToggleVisibility", Room.UpdateEntityVisibility);
+                Networker.hubConnection.On<string, int>("Entity:UpdateFoV", Room.UpdateEntityFoV);
             }
 
             if (newConnection && Networker.IsConnected)
@@ -123,11 +126,20 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Set:PlayerUID");
             Networker.hubConnection.Remove("Set:PlayerStatus");
             Networker.hubConnection.Remove("Player:Kick");
+            Networker.hubConnection.Remove("Set:Message");
+
             Networker.hubConnection.Remove("Tabletop:LoadImage");
             Networker.hubConnection.Remove("Tabletop:Clear");
             Networker.hubConnection.Remove("Tabletop:RenderPlayerEntities");
             Networker.hubConnection.Remove("Tabletop:RenderCreatureEntities");
             Networker.hubConnection.Remove("Tabletop:RenderNPCEntities");
+            Networker.hubConnection.Remove("Tabletop:SyncCells");
+            Networker.hubConnection.Remove("Tabletop:UpdateEntityPosition");
+            Networker.hubConnection.Remove("Tabletop:UpdateLock");
+            Networker.hubConnection.Remove("Tabletop:LoadPopupImage");
+            Networker.hubConnection.Remove("Tabletop:ToggleVisibility");
+            Networker.hubConnection.Remove("Tabletop:RenderLightEntities");
+
             Networker.hubConnection.Remove("Notification:PlayerConnected");
             Networker.hubConnection.Remove("Notification:PlayerDisconnected");
             Networker.hubConnection.Remove("Notification:PlayerReconnected");
@@ -137,14 +149,11 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Notification:EntityOnDeck");
             Networker.hubConnection.Remove("Notification:Ping");
             Networker.hubConnection.Remove("Notification:Roll");
-            Networker.hubConnection.Remove("Set:Message");
-            Networker.hubConnection.Remove("Tabletop:SyncCells");
-            Networker.hubConnection.Remove("Tabletop:UpdateEntityPosition");
-            Networker.hubConnection.Remove("Tabletop:UpdateLock");
-            Networker.hubConnection.Remove("Tabletop:LoadPopupImage");
+
             Networker.hubConnection.Remove("Entity:UpdateCondition");
             Networker.hubConnection.Remove("Entity:RenderDeathCelebration");
             Networker.hubConnection.Remove("Entity:UpdateVisibility");
+            Networker.hubConnection.Remove("Entity:UpdateFoV");
         }
 
         private async Task UpdateUID(string uid)
@@ -174,11 +183,11 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:KickPlayer", player.UID);
         }
 
-        public async Task LoadTabletop(String imageURL, string gridType, int[] gridData, int gridCellSize, bool fogOfWar)
+        public async Task LoadTabletop(String imageURL, string gridType, int[] gridData, int gridCellSize, bool fogOfWar, bool advanced, bool pvp)
         {
             int[] GridSize = {gridData[0], gridData[1]};
             int[] TabletopSize = {gridData[2], gridData[3]};
-            await Networker.hubConnection.SendAsync("Room:LoadImage", imageURL, gridType, GridSize, gridCellSize, TabletopSize, fogOfWar);
+            await Networker.hubConnection.SendAsync("Room:LoadImage", imageURL, gridType, GridSize, gridCellSize, TabletopSize, fogOfWar, advanced, pvp);
         }
 
         public async Task ClearTabletop()
@@ -262,6 +271,11 @@ namespace FreeTabletop.Client.Controllers
             await Networker.hubConnection.SendAsync("Room:UpdateEntityAC", entity.UID, ac);
         }
 
+        public void UpdateEntityFoV(Entity entity, int fov)
+        {
+            Networker.hubConnection.SendAsync("Room:UpdateEntityFoV", entity.UID, fov);
+        }
+
         public async Task UpdateEntityHP(Entity entity, int hp)
         {
             await Networker.hubConnection.SendAsync("Room:UpdateEntityHP", entity.UID, hp);
@@ -309,14 +323,14 @@ namespace FreeTabletop.Client.Controllers
             JSRuntime.InvokeVoidAsync("UpdateEntityPosition", uid, position, Tabletop.CellSize);
         }
 
-        public void LoadPopupImage(string url)
+        public void LoadPopupImage(string url, string label)
         {
-            Networker.hubConnection.SendAsync("Room:LoadPopupImage", url);
+            Networker.hubConnection.SendAsync("Room:LoadPopupImage", url, label);
         }
 
-        public void RenderPopupImage(string url)
+        public void RenderPopupImage(Image image)
         {
-            JSRuntime.InvokeVoidAsync("RenderPopupImage", url);
+            Room.RenderPopupImage(image, true);
         }
 
         public void SetBleeding(string uid, bool isBleeding)
@@ -352,6 +366,16 @@ namespace FreeTabletop.Client.Controllers
         public void ToggleEntityVisibility(string uid)
         {
             Networker.hubConnection.SendAsync("Entity:ToggleVisibility", uid);
+        }
+
+        public void ToggleTabletopVisibility()
+        {
+            Networker.hubConnection.SendAsync("Room:ToggleVisibility");
+        }
+
+        public void SpawnLight(int x, int y)
+        {
+            Networker.hubConnection.SendAsync("Room:SpawnLight", x, y);
         }
     }
 }

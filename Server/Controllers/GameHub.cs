@@ -70,6 +70,21 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:ToggleVisibility")]
+        public void ToggleSceneVisibility()
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.ToggleSceneVisibility();
+                    Clients.Group(room.RoomCode).SendAsync("Tabletop:ToggleVisibility", room.IsHidden);
+                }
+            }
+        }
+
         [HubMethodName("Room:ChangeCellStyle")]
         public void ChangeCellStyles(int index, string style)
         {
@@ -86,7 +101,7 @@ namespace FreeTabletop.Server.Controllers
         }
 
         [HubMethodName("Room:LoadPopupImage")]
-        public void LoadPopupImage(string url)
+        public void LoadPopupImage(string url, string label)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -94,13 +109,27 @@ namespace FreeTabletop.Server.Controllers
                 Room room = GetRoom(player.RoomCode);
                 if (room != null)
                 {
-                    Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadPopupImage", url);
+                    Image Image = new Image();
+                    Image.URL = url;
+                    if (!String.IsNullOrEmpty(label))
+                    {
+                        Image.Label = label;
+                    }
+                    else
+                    {
+                        Image.Label = url;
+                    }
+                    bool isNew = room.AddPopupImage(Image);
+                    if (isNew)
+                    {
+                        Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadPopupImage", Image);
+                    }
                 }
             }
         }
 
         [HubMethodName("Room:LoadImage")]
-        public async Task LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize, bool fogOfWar)
+        public async Task LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize, bool fogOfWar, bool advanced, bool pvp)
         {
             Player player = GetPlayer(Context.ConnectionId);
             if (player != null && player.IsGameMaster)
@@ -109,10 +138,11 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     room.ClearTabletop();
-                    room.LoadImage(imageURL, gridType, gridSize, cellSize, tabletopSize, fogOfWar);
+                    room.LoadImage(imageURL, gridType, gridSize, cellSize, tabletopSize, fogOfWar, advanced, pvp);
                     await RenderCreatureEntities(room);
                     await RenderNPCEntities(room);
                     await LoadTabletopImage(room);
+                    await RenderLightEntities(room);
                     if (gridType != "3")
                     {
                         room.ResetPlayerPawnPositions();
@@ -149,6 +179,7 @@ namespace FreeTabletop.Server.Controllers
                     room.RemoveEntity(uid);
                     await RenderCreatureEntities(room);
                     await RenderNPCEntities(room);
+                    await RenderLightEntities(room);
                 }
             }
         }
@@ -218,6 +249,21 @@ namespace FreeTabletop.Server.Controllers
                 {
                     room.SpawnCreature(creature);
                     await RenderCreatureEntities(room);
+                }
+            }
+        }
+
+        [HubMethodName("Room:SpawnLight")]
+        public async Task SpawnLight(int x, int y)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.SpawnLight(x, y);
+                    await RenderLightEntities(room);
                 }
             }
         }
@@ -292,6 +338,36 @@ namespace FreeTabletop.Server.Controllers
                 if (room != null)
                 {
                     room.UpdateEntityAC(uid, ac);
+                }
+            }
+        }
+
+        [HubMethodName("Room:UpdateEntityFoV")]
+        public void UpdateEntityFoV(string uid, int fov)
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.UpdateEntityFoV(uid, fov);
+                    if (room.PvP)
+                    {
+                        Player targetPlayerEntity = GlobalData.GetPlayerByStaleUID(uid);
+                        if (targetPlayerEntity != null)
+                        {
+                            Clients.Client(targetPlayerEntity.UID).SendAsync("Entity:UpdateFoV", uid, fov);
+                        }
+                        else
+                        {
+                            Clients.Group(room.RoomCode).SendAsync("Entity:UpdateFoV", uid, fov);
+                        }
+                    }
+                    else
+                    {
+                        Clients.Group(room.RoomCode).SendAsync("Entity:UpdateFoV", uid, fov);
+                    }
                 }
             }
         }
@@ -391,11 +467,11 @@ namespace FreeTabletop.Server.Controllers
                 {
                     List<PlayerEntity> players = room.BuildPlayerEntities();
                     Player gameMaster = room.GetGameMaster();
-                    await Clients.Caller.SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.MessageUID);
+                    await Clients.Caller.SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.MessageUID, room.IsHidden, room.Images);
                     
                     if (room.ImageURL != null && room.ImageURL.Length != 0)
                     {
-                        await Clients.Caller.SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize, room.TabletopSize, room.Cells);
+                        await Clients.Caller.SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize, room.TabletopSize, room.Cells, room.FoVFoW, room.PvP);
                         if (room.GridType != "3")
                         {
                             await Clients.Caller.SendAsync("Tabletop:RenderPlayerEntities", players);
@@ -612,7 +688,7 @@ namespace FreeTabletop.Server.Controllers
         {
             List<PlayerEntity> players = room.BuildPlayerEntities();
             Player gameMaster = room.GetGameMaster();
-            await Clients.Group(room.RoomCode).SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.MessageUID);
+            await Clients.Group(room.RoomCode).SendAsync("Sync:TabletopInfo", room.IsLocked, players, gameMaster.MessageUID, room.IsHidden, room.Images);
             
             if (room.ImageURL != null && room.ImageURL.Length != 0)
             {
@@ -622,6 +698,7 @@ namespace FreeTabletop.Server.Controllers
                     await RenderPlayerEntities(room);
                     await RenderCreatureEntities(room);
                     await RenderNPCEntities(room);
+                    await RenderLightEntities(room);
                     await SendCombatOrder(room, room.CombatOrder);
                 }
             }
@@ -634,7 +711,7 @@ namespace FreeTabletop.Server.Controllers
 
         private async Task LoadTabletopImage(Room room)
         {
-            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize, room.TabletopSize, room.Cells);
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:LoadImage", room.ImageURL, room.GridType, room.Grid, room.CellSize, room.TabletopSize, room.Cells, room.FoVFoW, room.PvP);
         }
 
         private async Task RenderPlayerEntities(Room room)
@@ -646,6 +723,11 @@ namespace FreeTabletop.Server.Controllers
         private async Task RenderCreatureEntities(Room room)
         {
             await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderCreatureEntities", room.Creatures);
+        }
+
+        private async Task RenderLightEntities(Room room)
+        {
+            await Clients.Group(room.RoomCode).SendAsync("Tabletop:RenderLightEntities", room.Lights);
         }
 
         private async Task RenderNPCEntities(Room room)

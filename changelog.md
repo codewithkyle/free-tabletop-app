@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.8.0] - 2021-01-07
+
+### Added
+
+- Game Masters can toggle tabletop scene visibility
+- messenger features
+    - clickable links
+    - image previews (created from links)
+    - embedded YouTube videos
+    - persistent message history (per room)
+- paintbrush size slider
+- persistent popup image history
+- popup image labels
+- ability to expand/shrink modals
+- localized field of view based fog of war
+    - team-based visibility (players see all players and NPCs fields of view)
+    - player vs player visibility (players only see their field of view)
+- dynamically hiding/showing pawns using fog of war
+- dynamic light sources
+
+### Fixed
+
+- buffer overflow bug that could appear while painting cells on massive maps
+
 ## [0.7.0] - 2020-12-30
 
 ### Added
@@ -66,11 +90,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - players can directly message each other
-- room based all chat
+- room-based all chat
 
 ### Fixed
 
-- fixed pawn relocation upon reload bug
+- fixed pawn relocation when reloading bug
 
 ## [0.4.0] - 2020-12-21
 
@@ -113,7 +137,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- fog of war grid grid gap bug (Chrome)
+- fog of war grid-gap bug (Chrome)
 - fog of war desync bug
 
 ## [0.3.1] - 2020-11-15
@@ -131,7 +155,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - tabletop loading animation
 - tabletop image loading error notification
-- image loading sfx
+- image loading SFX
 - initial fog of war functionality
 
 ### Fixed
@@ -161,7 +185,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - removed app access after an update was downloaded and is pending reload
-- centered snackbar message
+- centered snack bar message
 - fixed inaccurate document titles
 
 ## [0.1.5] - 2020-11-07
@@ -183,6 +207,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - initial beta build
 - CI/CD pipeline
 
+[0.8.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.5.1...v0.6.0
 [0.5.1]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.5.0...v0.5.1

@@ -27,6 +27,11 @@ namespace FreeTabletop.Server.Models
         public bool FogOfWar = true;
 
         public List<Cell> Cells = new List<Cell>();
+        public bool IsHidden = false;
+        public bool FoVFoW = false;
+        public bool PvP = false;
+        public List<Light> Lights = new List<Light>();
+        public List<Image> Images = new List<Image>();
 
         public void AddPlayer(Player player)
         {
@@ -115,13 +120,14 @@ namespace FreeTabletop.Server.Models
                     player.IsStunned = Players[i].IsStunned;
                     player.IsUnconscious = Players[i].IsUnconscious;
                     player.IsVisible = Players[i].IsVisible;
+                    player.FoV = Players[i].FoV;
                     players.Add(player);
                 }
             }
             return players;
         }
 
-        public void LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize, bool fogOfWar)
+        public void LoadImage(String imageURL, string gridType, int[] gridSize, int cellSize, int[] tabletopSize, bool fogOfWar, bool advanced, bool pvp)
         {
             ImageURL = imageURL;
             GridType = gridType;
@@ -129,6 +135,8 @@ namespace FreeTabletop.Server.Models
             CellSize = cellSize;
             TabletopSize = tabletopSize;
             FogOfWar = fogOfWar;
+            FoVFoW = advanced;
+            PvP = pvp;
 
             Cells = new List<Cell>();
             for (int y = 0; y < Grid[1]; y++)
@@ -158,6 +166,7 @@ namespace FreeTabletop.Server.Models
             Creatures = new List<Creature>();
             NPCs = new List<NPC>();
             Cells = new List<Cell>();
+            Lights = new List<Light>();
         }
 
         public void ResetPlayerPawnPositions()
@@ -460,6 +469,15 @@ namespace FreeTabletop.Server.Models
             return NeedsRerender;
         }
 
+        public void UpdateEntityFoV(string uid, int fov)
+        {
+            Entity entity = GetEntity(uid);
+            if (entity != null)
+            {
+                entity.FoV = fov;
+            }
+        }
+
         public Player GetGameMaster()
         {
             Player GameMaster = null;
@@ -531,6 +549,19 @@ namespace FreeTabletop.Server.Models
                     break;
                 }
             }
+            for (int i = 0; i < Lights.Count; i++)
+            {
+                if (FoundEntity)
+                {
+                    break;
+                }
+                if (Lights[i].UID == uid)
+                {
+                    FoundEntity = true;
+                    Lights[i].IsRemoved = true;
+                    break;
+                }
+            }
         }
 
         public void UpdateCellStyle(int index, string style)
@@ -570,6 +601,18 @@ namespace FreeTabletop.Server.Models
                 if (Players[i].UID == uid)
                 {
                     entity = Players[i];
+                    break;
+                }
+            }
+            for (int i = 0; i < Lights.Count; i++)
+            {
+                if (entity != null)
+                {
+                    break;
+                }
+                if (Lights[i].UID == uid)
+                {
+                    entity = Lights[i];
                     break;
                 }
             }
@@ -620,6 +663,39 @@ namespace FreeTabletop.Server.Models
                 entity.IsVisible ^= true;
             }
             return entity;
+        }
+
+        public void ToggleSceneVisibility()
+        {
+            IsHidden ^= true;
+        }
+
+        public void SpawnLight(int x, int y)
+        {
+            Guid guid = Guid.NewGuid();
+            Light light = new Light();
+            int[] pos = {x, y};
+            light.UpdatePosition(pos);
+            light.UID = guid.ToString();
+            Lights.Add(light);
+        }
+
+        public bool AddPopupImage(Image image)
+        {
+            bool isNew = true;
+            for (int i = 0; i < Images.Count; i++)
+            {
+                if (Images[i].URL == image.URL)
+                {
+                    isNew = false;
+                    break;
+                }
+            }
+            if (isNew)
+            {
+                Images.Insert(0, image);
+            }
+            return isNew;
         }
     }
 }

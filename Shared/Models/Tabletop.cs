@@ -22,6 +22,12 @@ namespace FreeTabletop.Shared.Models
         public int[] Size { get; set; }
         public List<Cell> Cells = new List<Cell>();
         public string MessageUID {get; set;}
+        public bool IsHidden {get;set;} = false;
+        public bool FoVFoW = false;
+        public bool PvP = false;
+
+        public List<Light> Lights = new List<Light>();
+        public List<Image> Images = new List<Image>();
 
         public Entity GetEntityByUID(string uid)
         {
@@ -59,6 +65,19 @@ namespace FreeTabletop.Shared.Models
                 {
                     FoundEntity = true;
                     entity = Players[i];
+                    break;
+                }
+            }
+            for (int i = 0; i < Lights.Count; i++)
+            {
+                if (FoundEntity)
+                {
+                    break;
+                }
+                if (Lights[i].UID == uid)
+                {
+                    FoundEntity = true;
+                    entity = Lights[i];
                     break;
                 }
             }

@@ -26,7 +26,7 @@ messenger-component{
     ul{
         display: block;
         width: 100%;
-        height: 256px;
+        height: 350px;
         overflow-y: scroll;
         
         li{
@@ -39,11 +39,13 @@ messenger-component{
             }
 
             &.outgoing{
+                .msg-container{
+                    margin-left: auto;
+                    margin-right: 0;
+                }
                 .msg{
                     background-color: var(--primary-700);
                     color: var(--white);
-                    margin-left: auto;
-                    margin-right: 0;
                     border-radius: 0.25rem 0.25rem 0 0.25rem;
                 }
                 .author{
@@ -58,13 +60,75 @@ messenger-component{
                 }
             }
 
+            .msg-container{
+                display: block;
+                width: 80%;
+
+                .img{
+                    display: block;
+                    width: 100%;
+                    overflow: hidden;
+                    border-radius: 0.25rem;
+                    cursor: pointer;
+                    margin-bottom: 0.25rem;
+
+                    &::before{
+                        content: "";
+                        display: block;
+                        width: 100%;
+                        padding-bottom: 56.25%;
+                    }
+
+                    &::after{
+                        content: "";
+                        display: inline-block;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        border-radius: 0.25rem;
+                        box-shadow: inset 0 0 3px rgba(0,0,0,0.3);
+                    }
+
+                    &:hover,
+                    &:focus{
+                        img{
+                            transform: scale(1.05);
+                            filter: brightness(1);
+                        }
+                    }
+
+                    img{
+                        transition: all 300ms var(--ease-in-out);
+                        filter: brightness(0.95);
+                        display: inline-block;
+                        width: 100%;
+                        height: 100%;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        object-fit: cover;
+                    }
+                }
+
+                iframe{
+                    display: block;
+                    width: 100%;
+                    height: 225px;
+                    margin-bottom: 0.25rem;
+                }
+            }
+
             .msg{
                 display: block;
-                width: 75%;
+                width: 100%;
                 line-height: 1.618;
                 margin-bottom: 0.25rem;
                 padding: 0.5rem 0.75rem;
                 font-size: var(--font-sm);
+
+                a{
+                    color: var(--white);
+                }
             }
 
             .author{

@@ -22,6 +22,7 @@ namespace FreeTabletop.Shared.Models
         public bool IsRestrained {get;set;} = false;
         public bool IsUnconscious {get;set;} = false;
         public bool IsVisible {get;set;} = true;
+        public int FoV {get;set;} = 0;
 
         public void UpdatePosition(int[] newPosition)
         {
