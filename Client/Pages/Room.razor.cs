@@ -205,10 +205,10 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public async Task RemoveTabletopImage()
+        public void RemoveTabletopImage()
         {
             CloseAllModals();
-            await Hub.ClearTabletop();
+            Hub.ClearTabletop();
         }
 
         public async Task LoadTabletop()
@@ -217,13 +217,13 @@ namespace FreeTabletop.Client.Pages
             {
                 if (InputImageURL == Tabletop.Image)
                 {
-                    await Hub.ClearTabletop();
+                    Hub.ClearTabletop();
                 }
                 Tabletop.Image = InputImageURL;
                 TabletopImageLoaded = false;
                 Tabletop.GridType = null;
                 int[] GridData = await JSRuntime.InvokeAsync<int[]>("GetGridSize", InputImageURL, GridCellSize);
-                await Hub.LoadTabletop(InputImageURL, SelectedGridType, GridData, GridCellSize, FogOfWar, FOVFOW, PvP);
+                Hub.LoadTabletop(InputImageURL, SelectedGridType, GridData, GridCellSize, FogOfWar, FOVFOW, PvP);
                 CloseAllModals();
                 StateHasChanged();
             }
@@ -338,7 +338,7 @@ namespace FreeTabletop.Client.Pages
             string CreatureJSON = await JSRuntime.InvokeAsync<string>("LookupCreature", CreatureName);
             Creature Creature = JsonConvert.DeserializeObject<Creature>(CreatureJSON);
             Creature.Main(RightClickGridPosition);
-            await Hub.SpawnCreature(Creature);
+            Hub.SpawnCreature(Creature);
             await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
             CloseAllModals();
         }
@@ -357,49 +357,49 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public async Task SpawnCustomCreature()
+        public void SpawnCustomCreature()
         {
             if (CustomCreature.BaseName == null || CustomCreature.BaseName.Trim() == "")
             {
-                await JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-name");
+                JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-name");
             }
             else if (CustomCreature.BaseAC == 0)
             {
-                await JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-ac");
+                JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-ac");
             }
             else if (CustomCreature.BaseHP == 0)
             {
-                await JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-hp");
+                JSRuntime.InvokeVoidAsync("FocusElement", "#custom-creature-hp");
             }
             else
             {
                 CustomCreature.Position = RightClickGridPosition;
-                await Hub.SpawnCreature(CustomCreature);
-                await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
-                await JSRuntime.InvokeVoidAsync("AddCustomCreature", JsonConvert.SerializeObject(CustomCreature));
+                Hub.SpawnCreature(CustomCreature);
+                JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
+                JSRuntime.InvokeVoidAsync("AddCustomCreature", JsonConvert.SerializeObject(CustomCreature));
                 CloseAllModals();
             }
         }
 
-        public async Task SpawnNPC()
+        public void SpawnNPC()
         {
             if (NewNPC.BaseName == null || NewNPC.BaseName.Trim() == "")
             {
-                await JSRuntime.InvokeVoidAsync("FocusElement", "#npc-name");
+                JSRuntime.InvokeVoidAsync("FocusElement", "#npc-name");
             }
             else if (NewNPC.BaseAC == 0)
             {
-                await JSRuntime.InvokeVoidAsync("FocusElement", "#npc-ac");
+                JSRuntime.InvokeVoidAsync("FocusElement", "#npc-ac");
             }
             else if (NewNPC.BaseHP == 0)
             {
-                await JSRuntime.InvokeVoidAsync("FocusElement", "#npc-hp");
+                JSRuntime.InvokeVoidAsync("FocusElement", "#npc-hp");
             }
             else
             {
                 NewNPC.Position = RightClickGridPosition;
-                await Hub.SpawnNPC(NewNPC);
-                await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
+                Hub.SpawnNPC(NewNPC);
+                JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
                 CloseAllModals();
             }
         }
@@ -434,7 +434,7 @@ namespace FreeTabletop.Client.Pages
             else if (Tabletop.IsGameMaster && ctrlKeyPressed || !Tabletop.IsGameMaster)
             {
                 int[] pingPosition = await JSRuntime.InvokeAsync<int[]>("CalculateLocalPosition", x, y);
-                await Hub.Ping(pingPosition[0], pingPosition[1]);
+                Hub.Ping(pingPosition[0], pingPosition[1]);
             }
         }
 
@@ -462,8 +462,8 @@ namespace FreeTabletop.Client.Pages
         {
             CloseAllModals();
             string RollResults = await JSRuntime.InvokeAsync<string>("RollDice", RollCount.ToString() + ActiveDie);
+            Hub.AnnounceRoll(RollCount, ActiveDie, RollResults);
             await JSRuntime.InvokeVoidAsync("PlaySound", "alert.wav");
-            await Hub.AnnounceRoll(RollCount, ActiveDie, RollResults);
             RollCount = 1;
         }
 
@@ -481,34 +481,29 @@ namespace FreeTabletop.Client.Pages
             JSRuntime.InvokeVoidAsync("ToggleModal", "js-combat-modal", CombatMenuOpen);
         }
 
-        public async Task SyncCombatOrder()
-        {
-            await Hub.SyncCombatOrder();
-        }
-
         public void UpdateCombatOrder(List<Entity> combatOrder)
         {
             Tabletop.CombatOrder = combatOrder;
             StateHasChanged();
         }
 
-        public async Task UpdateEntityCombatOrderPosition(int newPosition)
+        public void UpdateEntityCombatOrderPosition(int newPosition)
         {
-            await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
-            await Hub.UpdateEntityCombatOrderPosition(MovingEntityUID, newPosition);
+            Hub.UpdateEntityCombatOrderPosition(MovingEntityUID, newPosition);
+            JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
         }
 
-        public async Task UpdateEntityHP(Entity entity, ChangeEventArgs e)
+        public void UpdateEntityHP(Entity entity, ChangeEventArgs e)
         {
             int HP = Int32.Parse(e.Value.ToString());
             entity.HP = HP;
-            await Hub.UpdateEntityHP(entity, HP);
+            Hub.UpdateEntityHP(entity, HP);
         }
-        public async Task UpdateEntityAC(Entity entity, ChangeEventArgs e)
+        public void UpdateEntityAC(Entity entity, ChangeEventArgs e)
         {
             int AC = Int32.Parse(e.Value.ToString());
             entity.AC = AC;
-            await Hub.UpdateEntityAC(entity, AC);
+            Hub.UpdateEntityAC(entity, AC);
         }
 
         public void UpdateEntityFoV(Entity entity, ChangeEventArgs e)
@@ -558,7 +553,7 @@ namespace FreeTabletop.Client.Pages
             if (Key == "Enter")
             {
                 string[] Data = await JSRuntime.InvokeAsync<string[]>("GetChatMessage");
-                await Hub.SendMessage(Data[0], Data[1]);
+                Hub.SendMessage(Data[0], Data[1]);
                 StateHasChanged();
             }
         }
@@ -650,9 +645,9 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public async Task LeaveRoom()
+        public void LeaveRoom()
         {
-            await Hub.Disconnect();
+            Hub.Disconnect();
             NavigationManager.NavigateTo("/");
         }
 

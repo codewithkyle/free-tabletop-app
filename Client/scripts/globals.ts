@@ -261,3 +261,18 @@ function uid(): string {
 }
 
 const noop:any = ()=>{};
+
+function PromptReload(){
+    snackbar({
+        message: `You have lost connection with the server.`,
+        buttons: [
+            {
+                label: "reload",
+                callback: ()=>{location.reload();},
+            }
+        ],
+        duration: Infinity,
+        force: true,
+        closeable: false,
+    });
+}

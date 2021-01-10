@@ -507,23 +507,6 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
-        [HubMethodName("Player:Heartbeat")]
-        public void Heartbeat()
-        {
-            Player player = GetPlayer(Context.ConnectionId);
-            if (player != null)
-            {
-                Room room = GetRoom(player.RoomCode);
-                if (room != null)
-                {
-                    player.Heartbeat++;
-                    if (player.Heartbeat == int.MaxValue){
-                        player.Heartbeat = 0;
-                    }
-                }
-            }
-        }
-
         [HubMethodName("Room:Message")]
         public async Task AllChatMessage(string msg)
         {
