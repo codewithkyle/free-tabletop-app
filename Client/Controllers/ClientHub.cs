@@ -101,20 +101,6 @@ namespace FreeTabletop.Client.Controllers
 
             await Networker.hubConnection.SendAsync("Player:GetStatus");
             await Networker.hubConnection.SendAsync("Player:SyncTabletopInfo");
-
-            Timer = new System.Timers.Timer(1000);
-            Timer.Elapsed += (sender,args) => {
-                try
-                {
-                    Networker.hubConnection.SendAsync("Player:Heartbeat");
-                }
-                catch
-                {
-                    JSRuntime.InvokeVoidAsync("Reload");
-                }
-            };
-            Timer.AutoReset = true;
-            Timer.Enabled = true;
         }
 
         private void MessageReset()
@@ -173,55 +159,125 @@ namespace FreeTabletop.Client.Controllers
             NavigationManager.NavigateTo("/");
         }
 
-        public async Task ToggleRoomLock()
+        public void ToggleRoomLock()
         {
-            await Networker.hubConnection.SendAsync("Room:ToggleLock");
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:ToggleLock");
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
-        public async Task KickPlayer(PlayerEntity player)
+        public void KickPlayer(PlayerEntity player)
         {
-            await Networker.hubConnection.SendAsync("Room:KickPlayer", player.UID);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:KickPlayer", player.UID);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
-        public async Task LoadTabletop(String imageURL, string gridType, int[] gridData, int gridCellSize, bool fogOfWar, bool advanced, bool pvp)
+        public void LoadTabletop(String imageURL, string gridType, int[] gridData, int gridCellSize, bool fogOfWar, bool advanced, bool pvp)
         {
             int[] GridSize = {gridData[0], gridData[1]};
             int[] TabletopSize = {gridData[2], gridData[3]};
-            await Networker.hubConnection.SendAsync("Room:LoadImage", imageURL, gridType, GridSize, gridCellSize, TabletopSize, fogOfWar, advanced, pvp);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:LoadImage", imageURL, gridType, GridSize, gridCellSize, TabletopSize, fogOfWar, advanced, pvp);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
-        public async Task ClearTabletop()
+        public void ClearTabletop()
         {
-            await Networker.hubConnection.SendAsync("Room:ClearTabletop");
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:ClearTabletop");
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void MoveEntity(string entityUID, int[] newPosition)
         {
-            Networker.hubConnection.SendAsync("Room:MoveEntity", entityUID, newPosition);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:MoveEntity", entityUID, newPosition);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
-        public async Task SpawnCreature(Creature creature)
+        public void SpawnCreature(Creature creature)
         {
-            await Networker.hubConnection.SendAsync("Room:SpawnCreature", creature);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:SpawnCreature", creature);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
-        public async Task SpawnNPC(NPC npc)
+        public void SpawnNPC(NPC npc)
         {
-            await Networker.hubConnection.SendAsync("Room:SpawnNPC", npc);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:SpawnNPC", npc);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
-        public async Task SyncCombatOrder()
-        {
-            await Networker.hubConnection.SendAsync("Room:SyncCombatOrder");
+        public void SyncCombatOrder()
+        {            
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:SyncCombatOrder");
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
-        public async Task RemoveEntityFromCombatOrder(string uid)
+        public void RemoveEntityFromCombatOrder(string uid)
         {
-            await Networker.hubConnection.SendAsync("Room:RemoveEntityFromCombatOrder", uid);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:RemoveEntityFromCombatOrder", uid);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
-        public async Task UpdateEntityCombatOrderPosition(string uid, int newPosition)
+        public void UpdateEntityCombatOrderPosition(string uid, int newPosition)
         {
-            await Networker.hubConnection.SendAsync("Room:UpdateEntityCombatOrderPosition", uid, newPosition);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:UpdateEntityCombatOrderPosition", uid, newPosition);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         private void ConnectedNotification(string name)
@@ -261,61 +317,131 @@ namespace FreeTabletop.Client.Controllers
             JSRuntime.InvokeVoidAsync("EntityOnDeck", name);
         }
 
-        public async Task PingEntity(string uid)
+        public void PingEntity(string uid)
         {
-            await Networker.hubConnection.SendAsync("Room:PingEntity", uid);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:PingEntity", uid);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
-        public async Task UpdateEntityAC(Entity entity, int ac)
+        public void UpdateEntityAC(Entity entity, int ac)
         {
-            await Networker.hubConnection.SendAsync("Room:UpdateEntityAC", entity.UID, ac);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:UpdateEntityAC", entity.UID, ac);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void UpdateEntityFoV(Entity entity, int fov)
         {
-            Networker.hubConnection.SendAsync("Room:UpdateEntityFoV", entity.UID, fov);
-        }
-
-        public async Task UpdateEntityHP(Entity entity, int hp)
-        {
-            await Networker.hubConnection.SendAsync("Room:UpdateEntityHP", entity.UID, hp);
-        }
-
-        public async Task Ping(int x, int y)
-        {
-            await Networker.hubConnection.SendAsync("Room:Ping", x, y);
-        }
-
-        public async Task SendMessage(string activePlayerUID, string msg)
-        {
-            if (activePlayerUID != null)
+            try
             {
-                await Networker.hubConnection.SendAsync("Player:Message", msg, activePlayerUID);
+                Networker.hubConnection.SendAsync("Room:UpdateEntityFoV", entity.UID, fov);
             }
-            else
+            catch
             {
-                await Networker.hubConnection.SendAsync("Room:Message", msg);
+                JSRuntime.InvokeVoidAsync("PromptReload");
             }
         }
 
-        public async Task Disconnect()
+        public void UpdateEntityHP(Entity entity, int hp)
         {
-            await Networker.hubConnection.SendAsync("Player:Disconnect");
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:UpdateEntityHP", entity.UID, hp);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
+        }
+
+        public void Ping(int x, int y)
+        {
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:Ping", x, y);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
+        }
+
+        public void SendMessage(string activePlayerUID, string msg)
+        {
+            try
+            {
+                if (activePlayerUID != null)
+                {
+                    Networker.hubConnection.SendAsync("Player:Message", msg, activePlayerUID);
+                }
+                else
+                {
+                    Networker.hubConnection.SendAsync("Room:Message", msg);
+                }
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
+        }
+
+        public void Disconnect()
+        {
+            try
+            {
+                Networker.hubConnection.SendAsync("Player:Disconnect");
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void RemoveEntity(string uid)
         {
-            Networker.hubConnection.SendAsync("Room:RemoveEntity", uid);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:RemoveEntity", uid);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
-        public async Task AnnounceRoll(int diceCount, string die, string results)
+        public void AnnounceRoll(int diceCount, string die, string results)
         {
-            await Networker.hubConnection.SendAsync("Room:AnnounceRoll", diceCount, die, results);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:AnnounceRoll", diceCount, die, results);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void ChangeCellStyle(int cellIndex, string style)
         {
-            Networker.hubConnection.SendAsync("Room:ChangeCellStyle", cellIndex, style);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:ChangeCellStyle", cellIndex, style);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void UpdateEntityPosition(string uid, int[] position)
@@ -325,7 +451,14 @@ namespace FreeTabletop.Client.Controllers
 
         public void LoadPopupImage(string url, string label)
         {
-            Networker.hubConnection.SendAsync("Room:LoadPopupImage", url, label);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:LoadPopupImage", url, label);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void RenderPopupImage(Image image)
@@ -335,22 +468,50 @@ namespace FreeTabletop.Client.Controllers
 
         public void SetBleeding(string uid, bool isBleeding)
         {
-            Networker.hubConnection.SendAsync("Room:SetBleeding", uid, isBleeding);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:SetBleeding", uid, isBleeding);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void SetBurning(string uid, bool isBurning)
         {
-            Networker.hubConnection.SendAsync("Room:SetBurning", uid, isBurning);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:SetBurning", uid, isBurning);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void SetPoison(string uid, bool isPoisoned)
         {
-            Networker.hubConnection.SendAsync("Room:SetPoison", uid, isPoisoned);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:SetPoison", uid, isPoisoned);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void SetConcentration(string uid, bool isConcentrating)
         {
-            Networker.hubConnection.SendAsync("Room:SetConcentration", uid, isConcentrating);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:SetConcentration", uid, isConcentrating);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void RenderDeathCelebration(string uid)
@@ -360,22 +521,50 @@ namespace FreeTabletop.Client.Controllers
 
         public void ToggleCondition(string uid, string condition)
         {
-            Networker.hubConnection.SendAsync("Entity:ToggleCondition", uid, condition);
+            try
+            {
+                Networker.hubConnection.SendAsync("Entity:ToggleCondition", uid, condition);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void ToggleEntityVisibility(string uid)
         {
-            Networker.hubConnection.SendAsync("Entity:ToggleVisibility", uid);
+            try
+            {
+                Networker.hubConnection.SendAsync("Entity:ToggleVisibility", uid);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void ToggleTabletopVisibility()
         {
-            Networker.hubConnection.SendAsync("Room:ToggleVisibility");
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:ToggleVisibility");
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
 
         public void SpawnLight(int x, int y)
         {
-            Networker.hubConnection.SendAsync("Room:SpawnLight", x, y);
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:SpawnLight", x, y);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
         }
     }
 }
