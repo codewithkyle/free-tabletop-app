@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- disconnection error snack bar notificaiton
+- disconnection error snack bar notification
 
 ## [0.8.0] - 2021-01-07
 
