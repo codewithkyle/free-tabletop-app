@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - added global error handling and error snack bar notification tiggering
 
+### Removed
+
+- players no longer see creature nametags
+
 ## [0.8.1] - 2021-01-10
 
 ### Added
