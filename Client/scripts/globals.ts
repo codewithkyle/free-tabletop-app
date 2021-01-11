@@ -263,6 +263,7 @@ function uid(): string {
 const noop:any = ()=>{};
 
 function PromptReload(){
+    PlaySound("alert.wav");
     snackbar({
         message: `You have lost connection with the server.`,
         buttons: [
@@ -276,3 +277,51 @@ function PromptReload(){
         closeable: false,
     });
 }
+window.onerror = () => {
+    PlaySound("alert.wav");
+    snackbar({
+        message: `You have lost connection with the server.`,
+        buttons: [
+            {
+                label: "reload",
+                callback: ()=>{location.reload();},
+            }
+        ],
+        duration: Infinity,
+        force: true,
+        closeable: false,
+    });
+    return false;
+ };
+ window.addEventListener("error", () => {
+    PlaySound("alert.wav");
+    snackbar({
+        message: `You have lost connection with the server.`,
+        buttons: [
+            {
+                label: "reload",
+                callback: ()=>{location.reload();},
+            }
+        ],
+        duration: Infinity,
+        force: true,
+        closeable: false,
+    });
+    return false;
+ });
+ window.addEventListener('unhandledrejection', (e) => {
+    PlaySound("alert.wav");
+    snackbar({
+        message: `You have lost connection with the server.`,
+        buttons: [
+            {
+                label: "reload",
+                callback: ()=>{location.reload();},
+            }
+        ],
+        duration: Infinity,
+        force: true,
+        closeable: false,
+    });
+    return false;
+});
