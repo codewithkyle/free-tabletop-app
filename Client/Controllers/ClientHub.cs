@@ -14,16 +14,10 @@ namespace FreeTabletop.Client.Controllers
     public class ClientHub
     {
         private NavigationManager NavigationManager { get; set; }
-
         private IJSRuntime JSRuntime { get; set; }
-
         private RoomBase Room { get; set; }
-
         private Tabletop Tabletop { get; set; }
-
         string RoomCode { get; set; }
-
-        private static Timer Timer;
 
         public async Task Connect(string roomCode, RoomBase room, NavigationManager navManager, IJSRuntime jsRuntime, Tabletop tabletop)
         {

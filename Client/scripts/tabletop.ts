@@ -586,7 +586,7 @@ class PingComponent extends HTMLElement{
         if (!localStorage.getItem("pingDisabled")){
             var audio = new Audio(`${location.origin}/sfx/ping.mp3`);
             audio.volume = 0.75;
-            audio.play();
+            audio.play().catch(e => {});
         }
         setTimeout(this.remove.bind(this), 2000);
     }

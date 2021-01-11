@@ -83,38 +83,39 @@ async function PlaySound(name:string){
         case "alert.wav":
             if (!localStorage.getItem("alertDisabled")){
                 var audio = new Audio(`${location.origin}/sfx/${name}`);
-                audio.play();
+                if (audio.canPlayType)
+                audio.play().catch(e => {});
             }
             break;
         case "loading.wav":
             if (!localStorage.getItem("loadingDisabled")){
                 var audio = new Audio(`${location.origin}/sfx/${name}`);
-                audio.play();
+                audio.play().catch(e => {});
             }
             break;
         case "message.wav":
             if (!localStorage.getItem("notificationDisabled")){
                 var audio = new Audio(`${location.origin}/sfx/${name}`);
-                audio.play();
+                audio.play().catch(e => {});
             }
             break;
         case "ping.mp3":
             if (!localStorage.getItem("pingDisabled")){
                 var audio = new Audio(`${location.origin}/sfx/${name}`);
                 audio.volume = 0.75;
-                audio.play();
+                audio.play().catch(e => {});
             }
             break;
         case "death-celebration.mp3":
             if (!localStorage.getItem("deathCelebrationSoundDisabled") && !localStorage.getItem("deathCelebrationsDisabled")){
                 var audio = new Audio(`${location.origin}/sfx/${name}`);
                 audio.volume = 0.75;
-                audio.play();
+                audio.play().catch(e => {});
             }
             break;
         default:
             var audio = new Audio(`${location.origin}/sfx/${name}`);
-            audio.play();
+            audio.play().catch(e => {});
             break;
     }
     return;

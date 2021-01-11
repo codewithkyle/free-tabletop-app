@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - added global error handling and error snack bar notification tiggering
+- player position reset when loading new maps
 
 ### Removed
 
