@@ -452,6 +452,12 @@ class Tabletop extends HTMLElement{
                     }
                 }
             }
+            for (let i = 0; i < pawns.length; i++){
+                pawns[i].updateHUD();
+            }
+            for (let i = 0; i < lights.length; i++){
+                lights[i].updateHUD();
+            }
         }
         window.requestAnimationFrame(this.renderer.bind(this));
     }

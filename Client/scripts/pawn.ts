@@ -45,7 +45,7 @@ class Pawn extends HTMLElement{
         if (this.HUD){
             this.HUD.style.transform = "translate(0px,0px)";
             const hudBounds = this.HUD.getBoundingClientRect();
-            const tabletopBounds = this.parentElement.getBoundingClientRect();
+            let tabletopBounds = this.parentElement.getBoundingClientRect();
             const icon:HTMLElement = this.querySelector("i");
 
             let topOffset = hudBounds.height * -1;
@@ -53,18 +53,19 @@ class Pawn extends HTMLElement{
                 topOffset += hudBounds.height + icon.scrollHeight + 4;
             }
 
-            let leftOffset = hudBounds.width / 2 * -1 + icon.scrollWidth / 2 + 2;
-            if (hudBounds.left + leftOffset < tabletopBounds.left){
-                leftOffset += (tabletopBounds.left - (hudBounds.left + leftOffset)) + 16;
+            let leftOffset = hudBounds.width * -1 + icon.scrollWidth + 2;
+            this.HUD.style.transform = `translate(${leftOffset}px, ${topOffset}px)`;
+            tabletopBounds = this.parentElement.getBoundingClientRect();
+            if (hudBounds.left - hudBounds.width / 2 < tabletopBounds.left){
+                leftOffset = 0;
             }
-
-            if (hudBounds.right + leftOffset > tabletopBounds.right){
-                leftOffset -= ((hudBounds.right + leftOffset) - tabletopBounds.right) + 16;
+            else if (hudBounds.left + hudBounds.width / 2 < tabletopBounds.right){
+                leftOffset = hudBounds.width / 2 * -1;
             }
+            
             this.HUD.style.transform = `translate(${leftOffset}px, ${topOffset}px)`;
         }
     }
-    private checkHUD:EventListener = this.updateHUD.bind(this);
 
     public register(el:HTMLElement){
         this.HUD = el;
@@ -77,11 +78,7 @@ class Pawn extends HTMLElement{
         const tabletopPos = tabletop.convertViewportToTabletopPosition(x, y);
         const origin = { x: tabletopPos[0], y: tabletopPos[1] };
         deathCanvas.spawnConfetti(origin);
-    }
-
-    connectedCallback(){
-        this.addEventListener("mouseenter", this.checkHUD);
-    }    
+    }  
 }
 customElements.define("tabletop-pawn", Pawn);
 

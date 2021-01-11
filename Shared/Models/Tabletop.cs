@@ -19,7 +19,7 @@ namespace FreeTabletop.Shared.Models
         public List<Message> Messages = new List<Message>();
         public string GameMasterUID { get; set; }
         public int CellSize { get; set; }
-        public int[] Size { get; set; }
+        public int[] Size { get; set; } = {0,0};
         public List<Cell> Cells = new List<Cell>();
         public string MessageUID {get; set;}
         public bool IsHidden {get;set;} = false;
