@@ -240,6 +240,7 @@ namespace FreeTabletop.Client.Pages
             Tabletop.Cells = cells;
             Tabletop.FoVFoW = isAdvanced;
             Tabletop.PvP = isPVP;
+            Tabletop.GridType = gridType;
             StateHasChanged();
         }
 

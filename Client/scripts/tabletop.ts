@@ -452,6 +452,12 @@ class Tabletop extends HTMLElement{
                     }
                 }
             }
+            for (let i = 0; i < pawns.length; i++){
+                pawns[i].updateHUD();
+            }
+            for (let i = 0; i < lights.length; i++){
+                lights[i].updateHUD();
+            }
         }
         window.requestAnimationFrame(this.renderer.bind(this));
     }
@@ -586,7 +592,7 @@ class PingComponent extends HTMLElement{
         if (!localStorage.getItem("pingDisabled")){
             var audio = new Audio(`${location.origin}/sfx/ping.mp3`);
             audio.volume = 0.75;
-            audio.play();
+            audio.play().catch(e => {});
         }
         setTimeout(this.remove.bind(this), 2000);
     }

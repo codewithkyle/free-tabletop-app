@@ -171,22 +171,12 @@ namespace FreeTabletop.Server.Models
 
         public void ResetPlayerPawnPositions()
         {
-            int X = Convert.ToInt32(Math.Round((double)(Grid[0] / 2)));
-            int Y = Convert.ToInt32(Math.Round((double)(Grid[1] / 2)));
-            int StartingX = X;
-
             for (int i = 0; i < Players.Count; i++)
             {
                 if (!Players[i].IsGameMaster)
                 {
-                    int[] Position = {X, Y};
+                    int[] Position = {0, 0};
                     Players[i].UpdatePosition(Position);
-                    X++;
-                    if (X > Grid[0])
-                    {
-                        X = StartingX;
-                        Y++;
-                    }
                 }
             }
         }

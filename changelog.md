@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.8.2] - 2021-01-17
+
+### Fixed
+
+- added global error handling and error snack bar notification triggering
+- player position reset when loading new maps
+- player pawns no longer appear on gridless tabletops
+- HUD overflow right bugs
+
+### Removed
+
+- players no longer see creature nametags
+
 ## [0.8.1] - 2021-01-10
 
 ### Added
@@ -213,6 +226,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - initial beta build
 - CI/CD pipeline
 
+[0.8.2]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.8.1...v0.8.2
+[0.8.1]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.5.1...v0.6.0

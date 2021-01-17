@@ -311,7 +311,7 @@ class Notifier {
             }
         }
         if (snackbar.force && this.snackbarQueue.length) {
-            this.snackbarQueue[0].el.remove();
+            this.snackbarQueue[0]?.el?.remove();
             this.snackbarQueue.splice(0, 1, snackbar);
         }
         else {
