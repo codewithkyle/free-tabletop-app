@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- added global error handling and error snack bar notification tiggering
+- added global error handling and error snack bar notification triggering
 - player position reset when loading new maps
 - player pawns no longer appear on gridless tabletops
 - HUD overflow right bugs
