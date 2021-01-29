@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- creatures have nametags again
+
 ### Fixed
 
 - switched Contact Support link to open GitHub Issues instead of an email
