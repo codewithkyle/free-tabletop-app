@@ -719,6 +719,24 @@
                 }
             }
         </dd>
+        <dt>Dice:</dt>
+        <dd>
+            @if(@Tabletop.IsGameMaster){
+                <button class="bttn p-0.25" @onclick="Hub.ToggleDiceRolls" tooltip="@(Tabletop.IsLocalDiceRolls ? "Local" : "Global") dice roll announcements">
+                    @if(@Tabletop.IsLocalDiceRolls){
+                        <span>Local</span>
+                    }else{
+                        <span>Global</span>
+                    }
+                </button>
+            }else{
+                @if(@Tabletop.IsLocalDiceRolls){
+                    <span class="pl-0.5">Local</span>
+                }else{
+                    <span class="pl-0.5">Global</span>
+                }
+            }
+        </dd>
     </dl>
     <div class="entity-spawn-modal" style="top:0;left:0;transform: translate(@(RightClickPosition[0] != -1 ? RightClickPosition[0].ToString() : "208")px, @(RightClickPosition[1] != -1 ? RightClickPosition[1].ToString() + "px" : "calc(36px + 1rem)"));@(EntitySpawnMenuOpen ? "visibility:visible;opacity:1;" : "visibility:hidden;opacity:0;")">
         <button @onclick="OpenMonsterLookupMenu">

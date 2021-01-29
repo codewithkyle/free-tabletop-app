@@ -9,7 +9,7 @@ namespace FreeTabletop.Server.Models
         public string RoomCode { get; set; }
         public List<Player> Players = new List<Player>();
         public bool IsLocked = false;
-
+        public bool IsLocalDiceRolls = false;
         public String ImageURL;
         public string GridType = "1";
 
@@ -72,14 +72,12 @@ namespace FreeTabletop.Server.Models
 
         public void ToggleLock()
         {
-            if (IsLocked)
-            {
-                IsLocked = false;
-            }
-            else
-            {
-                IsLocked = true;
-            }
+            IsLocked ^= true;
+        }
+
+        public void ToggleDiceRolls()
+        {
+            IsLocalDiceRolls ^= true;
         }
 
         public void KickPlayer(Player player)

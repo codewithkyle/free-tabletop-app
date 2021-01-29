@@ -936,5 +936,11 @@ namespace FreeTabletop.Client.Pages
         {
             PvP ^= true;
         }
+
+        public void UpdateDiceRolls(bool isLocal)
+        {
+            Tabletop.IsLocalDiceRolls = isLocal;
+            StateHasChanged();
+        }
     }
 }

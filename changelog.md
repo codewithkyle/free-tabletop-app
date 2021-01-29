@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - creatures have nametags again
+- Game Masters can switch dice roll announcements from "Global" to "Local" in the room info menu
 
 ### Fixed
 
