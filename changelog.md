@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- switched Contact Support link to open GitHub Issues instead of an email
+
 ## [0.8.2] - 2021-01-17
 
 ### Fixed
