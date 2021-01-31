@@ -47,6 +47,9 @@ class CreatureManager{
     private async inbox(e:MessageEvent){
         const data = e.data;
         switch (data.type) {
+            case "delete":
+                await this.db.delete("creatures", data.index);
+                break;
             case "monster-manual-search":
                 this.monsterManualSearch(data.query).then((creatures) => {
                     // @ts-ignore

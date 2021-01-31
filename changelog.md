@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - creatures have nametags again
 - Game Masters can switch dice roll announcements from "Global" to "Local" in the room info menu
 - full suite of monster data (xp, speed, languages, challenge rating, etc)
+- monster manual
+    - search creatures
+    - delete creature
 
 ### Fixed
 

@@ -137,3 +137,17 @@ function MonsterManualSearch(query:string):Promise<Array<Creature>>{
         }
     });
 }
+
+function DeleteCreature(index:string){
+    if (!creatureWorkerReady) {
+        queue.push({
+            type: "delete",
+            index: index,
+        });
+    } else {
+        sendDataToWorker({
+            type: "delete",
+            index: index,
+        });
+    }
+}
