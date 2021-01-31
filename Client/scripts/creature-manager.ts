@@ -51,7 +51,7 @@ function LookupCreature(name: string) {
     });
 }
 
-async function AddCustomCreature(creature: string) {
+async function AddCustomCreature(creature: object) {
     if (!creatureWorker) {
         return;
     }

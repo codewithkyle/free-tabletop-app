@@ -366,7 +366,7 @@ namespace FreeTabletop.Client.Pages
                 CustomCreature.Position = RightClickGridPosition;
                 Hub.SpawnCreature(CustomCreature);
                 JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
-                JSRuntime.InvokeVoidAsync("AddCustomCreature", JsonConvert.SerializeObject(CustomCreature));
+                JSRuntime.InvokeVoidAsync("AddCustomCreature", CustomCreature);
                 CloseAllModals();
             }
         }

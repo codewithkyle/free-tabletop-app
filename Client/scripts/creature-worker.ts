@@ -64,22 +64,7 @@ class CreatureManager{
                 });
                 break;
             case "add":
-                console.warn("Adding custom creatures hasn't been implemented yet");
-                // const creature = JSON.parse(data.creature);
-                // const newCreature: Creature = {
-                //     name: creature.BaseName.trim().toLowerCase(),
-                //     ac: creature.BaseAC,
-                //     hp: creature.BaseHP,
-                //     str: 0,
-                //     int: 0,
-                //     wis: 0,
-                //     cha: 0,
-                //     dex: 0,
-                //     con: 0,
-                //     actions: JSON.stringify([]),
-                //     abilities: JSON.stringify([]),
-                // };
-                // PutCreaturesInLocalDB([newCreature]);
+                this.addCreature(data.creature);
                 break;
             case "get":
                 const creatures = await this.getAllCreatureNames();
@@ -102,6 +87,45 @@ class CreatureManager{
                 console.warn(`Uncaught DB Worker message type: ${data.type}`);
                 break;
         }
+    }
+
+    private addCreature(creature){
+        this.db.put("creatures", {
+            index: this.toKebabCase(creature.baseName),
+            name: creature.baseName,
+            size: null,
+            type: null,
+            subtype: null,
+            alignment: null,
+            ac: creature.baseAC,
+            hp: creature.baseHP,
+            hitDice: null,
+            speed: null,
+            str: null,
+            dex: null,
+            con: null,
+            int: null,
+            wis: null,
+            cha: null,
+            proficiencies: null,
+            vulnerabilities: null,
+            resistances: null,
+            immunities: null,
+            senses: null,
+            languages: null,
+            abilities: null,
+            actions: null,
+            legendaryActions: null,
+            cr: null,
+            xp: null,
+        });
+    }
+
+    private toKebabCase(str:string){
+        return str
+        .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+        .map(x => x.toLowerCase())
+        .join('-');
     }
 
     private lookupCreatureStats(name:string){
@@ -164,19 +188,6 @@ class CreatureManager{
 			},
 		});
 		const creatures = await this.fetchCreatures();
-		const cached = await this.getCreaturesFromIDB();
-		for (let k = 0; k < cached.length; k++) {
-			let wasRemoved = true;
-			for (let i = 0; i < creatures.length; i++) {
-				if (creatures[i].index === cached[k].index) {
-					wasRemoved = false;
-					break;
-				}
-			}
-			if (wasRemoved) {
-				this.db.delete("creatures", cached[k].index);
-			}
-		}
 		for (let i = 0; i < creatures.length; i++) {
 			this.db.put("creatures", creatures[i]);
 		}
