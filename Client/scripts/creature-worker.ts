@@ -1,222 +1,276 @@
 type Creature = {
+    index: string;
     name: string;
-    ac: number;
-    hp: number;
-    str: number;
-    int: number;
-    wis: number;
-    cha: number;
-    dex: number;
-    con: number;
-    actions: string;
+    size: string;
+    type: string;
+    subtype: string;
+    alignment: string;
+    ac: string;
+    hp: string;
+    hitDice: string;
+    speed: string;
+    str: string;
+    dex: string;
+    con: string;
+    int: string;
+    wis: string;
+    proficiencies: string;
+    vulnerabilities: string;
+    resistances: string;
+    immunities: string;
+    senses: string;
+    languages: string;
     abilities: string;
+    actions: string;
+    legendaryActions: string;
+    cr: string;
+    xp: string;
 };
 
-async function GetMonstersFromAPI() {
-    const request = await fetch("https://www.dnd5eapi.co/api/monsters", {
-        method: "GET",
-        headers: new Headers({
-            Accept: "application/json",
-        }),
-    });
-    let creatures = [];
-    if (request.ok) {
-        const response = await request.json();
-        creatures = response?.results || [];
+// @ts-ignore
+self.importScripts("idb.js");
+// @ts-ignore
+self.importScripts("fuzzy-search.js");
+
+declare const fuzzysort:any;
+
+class CreatureManager{
+    private db: any;
+
+    constructor(){
+        self.onmessage = this.inbox.bind(this);
+        this.db = null;
+        this.main();
     }
-    return creatures;
-}
 
-function GetMonsterDataFromAPI(creatures: Array<{ name: string; url: string }>): Promise<Array<Creature>> {
-    return new Promise((resolve) => {
-        const creatureData: Array<Creature> = [];
-        let resolved = 0;
-        for (let i = 0; i < creatures.length; i++) {
-            fetch(`https://www.dnd5eapi.co/${creatures[i].url.replace(/^(\/)/, "")}`)
-                .then((request) => request.json())
-                .then((response) => {
-                    const actions = [];
-                    const abilities = [];
-                    for (let i = 0; i < response.actions.length; i++) {
-                        actions.push({
-                            Name: response.actions[i].name,
-                            Description: response.actions[i].desc,
-                        });
-                    }
-                    for (let i = 0; i < response.special_abilities.length; i++) {
-                        abilities.push({
-                            Name: response.special_abilities[i].name,
-                            Description: response.special_abilities[i].desc,
-                        });
-                    }
-                    const creature: Creature = {
-                        name: response.name.toLowerCase(),
-                        ac: response.armor_class,
-                        hp: response.hit_points,
-                        str: response.strength,
-                        int: response.intelligence,
-                        wis: response.wisdom,
-                        cha: response.charisma,
-                        dex: response.dexterity,
-                        con: response.constitution,
-                        actions: JSON.stringify(actions),
-                        abilities: JSON.stringify(abilities),
-                    };
-                    creatureData.push(creature);
-                    resolved++;
-                })
-                .catch(() => {
-                    resolved++;
-                })
-                .finally(() => {
-                    if (resolved === creatures.length) {
-                        resolve(creatureData);
-                    }
+    private async inbox(e:MessageEvent){
+        const data = e.data;
+        switch (data.type) {
+            case "lookup":
+                console.warn("Creature lookup hasn't been implemented yet");
+                // LookupCreatureInDB(data.query).then((creatureData: Creature) => {
+                //     const creature = {
+                //         BaseHP: creatureData.hp,
+                //         BaseAC: creatureData.ac,
+                //         BaseName: creatureData.name,
+                //         HP: creatureData.hp,
+                //         AC: creatureData.ac,
+                //         Strength: creatureData.str,
+                //         Dexterity: creatureData.dex,
+                //         Intelligence: creatureData.int,
+                //         Constitution: creatureData.con,
+                //         Wisdom: creatureData.wis,
+                //         Charisma: creatureData.cha,
+                //         ActionsString: creatureData.actions,
+                //         AbilitiesString: creatureData.abilities,
+                //     };
+                //     // @ts-ignore
+                //     self.postMessage({
+                //         creature: creature,
+                //         messageUid: data.messageUid,
+                //     });
+                // });
+                break;
+            case "add":
+                console.warn("Adding custom creatures hasn't been implemented yet");
+                // const creature = JSON.parse(data.creature);
+                // const newCreature: Creature = {
+                //     name: creature.BaseName.trim().toLowerCase(),
+                //     ac: creature.BaseAC,
+                //     hp: creature.BaseHP,
+                //     str: 0,
+                //     int: 0,
+                //     wis: 0,
+                //     cha: 0,
+                //     dex: 0,
+                //     con: 0,
+                //     actions: JSON.stringify([]),
+                //     abilities: JSON.stringify([]),
+                // };
+                // PutCreaturesInLocalDB([newCreature]);
+                break;
+            case "get":
+                const creatures = await this.getAllCreatureNames();
+                // @ts-ignore
+                self.postMessage({
+                    data: creatures,
+                    messageId: data.messageId,
                 });
+                break;
+            case "search":
+                this.searchCreaturesByName(data.query).then((creatures) => {
+                    // @ts-ignore
+                    self.postMessage({
+                        data: creatures,
+                        messageId: data.messageId,
+                    });
+                });
+                break;
+            default:
+                console.warn(`Uncaught DB Worker message type: ${data.type}`);
+                break;
         }
-    });
-}
+    }
 
-function PutCreaturesInLocalDB(creatures: Array<Creature>): Promise<{}> {
-    return new Promise((resolve) => {
-        let stored = 0;
-        const creatureStore = idb.transaction("creatures", "readwrite").objectStore("creatures");
-        for (let i = 0; i < creatures.length; i++) {
-            const request = creatureStore.put(creatures[i]);
-            request.onsuccess = () => {
-                stored++;
-                if (stored === creatures.length) {
-                    resolve();
-                }
-            };
-            request.onerror = (e) => {
-                stored++;
-                if (stored === creatures.length) {
-                    resolve();
-                }
-            };
-        }
-    });
-}
-
-async function SyncMonstersWithAPI() {
-    let creatures = await GetMonstersFromAPI();
-    creatures = await GetMonsterDataFromAPI(creatures);
-    await PutCreaturesInLocalDB(creatures);
-}
-
-function LookupCreatureInDB(query: string) {
-    return new Promise((resolve) => {
-        let creature = {};
-        const creatureStore = idb.transaction("creatures", "readonly").objectStore("creatures");
-        const request = creatureStore.get(query);
-        request.onsuccess = () => {
-            creature = request.result;
-            resolve(creature);
-        };
-        request.onerror = () => {
-            resolve(creature);
-        };
-    });
-}
-
-function GetAllCreatures() {
-    return new Promise((resolve) => {
-        const creatures = [];
-        const creatureStore = idb.transaction("creatures", "readonly").objectStore("creatures");
-        const request = creatureStore.getAll();
-        request.onsuccess = () => {
-            const results = request.result;
+    private searchCreaturesByName(query:string){
+        return new Promise(async (resolve) => {
+            const creatures = [];
+            const creatureNames = await this.getAllCreatureNames();
+            const results = fuzzysort.go(query, creatureNames, {
+                threshold: -10000,
+                limit: Infinity,
+                allowTypo: false,
+            });
             for (let i = 0; i < results.length; i++) {
-                creatures.push(results[i].name);
+                creatures.push(results[i].target);
             }
             resolve(creatures);
-        };
-        request.onerror = () => {
-            resolve(creatures);
-        };
-    });
-}
-
-const idbRequest: any = indexedDB.open("monsters", 1);
-let idb: IDBDatabase = null;
-
-idbRequest.onupgradeneeded = (event) => {
-    idb = event.target.result;
-
-    var objectStore = idb.createObjectStore("creatures", { keyPath: "name" });
-    objectStore.createIndex("name", "name", { unique: true });
-    objectStore.createIndex("hp", "hp", { unique: false });
-    objectStore.createIndex("ac", "ac", { unique: false });
-    objectStore.createIndex("str", "str", { unique: false });
-    objectStore.createIndex("int", "int", { unique: false });
-    objectStore.createIndex("wis", "wis", { unique: false });
-    objectStore.createIndex("cha", "cha", { unique: false });
-    objectStore.createIndex("dex", "dex", { unique: false });
-    objectStore.createIndex("con", "con", { unique: false });
-    objectStore.createIndex("actions", "actions", { unique: false });
-    objectStore.createIndex("abilities", "abilities", { unique: false });
-};
-idbRequest.onsuccess = (event) => {
-    idb = event.target.result;
-    SyncMonstersWithAPI();
-};
-
-self.onmessage = (e: MessageEvent) => {
-    const data = e.data;
-    switch (data.type) {
-        case "lookup":
-            LookupCreatureInDB(data.query).then((creatureData: Creature) => {
-                const creature = {
-                    BaseHP: creatureData.hp,
-                    BaseAC: creatureData.ac,
-                    BaseName: creatureData.name,
-                    HP: creatureData.hp,
-                    AC: creatureData.ac,
-                    Strength: creatureData.str,
-                    Dexterity: creatureData.dex,
-                    Intelligence: creatureData.int,
-                    Constitution: creatureData.con,
-                    Wisdom: creatureData.wis,
-                    Charisma: creatureData.cha,
-                    ActionsString: creatureData.actions,
-                    AbilitiesString: creatureData.abilities,
-                };
-                // @ts-ignore
-                self.postMessage({
-                    creature: creature,
-                    messageUid: data.messageUid,
-                });
-            });
-            break;
-        case "add":
-            const creature = JSON.parse(data.creature);
-            const newCreature: Creature = {
-                name: creature.BaseName.trim().toLowerCase(),
-                ac: creature.BaseAC,
-                hp: creature.BaseHP,
-                str: 0,
-                int: 0,
-                wis: 0,
-                cha: 0,
-                dex: 0,
-                con: 0,
-                actions: JSON.stringify([]),
-                abilities: JSON.stringify([]),
-            };
-            PutCreaturesInLocalDB([newCreature]);
-            break;
-        case "get":
-            GetAllCreatures().then((creatures) => {
-                // @ts-ignore
-                self.postMessage({
-                    creatures: creatures,
-                    messageUid: data.messageUid,
-                });
-            });
-            break;
-        default:
-            console.warn(`Uncaught DB Worker message type: ${data.type}`);
-            break;
+        });
     }
-};
+
+    private async main() {
+		// @ts-ignore
+		this.db = await idb.openDB("entities", 1, {
+			upgrade(db) {
+				const store = db.createObjectStore("creatures", {
+					keyPath: "index",
+				});
+				store.createIndex("index", "index");
+                store.createIndex("name", "name");
+                store.createIndex("size", "size");
+                store.createIndex("type", "type");
+                store.createIndex("subtype", "subtype");
+                store.createIndex("alignment", "alignment");
+                store.createIndex("ac", "ac");
+                store.createIndex("hp", "hp");
+                store.createIndex("hitDice", "hitDice");
+                store.createIndex("speed", "speed");
+                store.createIndex("str", "str");
+                store.createIndex("dex", "dex");
+                store.createIndex("con", "con");
+                store.createIndex("int", "int");
+                store.createIndex("wis", "wis");
+                store.createIndex("proficiencies", "proficiencies");
+                store.createIndex("vulnerabilities", "vulnerabilities");
+                store.createIndex("resistances", "resistances");
+                store.createIndex("immunities", "immunities");
+                store.createIndex("senses", "senses");
+                store.createIndex("languages", "languages");
+                store.createIndex("abilities", "abilities");
+                store.createIndex("actions", "actions");
+                store.createIndex("legendaryActions", "legendaryActions");
+                store.createIndex("cr", "cr");
+                store.createIndex("xp", "xp");
+			},
+		});
+		const creatures = await this.fetchCreatures();
+		const cached = await this.getCreaturesFromIDB();
+		for (let k = 0; k < cached.length; k++) {
+			let wasRemoved = true;
+			for (let i = 0; i < creatures.length; i++) {
+				if (creatures[i].index === cached[k].index) {
+					wasRemoved = false;
+					break;
+				}
+			}
+			if (wasRemoved) {
+				this.db.delete("creatures", cached[k].index);
+			}
+		}
+		for (let i = 0; i < creatures.length; i++) {
+			this.db.put("creatures", creatures[i]);
+		}
+    }
+
+    private async getAllCreatureNames(): Promise<Array<string>>{
+        const results = await this.db.getAllFromIndex("creatures", "name");
+        const creatures = [];
+        for (let i = 0; i < results.length; i++){
+            creatures.push(results[i].name);
+        }
+        return creatures;
+    }
+
+    private async getCreaturesFromIDB(): Promise<Array<Creature>> {
+		const creatures: Array<Creature> = await this.db.getAllFromIndex("creatures", "index");
+		return creatures;
+	}
+    
+    private async fetchCreatures(): Promise<Array<Creature>>{
+        const request = await fetch("https://www.dnd5eapi.co/api/monsters", {
+            method: "GET",
+            headers: new Headers({
+                Accept: "application/json",
+            }),
+        });
+        let creatures:Array<Creature> = [];
+        if (request.ok) {
+            const response = await request.json();
+            if (response?.results?.length){
+                creatures = await this.fetchCreatureData(response.results);
+            }
+        }
+        return creatures;
+    }
+
+    private fetchCreatureData(creatures: Array<{ name: string; url: string }>): Promise<Array<Creature>> {
+        return new Promise((resolve) => {
+            const creatureData: Array<Creature> = [];
+            let resolved = 0;
+            for (let i = 0; i < creatures.length; i++) {
+                fetch(`https://www.dnd5eapi.co/${creatures[i].url.replace(/^(\/)/, "")}`)
+                    .then((request) => request.json())
+                    .then((response) => {
+
+                        const immunities = [];
+                        response["damage_immunities"].map(value => {
+                            immunities.push(value);
+                        });
+                        response["condition_immunities"].map(value => {
+                            immunities.push(value);
+                        });
+
+                        const creature:Creature = {
+                            index: response.index,
+                            name: response.name,
+                            size: response.size,
+                            type: response.type,
+                            subtype: response.subtype,
+                            alignment: response.alignment,
+                            ac: response["armor_class"],
+                            hp: response["hit_points"],
+                            hitDice: response["hit_dice"],
+                            speed: JSON.stringify(response["speed"]),
+                            str: response.strength,
+                            dex: response.dexterity,
+                            con: response.constitution,
+                            int: response.intelligence,
+                            wis: response.wisdom,
+                            proficiencies: JSON.stringify(response["proficiencies"]),
+                            vulnerabilities: JSON.stringify(response["damage_vulnerabilities"]),
+                            resistances: JSON.stringify(response["damage_resistances"]),
+                            immunities: JSON.stringify(immunities),
+                            senses: JSON.stringify(response.senses),
+                            languages: response.languages,
+                            abilities: JSON.stringify(response["special_abilities"]),
+                            actions: JSON.stringify(response.actions),
+                            legendaryActions: JSON.stringify(response["legendary_actions"]),
+                            cr: response["challenge_rating"],
+                            xp: response.xp,
+                        };
+                        creatureData.push(creature);
+                        resolved++;
+                    })
+                    .catch(() => {
+                        resolved++;
+                    })
+                    .finally(() => {
+                        if (resolved === creatures.length) {
+                            resolve(creatureData);
+                        }
+                    });
+            }
+        });
+    }
+}
+new CreatureManager();

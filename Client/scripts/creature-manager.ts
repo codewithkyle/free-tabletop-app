@@ -1,9 +1,40 @@
 let creatureWorker: Worker = null;
-let lastCreatureWorkerMessageUID = null;
+const promises = {};
+let messageId = 0;
+
+function stashMessageCallback(messageId, resolve, reject){
+    promises[`${messageId}`] = {
+        resolve: resolve,
+        reject: reject,
+    };
+}
+
+function sendDataToWorker(data, resolve = null, reject = () => {}){
+    messageId++;
+    if (resolve !== null){
+        stashMessageCallback(messageId, resolve, reject);
+    }
+    data.messageId = messageId;
+    creatureWorker.postMessage(data);
+}
+
+function handleDataFromWorker(e:MessageEvent){
+    const { data } = e;
+    const callback = promises?.[data.messageId] ?? null;
+    if (callback){
+        if (data?.type === "error"){
+            promises[data.messageId].reject(data.error);
+        } else {
+            promises[data.messageId].resolve(data?.data ?? null);
+        }
+        delete promises[data.messageId];
+    }
+}
 
 async function SyncMonsterData() {
     if (!creatureWorker) {
         creatureWorker = new Worker(`/js/creature-worker.js`);
+        creatureWorker.onmessage = handleDataFromWorker;
     }
     return;
 }
@@ -13,22 +44,10 @@ function LookupCreature(query: string) {
         if (!creatureWorker) {
             resolve([]);
         }
-        lastCreatureWorkerMessageUID = uid();
-        creatureWorker.onmessage = (e: MessageEvent) => {
-            const data = e.data;
-            if (data.messageUid === lastCreatureWorkerMessageUID) {
-                const creature = { ...data.creature };
-                creature.BaseName = toUpper(creature.BaseName);
-                resolve(JSON.stringify(creature));
-            } else {
-                resolve(JSON.stringify([]));
-            }
-        };
-        creatureWorker.postMessage({
+        sendDataToWorker({
             type: "lookup",
             query: query,
-            messageUid: lastCreatureWorkerMessageUID,
-        });
+        }, resolve);
     });
 }
 
@@ -36,7 +55,7 @@ async function AddCustomCreature(creature: string) {
     if (!creatureWorker) {
         return;
     }
-    creatureWorker.postMessage({
+    sendDataToWorker({
         type: "add",
         creature: creature,
     });
@@ -48,18 +67,20 @@ function GetCreatures() {
         if (!creatureWorker) {
             resolve([]);
         }
-        lastCreatureWorkerMessageUID = uid();
-        creatureWorker.onmessage = (e: MessageEvent) => {
-            const data = e.data;
-            if (data.messageUid === lastCreatureWorkerMessageUID) {
-                resolve(JSON.stringify(data.creatures));
-            } else {
-                resolve(JSON.stringify([]));
-            }
-        };
-        creatureWorker.postMessage({
+        sendDataToWorker({
             type: "get",
-            messageUid: lastCreatureWorkerMessageUID,
-        });
+        }, resolve);
+    });
+}
+
+function CreatureSearch(query:string){
+    return new Promise((resolve) => {
+        if (!creatureWorker) {
+            resolve([]);
+        }
+        sendDataToWorker({
+            type: "search",
+            query: query,
+        }, resolve);
     });
 }

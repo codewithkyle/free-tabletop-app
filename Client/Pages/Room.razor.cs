@@ -304,27 +304,17 @@ namespace FreeTabletop.Client.Pages
         public async Task OpenMonsterLookupMenu()
         {
             CloseAllModals();
-            string AllCreaturesJSON = await JSRuntime.InvokeAsync<string>("GetCreatures");
-            AllCreatures = JsonConvert.DeserializeObject<string[]>(AllCreaturesJSON);
+            AllCreatures = await JSRuntime.InvokeAsync<string[]>("GetCreatures");
             MonsterLookupMenuOpen = true;
             StateHasChanged();
         }
 
-        public void LookupMonster(ChangeEventArgs e)
+        public async Task LookupMonster(ChangeEventArgs e)
         {
             string Value = e.Value.ToString().ToLower().Trim();
             if (Value != "")
             {
-                Regex expression = new Regex(Value);
-                List<string> Results = new List<string>();
-                for (int i = 0; i < AllCreatures.Length; i++)
-                {
-                    if (expression.IsMatch(AllCreatures[i]))
-                    {
-                        Results.Add(AllCreatures[i]);
-                    }
-                }
-                Creatures = Results;
+                Creatures = await JSRuntime.InvokeAsync<List<string>>("CreatureSearch", Value);
             }
             else
             {
