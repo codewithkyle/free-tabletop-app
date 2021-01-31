@@ -326,8 +326,7 @@ namespace FreeTabletop.Client.Pages
         public async Task SpawnCreature(int index)
         {
             string CreatureName = Creatures[index];
-            string CreatureJSON = await JSRuntime.InvokeAsync<string>("LookupCreature", CreatureName);
-            Creature Creature = JsonConvert.DeserializeObject<Creature>(CreatureJSON);
+            Creature Creature = await JSRuntime.InvokeAsync<Creature>("LookupCreature", CreatureName);
             Creature.Main(RightClickGridPosition);
             Hub.SpawnCreature(Creature);
             await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");

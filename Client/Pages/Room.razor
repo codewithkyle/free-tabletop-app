@@ -129,8 +129,6 @@
                                     <div flex="row nowrap items-center">
                                         <button data-index="1" class="js-view-button dot" aria-label="switch to view 1"></button>
                                         <button data-index="2" class="js-view-button dot" aria-label="switch to view 2"></button>
-                                        <button data-index="3" class="js-view-button dot" aria-label="switch to view 3"></button>
-                                        <button data-index="4" class="js-view-button dot" aria-label="switch to view 4"></button>
                                         <button class="mx-0.25" tooltip aria-label="@(Creature.IsVisible ? "Hide" : "Show") @Creature.Name" @onclick="@(e => ToggleEntityVisibility(Creature.UID))">
                                             @if(Creature.IsVisible){
                                                 <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="eye" class="svg-inline--fa fa-eye fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z"></path></svg>
@@ -161,49 +159,6 @@
                                         </div>
                                     </div>
                                     <div data-view="2">
-                                        <div class="w-full stat-block" style="border-width:1px 0 0 1px;border-style:solid;border-color:var(--grey-300);">
-                                            <div></div>
-                                            <div class="font-grey-800 font-medium">Score</div>
-                                            <div class="font-grey-800 font-medium">Modifer</div>
-                                            
-                                            <div class="font-grey-800 font-medium text-uppercase text-left">Str</div>
-                                            <div>@Creature.Strength</div>
-                                            <div>@Creature.CalculateModifier(Creature.Strength)</div>
-
-                                            <div class="font-grey-800 font-medium text-uppercase text-left">Dex</div>
-                                            <div>@Creature.Dexterity</div>
-                                            <div>@Creature.CalculateModifier(Creature.Dexterity)</div>
-
-                                            <div class="font-grey-800 font-medium text-uppercase text-left">Con</div>
-                                            <div>@Creature.Constitution</div>
-                                            <div>@Creature.CalculateModifier(Creature.Constitution)</div>
-                                            
-                                            <div class="font-grey-800 font-medium text-uppercase text-left">Int</div>
-                                            <div>@Creature.Intelligence</div>
-                                            <div>@Creature.CalculateModifier(Creature.Intelligence)</div>
-
-                                            <div class="font-grey-800 font-medium text-uppercase text-left">Wis</div>
-                                            <div>@Creature.Wisdom</div>
-                                            <div>@Creature.CalculateModifier(Creature.Wisdom)</div>
-
-                                            <div class="font-grey-800 font-medium text-uppercase text-left">Chr</div>
-                                            <div>@Creature.Charisma</div>
-                                            <div>@Creature.CalculateModifier(Creature.Charisma)</div>
-                                        </div>
-                                    </div>
-                                    <div data-view="3">
-                                        <dl class="w-full" style="max-height: 150px;overflow-y:auto;">
-                                            @for(int k = 0; k < Creature.Actions.Count; k++){
-                                                <dt class="block w-full line-loose font-sm font-grey-800 font-medium">@Creature.Actions[k].Name</dt>
-                                                <dd class="block w-full line-snug font-xs font-grey-700 mb-0.5">@Creature.Actions[k].Description</dd>
-                                            }
-                                            @for(int k = 0; k < Creature.Abilities.Count; k++){
-                                                <dt class="block w-full line-loose font-sm font-grey-800 font-medium">@Creature.Abilities[k].Name</dt>
-                                                <dd class="block w-full line-snug font-xs font-grey-700 mb-0.5">@Creature.Abilities[k].Description</dd>
-                                            }
-                                        </dl>
-                                    </div>
-                                    <div data-view="4">
                                         <div class="w-full px-0.5" style="max-height:150px;overflow-y:scroll;">
                                             <div class="lightswitch">
                                                 <input id="@Creature.UID-bleeding" type="checkbox" @onchange="@(e => ToggleCondition(Creature, "Bleeding"))" />

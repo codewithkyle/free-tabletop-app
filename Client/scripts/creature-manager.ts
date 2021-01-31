@@ -39,14 +39,14 @@ async function SyncMonsterData() {
     return;
 }
 
-function LookupCreature(query: string) {
+function LookupCreature(name: string) {
     return new Promise((resolve) => {
         if (!creatureWorker) {
             resolve([]);
         }
         sendDataToWorker({
             type: "lookup",
-            query: query,
+            name: name,
         }, resolve);
     });
 }

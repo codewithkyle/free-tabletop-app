@@ -18,6 +18,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - switched Contact Support link to open GitHub Issues instead of an email
 - improved creature lookup performance & search result quality
 
+### Removed
+
+- creature stats and abilities HUD (moved to monster manual)
+
 ## [0.8.2] - 2021-01-17
 
 ### Fixed

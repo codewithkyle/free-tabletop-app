@@ -14,6 +14,7 @@ type Creature = {
     con: string;
     int: string;
     wis: string;
+    cha: string;
     proficiencies: string;
     vulnerabilities: string;
     resistances: string;
@@ -47,29 +48,20 @@ class CreatureManager{
         const data = e.data;
         switch (data.type) {
             case "lookup":
-                console.warn("Creature lookup hasn't been implemented yet");
-                // LookupCreatureInDB(data.query).then((creatureData: Creature) => {
-                //     const creature = {
-                //         BaseHP: creatureData.hp,
-                //         BaseAC: creatureData.ac,
-                //         BaseName: creatureData.name,
-                //         HP: creatureData.hp,
-                //         AC: creatureData.ac,
-                //         Strength: creatureData.str,
-                //         Dexterity: creatureData.dex,
-                //         Intelligence: creatureData.int,
-                //         Constitution: creatureData.con,
-                //         Wisdom: creatureData.wis,
-                //         Charisma: creatureData.cha,
-                //         ActionsString: creatureData.actions,
-                //         AbilitiesString: creatureData.abilities,
-                //     };
-                //     // @ts-ignore
-                //     self.postMessage({
-                //         creature: creature,
-                //         messageUid: data.messageUid,
-                //     });
-                // });
+                this.lookupCreatureStats(data.name).then((creatureData: Creature) => {
+                    const creature = {
+                        BaseHP: creatureData.hp,
+                        BaseAC: creatureData.ac,
+                        BaseName: creatureData.name,
+                        HP: creatureData.hp,
+                        AC: creatureData.ac,
+                    };
+                    // @ts-ignore
+                    self.postMessage({
+                        data: creature,
+                        messageId: data.messageId,
+                    });
+                });
                 break;
             case "add":
                 console.warn("Adding custom creatures hasn't been implemented yet");
@@ -112,6 +104,13 @@ class CreatureManager{
         }
     }
 
+    private lookupCreatureStats(name:string){
+        return new Promise(async (resolve) => {
+            const creature = this.db.getFromIndex("creatures", "name", name);
+            resolve(creature);
+        });
+    }
+
     private searchCreaturesByName(query:string){
         return new Promise(async (resolve) => {
             const creatures = [];
@@ -150,6 +149,7 @@ class CreatureManager{
                 store.createIndex("con", "con");
                 store.createIndex("int", "int");
                 store.createIndex("wis", "wis");
+                store.createIndex("cha", "cha");
                 store.createIndex("proficiencies", "proficiencies");
                 store.createIndex("vulnerabilities", "vulnerabilities");
                 store.createIndex("resistances", "resistances");
@@ -246,6 +246,7 @@ class CreatureManager{
                             con: response.constitution,
                             int: response.intelligence,
                             wis: response.wisdom,
+                            cha: response.charisma,
                             proficiencies: JSON.stringify(response["proficiencies"]),
                             vulnerabilities: JSON.stringify(response["damage_vulnerabilities"]),
                             resistances: JSON.stringify(response["damage_resistances"]),
