@@ -83,6 +83,7 @@ namespace FreeTabletop.Client.Pages
         public bool FOVFOW = false;
         public bool PvP = false;
         public bool ImageHistoryOpen = false;
+        public bool MonsterManualOpen = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -431,15 +432,15 @@ namespace FreeTabletop.Client.Pages
         public void ToggleDiceMenu()
         {
             CloseAllModals();
-            if (DiceMenuOpen)
-            {
-                DiceMenuOpen = false;
-            }
-            else
-            {
-                DiceMenuOpen = true;
-            }
+            DiceMenuOpen ^= true;
             JSRuntime.InvokeVoidAsync("ToggleModal", "js-dice-modal", DiceMenuOpen);
+        }
+
+        public void ToggleMonsterManual()
+        {
+            CloseAllModals();
+            MonsterManualOpen ^= true;
+            JSRuntime.InvokeVoidAsync("ToggleModal", "js-monster-manual", MonsterManualOpen);
         }
 
         public void SetActiveDie(string die)

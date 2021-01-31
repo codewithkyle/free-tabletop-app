@@ -47,6 +47,15 @@ class CreatureManager{
     private async inbox(e:MessageEvent){
         const data = e.data;
         switch (data.type) {
+            case "monster-manual-search":
+                this.monsterManualSearch(data.query).then((creatures) => {
+                    // @ts-ignore
+                    self.postMessage({
+                        data: creatures,
+                        messageId: data.messageId,
+                    });
+                });
+                break;
             case "lookup":
                 this.lookupCreatureStats(data.name).then((creatureData: Creature) => {
                     const creature = {
@@ -87,6 +96,27 @@ class CreatureManager{
                 console.warn(`Uncaught DB Worker message type: ${data.type}`);
                 break;
         }
+    }
+
+    private monsterManualSearch(query:string){
+        return new Promise(async (resolve) => {
+            let creatures = [];
+            const creatureData = await this.getCreaturesFromIDB();
+            if (query){
+                const results = fuzzysort.go(query, creatureData, {
+                    threshold: -10000,
+                    limit: Infinity,
+                    allowTypo: false,
+                    key: "name",
+                });
+                for (let i = 0; i < results.length; i++) {
+                    creatures.push(results[i].obj);
+                }
+            } else {
+                creatures = creatureData;
+            }
+            resolve(creatures);
+        });
     }
 
     private addCreature(creature){
@@ -190,7 +220,9 @@ class CreatureManager{
 		const creatures = await this.fetchCreatures();
 		for (let i = 0; i < creatures.length; i++) {
 			this.db.put("creatures", creatures[i]);
-		}
+        }
+        // @ts-ignore
+        self.postMessage({type: "ready"});
     }
 
     private async getAllCreatureNames(): Promise<Array<string>>{

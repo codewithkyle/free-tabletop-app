@@ -631,6 +631,16 @@ moveable-modal{
         }
     }
 
+    &.monster-manual{
+        background-color: var(--white);
+        border-radius: 0.25rem;
+        box-shadow: var(--shadow-lg);
+        position: absolute;
+        width: 768px;
+        overflow: hidden;
+        z-index: 1000;
+    }
+
     moveable-handle{
         cursor: move;
         width: 100%;
