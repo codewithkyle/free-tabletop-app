@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - monster manual
     - search creatures
     - delete creature
+    - view creature
+- creature stat block popup modal
 
 ### Fixed
 

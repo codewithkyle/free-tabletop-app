@@ -5,16 +5,16 @@ type Creature = {
     type: string;
     subtype: string;
     alignment: string;
-    ac: string;
-    hp: string;
+    ac: number;
+    hp: number;
     hitDice: string;
     speed: string;
-    str: string;
-    dex: string;
-    con: string;
-    int: string;
-    wis: string;
-    cha: string;
+    str: number;
+    dex: number;
+    con: number;
+    int: number;
+    wis: number;
+    cha: number;
     proficiencies: string;
     vulnerabilities: string;
     resistances: string;
@@ -24,8 +24,8 @@ type Creature = {
     abilities: string;
     actions: string;
     legendaryActions: string;
-    cr: string;
-    xp: string;
+    cr: number;
+    xp: number;
 };
 
 // @ts-ignore
@@ -301,7 +301,7 @@ class CreatureManager{
                             languages: response.languages,
                             abilities: JSON.stringify(response["special_abilities"]),
                             actions: JSON.stringify(response.actions),
-                            legendaryActions: JSON.stringify(response["legendary_actions"]),
+                            legendaryActions: JSON.stringify(response?.["legendary_actions"] ?? []),
                             cr: response["challenge_rating"],
                             xp: response.xp,
                         };

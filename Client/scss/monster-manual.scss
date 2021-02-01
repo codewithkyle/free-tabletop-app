@@ -11,23 +11,19 @@ monster-manual{
         border-radius: 0.25rem;
 
         .search{
-            width: 100%;
             flex: 1;
+            height: 36px;
+            line-height:36px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 1rem;
+            width: 100%;
+            font-size: var(--font-sm);
+            color: var(--grey-900);
+            transition: all 150ms var(--ease-in-out);
 
-            input{
-                height: 36px;
-                line-height:36px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                padding: 0 1rem;
-                width: 100%;
-                font-size: var(--font-sm);
-                color: var(--grey-900);
-                transition: all 150ms var(--ease-in-out);
-
-                &::placeholder {
-                    color: var(--grey-700);
-                }
+            &::placeholder {
+                color: var(--grey-700);
             }
         }
 
@@ -73,10 +69,11 @@ monster-manual{
 
     .container{
         overflow-y: scroll;
-        max-height: 500px;
+        max-height: 280px;
         margin-top: 0.5rem;
         border-radius: 0.25rem;
         border: 1px solid var(--grey-300);
+        overscroll-behavior: contain;
 
         table{
             display: block;
@@ -94,6 +91,7 @@ monster-manual{
                 flex-flow: row nowrap;
                 width: 100%;
                 padding: 0;
+                content-visibility: auto;
 
                 &:not(:last-of-type){
                     border-bottom: 1px solid var(--grey-300);
@@ -113,7 +111,6 @@ monster-manual{
                         width: 100%;
                         flex: 1;
                         justify-content: flex-start;
-                        padding: 0 0.5rem;
                     }
 
                     &:nth-child(2),
@@ -122,7 +119,26 @@ monster-manual{
                         width: 36px;
                     }
 
-                    button{
+                    .creature-name{
+                        transition: all 150ms var(--ease-in-out);
+                        cursor: pointer;
+                        height: 36px;
+                        color: var(--grey-700);
+                        padding: 0 0.5rem;
+                        width: 100%;
+                        text-align: left;
+
+                        &:hover,
+                        &:focus-visible{
+                            background-color: var(--grey-100);
+                        }
+
+                        &:active{
+                            background-color: var(--grey-200);
+                        }
+                    }
+
+                    .bttn{
                         border-left: 1px solid var(--grey-300);
                         transition: all 150ms var(--ease-in-out);
                         cursor: pointer;
