@@ -41,7 +41,6 @@ namespace FreeTabletop.Client.Pages
         public bool ChatMenuOpen = false;
 
         public List<string> Creatures = new List<string>();
-        public string[] AllCreatures { get; set; }
 
         public Creature CustomCreature = new Creature();
         public NPC NewNPC = new NPC();
@@ -302,10 +301,9 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public async Task OpenMonsterLookupMenu()
+        public void OpenMonsterLookupMenu()
         {
             CloseAllModals();
-            AllCreatures = await JSRuntime.InvokeAsync<string[]>("GetCreatures");
             MonsterLookupMenuOpen = true;
             StateHasChanged();
         }

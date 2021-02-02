@@ -59,18 +59,28 @@ async function SyncMonsterData() {
 
 function LookupCreature(name: string) {
     return new Promise((resolve) => {
-        if (!creatureWorkerReady) {
-            queue.push({
-                type: "lookup",
-                name: name,
-                resolve: resolve
+        new Promise((resolveFirst) => {
+            if (!creatureWorkerReady) {
+                queue.push({
+                    type: "lookup",
+                    name: name,
+                    resolve: resolveFirst
+                });
+            } else {
+                sendDataToWorker({
+                    type: "lookup",
+                    name: name,
+                }, resolveFirst);
+            }
+        }).then((creature:Creature) => {
+            resolve({
+                BaseHP: creature.hp,
+                BaseAC: creature.ac,
+                BaseName: creature.name,
+                HP: creature.hp,
+                AC: creature.ac,
             });
-        } else {
-            sendDataToWorker({
-                type: "lookup",
-                name: name,
-            }, resolve);
-        }
+        });
     });
 }
 
@@ -97,35 +107,28 @@ async function AddCustomCreature(creature) {
     return;
 }
 
-function GetCreatures() {
-    return new Promise((resolve) => {
-        if (!creatureWorkerReady) {
-            queue.push({
-                type: "get",
-                resolve: resolve
-            });
-        } else {
-            sendDataToWorker({
-                type: "get",
-            }, resolve);
-        }
-    });
-}
-
 function CreatureSearch(query:string){
     return new Promise((resolve) => {
-        if (!creatureWorkerReady) {
-            queue.push({
-                type: "search",
-                query: query,
-                resolve: resolve
-            });
-        } else {
-            sendDataToWorker({
-                type: "search",
-            query: query,
-            }, resolve);
-        }
+        new Promise((resolveFirst) => {
+            if (!creatureWorkerReady) {
+                queue.push({
+                    type: "search",
+                    query: query,
+                    resolve: resolveFirst
+                });
+            } else {
+                sendDataToWorker({
+                    type: "search",
+                    query: query,
+                }, resolveFirst);
+            } 
+        }).then((data:Array<Creature>) => {
+            const names = [];
+            for (let i = 0; i < data.length; i++){
+                names.push(data[i].name);
+            }
+            resolve(names);
+        });
     });
 }
 
@@ -133,13 +136,13 @@ function MonsterManualSearch(query:string):Promise<Array<Creature>>{
     return new Promise((resolve) => {
         if (!creatureWorkerReady) {
             queue.push({
-                type: "monster-manual-search",
+                type: "search",
                 query: query,
                 resolve: resolve
             });
         } else {
             sendDataToWorker({
-                type: "monster-manual-search",
+                type: "search",
                 query: query,
             }, resolve);
         }

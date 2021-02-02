@@ -67,24 +67,8 @@ class CreatureManager{
             case "delete":
                 await this.db.delete("creatures", data.index);
                 break;
-            case "monster-manual-search":
-                this.monsterManualSearch(data.query).then((creatures) => {
-                    // @ts-ignore
-                    self.postMessage({
-                        data: creatures,
-                        messageId: data.messageId,
-                    });
-                });
-                break;
             case "lookup":
-                this.lookupCreatureStats(data.name).then((creatureData: Creature) => {
-                    const creature = {
-                        BaseHP: creatureData.hp,
-                        BaseAC: creatureData.ac,
-                        BaseName: creatureData.name,
-                        HP: creatureData.hp,
-                        AC: creatureData.ac,
-                    };
+                this.lookupCreature(data.name).then((creature: Creature) => {
                     // @ts-ignore
                     self.postMessage({
                         data: creature,
@@ -95,16 +79,8 @@ class CreatureManager{
             case "add":
                 this.addCreature(data.creature);
                 break;
-            case "get":
-                const creatures = await this.getAllCreatureNames();
-                // @ts-ignore
-                self.postMessage({
-                    data: creatures,
-                    messageId: data.messageId,
-                });
-                break;
             case "search":
-                this.searchCreaturesByName(data.query).then((creatures) => {
+                this.searchByName(data.query).then((creatures) => {
                     // @ts-ignore
                     self.postMessage({
                         data: creatures,
@@ -118,7 +94,7 @@ class CreatureManager{
         }
     }
 
-    private monsterManualSearch(query:string): Promise<Array<Creature>>{
+    private searchByName(query:string): Promise<Array<Creature>>{
         return new Promise(async (resolve) => {
             let creatures:Array<Creature> = [];
             const creatureData = await this.getCreaturesFromIDB();
@@ -179,27 +155,8 @@ class CreatureManager{
         .join('-');
     }
 
-    private lookupCreatureStats(name:string){
-        return new Promise(async (resolve) => {
-            const creature = this.db.getFromIndex("creatures", "name", name);
-            resolve(creature);
-        });
-    }
-
-    private searchCreaturesByName(query:string){
-        return new Promise(async (resolve) => {
-            const creatures = [];
-            const creatureNames = await this.getAllCreatureNames();
-            const results = fuzzysort.go(query, creatureNames, {
-                threshold: -10000,
-                limit: Infinity,
-                allowTypo: false,
-            });
-            for (let i = 0; i < results.length; i++) {
-                creatures.push(results[i].target);
-            }
-            resolve(creatures);
-        });
+    private async lookupCreature(name:string): Promise<Creature>{
+        return await this.db.getFromIndex("creatures", "name", name);
     }
 
     private async main() {
@@ -245,15 +202,6 @@ class CreatureManager{
         }
         // @ts-ignore
         self.postMessage({type: "ready"});
-    }
-
-    private async getAllCreatureNames(): Promise<Array<string>>{
-        const results = await this.db.getAllFromIndex("creatures", "name");
-        const creatures = [];
-        for (let i = 0; i < results.length; i++){
-            creatures.push(results[i].name);
-        }
-        return creatures;
     }
 
     private async getCreaturesFromIDB(): Promise<Array<Creature>> {
