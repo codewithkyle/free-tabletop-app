@@ -259,63 +259,74 @@ class CreatureManager{
         return creatures;
     }
 
-    private fetchCreatureData(creatures: Array<{ name: string; url: string }>): Promise<Array<Creature>> {
+    private fetchCreatureData(creatures: Array<{ name: string; url: string, index:string }>): Promise<Array<Creature>> {
         return new Promise((resolve) => {
             const creatureData: Array<Creature> = [];
             let resolved = 0;
             for (let i = 0; i < creatures.length; i++) {
-                fetch(`https://www.dnd5eapi.co/${creatures[i].url.replace(/^(\/)/, "")}`)
-                    .then((request) => request.json())
-                    .then((response) => {
+                this.db.get("creatures", creatures[i].index).then(result => {
+                    if (!result){
+                        console.log(`Missing ${creatures[i].name}, doing fetch now.`);
+                        fetch(`https://www.dnd5eapi.co/${creatures[i].url.replace(/^(\/)/, "")}`)
+                            .then((request) => request.json())
+                            .then((response) => {
 
-                        const immunities = [];
-                        response["damage_immunities"].map(value => {
-                            immunities.push(value);
-                        });
-                        response["condition_immunities"].map(value => {
-                            immunities.push(value);
-                        });
+                                const immunities = [];
+                                response["damage_immunities"].map(value => {
+                                    immunities.push(value);
+                                });
+                                response["condition_immunities"].map(value => {
+                                    immunities.push(value);
+                                });
 
-                        const creature:Creature = {
-                            index: response.index,
-                            name: response.name,
-                            size: response.size,
-                            type: response.type,
-                            subtype: response.subtype,
-                            alignment: response.alignment,
-                            ac: response["armor_class"],
-                            hp: response["hit_points"],
-                            hitDice: response["hit_dice"],
-                            speed: JSON.stringify(response["speed"]),
-                            str: response.strength,
-                            dex: response.dexterity,
-                            con: response.constitution,
-                            int: response.intelligence,
-                            wis: response.wisdom,
-                            cha: response.charisma,
-                            proficiencies: JSON.stringify(response["proficiencies"]),
-                            vulnerabilities: JSON.stringify(response["damage_vulnerabilities"]),
-                            resistances: JSON.stringify(response["damage_resistances"]),
-                            immunities: JSON.stringify(immunities),
-                            senses: JSON.stringify(response.senses),
-                            languages: response.languages,
-                            abilities: JSON.stringify(response["special_abilities"]),
-                            actions: JSON.stringify(response.actions),
-                            legendaryActions: JSON.stringify(response?.["legendary_actions"] ?? []),
-                            cr: response["challenge_rating"],
-                            xp: response.xp,
-                        };
-                        creatureData.push(creature);
+                                const creature:Creature = {
+                                    index: response.index,
+                                    name: response.name,
+                                    size: response.size,
+                                    type: response.type,
+                                    subtype: response.subtype,
+                                    alignment: response.alignment,
+                                    ac: response["armor_class"],
+                                    hp: response["hit_points"],
+                                    hitDice: response["hit_dice"],
+                                    speed: JSON.stringify(response["speed"]),
+                                    str: response.strength,
+                                    dex: response.dexterity,
+                                    con: response.constitution,
+                                    int: response.intelligence,
+                                    wis: response.wisdom,
+                                    cha: response.charisma,
+                                    proficiencies: JSON.stringify(response["proficiencies"]),
+                                    vulnerabilities: JSON.stringify(response["damage_vulnerabilities"]),
+                                    resistances: JSON.stringify(response["damage_resistances"]),
+                                    immunities: JSON.stringify(immunities),
+                                    senses: JSON.stringify(response.senses),
+                                    languages: response.languages,
+                                    abilities: JSON.stringify(response["special_abilities"]),
+                                    actions: JSON.stringify(response.actions),
+                                    legendaryActions: JSON.stringify(response?.["legendary_actions"] ?? []),
+                                    cr: response["challenge_rating"],
+                                    xp: response.xp,
+                                };
+                                creatureData.push(creature);
+                                resolved++;
+                            })
+                            .catch(() => {
+                                resolved++;
+                            })
+                            .finally(() => {
+                                if (resolved === creatures.length) {
+                                    resolve(creatureData);
+                                }
+                            });
+                    } else {
                         resolved++;
-                    })
-                    .catch(() => {
-                        resolved++;
-                    })
-                    .finally(() => {
                         if (resolved === creatures.length) {
                             resolve(creatureData);
                         }
-                    });
+                    }
+                });
+                
             }
         });
     }
