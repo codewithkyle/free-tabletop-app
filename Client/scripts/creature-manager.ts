@@ -84,7 +84,7 @@ function LookupCreature(name: string) {
     });
 }
 
-async function AddCustomCreature(creature) {
+async function AddCustomCreature(creature: {baseName: string; baseAC: string; baseHP: string;}) {
     if (!creatureWorkerReady) {
         queue.push({
             type: "add",
@@ -102,6 +102,21 @@ async function AddCustomCreature(creature) {
                 ac: creature.baseAC,
                 hp: creature.baseHP,
             },
+        });
+    }
+    return;
+}
+
+async function AddCreature(creature:Creature) {
+    if (!creatureWorkerReady) {
+        queue.push({
+            type: "add",
+            creature: creature,
+        });
+    } else {
+        sendDataToWorker({
+            type: "add",
+            creature: creature,
         });
     }
     return;

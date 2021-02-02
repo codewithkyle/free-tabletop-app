@@ -203,6 +203,25 @@
             }
         }
 
+        &.-grey {
+            background-color: var(--grey-100);
+            border-color: var(--grey-100);
+            color: var(--grey-700);
+
+            &:hover,
+            &:focus {
+                background-color: var(--grey-200);
+                border-color: var(--grey-200);
+                color: var(--grey-800);
+            }
+
+            &:active {
+                background-color: var(--grey-300);
+                border-color: var(--grey-300);
+                color: var(--grey-900);
+            }
+        }
+
         &.-white {
             background-color: var(--white);
             border-color: var(--white);

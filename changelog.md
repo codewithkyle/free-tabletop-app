@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - search creatures
     - delete creature
     - view creature
+    - edit creatures
+    - add custom creatures
 - creature stat block popup modal
 
 ### Fixed
