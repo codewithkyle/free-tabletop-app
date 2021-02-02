@@ -117,14 +117,14 @@ class CreatureManager{
 
     private addCreature(creature:Creature){
         this.db.put("creatures", {
-            index: creature?.index ?? this.toKebabCase(creature.name),
+            index: creature?.index?.toLowerCase() ?? this.toKebabCase(creature.name).toLowerCase(),
             name: creature.name,
             ac: creature.ac,
             hp: creature.hp,
             size: creature?.size ?? "Medium",
-            type: creature?.type ?? null,
-            subtype: creature?.subtype ?? null,
-            alignment: creature?.alignment ?? "unaligned",
+            type: creature?.type?.toLowerCase() ?? null,
+            subtype: creature?.subtype?.toLowerCase() ?? null,
+            alignment: creature?.alignment?.toLowerCase() ?? "unaligned",
             hitDice: creature?.hitDice ?? null,
             speed: creature?.speed ?? "—",
             str: creature?.str ?? 10,

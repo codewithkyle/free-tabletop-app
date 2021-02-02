@@ -67,6 +67,16 @@
             }
         }
 
+        &.-grey {
+            &:active {
+                color: var(--grey-900);
+            }
+
+            &::before {
+                background-color: var(--grey-500);
+            }
+        }
+
         &.-white {
             color: var(--white);
 

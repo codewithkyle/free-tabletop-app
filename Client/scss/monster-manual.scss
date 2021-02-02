@@ -3,6 +3,16 @@ monster-manual{
     width: 100%;
     padding: 0.5rem;
 
+    &[state="editing"]{
+        header{
+            display: none;
+        }
+
+        .container{
+            max-height: 480px;
+        }
+    }
+
     header{
         width: 100%;
         display: flex;
@@ -74,6 +84,16 @@ monster-manual{
         border-radius: 0.25rem;
         border: 1px solid var(--grey-300);
         overscroll-behavior: contain;
+
+        .header{
+            position: sticky;
+            top: 0;
+            background-color: var(--white);
+            z-index: 100;
+            padding-bottom: 0.5rem;
+            padding-top: 0.5rem;
+            margin-top: -1px;
+        }
 
         table{
             display: block;
