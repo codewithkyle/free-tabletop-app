@@ -45,20 +45,7 @@ class MonsterManual extends Component<MonsterManualState>{
         const target = e.currentTarget as HTMLElement;
         const index = parseInt(target.dataset.index);
         const creature = this.state.creatures[index];
-        console.log(creature);
         this.spawnCreatureModal(creature);
-    }
-
-    private formatSpeed(raw:string):string {
-        let speed = "";
-        const speedObject = JSON.parse(raw);
-        for (const key in speedObject){
-            if (key !== "hover"){
-                speed += `${speedObject[key]} ${key}, `;
-            }
-        }
-        speed = speed.trim().replace(/\,$/, "").replace(/\_/g, " ");
-        return speed;
     }
 
     private calculateModifier(value:number): string{
@@ -70,83 +57,7 @@ class MonsterManual extends Component<MonsterManualState>{
         }
     }
 
-    private formatMixed(raw:string): string{
-        let value = "";
-        const decoded = JSON.parse(raw);
-        for (let i = 0; i < decoded.length; i++){
-            if (typeof decoded[i] === "object"){
-                value += `${decoded[i].name}, `;
-            } else {
-                value += `${decoded[i]}, `;
-            }
-        }
-        value = value.trim().replace(/\,$/, "").replace(/\_/g, " ");
-        if (!value){
-            value = "—";
-        }
-        return value;
-    }
-
-    private formatObject(raw:string): string{
-        let value = "";
-        const decoded = JSON.parse(raw);
-        for (const key in decoded){
-            value += `${key} ${decoded[key]}, `;
-        }
-        value = value.trim().replace(/\,$/, "").replace(/\_/g, " ");
-        if (!value){
-            value = "—";
-        }
-        return value;
-    }
-
-    private formatSavingThrows(raw:string){
-        let value = "";
-        const decoded = JSON.parse(raw);
-        const regex = new RegExp("Saving Throw:");
-        for (let i = 0; i < decoded.length; i++){
-            if (regex.test(decoded[i].proficiency.name)){
-                value += `${decoded[i].proficiency.name.replace("Saving Throw:", "").trim()} ${decoded[i].value >= 0 ? "+" : "-"}${decoded[i].value}, `;
-            }
-        }
-        value = value.trim().replace(/\,$/, "").replace(/\_/g, " ");
-        if (!value){
-            value = "—";
-        }
-        return value;
-    }
-
-    private formatSkills(raw:string){
-        let value = "";
-        const decoded = JSON.parse(raw);
-        const regex = new RegExp("Skill:");
-        for (let i = 0; i < decoded.length; i++){
-            if (regex.test(decoded[i].proficiency.name)){
-                value += `${decoded[i].proficiency.name.replace("Skill:", "").trim()} ${decoded[i].value >= 0 ? "+" : "-"}${decoded[i].value}, `;
-            }
-        }
-        value = value.trim().replace(/\,$/, "").replace(/\_/g, " ");
-        if (!value){
-            value = "—";
-        }
-        return value;
-    }
-
-    private formatAbilities(raw:string){
-        const abilities = [];
-        const decoded = JSON.parse(raw);
-        for (let i = 0; i < decoded.length; i++){
-            const usage = decoded[i]?.usage ? `${decoded[i]?.usage?.times} ${decoded[i]?.usage?.type}` : null;
-            abilities.push({
-                name: decoded[i].name,
-                desc: decoded[i].desc,
-                usage: usage,
-            });
-        }
-        return abilities;
-    }
-
-    private calculateProficiencyBonue(cr:number): string{
+    private calculateProficiencyBonus(cr:number): string{
         if (cr >= 0 && cr <=4){
             return "+2";
         } else if (cr >= 5 && cr <= 8){
@@ -166,36 +77,10 @@ class MonsterManual extends Component<MonsterManualState>{
         }
     }
 
-    private formatAcitons(raw:string){
-        const actions = [];
-        const decoded = JSON.parse(raw);
-        for (let i = 0; i < decoded.length; i++){
-            let usage = null;
-            if (decoded[i]?.usage){
-                if (decoded[i].usage?.times){
-                    usage = `${decoded[i].usage?.times} ${decoded[i].usage?.type}`;
-                } else if (decoded[i].usage?.dice){
-                    usage = `${decoded[i].usage?.type} ${decoded[i].usage?.dice} ${decoded[i].usage?.["min_value"] ? `min ${decoded[i].usage?.["min_value"]}` : null}`;
-                    usage = usage.trim();
-                }
-            }
-            actions.push({
-                name: decoded[i].name,
-                desc: decoded[i].desc,
-                usage: usage,
-            });
-        }
-        return actions;
-    }
-
     private spawnCreatureModal(creature:Creature){
         const el = document.createElement("moveable-modal");
         el.className = "stat-block";
         el.style.zIndex = "1001";
-
-        const abilities = this.formatAbilities(creature.abilities);
-        const actions = this.formatAcitons(creature.actions);
-        const legnedaryActions = this.formatAcitons(creature.legendaryActions);
 
         // @ts-ignore
         render(html`
@@ -211,7 +96,7 @@ class MonsterManual extends Component<MonsterManualState>{
                 <div class="stats line-normal">
                     <div class="block w-full p-0.5">
                         <h3 class="block font-red font-lg font-bold font-serif">${creature.name}</h3>
-                        <p style="font-style:italic;" class="block font-neutral-900 font-xs">${creature.size} ${creature.type}${creature.subtype ? ` ${creature.subtype}` : null}, ${creature.alignment}</p>
+                        <p style="font-style:italic;" class="block font-neutral-900 font-xs">${creature.size}${creature.type}${creature.subtype ? ` ${creature.subtype}` : null}, ${creature.alignment}</p>
                     </div>
                     <hr>
                     <p class="block w-full p-0.5 font-red font-sm">
@@ -219,10 +104,13 @@ class MonsterManual extends Component<MonsterManualState>{
                         ${creature.ac}
                         <br>
                         <strong>Hit Points</strong>
-                        ${creature.hp} (${creature.hitDice})
+                        ${creature.hp} ${creature.hitDice ? `(${creature.hitDice})` : null}
                         <br>
                         <strong>Speed</strong>
-                        ${this.formatSpeed(creature.speed)}
+                        ${creature.speed}
+                        <br>
+                        <strong>Challenge</strong>
+                        ${creature.cr} (${creature.xp} XP)
                     </p>
                     <hr>
                     <div class="abilities p-0.5">
@@ -254,68 +142,62 @@ class MonsterManual extends Component<MonsterManualState>{
                     <hr>
                     <p class="block w-full p-0.5 font-red font-sm">
                         <strong>Immunities</strong>
-                        ${this.formatMixed(creature.immunities)}
+                        ${creature.immunities}
                         <br>
                         <strong>Resistances</strong>
-                        ${this.formatMixed(creature.resistances)}
+                        ${creature.resistances}
                         <br>
                         <strong>Vulnerabilities</strong>
-                        ${this.formatMixed(creature.vulnerabilities)}
+                        ${creature.vulnerabilities}
                         <br>
                         <strong>Senses</strong>
-                        ${this.formatObject(creature.senses)}
+                        ${creature.senses}
                         <br>
                         <strong>Languages</strong>
                         ${creature.languages.length ? creature.languages : "—"}
                         <br>
-                        <strong>Challenge</strong>
-                        ${creature.cr} (${creature.xp} XP)
-                        <br>
                         <strong>Saving Throws</strong>
-                        ${this.formatSavingThrows(creature.proficiencies)}
+                        ${creature.savingThrows}
                         <br>
                         <strong>Skills</strong>
-                        ${this.formatSkills(creature.proficiencies)}
+                        ${creature.skills}
                         <br>
                         <strong>Proficiency Bonus</strong>
-                        ${this.calculateProficiencyBonue(creature.cr)}
+                        ${this.calculateProficiencyBonus(creature.cr)}
                         <br>
                     </p>
                     <hr>
-                    ${abilities.length ? html`
-                        <p class="block w-full p-0.5 font-sm font-neutral-900">
-                            ${abilities.map((ability, index) => {
+                    ${creature.abilities.length ? html`
+                        <dl class="block w-full p-0.5 font-sm font-neutral-900">
+                            ${creature.abilities.map((ability) => {
                                 return html`
-                                    <strong class="block mt-0.5">${ability.name} ${ability.usage ? `(${ability.usage})` : null}</strong>
-                                    ${ability.desc}
-                                    ${index !== abilities.length - 1 ? html`<br>` : null}
+                                    <dt class="block mt-0.5 font-bold block">${ability.name}</dt>
+                                    <dd>${ability.desc}</dd>
                                 `;
                             })}
-                        </p>
+                        </dl>
                     ` : null}
-                    ${actions.length ? html`
+                    ${creature.actions.length ? html`
                         <h4 class="py-0.5 block font-red font-md border-b-1 border-b-solid border-b-red mx-auto" style="width:calc(100% - 1rem);">Actions</h4>
-                        <p class="block w-full p-0.5 font-sm font-neutral-900">
-                            ${actions.map((action, index) => {
+                        <dl class="block w-full p-0.5 font-sm font-neutral-900">
+                            ${creature.actions.map((action) => {
                                 return html`
-                                    <strong class="block mt-0.5">${action.name} ${action.usage ? `(${action.usage})` : null}</strong>
-                                    ${action.desc}
-                                    ${index !== actions.length - 1 ? html`<br>` : null}
+                                    <dt class="block mt-0.5 font-bold block">${action.name}</dt>
+                                    <dd>${action.desc}</dd>
                                 `;
                             })}
-                        </p>
+                        </dl>
                     ` : null}
-                    ${legnedaryActions.length ? html`
+                    ${creature.legendaryActions.length ? html`
                         <h4 class="py-0.5 block font-red font-md border-b-1 border-b-solid border-b-red mx-auto" style="width:calc(100% - 1rem);">Legendary Actions</h4>
-                        <p class="block w-full p-0.5 font-sm font-neutral-900">
-                            ${legnedaryActions.map((action, index) => {
+                        <dl class="block w-full p-0.5 font-sm font-neutral-900">
+                            ${creature.legendaryActions.map((action) => {
                                 return html`
-                                    <strong class="block mt-0.5">${action.name} ${action.usage ? `(${action.usage})` : null}</strong>
-                                    ${action.desc}
-                                    ${index !== actions.length - 1 ? html`<br>` : null}
+                                    <dt class="block mt-0.5 font-bold block">${action.name}</dt>
+                                    <dd>${action.desc}</dd>
                                 `;
                             })}
-                        </p>
+                        </dl>
                     ` : null}
                 </div>
             </div>

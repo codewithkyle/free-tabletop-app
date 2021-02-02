@@ -15,23 +15,40 @@ type Creature = {
     int: number;
     wis: number;
     cha: number;
-    proficiencies: string;
+    savingThrows: string;
+    skills: string;
     vulnerabilities: string;
     resistances: string;
     immunities: string;
     senses: string;
     languages: string;
-    abilities: string;
-    actions: string;
-    legendaryActions: string;
+    abilities: Array<{
+        name: string;
+        desc: string;
+    }>;
+    actions: Array<{
+        name: string;
+        desc: string;
+    }>;
+    legendaryActions: Array<{
+        name: string;
+        desc: string;
+    }>;
     cr: number;
     xp: number;
 };
 
+type Usage = {
+    times?:string;
+    dice?:string;
+    type?:string;
+    min_value?:string
+};
+
 // @ts-ignore
-self.importScripts("idb.js");
+self.importScripts("/js/lib/idb.js");
 // @ts-ignore
-self.importScripts("fuzzy-search.js");
+self.importScripts("/js/lib/fuzzy-search.js");
 
 declare const fuzzysort:any;
 
@@ -101,9 +118,9 @@ class CreatureManager{
         }
     }
 
-    private monsterManualSearch(query:string){
+    private monsterManualSearch(query:string): Promise<Array<Creature>>{
         return new Promise(async (resolve) => {
-            let creatures = [];
+            let creatures:Array<Creature> = [];
             const creatureData = await this.getCreaturesFromIDB();
             if (query){
                 const results = fuzzysort.go(query, creatureData, {
@@ -122,35 +139,36 @@ class CreatureManager{
         });
     }
 
-    private addCreature(creature){
+    private addCreature(creature:Creature){
         this.db.put("creatures", {
-            index: this.toKebabCase(creature.baseName),
-            name: creature.baseName,
-            size: null,
-            type: null,
-            subtype: null,
-            alignment: null,
-            ac: creature.baseAC,
-            hp: creature.baseHP,
-            hitDice: null,
-            speed: null,
-            str: null,
-            dex: null,
-            con: null,
-            int: null,
-            wis: null,
-            cha: null,
-            proficiencies: null,
-            vulnerabilities: null,
-            resistances: null,
-            immunities: null,
-            senses: null,
-            languages: null,
-            abilities: null,
-            actions: null,
-            legendaryActions: null,
-            cr: null,
-            xp: null,
+            index: creature?.index ?? this.toKebabCase(creature.name),
+            name: creature.name,
+            ac: creature.ac,
+            hp: creature.hp,
+            size: creature?.size ?? "Medium",
+            type: creature?.type ?? null,
+            subtype: creature?.subtype ?? null,
+            alignment: creature?.alignment ?? "unaligned",
+            hitDice: creature?.hitDice ?? null,
+            speed: creature?.speed ?? "—",
+            str: creature?.str ?? 10,
+            dex: creature?.dex ?? 10,
+            con: creature?.con ?? 10,
+            int: creature?.int ?? 10,
+            wis: creature?.wis ?? 10,
+            cha: creature?.cha ?? 10,
+            vulnerabilities: creature?.vulnerabilities ?? "—",
+            resistances: creature?.resistances ?? "—",
+            immunities: creature?.immunities ?? "—",
+            senses: creature?.senses ?? "—",
+            savingThrows: creature?.savingThrows ?? "—",
+            skills: creature?.skills ?? "—",
+            languages: creature?.languages ?? "—",
+            abilities: creature?.abilities ?? [],
+            actions: creature?.actions ?? [],
+            legendaryActions: creature?.legendaryActions ?? [],
+            cr: creature?.cr ?? 0,
+            xp: creature?.xp ?? 0,
         });
     }
 
@@ -207,7 +225,8 @@ class CreatureManager{
                 store.createIndex("int", "int");
                 store.createIndex("wis", "wis");
                 store.createIndex("cha", "cha");
-                store.createIndex("proficiencies", "proficiencies");
+                store.createIndex("savingThrows", "savingThrows");
+                store.createIndex("skills", "skills");
                 store.createIndex("vulnerabilities", "vulnerabilities");
                 store.createIndex("resistances", "resistances");
                 store.createIndex("immunities", "immunities");
@@ -222,7 +241,7 @@ class CreatureManager{
 		});
 		const creatures = await this.fetchCreatures();
 		for (let i = 0; i < creatures.length; i++) {
-			this.db.put("creatures", creatures[i]);
+            this.addCreature(creatures[i]);
         }
         // @ts-ignore
         self.postMessage({type: "ready"});
@@ -242,14 +261,14 @@ class CreatureManager{
 		return creatures;
 	}
     
-    private async fetchCreatures(): Promise<Array<Creature>>{
+    private async fetchCreatures(): Promise<Array<any>>{
         const request = await fetch("https://www.dnd5eapi.co/api/monsters", {
             method: "GET",
             headers: new Headers({
                 Accept: "application/json",
             }),
         });
-        let creatures:Array<Creature> = [];
+        let creatures = [];
         if (request.ok) {
             const response = await request.json();
             if (response?.results?.length){
@@ -266,48 +285,10 @@ class CreatureManager{
             for (let i = 0; i < creatures.length; i++) {
                 this.db.get("creatures", creatures[i].index).then(result => {
                     if (!result){
-                        console.log(`Missing ${creatures[i].name}, doing fetch now.`);
                         fetch(`https://www.dnd5eapi.co/${creatures[i].url.replace(/^(\/)/, "")}`)
                             .then((request) => request.json())
                             .then((response) => {
-
-                                const immunities = [];
-                                response["damage_immunities"].map(value => {
-                                    immunities.push(value);
-                                });
-                                response["condition_immunities"].map(value => {
-                                    immunities.push(value);
-                                });
-
-                                const creature:Creature = {
-                                    index: response.index,
-                                    name: response.name,
-                                    size: response.size,
-                                    type: response.type,
-                                    subtype: response.subtype,
-                                    alignment: response.alignment,
-                                    ac: response["armor_class"],
-                                    hp: response["hit_points"],
-                                    hitDice: response["hit_dice"],
-                                    speed: JSON.stringify(response["speed"]),
-                                    str: response.strength,
-                                    dex: response.dexterity,
-                                    con: response.constitution,
-                                    int: response.intelligence,
-                                    wis: response.wisdom,
-                                    cha: response.charisma,
-                                    proficiencies: JSON.stringify(response["proficiencies"]),
-                                    vulnerabilities: JSON.stringify(response["damage_vulnerabilities"]),
-                                    resistances: JSON.stringify(response["damage_resistances"]),
-                                    immunities: JSON.stringify(immunities),
-                                    senses: JSON.stringify(response.senses),
-                                    languages: response.languages,
-                                    abilities: JSON.stringify(response["special_abilities"]),
-                                    actions: JSON.stringify(response.actions),
-                                    legendaryActions: JSON.stringify(response?.["legendary_actions"] ?? []),
-                                    cr: response["challenge_rating"],
-                                    xp: response.xp,
-                                };
+                                const creature = this.formatCreatureData(response);
                                 creatureData.push(creature);
                                 resolved++;
                             })
@@ -329,6 +310,144 @@ class CreatureManager{
                 
             }
         });
+    }
+
+    private formatMixed(data:Array<any>): string{
+        let value = "";
+        for (let i = 0; i < data.length; i++){
+            if (typeof data[i] === "object"){
+                value += `${data[i].name}, `;
+            } else {
+                value += `${data[i]}, `;
+            }
+        }
+        value = value.trim().replace(/\,$/, "").replace(/\_/g, " ");
+        if (!value){
+            value = "—";
+        }
+        return value;
+    }
+
+    private formatObject(data): string{
+        let value = "";
+        for (const key in data){
+            value += `${key} ${data[key]}, `;
+        }
+        value = value.trim().replace(/\,$/, "").replace(/\_/g, " ");
+        if (!value){
+            value = "—";
+        }
+        return value;
+    }
+
+    private formatSavingThrows(data): string{
+        let value = "";
+        const regex = new RegExp("Saving Throw:");
+        for (let i = 0; i < data.length; i++){
+            if (regex.test(data[i].proficiency.name)){
+                value += `${data[i].proficiency.name.replace("Saving Throw:", "").trim()} ${data[i].value >= 0 ? "+" : "-"}${data[i].value}, `;
+            }
+        }
+        value = value.trim().replace(/\,$/, "").replace(/\_/g, " ");
+        if (!value){
+            value = "—";
+        }
+        return value;
+    }
+
+    private formatSkills(data): string{
+        let value = "";
+        const regex = new RegExp("Skill:");
+        for (let i = 0; i < data.length; i++){
+            if (regex.test(data[i].proficiency.name)){
+                value += `${data[i].proficiency.name.replace("Skill:", "").trim()} ${data[i].value >= 0 ? "+" : "-"}${data[i].value}, `;
+            }
+        }
+        value = value.trim().replace(/\,$/, "").replace(/\_/g, " ");
+        if (!value){
+            value = "—";
+        }
+        return value;
+    }
+
+    private formatUsage(usage:Usage): string{
+        let output = "";
+        if (usage?.times){
+            output = `${usage?.times} ${usage?.type}`;
+        } else if (usage?.dice){
+            output = `${usage?.type} ${usage?.dice} ${usage?.["min_value"] ? `min ${usage?.["min_value"]}` : null}`;
+        }
+        output = output.trim();
+        return `(${output})`;
+    }
+
+    private formatTableData(data:Array<any>):Array<any>{
+        const output = [];
+        for (let i = 0; i < data.length; i++){
+            let usage = "";
+            if (data[i]?.usage){
+                usage = this.formatUsage(data[i].usage);
+            }
+            output.push({
+                name: `${data[i].name} ${usage}`.trim(),
+                desc: data[i].desc,
+            });
+        }
+        return output;
+    }
+
+    private formatSpeed(speedObject):string {
+        let speed = "";
+        for (const key in speedObject){
+            if (key !== "hover"){
+                speed += `${speedObject[key]} ${key}, `;
+            }
+        }
+        speed = speed.trim().replace(/\,$/, "").replace(/\_/g, " ");
+        return speed;
+    }
+
+    private formatCreatureData(response): Creature{
+        const immunities = [];
+        response["damage_immunities"].map(value => {
+            immunities.push(value);
+        });
+        response["condition_immunities"].map(value => {
+            immunities.push(value);
+        });
+
+        const legendaryActions = response?.["legendary_actions"] ?? [];
+
+        return {
+            index: response.index,
+            name: response.name,
+            size: response.size,
+            type: response.type,
+            subtype: response.subtype,
+            alignment: response.alignment,
+            ac: response["armor_class"],
+            hp: response["hit_points"],
+            hitDice: response["hit_dice"],
+            str: response.strength,
+            dex: response.dexterity,
+            con: response.constitution,
+            int: response.intelligence,
+            wis: response.wisdom,
+            cha: response.charisma,
+            languages: response.languages,
+            cr: response["challenge_rating"],
+            xp: response.xp,
+            speed: this.formatSpeed(response["speed"]),
+            vulnerabilities: this.formatMixed(response["damage_vulnerabilities"]),
+            resistances: this.formatMixed(response["damage_resistances"]),
+            immunities: this.formatMixed(immunities),
+            senses: this.formatObject(response.senses),
+            savingThrows: this.formatSavingThrows(response["proficiencies"]),
+            skills: this.formatSkills(response["proficiencies"]),
+            abilities: this.formatTableData(response["special_abilities"]),
+            actions: this.formatTableData(response.actions),
+            legendaryActions: this.formatTableData(legendaryActions),
+        };
     }
 }
 new CreatureManager();

@@ -1,4 +1,4 @@
-let roomWorker: Worker = new Worker(`${location.origin}/js/room-worker.js`);;
+let roomWorker: Worker = new Worker(`${location.origin}/js/workers/room-worker.js`);;
 let lastRoomWorkerMessageUID = null;
 let roomCode = null;
 let isRoomWorkerReady = false;

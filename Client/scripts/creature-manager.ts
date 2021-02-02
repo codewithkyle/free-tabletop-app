@@ -51,7 +51,7 @@ function handleDataFromWorker(e:MessageEvent){
 
 async function SyncMonsterData() {
     if (!creatureWorker) {
-        creatureWorker = new Worker(`/js/creature-worker.js`);
+        creatureWorker = new Worker(`/js/workers/creature-worker.js`);
         creatureWorker.onmessage = handleDataFromWorker;
     }
     return;
@@ -74,16 +74,24 @@ function LookupCreature(name: string) {
     });
 }
 
-async function AddCustomCreature(creature: object) {
+async function AddCustomCreature(creature) {
     if (!creatureWorkerReady) {
         queue.push({
             type: "add",
-            creature: creature,
+            creature: {
+                name: creature.baseName,
+                ac: creature.baseAC,
+                hp: creature.baseHP,
+            },
         });
     } else {
         sendDataToWorker({
             type: "add",
-            creature: creature,
+            creature: {
+                name: creature.baseName,
+                ac: creature.baseAC,
+                hp: creature.baseHP,
+            },
         });
     }
     return;
