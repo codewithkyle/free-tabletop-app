@@ -218,7 +218,6 @@ creature-info-table{
     table-row{
         display: block;
         width: 100%;
-        background-color: var(--grey-100);
         border-radius: 0.25rem;
         border: 1px solid var(--grey-300);
         
@@ -231,6 +230,12 @@ creature-info-table{
             line-height: 1.375;
             color: var(--grey-800);
             width: 100%;
+            background-color: var(--grey-100);
+            transition: all 150ms var(--ease-in-out);
+
+            &:focus{
+                background-color: transparent;
+            }
         }
 
         input{
