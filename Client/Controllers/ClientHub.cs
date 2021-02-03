@@ -62,6 +62,7 @@ namespace FreeTabletop.Client.Controllers
                 Networker.hubConnection.On<Image>("Tabletop:LoadPopupImage", RenderPopupImage);
                 Networker.hubConnection.On<bool>("Tabletop:ToggleVisibility", Room.SetTabletopVisibility);
                 Networker.hubConnection.On<List<Light>>("Tabletop:RenderLightEntities", Room.RenderLightEntities);
+                Networker.hubConnection.On<bool>("Tabletop:UpdateDiceRolls", Room.UpdateDiceRolls);
 
                 Networker.hubConnection.On<string>("Notification:PlayerConnected", ConnectedNotification);
                 Networker.hubConnection.On<string, string>("Notification:PlayerDisconnected", DisconnectedNotification);
@@ -119,6 +120,7 @@ namespace FreeTabletop.Client.Controllers
             Networker.hubConnection.Remove("Tabletop:LoadPopupImage");
             Networker.hubConnection.Remove("Tabletop:ToggleVisibility");
             Networker.hubConnection.Remove("Tabletop:RenderLightEntities");
+            Networker.hubConnection.Remove("Tabletop:UpdateDiceRolls");
 
             Networker.hubConnection.Remove("Notification:PlayerConnected");
             Networker.hubConnection.Remove("Notification:PlayerDisconnected");
@@ -554,6 +556,18 @@ namespace FreeTabletop.Client.Controllers
             try
             {
                 Networker.hubConnection.SendAsync("Room:SpawnLight", x, y);
+            }
+            catch
+            {
+                JSRuntime.InvokeVoidAsync("PromptReload");
+            }
+        }
+
+        public void ToggleDiceRolls()
+        {
+            try
+            {
+                Networker.hubConnection.SendAsync("Room:ToggleDiceRolls");
             }
             catch
             {

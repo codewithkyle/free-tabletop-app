@@ -8,6 +8,7 @@ namespace FreeTabletop.Shared.Models
         public string RoomCode = "";
         public bool IsGameMaster = false;
         public bool IsLocked = false;
+        public bool IsLocalDiceRolls = false;
         public List<PlayerEntity> Players = new List<PlayerEntity>();
         public List<Creature> Creatures = new List<Creature>();
         public List<NPC> NPCs = new List<NPC>();

@@ -70,6 +70,21 @@ namespace FreeTabletop.Server.Controllers
             }
         }
 
+        [HubMethodName("Room:ToggleDiceRolls")]
+        public void ToggleDiceRolls()
+        {
+            Player player = GetPlayer(Context.ConnectionId);
+            if (player != null && player.IsGameMaster)
+            {
+                Room room = GetRoom(player.RoomCode);
+                if (room != null)
+                {
+                    room.ToggleDiceRolls();
+                    Clients.Group(room.RoomCode).SendAsync("Tabletop:UpdateDiceRolls", room.IsLocalDiceRolls);
+                }
+            }
+        }
+
         [HubMethodName("Room:ToggleVisibility")]
         public void ToggleSceneVisibility()
         {
@@ -416,7 +431,7 @@ namespace FreeTabletop.Server.Controllers
             if (player != null)
             {
                 Room room = GetRoom(player.RoomCode);
-                if (room != null)
+                if (room != null && !room.IsLocalDiceRolls)
                 {
                     AnnounceRoll(room, diceCount, die, results, player.Name, player.UID);
                 }

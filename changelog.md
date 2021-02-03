@@ -7,6 +7,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.9.0] - 2021-02-03
+
+### Added
+
+- creatures have nametags again
+- Game Masters can switch dice roll announcements from "Global" to "Local" in the room info menu
+- full suite of monster data (xp, speed, languages, challenge rating, etc)
+- monster manual
+    - search creatures
+    - delete creature
+    - view creature
+    - edit creatures
+    - add custom creatures
+- creature stat block popup modal
+
+### Fixed
+
+- switched Contact Support link to open GitHub Issues instead of an email
+- improved creature lookup performance & search result quality
+
+### Removed
+
+- creature stats and abilities HUD (moved to monster manual)
+
 ## [0.8.2] - 2021-01-17
 
 ### Fixed
@@ -226,6 +250,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - initial beta build
 - CI/CD pipeline
 
+[0.9.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.8.2...v0.9.0
 [0.8.2]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.8.1...v0.8.2
 [0.8.1]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/codewithkyle/free-tabletop-app/compare/v0.7.0...v0.8.0

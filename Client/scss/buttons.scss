@@ -67,6 +67,16 @@
             }
         }
 
+        &.-grey {
+            &:active {
+                color: var(--grey-900);
+            }
+
+            &::before {
+                background-color: var(--grey-500);
+            }
+        }
+
         &.-white {
             color: var(--white);
 
@@ -190,6 +200,25 @@
                 background-color: var(--black);
                 border-color: var(--black);
                 color: var(--white);
+            }
+        }
+
+        &.-grey {
+            background-color: var(--grey-100);
+            border-color: var(--grey-100);
+            color: var(--grey-700);
+
+            &:hover,
+            &:focus {
+                background-color: var(--grey-200);
+                border-color: var(--grey-200);
+                color: var(--grey-800);
+            }
+
+            &:active {
+                background-color: var(--grey-300);
+                border-color: var(--grey-300);
+                color: var(--grey-900);
             }
         }
 

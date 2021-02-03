@@ -41,7 +41,6 @@ namespace FreeTabletop.Client.Pages
         public bool ChatMenuOpen = false;
 
         public List<string> Creatures = new List<string>();
-        public string[] AllCreatures { get; set; }
 
         public Creature CustomCreature = new Creature();
         public NPC NewNPC = new NPC();
@@ -83,6 +82,7 @@ namespace FreeTabletop.Client.Pages
         public bool FOVFOW = false;
         public bool PvP = false;
         public bool ImageHistoryOpen = false;
+        public bool MonsterManualOpen = false;
 
         protected override async Task OnInitializedAsync()
         {
@@ -301,30 +301,19 @@ namespace FreeTabletop.Client.Pages
             StateHasChanged();
         }
 
-        public async Task OpenMonsterLookupMenu()
+        public void OpenMonsterLookupMenu()
         {
             CloseAllModals();
-            string AllCreaturesJSON = await JSRuntime.InvokeAsync<string>("GetCreatures");
-            AllCreatures = JsonConvert.DeserializeObject<string[]>(AllCreaturesJSON);
             MonsterLookupMenuOpen = true;
             StateHasChanged();
         }
 
-        public void LookupMonster(ChangeEventArgs e)
+        public async Task LookupMonster(ChangeEventArgs e)
         {
             string Value = e.Value.ToString().ToLower().Trim();
             if (Value != "")
             {
-                Regex expression = new Regex(Value);
-                List<string> Results = new List<string>();
-                for (int i = 0; i < AllCreatures.Length; i++)
-                {
-                    if (expression.IsMatch(AllCreatures[i]))
-                    {
-                        Results.Add(AllCreatures[i]);
-                    }
-                }
-                Creatures = Results;
+                Creatures = await JSRuntime.InvokeAsync<List<string>>("CreatureSearch", Value);
             }
             else
             {
@@ -336,8 +325,7 @@ namespace FreeTabletop.Client.Pages
         public async Task SpawnCreature(int index)
         {
             string CreatureName = Creatures[index];
-            string CreatureJSON = await JSRuntime.InvokeAsync<string>("LookupCreature", CreatureName);
-            Creature Creature = JsonConvert.DeserializeObject<Creature>(CreatureJSON);
+            Creature Creature = await JSRuntime.InvokeAsync<Creature>("LookupCreature", CreatureName);
             Creature.Main(RightClickGridPosition);
             Hub.SpawnCreature(Creature);
             await JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
@@ -377,7 +365,7 @@ namespace FreeTabletop.Client.Pages
                 CustomCreature.Position = RightClickGridPosition;
                 Hub.SpawnCreature(CustomCreature);
                 JSRuntime.InvokeVoidAsync("PlaySound", "plop.wav");
-                JSRuntime.InvokeVoidAsync("AddCustomCreature", JsonConvert.SerializeObject(CustomCreature));
+                JSRuntime.InvokeVoidAsync("AddCustomCreature", CustomCreature);
                 CloseAllModals();
             }
         }
@@ -442,15 +430,15 @@ namespace FreeTabletop.Client.Pages
         public void ToggleDiceMenu()
         {
             CloseAllModals();
-            if (DiceMenuOpen)
-            {
-                DiceMenuOpen = false;
-            }
-            else
-            {
-                DiceMenuOpen = true;
-            }
+            DiceMenuOpen ^= true;
             JSRuntime.InvokeVoidAsync("ToggleModal", "js-dice-modal", DiceMenuOpen);
+        }
+
+        public void ToggleMonsterManual()
+        {
+            CloseAllModals();
+            MonsterManualOpen ^= true;
+            JSRuntime.InvokeVoidAsync("ToggleModal", "js-monster-manual", MonsterManualOpen);
         }
 
         public void SetActiveDie(string die)
@@ -935,6 +923,12 @@ namespace FreeTabletop.Client.Pages
         public void TogglePvP()
         {
             PvP ^= true;
+        }
+
+        public void UpdateDiceRolls(bool isLocal)
+        {
+            Tabletop.IsLocalDiceRolls = isLocal;
+            StateHasChanged();
         }
     }
 }

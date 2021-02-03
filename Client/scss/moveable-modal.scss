@@ -101,6 +101,7 @@ moveable-modal{
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    line-height: 1.618;
                 }
 
                 .ping-player {
@@ -628,6 +629,27 @@ moveable-modal{
                 }
             }
         }
+    }
+
+    &.monster-manual{
+        background-color: var(--white);
+        border-radius: 0.25rem;
+        box-shadow: var(--shadow-lg);
+        position: absolute;
+        width: 600px;
+        overflow: hidden;
+        z-index: 1000;
+    }
+
+    &.stat-block{
+        background-color: var(--white);
+        border-radius: 0.25rem;
+        box-shadow: var(--shadow-lg);
+        position: absolute;
+        width: 425px;
+        overflow: hidden;
+        z-index: 1000;
+        visibility: visible;
     }
 
     moveable-handle{
