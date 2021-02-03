@@ -25,12 +25,13 @@ const options = {
 };
 
 async function run(){
-    glob(`${cwd}/_js/*.js`, (err, files) => {
+    await fs.promises.mkdir(path.join(cwd, "Client", "wwwroot", "js", "lib"));
+    await fs.promises.mkdir(path.join(cwd, "Client", "wwwroot", "js", "workers"));
+    glob(`${cwd}/_js/**/*.js`, (err, files) => {
         if (err){
             console.log(err);
             process.exit(1);
         }
-
         let finished = 0;
         for (let i = 0; i < files.length; i++){
             fs.readFile(files[i], (err, buffer) => {
@@ -43,16 +44,40 @@ async function run(){
                 const code = {};
                 code[file] = data;
                 minify(code, options).then(result => {
-                    fs.writeFile(path.join(cwd, "Client", "wwwroot", "js", file), result.code, (err) => {
-                        if (err){
-                            console.log(err);
-                            process.exit(1);
-                        }
-                        finished++;
-                        if (finished === files.length){
-                            process.exit(0);
-                        }
-                    }); 
+                    if (files[i].match("lib")){
+                        fs.writeFile(path.join(cwd, "Client", "wwwroot", "js", "lib", file), result.code, (err) => {
+                            if (err){
+                                console.log(err);
+                                process.exit(1);
+                            }
+                            finished++;
+                            if (finished === files.length){
+                                process.exit(0);
+                            }
+                        }); 
+                    } else if (files[i].match("workers")){
+                        fs.writeFile(path.join(cwd, "Client", "wwwroot", "js", "workers", file), result.code, (err) => {
+                            if (err){
+                                console.log(err);
+                                process.exit(1);
+                            }
+                            finished++;
+                            if (finished === files.length){
+                                process.exit(0);
+                            }
+                        }); 
+                    } else {
+                        fs.writeFile(path.join(cwd, "Client", "wwwroot", "js", file), result.code, (err) => {
+                            if (err){
+                                console.log(err);
+                                process.exit(1);
+                            }
+                            finished++;
+                            if (finished === files.length){
+                                process.exit(0);
+                            }
+                        }); 
+                    }
                 });
             });
         }
