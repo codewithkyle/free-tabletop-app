@@ -6,55 +6,54 @@ on:
             - master
 
 jobs:
-  build:
+    build:
+        runs-on: ubuntu-latest
 
-    runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@master
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@master
+            - name: Setup Node and NPM
+              uses: actions/setup-node@v1
+              with:
+                  node-version: 14.5.0
 
-    - name: Setup Node and NPM
-      uses: actions/setup-node@v1
-      with:
-        node-version: 14.5.0
+            - name: Install NPM Packages
+              run: npm ci
 
-    - name: Install NPM Packages
-      run: npm ci
+            - name: Setup dotnet
+              uses: actions/setup-dotnet@v1
+              with:
+                  dotnet-version: 3.1.x
 
-    - name: Setup dotnet
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: 3.1.x
+            - name: Build
+              run: npm run production
 
-    - name: Build
-      run: npm run production
+            - name: Clear Old Files
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.HOST }}
+                  USERNAME: ${{ secrets.USERNAME }}
+                  PORT: ${{ secrets.PORT }}
+                  KEY: ${{ secrets.SSHKEY }}
+                  script: rm -rf /var/www/free-tabletop/compiled
 
-    - name: Clear Old Files
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        USERNAME: ${{ secrets.USERNAME }}
-        PORT: ${{ secrets.PORT }}
-        KEY: ${{ secrets.SSHKEY }}
-        script: rm -rf /var/www/free-tabletop-app/compiled
+            - name: Copy Files
+              uses: appleboy/scp-action@master
+              env:
+                  HOST: ${{ secrets.HOST }}
+                  USERNAME: ${{ secrets.USERNAME }}
+                  PORT: ${{ secrets.PORT }}
+                  KEY: ${{ secrets.SSHKEY }}
+              with:
+                  source: "./compiled"
+                  target: "/var/www/free-tabletop"
 
-    - name: Copy Files
-      uses: appleboy/scp-action@master
-      env:
-        HOST: ${{ secrets.HOST }}
-        USERNAME: ${{ secrets.USERNAME }}
-        PORT: ${{ secrets.PORT }}
-        KEY: ${{ secrets.SSHKEY }}
-      with:
-        source: "./compiled"
-        target: "/var/www/free-tabletop-app"
-
-    - name: Restart App
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        USERNAME: ${{ secrets.USERNAME }}
-        PORT: ${{ secrets.PORT }}
-        KEY: ${{ secrets.SSHKEY }}
-        script: systemctl restart freetabletop.service
+            - name: Restart App
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.HOST }}
+                  USERNAME: ${{ secrets.USERNAME }}
+                  PORT: ${{ secrets.PORT }}
+                  KEY: ${{ secrets.SSHKEY }}
+                  script: systemctl restart freetabletop.service
