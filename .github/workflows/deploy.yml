@@ -56,4 +56,4 @@ jobs:
                   USERNAME: ${{ secrets.USERNAME }}
                   PORT: ${{ secrets.PORT }}
                   KEY: ${{ secrets.SSHKEY }}
-                  script: systemctl restart freetabletop.service
+                  script: sudo systemctl restart freetabletop.service
